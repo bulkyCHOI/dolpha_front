@@ -704,6 +704,14 @@ function Presentation() {
 
   // API 데이터 가져오기
   useEffect(() => {
+    console.log('🔍 Environment Variables:');
+    console.log('NODE_ENV:', process.env.NODE_ENV);
+    console.log('REACT_APP_API_BASE_URL:', process.env.REACT_APP_API_BASE_URL);
+    console.log('All REACT_APP_* vars:', Object.keys(process.env).filter(key => key.startsWith('REACT_APP_')).reduce((obj, key) => {
+      obj[key] = process.env[key];
+      return obj;
+    }, {}));
+    
     const fetchStockData = async () => {
       try {
         setLoading(true);
