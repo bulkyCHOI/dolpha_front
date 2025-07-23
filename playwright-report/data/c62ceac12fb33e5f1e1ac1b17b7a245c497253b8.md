@@ -1,0 +1,60 @@
+# Page snapshot
+
+```yaml
+- navigation "Main navigation":
+  - link "Dolpha":
+    - /url: /
+  - link "MTT":
+    - /url: /mtt
+    - paragraph
+    - text: MTT
+    - paragraph
+  - paragraph
+  - text: pages
+  - paragraph
+  - paragraph
+  - text: sections
+  - paragraph
+  - paragraph
+  - text: docs
+  - paragraph
+  - link "github":
+    - /url: https://www.github.com/creativetimofficial/material-kit-react
+    - paragraph
+    - text: github
+    - paragraph
+  - link "free download":
+    - /url: https://www.creative-tim.com/product/material-kit-react
+- heading "Dolpha 로그인" [level=4]
+- paragraph: 주식 자동매매 분석 시스템
+- button "Google로 로그인"
+- paragraph: 또는
+- form:
+  - text: Email
+  - textbox "Email"
+  - text: Password
+  - textbox "Password"
+  - checkbox
+  - text: Remember me
+  - button "이메일로 로그인"
+  - text: Don't have an account?
+  - link "Sign up":
+    - /url: /authentication/sign-up/cover
+- text: © 2025, made with by
+- link "Creative Tim":
+  - /url: https://www.creative-tim.com/
+- text: for a better web.
+- list:
+  - listitem:
+    - link "Creative Tim":
+      - /url: https://www.creative-tim.com/
+  - listitem:
+    - link "About Us":
+      - /url: https://www.creative-tim.com/presentation
+  - listitem:
+    - link "Blog":
+      - /url: https://www.creative-tim.com/blog
+  - listitem:
+    - link "License":
+      - /url: https://www.creative-tim.com/license
+```

@@ -48,6 +48,7 @@ import ContactUs from "layouts/pages/landing-pages/contact-us";
 import Author from "layouts/pages/landing-pages/author";
 import SignIn from "layouts/pages/authentication/sign-in";
 import MyPage from "pages/MyPage";
+import MTT from "layouts/pages/mtt";
 import ProtectedRoute from "components/ProtectedRoute";
 
 // Sections
@@ -71,6 +72,12 @@ import Toggles from "layouts/sections/elements/toggles";
 import Typography from "layouts/sections/elements/typography";
 
 const routes = [
+  {
+    name: "MTT",
+    icon: <Icon>trending_up</Icon>,
+    route: "/mtt",
+    component: <MTT />,
+  },
   {
     name: "pages",
     icon: <Icon>dashboard</Icon>,
