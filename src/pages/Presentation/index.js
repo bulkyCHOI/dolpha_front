@@ -396,7 +396,7 @@ function Presentation() {
             <BottomNavigation
               value={mobileTab}
               onChange={handleMobileTabChange}
-              sx={{ 
+              sx={{
                 height: "80px",
                 "& .MuiBottomNavigationAction-root": {
                   fontSize: "0.75rem",

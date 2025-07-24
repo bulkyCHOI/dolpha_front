@@ -49,6 +49,7 @@ import Author from "layouts/pages/landing-pages/author";
 import SignIn from "layouts/pages/authentication/sign-in";
 import MyPage from "pages/MyPage";
 import MTT from "./layouts/pages/mtt";
+import WeeklyHigh from "./layouts/pages/weekly-high";
 import ProtectedRoute from "components/ProtectedRoute";
 
 // Sections
@@ -77,6 +78,12 @@ const routes = [
     icon: <Icon>trending_up</Icon>,
     route: "/mtt",
     component: <MTT />,
+  },
+  {
+    name: "52주 신고가",
+    icon: <Icon>show_chart</Icon>,
+    route: "/weekly-high",
+    component: <WeeklyHigh />,
   },
   {
     name: "pages",

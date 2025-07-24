@@ -27,8 +27,8 @@ import { formatFinancialAmount } from "utils/formatters";
  */
 const FinancialModal = ({ open, onClose, selectedStock, financialData, loading, onOpen }) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const isSmallMobile = useMediaQuery(theme.breakpoints.down("sm"));
   return (
     <Dialog
       open={open}
@@ -81,11 +81,15 @@ const FinancialModal = ({ open, onClose, selectedStock, financialData, loading, 
               재무제표 데이터를 로드하는 중...
             </MKTypography>
           </MKBox>
-        ) : financialData.length > 0 ? (
+        ) : financialData && financialData.length > 0 ? (
           <>
             {/* 손익계산서 */}
             <MKBox sx={{ mb: 3 }}>
-              <MKTypography variant={isMobile ? "subtitle1" : "h6"} fontWeight="bold" sx={{ mb: 2, color: "info" }}>
+              <MKTypography
+                variant={isMobile ? "subtitle1" : "h6"}
+                fontWeight="bold"
+                sx={{ mb: 2, color: "info" }}
+              >
                 손익계산서
               </MKTypography>
               <TableContainer component={Paper} sx={{ boxShadow: 1, mb: 2, overflowX: "auto" }}>
@@ -104,16 +108,8 @@ const FinancialModal = ({ open, onClose, selectedStock, financialData, loading, 
                       >
                         항목
                       </TableCell>
-                      {/* 최신 5개 분기를 년도-분기 순으로 오름차순 정렬 (과거~현재) */}
-                      {[...new Set(financialData.map((item) => `${item.year} ${item.quarter}`))]
-                        .sort((a, b) => {
-                          const [yearA, quarterA] = a.split(" ");
-                          const [yearB, quarterB] = b.split(" ");
-                          if (yearA !== yearB) return yearA - yearB; // 년도 오름차순
-                          // 분기 오름차순 (1Q > 2Q > 3Q > 4Q)
-                          const quarterOrder = { "1Q": 1, "2Q": 2, "3Q": 3, "4Q": 4 };
-                          return (quarterOrder[quarterA] || 0) - (quarterOrder[quarterB] || 0);
-                        })
+                      {/* 최신 5개 분기 (백엔드에서 이미 과거~현재 순으로 정렬됨) */}
+                      {[...new Set((financialData || []).map((item) => `${item.year} ${item.quarter}`))]
                         .slice(-5)
                         .map((period) => (
                           <TableCell
@@ -163,7 +159,7 @@ const FinancialModal = ({ open, onClose, selectedStock, financialData, loading, 
                         >
                           {accountName}
                         </TableCell>
-                        {[...new Set(financialData.map((item) => `${item.year} ${item.quarter}`))]
+                        {[...new Set((financialData || []).map((item) => `${item.year} ${item.quarter}`))]
                           .sort((a, b) => {
                             const [yearA, quarterA] = a.split(" ");
                             const [yearB, quarterB] = b.split(" ");
@@ -175,7 +171,7 @@ const FinancialModal = ({ open, onClose, selectedStock, financialData, loading, 
                           .slice(-5)
                           .map((period) => {
                             const [year, quarter] = period.split(" ");
-                            const item = financialData.find(
+                            const item = (financialData || []).find(
                               (d) =>
                                 d.year === year &&
                                 d.quarter === quarter &&
@@ -210,7 +206,11 @@ const FinancialModal = ({ open, onClose, selectedStock, financialData, loading, 
 
             {/* 재무상태표 */}
             <MKBox sx={{ mb: 2 }}>
-              <MKTypography variant={isMobile ? "subtitle1" : "h6"} fontWeight="bold" sx={{ mb: 2, color: "info" }}>
+              <MKTypography
+                variant={isMobile ? "subtitle1" : "h6"}
+                fontWeight="bold"
+                sx={{ mb: 2, color: "info" }}
+              >
                 재무상태표
               </MKTypography>
               <TableContainer component={Paper} sx={{ boxShadow: 1, overflowX: "auto" }}>
@@ -229,16 +229,8 @@ const FinancialModal = ({ open, onClose, selectedStock, financialData, loading, 
                       >
                         항목
                       </TableCell>
-                      {/* 최신 5개 분기를 년도-분기 순으로 오름차순 정렬 (과거~현재) */}
-                      {[...new Set(financialData.map((item) => `${item.year} ${item.quarter}`))]
-                        .sort((a, b) => {
-                          const [yearA, quarterA] = a.split(" ");
-                          const [yearB, quarterB] = b.split(" ");
-                          if (yearA !== yearB) return yearA - yearB; // 년도 오름차순
-                          // 분기 오름차순 (1Q > 2Q > 3Q > 4Q)
-                          const quarterOrder = { "1Q": 1, "2Q": 2, "3Q": 3, "4Q": 4 };
-                          return (quarterOrder[quarterA] || 0) - (quarterOrder[quarterB] || 0);
-                        })
+                      {/* 최신 5개 분기 (백엔드에서 이미 과거~현재 순으로 정렬됨) */}
+                      {[...new Set((financialData || []).map((item) => `${item.year} ${item.quarter}`))]
                         .slice(-5)
                         .map((period) => (
                           <TableCell
@@ -287,7 +279,7 @@ const FinancialModal = ({ open, onClose, selectedStock, financialData, loading, 
                         >
                           {accountName}
                         </TableCell>
-                        {[...new Set(financialData.map((item) => `${item.year} ${item.quarter}`))]
+                        {[...new Set((financialData || []).map((item) => `${item.year} ${item.quarter}`))]
                           .sort((a, b) => {
                             const [yearA, quarterA] = a.split(" ");
                             const [yearB, quarterB] = b.split(" ");
@@ -299,7 +291,7 @@ const FinancialModal = ({ open, onClose, selectedStock, financialData, loading, 
                           .slice(-5)
                           .map((period) => {
                             const [year, quarter] = period.split(" ");
-                            const item = financialData.find(
+                            const item = (financialData || []).find(
                               (d) =>
                                 d.year === year &&
                                 d.quarter === quarter &&
@@ -352,7 +344,11 @@ const FinancialModal = ({ open, onClose, selectedStock, financialData, loading, 
         )}
 
         <MKBox sx={{ mt: 2, p: 1, bgcolor: "info.main", borderRadius: 1 }}>
-          <MKTypography variant="caption" color="white" sx={{ fontSize: isMobile ? "0.65rem" : "inherit" }}>
+          <MKTypography
+            variant="caption"
+            color="white"
+            sx={{ fontSize: isMobile ? "0.65rem" : "inherit" }}
+          >
             * 금액 단위: 원 (조/억/만 단위로 표시)
           </MKTypography>
         </MKBox>

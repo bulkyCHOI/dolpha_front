@@ -58,7 +58,7 @@ function MTT() {
     deleteAutotradingConfig,
     toggleAutotradingConfig,
     handleAccordionChange,
-  } = useAutotradingConfig(authenticatedFetch, showSnackbar);
+  } = useAutotradingConfig(authenticatedFetch, showSnackbar, 'mtt');
 
   const {
     stockData,
@@ -75,7 +75,7 @@ function MTT() {
     setSelectedStock,
   } = useStockData();
 
-  const tradingForm = useTradingForm(selectedStock, authenticatedFetch, showSnackbar);
+  const tradingForm = useTradingForm(selectedStock, authenticatedFetch, showSnackbar, 'mtt');
 
   const chartInteractions = useChartInteractions(
     tradingForm.entryPoint,
@@ -355,6 +355,7 @@ function MTT() {
               onRefresh={fetchAutotradingList}
               authenticatedFetch={authenticatedFetch}
               showSnackbar={showSnackbar}
+              strategyType="mtt"
             />
           )}
         </MKBox>
@@ -396,7 +397,7 @@ function MTT() {
             <BottomNavigation
               value={mobileTab}
               onChange={handleMobileTabChange}
-              sx={{ 
+              sx={{
                 height: "80px",
                 "& .MuiBottomNavigationAction-root": {
                   fontSize: "0.75rem",
@@ -955,6 +956,7 @@ function MTT() {
                                 showSnackbar={showSnackbar}
                                 authenticatedFetch={authenticatedFetch}
                                 tradingForm={tradingForm}
+                                strategyType="mtt"
                               />
                             </MKBox>
                           </>

@@ -9,7 +9,7 @@ import MKTypography from "components/MKTypography";
 
 function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinancialModal }) {
   const getChangeRate = () => {
-    if (ohlcvData.length < 2) return null;
+    if (!ohlcvData || ohlcvData.length < 2) return null;
     const current = ohlcvData[ohlcvData.length - 1]?.close;
     const previous = ohlcvData[ohlcvData.length - 2]?.close;
     return ((current - previous) / previous) * 100;
@@ -59,7 +59,7 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
         <MKBox sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <MKBox>
             <MKTypography variant="h5" color="white" fontWeight="bold">
-              {ohlcvData.length > 0
+              {ohlcvData && ohlcvData.length > 0
                 ? new Intl.NumberFormat("ko-KR").format(ohlcvData[ohlcvData.length - 1]?.close)
                 : "-"}
             </MKTypography>
@@ -86,11 +86,15 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
             </MKBox>
             <MKTypography variant="caption" color="white" sx={{ opacity: 0.9 }}>
               ATR:{" "}
-              {analysisData.length > 0 && analysisData[analysisData.length - 1]?.atr && ohlcvData.length > 0
+              {analysisData && analysisData.length > 0 &&
+              analysisData[analysisData.length - 1]?.atr &&
+              ohlcvData && ohlcvData.length > 0
                 ? (() => {
                     const atr = analysisData[analysisData.length - 1].atr;
                     const currentPrice = ohlcvData[ohlcvData.length - 1]?.close;
-                    const atrPercent = currentPrice ? ((atr / currentPrice) * 100).toFixed(1) : null;
+                    const atrPercent = currentPrice
+                      ? ((atr / currentPrice) * 100).toFixed(1)
+                      : null;
                     return `${atr.toFixed(1)}${atrPercent ? ` (${atrPercent}%)` : ""}`;
                   })()
                 : "-"}
@@ -153,7 +157,7 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
                 color="white"
                 sx={{ fontSize: "0.85rem" }}
               >
-                {ohlcvData.length > 0
+                {ohlcvData && ohlcvData.length > 0
                   ? new Intl.NumberFormat("ko-KR").format(ohlcvData[ohlcvData.length - 1]?.close)
                   : "-"}
               </MKTypography>
@@ -199,11 +203,15 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
                 color="white"
                 sx={{ fontSize: "0.85rem" }}
               >
-                {analysisData.length > 0 && analysisData[analysisData.length - 1]?.atr && ohlcvData.length > 0
+                {analysisData && analysisData.length > 0 &&
+                analysisData[analysisData.length - 1]?.atr &&
+                ohlcvData && ohlcvData.length > 0
                   ? (() => {
                       const atr = analysisData[analysisData.length - 1].atr;
                       const currentPrice = ohlcvData[ohlcvData.length - 1]?.close;
-                      const atrPercent = currentPrice ? ((atr / currentPrice) * 100).toFixed(1) : null;
+                      const atrPercent = currentPrice
+                        ? ((atr / currentPrice) * 100).toFixed(1)
+                        : null;
                       return `${atr.toFixed(1)}${atrPercent ? ` (${atrPercent}%)` : ""}`;
                     })()
                   : "-"}

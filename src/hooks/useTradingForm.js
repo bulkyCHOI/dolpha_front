@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
  * Custom hook for managing trading form state and validation
  * Handles trading mode, entry points, stop loss, take profit, pyramiding configuration
  */
-export const useTradingForm = (selectedStock, authenticatedFetch, showSnackbar) => {
+export const useTradingForm = (selectedStock, authenticatedFetch, showSnackbar, strategyType = 'mtt') => {
   // Trading form state
   const [tradingMode, setTradingMode] = useState("manual");
   const [maxLoss, setMaxLoss] = useState("");
@@ -164,7 +164,7 @@ export const useTradingForm = (selectedStock, authenticatedFetch, showSnackbar) 
     try {
       const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
       const response = await authenticatedFetch(
-        `${apiBaseUrl}/api/mypage/trading-configs/stock/${stockCode}`
+        `${apiBaseUrl}/api/mypage/trading-configs/stock/${stockCode}?strategy_type=${strategyType}`
       );
 
       if (response.ok) {
@@ -175,8 +175,11 @@ export const useTradingForm = (selectedStock, authenticatedFetch, showSnackbar) 
         setStopLoss(config.stop_loss ? config.stop_loss.toString() : "");
         setTakeProfit(config.take_profit ? config.take_profit.toString() : "");
         setPyramidingCount(config.pyramiding_count || 0);
-        setEntryPoint(config.position_size ? config.position_size.toString() : "");
+        
+        // 1차 진입시점은 entry_point 필드에서 가져옴
+        setEntryPoint(config.entry_point ? config.entry_point.toString() : "");
 
+        // Django DB에서 완전한 데이터 가져옴
         if (config.pyramiding_entries && config.pyramiding_entries.length > 0) {
           setPyramidingEntries(config.pyramiding_entries);
         } else {
@@ -241,11 +244,12 @@ export const useTradingForm = (selectedStock, authenticatedFetch, showSnackbar) 
       stock_code: selectedStock.code,
       stock_name: selectedStock.name,
       trading_mode: tradingMode,
+      strategy_type: strategyType,
       max_loss: maxLoss ? parseFloat(maxLoss) : null,
       stop_loss: stopLoss ? parseFloat(stopLoss) : null,
       take_profit: takeProfit ? parseFloat(takeProfit) : null,
       pyramiding_count: pyramidingCount,
-      position_size: entryPoint ? parseFloat(entryPoint) : null,
+      entry_point: entryPoint ? parseFloat(entryPoint) : null,
       pyramiding_entries: pyramidingEntries,
       positions: positions,
       is_active: currentIsActive,

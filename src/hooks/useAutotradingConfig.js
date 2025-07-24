@@ -3,7 +3,7 @@ import { useState } from "react";
 /**
  * 자동매매 설정 관리 훅
  */
-export const useAutotradingConfig = (authenticatedFetch, showSnackbar) => {
+export const useAutotradingConfig = (authenticatedFetch, showSnackbar, strategyType = 'mtt') => {
   const [autotradingList, setAutotradingList] = useState([]);
   const [expandedAccordion, setExpandedAccordion] = useState(null);
 
@@ -13,41 +13,20 @@ export const useAutotradingConfig = (authenticatedFetch, showSnackbar) => {
       // Django API 기본 URL
       const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
-      // 첫 번째로 서버 설정이 있는지 확인
-      try {
-        const serverResponse = await authenticatedFetch(`${apiBaseUrl}/api/mypage/server-settings`);
-        if (!serverResponse.ok) {
-          if (serverResponse.status === 401 || serverResponse.status === 404) {
-            // 서버 설정이 없으면 빈 목록으로 설정하고 종료
-            setAutotradingList([]);
-            showSnackbar(
-              "자동매매 기능을 사용하려면 먼저 autobot 서버 설정을 완료해주세요.",
-              "warning"
-            );
-            return;
-          }
-          // 서버 설정 조회 실패 시에도 빈 목록으로 설정하고 종료
-          setAutotradingList([]);
-          showSnackbar("서버 설정을 확인할 수 없습니다. 먼저 서버 설정을 완료해주세요.", "warning");
-          return;
-        }
-      } catch (error) {
-        // 서버 설정 확인 실패 시에도 빈 목록으로 설정하고 종료
-        setAutotradingList([]);
-        showSnackbar("서버 설정을 확인할 수 없습니다. 먼저 서버 설정을 완료해주세요.", "warning");
-        return;
-      }
+      // Django DB에서 직접 자동매매 목록을 조회하므로 서버 설정 확인은 선택적으로 처리
+      // autobot이 필요한 기능(실제 거래 실행)은 별도로 서버 설정을 체크
 
-      // 서버 설정이 확인되면 자동매매 개요 목록 가져오기
-      const response = await authenticatedFetch(`${apiBaseUrl}/api/mypage/trading-configs/summary`);
+      // 서버 설정이 확인되면 자동매매 목록 가져오기 (strategy_type 필터 적용)
+      // Django DB에서 직접 조회하도록 변경
+      const response = await authenticatedFetch(`${apiBaseUrl}/api/mypage/trading-configs?strategy_type=${strategyType}`);
 
       if (response.ok) {
         const configs = await response.json();
 
-        // 각 설정에 is_from_summary 플래그 추가 (개요에서 온 데이터임을 표시)
+        // 각 설정에 is_from_summary 플래그 추가 (DB에서 온 완전한 데이터임을 표시)
         const configsWithFlag = configs.map((config) => ({
           ...config,
-          is_from_summary: true, // 개요 데이터 플래그
+          is_from_summary: false, // DB에서 온 완전한 데이터 플래그
         }));
 
         setAutotradingList(configsWithFlag);
@@ -58,7 +37,7 @@ export const useAutotradingConfig = (authenticatedFetch, showSnackbar) => {
         }
       } else {
         setAutotradingList([]);
-        showSnackbar("자동매매 개요 목록 조회에 실패했습니다.", "error");
+        showSnackbar("자동매매 목록 조회에 실패했습니다.", "error");
       }
     } catch (error) {
       setAutotradingList([]);
@@ -118,8 +97,8 @@ export const useAutotradingConfig = (authenticatedFetch, showSnackbar) => {
       if (configToDelete) {
         const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
-        // stock_code를 사용하여 삭제
-        const deleteUrl = `${apiBaseUrl}/api/mypage/trading-configs/stock/${stockCode}`;
+        // stock_code와 strategy_type을 사용하여 삭제
+        const deleteUrl = `${apiBaseUrl}/api/mypage/trading-configs/stock/${stockCode}?strategy_type=${strategyType}`;
         console.log(`[FRONTEND] 삭제 요청 URL: ${deleteUrl}`);
 
         const response = await authenticatedFetch(deleteUrl, {

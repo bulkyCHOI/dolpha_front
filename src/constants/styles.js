@@ -19,6 +19,7 @@ export const COLORS = {
 
 export const LAYOUT = {
   NAVBAR_HEIGHT: "80px",
+  CONTENT_HEIGHT: "calc(100vh - 80px)",
   BOX_SHADOW: "0 4px 6px rgba(0,0,0,0.1)",
   HOVER_SHADOW: "0 2px 8px rgba(0,0,0,0.08)",
   SELECTED_SHADOW: "0 2px 12px rgba(102, 126, 234, 0.2)",

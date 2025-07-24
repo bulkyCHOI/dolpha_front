@@ -5,7 +5,16 @@ import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
 import { formatNumber } from "utils/formatters";
 
-function StockList({ stocks, loading, error, selectedStock, onStockClick }) {
+function StockList({ 
+  stocks, 
+  loading, 
+  error, 
+  selectedStock, 
+  onStockClick, 
+  getColumnHeaders, 
+  getRowData,
+  disableStripes = false 
+}) {
   // 로딩 상태
   if (loading) {
     return (
@@ -69,6 +78,28 @@ function StockList({ stocks, loading, error, selectedStock, onStockClick }) {
     );
   }
 
+  // 컬럼 헤더 정의 (기본값 또는 전달받은 값 사용)
+  const columnHeaders = getColumnHeaders ? getColumnHeaders() : [
+    { label: "종목명", field: "name", width: 3.5 },
+    { label: "RS순위", field: "rsRank", width: 2.5 },
+    { label: "당기매출", field: "당기매출", width: 3 },
+    { label: "영업이익", field: "당기영업이익", width: 3 },
+  ];
+
+  // 행 데이터 변환 함수
+  const getRowDataForDisplay = (stock) => {
+    if (getRowData) {
+      return getRowData(stock);
+    }
+    // 기본 데이터 구조
+    return {
+      name: stock.name,
+      rsRank: stock.rsRank,
+      "당기매출": stock["당기매출"],
+      "당기영업이익": stock["당기영업이익"],
+    };
+  };
+
   return (
     <>
       {/* 테이블 헤더 */}
@@ -83,26 +114,18 @@ function StockList({ stocks, loading, error, selectedStock, onStockClick }) {
         }}
       >
         <Grid container spacing={0}>
-          <Grid item xs={3.5}>
-            <MKTypography variant="subtitle2" color="white" fontWeight="bold">
-              종목명
-            </MKTypography>
-          </Grid>
-          <Grid item xs={2.5}>
-            <MKTypography variant="subtitle2" color="white" fontWeight="bold" textAlign="center">
-              RS순위
-            </MKTypography>
-          </Grid>
-          <Grid item xs={3}>
-            <MKTypography variant="subtitle2" color="white" fontWeight="bold" textAlign="center">
-              당기매출
-            </MKTypography>
-          </Grid>
-          <Grid item xs={3}>
-            <MKTypography variant="subtitle2" color="white" fontWeight="bold" textAlign="center">
-              영업이익
-            </MKTypography>
-          </Grid>
+          {columnHeaders.map((header, index) => (
+            <Grid key={header.field} item xs={header.width || 12 / columnHeaders.length}>
+              <MKTypography 
+                variant="subtitle2" 
+                color="white" 
+                fontWeight="bold" 
+                textAlign={index === 0 ? "left" : "center"}
+              >
+                {header.label}
+              </MKTypography>
+            </Grid>
+          ))}
         </Grid>
       </MKBox>
 
@@ -128,111 +151,104 @@ function StockList({ stocks, loading, error, selectedStock, onStockClick }) {
           },
         }}
       >
-        {stocks.map((row, rowIndex) => (
-          <MKBox
-            key={row.code || rowIndex}
-            onClick={() => onStockClick(row)}
-            sx={{
-              p: 0.5,
-              borderBottom: rowIndex === stocks.length - 1 ? "none" : "1px solid #f0f0f0",
-              cursor: "pointer",
-              transition: "all 0.2s ease",
-              backgroundColor:
-                selectedStock?.code === row.code
-                  ? "linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)"
-                  : rowIndex % 2 === 0
-                  ? "#fafafa"
-                  : "white",
-              "&:hover": {
-                backgroundColor: "rgba(102, 126, 234, 0.08)",
-                transform: "translateX(4px)",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                borderLeft: "3px solid #667eea",
-              },
-              ...(selectedStock?.code === row.code && {
-                borderLeft: "3px solid #667eea",
-                boxShadow: "0 2px 12px rgba(102, 126, 234, 0.2)",
-              }),
-            }}
-          >
-            <Grid container spacing={0} alignItems="center">
-              <Grid item xs={3.5}>
-                <MKBox>
-                  <MKTypography
-                    variant="body2"
-                    fontWeight={selectedStock?.code === row.code ? "bold" : "medium"}
-                    color={selectedStock?.code === row.code ? "info" : "text"}
-                    sx={{
-                      fontSize: "0.8rem",
-                      lineHeight: 1.1,
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {row.name || "-"}
-                  </MKTypography>
-                  <MKTypography variant="caption" color="text" sx={{ fontSize: "0.7rem" }}>
-                    {row.code || ""}
-                  </MKTypography>
-                </MKBox>
+        {stocks.map((row, rowIndex) => {
+          const rowData = getRowDataForDisplay(row);
+          return (
+            <MKBox
+              key={row.code || rowIndex}
+              onClick={() => onStockClick(row)}
+              sx={{
+                p: 0.5,
+                borderBottom: rowIndex === stocks.length - 1 ? "none" : "1px solid #f0f0f0",
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+                backgroundColor:
+                  selectedStock?.code === row.code
+                    ? "linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)"
+                    : disableStripes ? "white" : (rowIndex % 2 === 0 ? "#fafafa" : "white"),
+                "&:hover": {
+                  backgroundColor: "rgba(102, 126, 234, 0.08)",
+                  transform: "translateX(4px)",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                  borderLeft: "3px solid #667eea",
+                },
+                ...(selectedStock?.code === row.code && {
+                  borderLeft: "3px solid #667eea",
+                  boxShadow: "0 2px 12px rgba(102, 126, 234, 0.2)",
+                }),
+              }}
+            >
+              <Grid container spacing={0} alignItems="center">
+                {columnHeaders.map((header, colIndex) => (
+                  <Grid key={header.field} item xs={header.width || 12 / columnHeaders.length}>
+                    {colIndex === 0 ? (
+                      // 첫 번째 컬럼 (종목명)
+                      <MKBox>
+                        <MKTypography
+                          variant="body2"
+                          fontWeight={selectedStock?.code === row.code ? "bold" : "medium"}
+                          color={selectedStock?.code === row.code ? "info" : "text"}
+                          sx={{
+                            fontSize: "0.8rem",
+                            lineHeight: 1.1,
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {rowData[header.field] || row.name || "-"}
+                        </MKTypography>
+                        <MKTypography variant="caption" color="text" sx={{ fontSize: "0.7rem" }}>
+                          {row.code || ""}
+                        </MKTypography>
+                      </MKBox>
+                    ) : header.field === "rsRank" ? (
+                      // RS 점수 컬럼
+                      <MKBox display="flex" justifyContent="center">
+                        <Chip
+                          label={rowData[header.field] || "-"}
+                          size="small"
+                          sx={{
+                            backgroundColor:
+                              rowData[header.field] >= 80
+                                ? "#4caf50"
+                                : rowData[header.field] >= 60
+                                ? "#ff9800"
+                                : rowData[header.field] >= 40
+                                ? "#f44336"
+                                : "#9e9e9e",
+                            color: "white",
+                            fontWeight: "bold",
+                            fontSize: "0.7rem",
+                            minWidth: "35px",
+                            height: "20px",
+                          }}
+                        />
+                      </MKBox>
+                    ) : (
+                      // 일반 데이터 컬럼
+                      <MKBox display="flex" justifyContent="center" alignItems="center">
+                        <MKTypography
+                          variant="body2"
+                          textAlign="center"
+                          fontWeight="bold"
+                          sx={{
+                            fontSize: "0.75rem",
+                            color: typeof rowData[header.field] === 'number' && rowData[header.field] < 0 ? "#1976d2" : "inherit",
+                          }}
+                        >
+                          {typeof rowData[header.field] === 'number' 
+                            ? formatNumber(rowData[header.field]) 
+                            : rowData[header.field] || "-"}
+                        </MKTypography>
+                      </MKBox>
+                    )}
+                  </Grid>
+                ))}
               </Grid>
-              <Grid item xs={2.5}>
-                <MKBox display="flex" justifyContent="center">
-                  <Chip
-                    label={row.rsRank || "-"}
-                    size="small"
-                    sx={{
-                      backgroundColor:
-                        row.rsRank >= 80
-                          ? "#4caf50"
-                          : row.rsRank >= 60
-                          ? "#ff9800"
-                          : row.rsRank >= 40
-                          ? "#f44336"
-                          : "#9e9e9e",
-                      color: "white",
-                      fontWeight: "bold",
-                      fontSize: "0.7rem",
-                      minWidth: "35px",
-                      height: "20px",
-                    }}
-                  />
-                </MKBox>
-              </Grid>
-              <Grid item xs={3}>
-                <MKBox display="flex" justifyContent="center" alignItems="center">
-                  <MKTypography
-                    variant="body2"
-                    textAlign="center"
-                    fontWeight="bold"
-                    sx={{
-                      fontSize: "0.75rem",
-                      color: row["당기매출"] < 0 ? "#1976d2" : "inherit",
-                    }}
-                  >
-                    {formatNumber(row["당기매출"]) || "0"}
-                  </MKTypography>
-                </MKBox>
-              </Grid>
-              <Grid item xs={3}>
-                <MKBox display="flex" justifyContent="center" alignItems="center">
-                  <MKTypography
-                    variant="body2"
-                    textAlign="center"
-                    fontWeight="bold"
-                    sx={{
-                      fontSize: "0.8rem",
-                      color: row["당기영업이익"] < 0 ? "#1976d2" : "inherit",
-                    }}
-                  >
-                    {formatNumber(row["당기영업이익"]) || "0"}
-                  </MKTypography>
-                </MKBox>
-              </Grid>
-            </Grid>
-          </MKBox>
-        ))}
+            </MKBox>
+          );
+        })}
       </MKBox>
     </>
   );

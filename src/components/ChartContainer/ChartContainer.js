@@ -109,17 +109,17 @@ const ChartContainer = ({
   // Prevent body scroll during drag
   useEffect(() => {
     if (isDragging) {
-      document.body.style.overflow = 'hidden';
-      document.body.style.touchAction = 'none';
+      document.body.style.overflow = "hidden";
+      document.body.style.touchAction = "none";
     } else {
-      document.body.style.overflow = '';
-      document.body.style.touchAction = '';
+      document.body.style.overflow = "";
+      document.body.style.touchAction = "";
     }
 
     // Cleanup on unmount
     return () => {
-      document.body.style.overflow = '';
-      document.body.style.touchAction = '';
+      document.body.style.overflow = "";
+      document.body.style.touchAction = "";
     };
   }, [isDragging]);
 
@@ -513,14 +513,16 @@ const ChartContainer = ({
         borderColor: "#ff5722",
         backgroundColor: "rgba(255, 87, 34, 0.6)",
         borderWidth: 1,
-        yAxisID: 'y',
+        yAxisID: "y",
         order: 1, // 막대를 뒤쪽에 표시
       });
     }
 
     // ATR Ratio 데이터 (라인그래프)
     const atrRatioData = analysisData
-      .filter((item) => item.atrRatio !== null && item.atrRatio !== undefined && !isNaN(item.atrRatio))
+      .filter(
+        (item) => item.atrRatio !== null && item.atrRatio !== undefined && !isNaN(item.atrRatio)
+      )
       .map((item, index) => ({
         x: index,
         y: item.atrRatio * 100, // 백분율로 표시
@@ -540,7 +542,7 @@ const ChartContainer = ({
         pointBorderColor: "white",
         pointBorderWidth: 2,
         tension: 0.1,
-        yAxisID: 'y1',
+        yAxisID: "y1",
         order: 0, // 라인을 가장 앞에 표시
         fill: false,
         showLine: true,
@@ -619,7 +621,7 @@ const ChartContainer = ({
       // 이미 선택된 라인이고 팝업이 열려있으면 팝업 유지
       return;
     }
-    
+
     setSelectedLineId(lineId);
     setShowEntryPopup(true);
   };
@@ -659,7 +661,7 @@ const ChartContainer = ({
   const handleLabelTouchStart = (lineId, event) => {
     event.preventDefault();
     event.stopPropagation();
-    
+
     const touch = event.touches[0];
     const startY = touch.clientY;
     let hasMoved = false;
@@ -667,7 +669,7 @@ const ChartContainer = ({
     const handleTouchMove = (e) => {
       const currentTouch = e.touches[0];
       const deltaY = Math.abs(currentTouch.clientY - startY);
-      
+
       if (deltaY > 5 && !hasMoved) {
         hasMoved = true;
         dragStateRef.current = {
@@ -1364,7 +1366,7 @@ const ChartContainer = ({
     responsive: true,
     maintainAspectRatio: false,
     interaction: {
-      mode: 'index',
+      mode: "index",
       intersect: false,
     },
     animation: {
@@ -1402,9 +1404,9 @@ const ChartContainer = ({
         },
       },
       y: {
-        type: 'linear',
+        type: "linear",
         display: true,
-        position: 'left',
+        position: "left",
         beginAtZero: true,
         grid: {
           color: "rgba(0,0,0,0.05)",
@@ -1424,9 +1426,9 @@ const ChartContainer = ({
         },
       },
       y1: {
-        type: 'linear',
+        type: "linear",
         display: true,
-        position: 'right',
+        position: "right",
         beginAtZero: true,
         grid: {
           drawOnChartArea: false,
@@ -1438,7 +1440,7 @@ const ChartContainer = ({
           },
           padding: 8,
           callback: function (value) {
-            return value.toFixed(1) + '%';
+            return value.toFixed(1) + "%";
           },
         },
         title: {
@@ -1449,25 +1451,25 @@ const ChartContainer = ({
     plugins: {
       legend: {
         display: true,
-        position: 'top',
+        position: "top",
         labels: {
           usePointStyle: true,
           padding: 15,
           font: {
             size: 11,
           },
-          generateLabels: function(chart) {
+          generateLabels: function (chart) {
             const datasets = chart.data.datasets;
             return datasets.map((dataset, i) => ({
               text: dataset.label,
               fillStyle: dataset.backgroundColor,
               strokeStyle: dataset.borderColor,
               lineWidth: dataset.borderWidth,
-              pointStyle: dataset.type === 'line' ? 'line' : 'rect',
+              pointStyle: dataset.type === "line" ? "line" : "rect",
               hidden: !chart.isDatasetVisible(i),
-              datasetIndex: i
+              datasetIndex: i,
             }));
-          }
+          },
         },
       },
       tooltip: {
@@ -1484,9 +1486,9 @@ const ChartContainer = ({
           label: function (context) {
             const label = context.dataset.label;
             const value = context.parsed.y;
-            if (label === 'ATR') {
+            if (label === "ATR") {
               return `ATR: ${new Intl.NumberFormat("ko-KR").format(value)}`;
-            } else if (label === 'ATR Ratio (%)') {
+            } else if (label === "ATR Ratio (%)") {
               return `ATR Ratio: ${value.toFixed(2)}%`;
             }
             return `${label}: ${value}`;
@@ -1756,10 +1758,10 @@ const ChartContainer = ({
                     mb: { xs: 0.8, md: 1 },
                   }}
                 >
-                  <MKTypography 
-                    variant="caption" 
-                    fontWeight="bold" 
-                    sx={{ 
+                  <MKTypography
+                    variant="caption"
+                    fontWeight="bold"
+                    sx={{
                       fontSize: { xs: "10px", md: "12px" },
                       lineHeight: 1.2,
                       flex: 1,
