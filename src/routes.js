@@ -48,7 +48,7 @@ import ContactUs from "layouts/pages/landing-pages/contact-us";
 import Author from "layouts/pages/landing-pages/author";
 import SignIn from "layouts/pages/authentication/sign-in";
 import MyPage from "pages/MyPage";
-import MTT from "layouts/pages/mtt";
+import MTT from "./layouts/pages/mtt";
 import ProtectedRoute from "components/ProtectedRoute";
 
 // Sections

@@ -24,7 +24,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 
 // Material Kit 2 React themes
 import theme from "assets/theme";
-import MTT from "layouts/pages/mtt";
+import MTT from "./layouts/pages/mtt";
 
 // Material Kit 2 React routes
 import routes from "routes";
