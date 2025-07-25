@@ -50,6 +50,7 @@ import SignIn from "layouts/pages/authentication/sign-in";
 import MyPage from "pages/MyPage";
 import MTT from "./layouts/pages/mtt";
 import WeeklyHigh from "./layouts/pages/weekly-high";
+import TopRising from "pages/TopRising";
 import ProtectedRoute from "components/ProtectedRoute";
 
 // Sections
@@ -78,6 +79,12 @@ const routes = [
     icon: <Icon>trending_up</Icon>,
     route: "/mtt",
     component: <MTT />,
+  },
+  {
+    name: "상승률 TOP",
+    icon: <Icon>north</Icon>,
+    route: "/top-rising",
+    component: <TopRising />,
   },
   {
     name: "52주 신고가",

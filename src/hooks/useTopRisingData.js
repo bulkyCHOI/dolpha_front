@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
-export const useWeeklyHighData = () => {
+export const useTopRisingData = () => {
   const [stockData, setStockData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -13,13 +13,13 @@ export const useWeeklyHighData = () => {
   const [selectedIndexCode, setSelectedIndexCode] = useState("");
   const [analysisData, setAnalysisData] = useState([]);
 
-  // 52주 신고가 종목 데이터 조회
-  const fetchWeeklyHighStocks = useCallback(async () => {
+  // 상승률 TOP 50 종목 데이터 조회
+  const fetchTopRisingStocks = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`${BASE_URL}/api/find_stock_52w_high`);
+      const response = await fetch(`${BASE_URL}/api/find_stock_top_rising`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -44,7 +44,7 @@ export const useWeeklyHighData = () => {
         throw new Error("Invalid response format");
       }
     } catch (err) {
-      console.error("Error fetching weekly high stocks:", err);
+      console.error("Error fetching top rising stocks:", err);
       setError(err.message);
       setStockData([]);
     } finally {
@@ -153,8 +153,8 @@ export const useWeeklyHighData = () => {
 
   // 컴포넌트 마운트 시 데이터 로딩
   useEffect(() => {
-    fetchWeeklyHighStocks();
-  }, [fetchWeeklyHighStocks]);
+    fetchTopRisingStocks();
+  }, [fetchTopRisingStocks]);
 
   return {
     stockData,
@@ -169,6 +169,6 @@ export const useWeeklyHighData = () => {
     handleStockClick,
     handleIndexChange,
     setSelectedStock,
-    refreshData: fetchWeeklyHighStocks,
+    refreshData: fetchTopRisingStocks,
   };
 };
