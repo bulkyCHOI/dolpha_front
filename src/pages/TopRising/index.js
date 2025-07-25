@@ -150,6 +150,27 @@ function TopRising() {
     }
   };
 
+  // 아코디언 확장 시 스크롤 처리를 위한 커스텀 핸들러
+  const handleAccordionChangeWithScroll = (stockCode) => {
+    handleAccordionChange(stockCode);
+    
+    // 아코디언이 확장될 때만 스크롤 처리
+    if (stockCode) {
+      // 약간의 지연을 두어 아코디언 확장 애니메이션 완료 후 스크롤
+      setTimeout(() => {
+        const accordionElement = document.querySelector(`[data-accordion-id="${stockCode}"]`);
+        if (accordionElement) {
+          // 아코디언 상단이 스크롤 컨테이너의 상단과 맞춰지도록 스크롤
+          accordionElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+            inline: 'nearest'
+          });
+        }
+      }, 100);
+    }
+  };
+
   if (authLoading) {
     return (
       <Box
@@ -743,7 +764,7 @@ function TopRising() {
                         <AutotradingAccordion
                           autotradingList={autotradingList}
                           expandedAccordion={expandedAccordion}
-                          onAccordionChange={handleAccordionChange}
+                          onAccordionChange={handleAccordionChangeWithScroll}
                           onToggle={toggleAutotradingConfig}
                           onDelete={deleteAutotradingConfig}
                           onRefresh={fetchAutotradingList}
@@ -968,7 +989,7 @@ function TopRising() {
               autotradingList={autotradingList}
               expandedAccordion={expandedAccordion}
               tradingForm={tradingForm}
-              onAccordionChange={handleAccordionChange}
+              onAccordionChange={handleAccordionChangeWithScroll}
               onDelete={deleteAutotradingConfig}
               onToggle={toggleAutotradingConfig}
               onStockSelect={handleStockSelection}

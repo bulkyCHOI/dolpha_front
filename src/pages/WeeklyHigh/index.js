@@ -159,6 +159,27 @@ function WeeklyHigh() {
     }
   };
 
+  // 아코디언 확장 시 스크롤 처리를 위한 커스텀 핸들러
+  const handleAccordionChangeWithScroll = (stockCode) => {
+    handleAccordionChange(stockCode);
+    
+    // 아코디언이 확장될 때만 스크롤 처리
+    if (stockCode) {
+      // 약간의 지연을 두어 아코디언 확장 애니메이션 완료 후 스크롤
+      setTimeout(() => {
+        const accordionElement = document.querySelector(`[data-accordion-id="${stockCode}"]`);
+        if (accordionElement) {
+          // 아코디언 상단이 스크롤 컨테이너의 상단과 맞춰지도록 스크롤
+          accordionElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+            inline: 'nearest'
+          });
+        }
+      }, 100);
+    }
+  };
+
   const getStockColumnHeaders = () => [
     { label: "종목명", field: "name", width: 120 },
     { label: "RS점수", field: "rsRank", width: 60 },
@@ -608,15 +629,17 @@ function WeeklyHigh() {
                                 size="small"
                                 sx={{
                                   backgroundColor:
-                                    row.min_52w_gain_percent >= 100
-                                      ? "#4caf50"
+                                    row.min_52w_gain_percent >= 300
+                                      ? "#f44336"      // 300%이상 빨강
+                                      : row.min_52w_gain_percent >= 200
+                                      ? "#ff9800"      // 200%이상 주황
+                                      : row.min_52w_gain_percent >= 100
+                                      ? "#ffeb3b"      // 100%이상 노랑
+                                      : row.min_52w_gain_percent >= 75
+                                      ? "#4caf50"      // 75%이상 녹색
                                       : row.min_52w_gain_percent >= 50
-                                      ? "#2196f3"
-                                      : row.min_52w_gain_percent >= 20
-                                      ? "#ff9800"
-                                      : row.min_52w_gain_percent >= 0
-                                      ? "#9c27b0"
-                                      : "#f44336",
+                                      ? "#2196f3"      // 50%이상 파랑
+                                      : "#9e9e9e",     // 50%미만 회색
                                   color: "white",
                                   fontWeight: "bold",
                                   fontSize: { xs: "0.6rem", md: "0.7rem" },
@@ -637,14 +660,20 @@ function WeeklyHigh() {
                                 size="small"
                                 sx={{
                                   backgroundColor:
-                                    row.rsRank >= 80
-                                      ? "#4caf50"
+                                    row.rsRank >= 90
+                                      ? "#f44336"  // 90 이상: 빨강
+                                      : row.rsRank >= 80
+                                      ? "#ff5722"  // 80 이상: 주황
+                                      : row.rsRank >= 70
+                                      ? "#ffc107"  // 70 이상: 노랑
                                       : row.rsRank >= 60
-                                      ? "#ff9800"
-                                      : row.rsRank >= 40
-                                      ? "#f44336"
-                                      : "#9e9e9e",
-                                  color: "white",
+                                      ? "#4caf50"  // 60 이상: 초록
+                                      : row.rsRank >= 50
+                                      ? "#2196f3"  // 50 이상: 파랑
+                                      : "#9e9e9e", // 50 이하: 회색
+                                  color: row.rsRank >= 70 && row.rsRank < 80 
+                                    ? "black"  // 노란색일 때는 검은색 텍스트
+                                    : "white",
                                   fontWeight: "bold",
                                   fontSize: { xs: "0.6rem", md: "0.7rem" },
                                   minWidth: { xs: "30px", md: "35px" },
@@ -762,7 +791,7 @@ function WeeklyHigh() {
                         <AutotradingAccordion
                           autotradingList={autotradingList}
                           expandedAccordion={expandedAccordion}
-                          onAccordionChange={handleAccordionChange}
+                          onAccordionChange={handleAccordionChangeWithScroll}
                           onToggle={toggleAutotradingConfig}
                           onDelete={deleteAutotradingConfig}
                           onRefresh={fetchAutotradingList}
@@ -987,7 +1016,7 @@ function WeeklyHigh() {
               autotradingList={autotradingList}
               expandedAccordion={expandedAccordion}
               tradingForm={tradingForm}
-              onAccordionChange={handleAccordionChange}
+              onAccordionChange={handleAccordionChangeWithScroll}
               onDelete={deleteAutotradingConfig}
               onToggle={toggleAutotradingConfig}
               onStockSelect={handleStockSelection}

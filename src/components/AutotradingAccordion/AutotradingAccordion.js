@@ -106,6 +106,7 @@ const AutotradingAccordion = ({
             expanded={expandedAccordion === selectedStock.code}
             onChange={handleAccordionChange(selectedStock.code)}
             sx={{ mb: 1 }}
+            data-accordion-id={selectedStock.code}
           >
             <AccordionSummary
               expandIcon={<ExpandMore />}
@@ -535,6 +536,7 @@ const AutotradingAccordion = ({
                 expanded={expandedAccordion === selectedStock.code}
                 onChange={handleAccordionChange(selectedStock.code)}
                 sx={{ mb: 1 }}
+                data-accordion-id={selectedStock.code}
               >
                 <AccordionSummary
                   expandIcon={<ExpandMore />}
@@ -940,6 +942,7 @@ const AutotradingAccordion = ({
               expanded={expandedAccordion === stockConfig.stock_code}
               onChange={handleAccordionChange(stockConfig.stock_code)}
               sx={{ mb: 1 }}
+              data-accordion-id={stockConfig.stock_code}
             >
               <AccordionSummary
                 expandIcon={<ExpandMore />}
