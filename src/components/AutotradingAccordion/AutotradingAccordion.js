@@ -1000,8 +1000,8 @@ const AutotradingAccordion = ({
                       <MKBox sx={{ display: "flex", gap: 2, mt: 0.5 }}>
                         <MKTypography variant="caption" color="text">
                           진입:{" "}
-                          {stockConfig.position_size
-                            ? `${Number(stockConfig.position_size).toLocaleString()}원`
+                          {stockConfig.entry_point
+                            ? `${Number(stockConfig.entry_point).toLocaleString()}원`
                             : "-"}
                         </MKTypography>
                         <MKTypography variant="caption" color="text">

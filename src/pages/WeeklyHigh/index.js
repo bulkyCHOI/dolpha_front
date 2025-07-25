@@ -463,7 +463,7 @@ function WeeklyHigh() {
                     }}
                   >
                     <Grid container spacing={0}>
-                      <Grid item xs={4} sm={3.5}>
+                      <Grid item xs={3} sm={2.5}>
                         <MKTypography
                           variant="subtitle2"
                           color="white"
@@ -473,7 +473,18 @@ function WeeklyHigh() {
                           종목명
                         </MKTypography>
                       </Grid>
-                      <Grid item xs={2} sm={2.5}>
+                      <Grid item xs={2.5} sm={2.5}>
+                        <MKTypography
+                          variant="subtitle2"
+                          color="white"
+                          fontWeight="bold"
+                          textAlign="center"
+                          sx={{ fontSize: { xs: "0.65rem", md: "0.8rem" } }}
+                        >
+                          52주상승률
+                        </MKTypography>
+                      </Grid>
+                      <Grid item xs={1.5} sm={2}>
                         <MKTypography
                           variant="subtitle2"
                           color="white"
@@ -484,7 +495,7 @@ function WeeklyHigh() {
                           RS
                         </MKTypography>
                       </Grid>
-                      <Grid item xs={3} sm={3}>
+                      <Grid item xs={2.5} sm={2.5}>
                         <MKTypography
                           variant="subtitle2"
                           color="white"
@@ -495,7 +506,7 @@ function WeeklyHigh() {
                           매출
                         </MKTypography>
                       </Grid>
-                      <Grid item xs={3} sm={3}>
+                      <Grid item xs={2.5} sm={2.5}>
                         <MKTypography
                           variant="subtitle2"
                           color="white"
@@ -560,7 +571,7 @@ function WeeklyHigh() {
                         }}
                       >
                         <Grid container spacing={0} alignItems="center">
-                          <Grid item xs={4} sm={3.5}>
+                          <Grid item xs={3} sm={2.5}>
                             <MKBox>
                               <MKTypography
                                 variant="body2"
@@ -590,7 +601,36 @@ function WeeklyHigh() {
                               </MKTypography>
                             </MKBox>
                           </Grid>
-                          <Grid item xs={2} sm={2.5}>
+                          <Grid item xs={2.5} sm={2.5}>
+                            <MKBox display="flex" justifyContent="center" alignItems="center">
+                              <Chip
+                                label={`${row.min_52w_gain_percent || 0}%`}
+                                size="small"
+                                sx={{
+                                  backgroundColor:
+                                    row.min_52w_gain_percent >= 100
+                                      ? "#4caf50"
+                                      : row.min_52w_gain_percent >= 50
+                                      ? "#2196f3"
+                                      : row.min_52w_gain_percent >= 20
+                                      ? "#ff9800"
+                                      : row.min_52w_gain_percent >= 0
+                                      ? "#9c27b0"
+                                      : "#f44336",
+                                  color: "white",
+                                  fontWeight: "bold",
+                                  fontSize: { xs: "0.6rem", md: "0.7rem" },
+                                  minWidth: { xs: "45px", md: "50px" },
+                                  height: { xs: "20px", md: "22px" },
+                                  cursor: "pointer",
+                                  "&:hover": {
+                                    opacity: 0.8,
+                                  },
+                                }}
+                              />
+                            </MKBox>
+                          </Grid>
+                          <Grid item xs={1.5} sm={2}>
                             <MKBox display="flex" justifyContent="center">
                               <Chip
                                 label={Math.floor(row.rsRank) || "-"}
@@ -607,8 +647,8 @@ function WeeklyHigh() {
                                   color: "white",
                                   fontWeight: "bold",
                                   fontSize: { xs: "0.6rem", md: "0.7rem" },
-                                  minWidth: { xs: "40px", md: "35px" },
-                                  height: { xs: "32px", md: "20px" },
+                                  minWidth: { xs: "30px", md: "35px" },
+                                  height: { xs: "20px", md: "22px" },
                                   cursor: "pointer",
                                   "&:hover": {
                                     opacity: 0.8,
@@ -617,7 +657,7 @@ function WeeklyHigh() {
                               />
                             </MKBox>
                           </Grid>
-                          <Grid item xs={3} sm={3}>
+                          <Grid item xs={2.5} sm={2.5}>
                             <MKBox display="flex" justifyContent="center" alignItems="center">
                               <MKTypography
                                 variant="body2"
@@ -634,7 +674,7 @@ function WeeklyHigh() {
                               </MKTypography>
                             </MKBox>
                           </Grid>
-                          <Grid item xs={3} sm={3}>
+                          <Grid item xs={2.5} sm={2.5}>
                             <MKBox display="flex" justifyContent="center" alignItems="center">
                               <MKTypography
                                 variant="body2"
