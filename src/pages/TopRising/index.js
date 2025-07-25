@@ -830,6 +830,20 @@ function TopRising() {
               // 종목 선택 후 차트 탭으로 자동 전환
               setMobileTab(1);
             }}
+            getColumnHeaders={() => [
+              { label: "종목명", field: "name", width: 3.5 },
+              { label: "상승률", field: "change", width: 2 },
+              { label: "RS순위", field: "rsRank", width: 2 },
+              { label: "당기매출", field: "당기매출", width: 2.25 },
+              { label: "영업이익", field: "당기영업이익", width: 2.25 }
+            ]}
+            getRowData={(stock) => ({
+              name: stock.name,
+              change: (stock.change || 0) * 100, // 백분율로 변환
+              rsRank: stock.rsRank,
+              "당기매출": stock["당기매출"],
+              "당기영업이익": stock["당기영업이익"]
+            })}
           />
         </MKBox>
       </MKBox>

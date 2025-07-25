@@ -206,21 +206,83 @@ function StockList({
                       // RS 점수 컬럼
                       <MKBox display="flex" justifyContent="center">
                         <Chip
-                          label={rowData[header.field] || "-"}
+                          label={Math.floor(rowData[header.field]) || "-"}
                           size="small"
                           sx={{
                             backgroundColor:
-                              rowData[header.field] >= 80
-                                ? "#4caf50"
+                              rowData[header.field] >= 90
+                                ? "#f44336"  // 90 이상: 빨강
+                                : rowData[header.field] >= 80
+                                ? "#ff5722"  // 80 이상: 주황
+                                : rowData[header.field] >= 70
+                                ? "#ffc107"  // 70 이상: 노랑
                                 : rowData[header.field] >= 60
-                                ? "#ff9800"
-                                : rowData[header.field] >= 40
-                                ? "#f44336"
-                                : "#9e9e9e",
-                            color: "white",
+                                ? "#4caf50"  // 60 이상: 초록
+                                : rowData[header.field] >= 50
+                                ? "#2196f3"  // 50 이상: 파랑
+                                : "#9e9e9e", // 50 이하: 회색
+                            color: rowData[header.field] >= 70 && rowData[header.field] < 80 
+                              ? "black"  // 노란색일 때는 검은색 텍스트
+                              : "white",
                             fontWeight: "bold",
                             fontSize: "0.7rem",
                             minWidth: "35px",
+                            height: "20px",
+                          }}
+                        />
+                      </MKBox>
+                    ) : header.field === "min_52w_gain_percent" ? (
+                      // 52주상승률 컬럼
+                      <MKBox display="flex" justifyContent="center">
+                        <Chip
+                          label={`${rowData[header.field] || 0}%`}
+                          size="small"
+                          sx={{
+                            backgroundColor:
+                              rowData[header.field] >= 300
+                                ? "#f44336"      // 300%이상 빨강
+                                : rowData[header.field] >= 200
+                                ? "#ff9800"      // 200%이상 주황
+                                : rowData[header.field] >= 100
+                                ? "#ffeb3b"      // 100%이상 노랑
+                                : rowData[header.field] >= 75
+                                ? "#4caf50"      // 75%이상 녹색
+                                : rowData[header.field] >= 50
+                                ? "#2196f3"      // 50%이상 파랑
+                                : "#9e9e9e",     // 50%미만 회색
+                            color: "white",
+                            fontWeight: "bold",
+                            fontSize: "0.7rem",
+                            minWidth: "40px",
+                            height: "20px",
+                          }}
+                        />
+                      </MKBox>
+                    ) : header.field === "change" ? (
+                      // 상승률 컬럼 (TopRising 페이지용)
+                      <MKBox display="flex" justifyContent="center">
+                        <Chip
+                          label={`+${(rowData[header.field] || 0).toFixed(1)}%`}
+                          size="small"
+                          sx={{
+                            backgroundColor: 
+                              rowData[header.field] >= 25 
+                                ? "#f44336"  // 25% 이상: 빨강
+                                : rowData[header.field] >= 20 
+                                ? "#ff5722"  // 20% 이상: 주황
+                                : rowData[header.field] >= 15 
+                                ? "#ffc107"  // 15% 이상: 노랑
+                                : rowData[header.field] >= 10 
+                                ? "#4caf50"  // 10% 이상: 초록
+                                : rowData[header.field] >= 5 
+                                ? "#2196f3"  // 5% 이상: 파랑
+                                : "#9e9e9e", // 5% 미만: 회색
+                            color: rowData[header.field] >= 15 && rowData[header.field] < 20 
+                              ? "black"  // 노란색일 때는 검은색 텍스트
+                              : "white",
+                            fontWeight: "bold",
+                            fontSize: "0.7rem",
+                            minWidth: "40px",
                             height: "20px",
                           }}
                         />
