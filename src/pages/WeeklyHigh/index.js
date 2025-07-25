@@ -181,17 +181,19 @@ function WeeklyHigh() {
   };
 
   const getStockColumnHeaders = () => [
-    { label: "종목명", field: "name", width: 120 },
-    { label: "RS점수", field: "rsRank", width: 60 },
-    { label: "52주 최고가", field: "max_52w", width: 80 },
-    { label: "신고가일", field: "max_52w_date", width: 80 },
+    { label: "종목명", field: "name", width: 3.5 },
+    { label: "52주상승률", field: "min_52w_gain_percent", width: 2.5 },
+    { label: "RS점수", field: "rsRank", width: 1.5 },
+    { label: "매출", field: "당기매출", width: 2.25 },
+    { label: "영업익", field: "당기영업이익", width: 2.25 },
   ];
 
   const getStockRowData = (stock) => ({
     name: stock.name,
+    min_52w_gain_percent: stock.min_52w_gain_percent,
     rsRank: Math.floor(stock.rsRank),
-    max_52w: formatNumber(stock.max_52w),
-    max_52w_date: stock.max_52w_date,
+    "당기매출": stock["당기매출"],
+    "당기영업이익": stock["당기영업이익"],
   });
 
   if (authLoading) {
@@ -852,6 +854,8 @@ function WeeklyHigh() {
             loading={loading}
             error={error}
             selectedStock={selectedStock}
+            getColumnHeaders={getStockColumnHeaders}
+            getRowData={getStockRowData}
             onStockClick={(stock) => {
               handleStockClick(stock);
               // 종목 선택 후 차트 탭으로 자동 전환
