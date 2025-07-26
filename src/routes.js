@@ -46,6 +46,7 @@ import Logout from "pages/Logout";
 import MTT from "./layouts/pages/mtt";
 import WeeklyHigh from "./layouts/pages/weekly-high";
 import TopRising from "pages/TopRising";
+import FiftyDayHigh from "pages/FiftyDayHigh";
 import ProtectedRoute from "components/ProtectedRoute";
 
 const routes = [
@@ -53,7 +54,7 @@ const routes = [
     name: "전략",
     icon: <Icon>psychology</Icon>,
     columns: 1,
-    rowsPerColumn: 3,
+    rowsPerColumn: 4,
     collapse: [
       {
         name: "투자 전략",
@@ -67,6 +68,11 @@ const routes = [
             name: "52주 신고가",
             route: "/weekly-high", 
             component: <WeeklyHigh />,
+          },
+          {
+            name: "50일 신고가",
+            route: "/fifty-day-high",
+            component: <FiftyDayHigh />,
           },
           {
             name: "상승률 TOP50",
