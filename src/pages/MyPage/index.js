@@ -35,6 +35,7 @@ import footerRoutes from "footer.routes";
 // MyPage sections
 import ServerSettings from "./sections/ServerSettings";
 import Profile from "./sections/Profile";
+import TradingDefaults from "./sections/TradingDefaults";
 
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
@@ -60,6 +61,8 @@ function MyPage() {
         return <Profile />;
       case 1:
         return <ServerSettings />;
+      case 2:
+        return <TradingDefaults />;
       default:
         return <Profile />;
     }
@@ -69,16 +72,10 @@ function MyPage() {
     <>
       <DefaultNavbar
         routes={routes}
-        action={{
-          type: "external",
-          route: "https://www.creative-tim.com/product/material-kit-react",
-          label: "free download",
-          color: "info",
-        }}
         sticky
       />
       <MKBox
-        minHeight={{ xs: "50vh", md: "75vh" }}
+        minHeight={{ xs: "25vh", md: "30vh" }}
         width="100%"
         sx={{
           backgroundImage: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
@@ -86,91 +83,102 @@ function MyPage() {
           backgroundPosition: "top",
           display: "grid",
           placeItems: "center",
-          pt: { xs: 8, md: 0 },
+          pt: { xs: 8, md: 2 },
+          pb: { xs: 1, md: 2 },
         }}
       >
         <Container>
-          <Grid container item xs={12} lg={7} justifyContent="center" mx="auto">
+          <Grid container item xs={12} lg={6} justifyContent="center" mx="auto">
             <MKTypography
-              variant="h1"
+              variant="h2"
               color="white"
-              mt={{ xs: -4, md: -6 }}
-              mb={1}
+              mb={0.5}
               sx={({ breakpoints, typography: { size } }) => ({
+                fontWeight: 700,
+                textAlign: "center",
                 [breakpoints.down("md")]: {
-                  fontSize: size["2xl"],
+                  fontSize: size["xl"],
                 },
                 [breakpoints.down("sm")]: {
-                  fontSize: size["xl"],
+                  fontSize: size["lg"],
                 },
               })}
             >
               마이페이지
             </MKTypography>
             <MKTypography
-              variant="body1"
+              variant="body2"
               color="white"
               textAlign="center"
-              px={{ xs: 2, sm: 6, lg: 12 }}
-              mt={1}
               sx={{
-                fontSize: { xs: "0.9rem", md: "1rem" },
+                fontSize: { xs: "0.85rem", md: "0.95rem" },
+                opacity: 0.85,
+                lineHeight: 1.3,
               }}
             >
-              자동매매 서버 설정 및 개인정보를 관리하세요
+              프로필 및 서버 설정 관리
             </MKTypography>
           </Grid>
         </Container>
       </MKBox>
       <Card
         sx={{
-          p: { xs: 1, sm: 2 },
-          mx: { xs: 1, sm: 2, lg: 3 },
-          mt: { xs: -6, md: -8 },
-          mb: 4,
-          backgroundColor: ({ palette: { white }, functions: { rgba } }) => rgba(white.main, 0.8),
+          p: { xs: 2, sm: 3, md: 4 },
+          mx: { xs: 2, sm: 3, lg: 4 },
+          mt: { xs: -4, md: -6 },
+          mb: 2,
+          backgroundColor: ({ palette: { white }, functions: { rgba } }) => rgba(white.main, 0.95),
           backdropFilter: "saturate(200%) blur(30px)",
           boxShadow: ({ boxShadows: { xxl } }) => xxl,
+          borderRadius: 3,
         }}
       >
-        <MKBox component="section" py={{ xs: 3, md: 6 }}>
-          <Container>
-            <Grid container spacing={{ xs: 2, md: 3 }} justifyContent="center">
-              <Grid item xs={12}>
-                <MKBox mb={{ xs: 2, md: 3 }}>
-                  <Tabs
-                    value={activeTab}
-                    onChange={handleTabChange}
-                    centered
-                    variant="fullWidth"
-                    sx={{
-                      "& .MuiTabs-indicator": {
-                        backgroundColor: "#667eea",
+        <Container maxWidth="lg">
+          <Grid container spacing={{ xs: 2, md: 4 }} justifyContent="center">
+            <Grid item xs={12}>
+              <MKBox mb={{ xs: 3, md: 4 }}>
+                <Tabs
+                  value={activeTab}
+                  onChange={handleTabChange}
+                  centered
+                  variant="fullWidth"
+                  sx={{
+                    "& .MuiTabs-indicator": {
+                      backgroundColor: "#667eea",
+                      height: 3,
+                      borderRadius: "4px 4px 0 0",
+                    },
+                    "& .MuiTab-root": {
+                      color: "#666",
+                      fontWeight: 500,
+                      fontSize: { xs: "0.95rem", md: "1.1rem" },
+                      minWidth: { xs: "auto", md: 180 },
+                      padding: { xs: "12px 20px", md: "16px 32px" },
+                      textTransform: "none",
+                      borderRadius: "8px 8px 0 0",
+                      transition: "all 0.3s ease",
+                      "&.Mui-selected": {
+                        color: "#667eea",
+                        fontWeight: 600,
+                        backgroundColor: "rgba(102, 126, 234, 0.08)",
                       },
-                      "& .MuiTab-root": {
-                        color: "#666",
-                        fontWeight: 500,
-                        fontSize: { xs: "0.9rem", md: "1rem" },
-                        minWidth: { xs: "auto", md: 160 },
-                        padding: { xs: "8px 16px", md: "12px 24px" },
-                        "&.Mui-selected": {
-                          color: "#667eea",
-                          fontWeight: 600,
-                        },
+                      "&:hover": {
+                        backgroundColor: "rgba(102, 126, 234, 0.04)",
                       },
-                    }}
-                  >
-                    <Tab label="프로필" />
-                    <Tab label="서버 설정" />
-                  </Tabs>
-                </MKBox>
-                <MKBox>{renderTabContent()}</MKBox>
-              </Grid>
+                    },
+                  }}
+                >
+                  <Tab label="프로필" />
+                  <Tab label="서버 설정" />
+                  <Tab label="자동매매 기본설정" />
+                </Tabs>
+              </MKBox>
+              <MKBox>{renderTabContent()}</MKBox>
             </Grid>
-          </Container>
-        </MKBox>
+          </Grid>
+        </Container>
       </Card>
-      <MKBox pt={6} px={1} mt={6}>
+      <MKBox pt={2} px={1} mt={2}>
         <DefaultFooter content={footerRoutes} />
       </MKBox>
     </>

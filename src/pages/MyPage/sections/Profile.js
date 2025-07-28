@@ -81,76 +81,128 @@ function Profile() {
   };
 
   return (
-    <MKBox component="section" py={2}>
-      <Container>
-        <Grid container spacing={3} justifyContent="center">
-          <Grid item xs={12} md={8}>
-            <Card sx={{ p: 4 }}>
-              <MKBox display="flex" alignItems="center" mb={3}>
-                <Avatar src={userInfo.profilePicture} sx={{ width: 80, height: 80, mr: 3 }}>
-                  {userInfo.name ? userInfo.name[0] : "U"}
-                </Avatar>
-                <MKBox>
-                  <MKTypography variant="h4" mb={1}>
-                    {userInfo.name}
-                  </MKTypography>
-                  <MKTypography variant="body2" color="text" mb={0.5}>
-                    {userInfo.email}
-                  </MKTypography>
-                  <MKTypography variant="caption" color="text">
-                    가입일: {userInfo.joinDate}
-                  </MKTypography>
-                </MKBox>
-              </MKBox>
-
-              <Divider sx={{ my: 3 }} />
-
-              <MKTypography variant="h6" mb={2}>
-                기본 정보
-              </MKTypography>
-
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    fullWidth
-                    label="이름"
-                    value={userInfo.name}
-                    onChange={(e) => setUserInfo({ ...userInfo, name: e.target.value })}
-                    variant="outlined"
-                  />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    fullWidth
-                    label="이메일"
-                    value={userInfo.email}
-                    onChange={(e) => setUserInfo({ ...userInfo, email: e.target.value })}
-                    variant="outlined"
-                    disabled
-                  />
-                </Grid>
-              </Grid>
-
-              <MKBox mt={4} display="flex" justifyContent="flex-end">
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleSave}
-                  sx={{
-                    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                    color: "white",
-                    "&:hover": {
-                      background: "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)",
-                    },
+    <MKBox component="section">
+      <Grid container spacing={3}>
+        {/* 프로필 헤더 카드 */}
+        <Grid item xs={12}>
+          <Card 
+            sx={{ 
+              p: { xs: 2, md: 3 },
+              background: "linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%)",
+              border: "1px solid rgba(102, 126, 234, 0.1)",
+              borderRadius: 3,
+            }}
+          >
+            <Grid container spacing={3} alignItems="center">
+              <Grid item xs={12} sm={4} md={3} display="flex" justifyContent="center">
+                <Avatar 
+                  src={userInfo.profilePicture} 
+                  sx={{ 
+                    width: { xs: 100, md: 120 }, 
+                    height: { xs: 100, md: 120 },
+                    border: "4px solid rgba(102, 126, 234, 0.2)",
+                    boxShadow: "0 8px 32px rgba(102, 126, 234, 0.2)",
                   }}
                 >
-                  저장하기
-                </Button>
-              </MKBox>
-            </Card>
-          </Grid>
+                  {userInfo.name ? userInfo.name[0] : "U"}
+                </Avatar>
+              </Grid>
+              <Grid item xs={12} sm={8} md={9}>
+                <MKBox textAlign={{ xs: "center", sm: "left" }}>
+                  <MKTypography variant="h3" mb={1} fontWeight="bold">
+                    {userInfo.name}
+                  </MKTypography>
+                  <MKTypography variant="h6" color="text" mb={1} opacity={0.8}>
+                    {userInfo.email}
+                  </MKTypography>
+                  <MKBox display="flex" alignItems="center" justifyContent={{ xs: "center", sm: "flex-start" }} gap={1}>
+                    <MKTypography variant="body2" color="text">
+                      가입일: {userInfo.joinDate}
+                    </MKTypography>
+                  </MKBox>
+                </MKBox>
+              </Grid>
+            </Grid>
+          </Card>
         </Grid>
-      </Container>
+
+        {/* 정보 편집 카드 */}
+        <Grid item xs={12}>
+          <Card sx={{ p: { xs: 2, md: 3 }, borderRadius: 3 }}>
+            <MKBox mb={3}>
+              <MKTypography variant="h5" mb={1} fontWeight="600">
+                기본 정보
+              </MKTypography>
+              <MKTypography variant="body2" color="text" opacity={0.7}>
+                Google 계정 정보는 Google에서 관리됩니다
+              </MKTypography>
+            </MKBox>
+
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  label="이름"
+                  value={userInfo.name}
+                  onChange={(e) => setUserInfo({ ...userInfo, name: e.target.value })}
+                  variant="outlined"
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: 2,
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#667eea",
+                      },
+                    },
+                    "& .MuiInputLabel-root.Mui-focused": {
+                      color: "#667eea",
+                    },
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  label="이메일"
+                  value={userInfo.email}
+                  onChange={(e) => setUserInfo({ ...userInfo, email: e.target.value })}
+                  variant="outlined"
+                  disabled
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: 2,
+                    },
+                  }}
+                />
+              </Grid>
+            </Grid>
+
+            <MKBox mt={4} display="flex" justifyContent="flex-end" gap={2}>
+              <Button
+                variant="contained"
+                onClick={handleSave}
+                sx={{
+                  background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  color: "white",
+                  px: 4,
+                  py: 1.5,
+                  borderRadius: 2,
+                  textTransform: "none",
+                  fontSize: "1rem",
+                  fontWeight: 500,
+                  "&:hover": {
+                    background: "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)",
+                    transform: "translateY(-1px)",
+                    boxShadow: "0 6px 20px rgba(102, 126, 234, 0.3)",
+                  },
+                  transition: "all 0.3s ease",
+                }}
+              >
+                저장하기
+              </Button>
+            </MKBox>
+          </Card>
+        </Grid>
+      </Grid>
     </MKBox>
   );
 }
