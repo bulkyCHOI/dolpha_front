@@ -47,6 +47,7 @@ import MTT from "./layouts/pages/mtt";
 import WeeklyHigh from "./layouts/pages/weekly-high";
 import TopRising from "pages/TopRising";
 import FiftyDayHigh from "pages/FiftyDayHigh";
+import TradingConfigs from "pages/TradingConfigs";
 import ProtectedRoute from "components/ProtectedRoute";
 
 const routes = [
@@ -78,6 +79,28 @@ const routes = [
             name: "상승률 TOP50",
             route: "/top-rising",
             component: <TopRising />,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    name: "자동매매",
+    icon: <Icon>smart_toy</Icon>,
+    columns: 1,
+    rowsPerColumn: 1,
+    collapse: [
+      {
+        name: "관리",
+        collapse: [
+          {
+            name: "설정 목록",
+            route: "/trading-configs",
+            component: (
+              <ProtectedRoute>
+                <TradingConfigs />
+              </ProtectedRoute>
+            ),
           },
         ],
       },
