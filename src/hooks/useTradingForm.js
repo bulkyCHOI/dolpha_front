@@ -22,7 +22,7 @@ export const useTradingForm = (selectedStock, authenticatedFetch, showSnackbar, 
     }
   }, [selectedStock]);
 
-  // Load user's saved default trading values
+  // 사용자가 설정한 기본 매매 설정값을 불러오는 함수
   const loadDefaultValues = async () => {
     try {
       const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
@@ -34,34 +34,34 @@ export const useTradingForm = (selectedStock, authenticatedFetch, showSnackbar, 
         const defaults = await response.json();
         
         setTradingMode(defaults.trading_mode || "turtle");
-        setMaxLoss(defaults.max_loss ? defaults.max_loss.toString() : "8");
-        setStopLoss(defaults.stop_loss ? defaults.stop_loss.toString() : "2");
+        setMaxLoss(defaults.max_loss ? defaults.max_loss.toString() : "");
+        setStopLoss(defaults.stop_loss ? defaults.stop_loss.toString() : "");
         setTakeProfit(defaults.take_profit ? defaults.take_profit.toString() : "");
-        setPyramidingCount(defaults.pyramiding_count || 3);
+        setPyramidingCount(defaults.pyramiding_count || 0);
         setEntryPoint("");
         setPyramidingEntries(defaults.pyramiding_entries || []);
-        setPositions(defaults.positions || [25, 25, 25, 25]);
+        setPositions(defaults.positions && defaults.positions.length > 0 ? defaults.positions : [100]);
       } else {
-        // 기본값을 불러올 수 없으면 DB 기본값과 동일한 값 사용
+        // 기본값을 불러올 수 없으면 모든 필드 공란
         setTradingMode("turtle");
-        setMaxLoss("8");
-        setStopLoss("2");
+        setMaxLoss("");
+        setStopLoss("");
         setTakeProfit("");
-        setPyramidingCount(3);
+        setPyramidingCount(0);
         setEntryPoint("");
-        setPyramidingEntries(["", "", ""]);
-        setPositions([25, 25, 25, 25]);
+        setPyramidingEntries([]);
+        setPositions([100]);
       }
     } catch (error) {
-      // 오류 발생 시 DB 기본값과 동일한 값 사용
+      // 오류 발생 시 모든 필드 공란
       setTradingMode("turtle");
-      setMaxLoss("8");
-      setStopLoss("2");
+      setMaxLoss("");
+      setStopLoss("");
       setTakeProfit("");
-      setPyramidingCount(3);
+      setPyramidingCount(0);
       setEntryPoint("");
-      setPyramidingEntries(["", "", ""]);
-      setPositions([25, 25, 25, 25]);
+      setPyramidingEntries([]);
+      setPositions([100]);
     }
   };
 
@@ -81,47 +81,46 @@ export const useTradingForm = (selectedStock, authenticatedFetch, showSnackbar, 
     setPositions(newPositions);
   }, [pyramidingCount]);
 
-  // Trading form handlers
+  // 매매 방식 변경 시 해당 모드의 기본값을 불러오는 핸들러
   const handleTradingModeChange = async (event) => {
     const newMode = event.target.value;
     setTradingMode(newMode);
 
-    // 모드 변경 시 사용자의 기본값 로드 시도, 실패시 하드코딩된 기본값 사용
+    // 선택한 매매 모드에 해당하는 기본값을 MyPage에서 불러와서 적용
     try {
       const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
       const response = await authenticatedFetch(
-        `${apiBaseUrl}/api/mypage/trading-defaults/for-new-config`
+        `${apiBaseUrl}/api/mypage/trading-defaults/for-new-config?mode=${newMode}`
       );
 
       if (response.ok) {
         const defaults = await response.json();
         
-        // 매매모드에 관계없이 DB에서 불러온 기본값 사용
-        setMaxLoss(defaults.max_loss ? defaults.max_loss.toString() : "8");
-        setStopLoss(defaults.stop_loss ? defaults.stop_loss.toString() : "2");
+        // 선택한 매매모드의 기본값 적용 (기본값이 없으면 공란)
+        setMaxLoss(defaults.max_loss ? defaults.max_loss.toString() : "");
+        setStopLoss(defaults.stop_loss ? defaults.stop_loss.toString() : "");
         setTakeProfit(defaults.take_profit ? defaults.take_profit.toString() : "");
-        setPyramidingCount(defaults.pyramiding_count || 3);
+        setPyramidingCount(defaults.pyramiding_count || 0);
         setPyramidingEntries(defaults.pyramiding_entries || []);
-        setPositions(defaults.positions || [25, 25, 25, 25]);
+        setPositions(defaults.positions && defaults.positions.length > 0 ? defaults.positions : [100]);
       } else {
-        // API 호출 실패시 하드코딩된 기본값 사용
-        applyHardcodedDefaults(newMode);
+        // API 호출 실패시 공란으로 초기화
+        applyEmptyDefaults();
       }
     } catch (error) {
-      // 오류 발생시 하드코딩된 기본값 사용
-      applyHardcodedDefaults(newMode);
+      // 오류 발생시 공란으로 초기화
+      applyEmptyDefaults();
     }
   };
 
-  // 하드코딩된 기본값 적용 함수 (DB에서 불러오지 못할 때만 사용)
-  const applyHardcodedDefaults = (mode) => {
-    // 기본 안전 값들 (DB 기본값과 동일하게 설정)
-    setMaxLoss("8");
-    setStopLoss("2");
+  // 모든 필드를 공란으로 초기화하는 함수
+  const applyEmptyDefaults = () => {
+    setMaxLoss("");
+    setStopLoss("");
     setTakeProfit("");
-    setPyramidingCount(3);
-    setPyramidingEntries(["", "", ""]);
-    setPositions([25, 25, 25, 25]);
+    setPyramidingCount(0);
+    setPyramidingEntries([]);
+    setPositions([100]);
   };
 
   const handlePyramidingCountChange = (event) => {
@@ -347,7 +346,7 @@ export const useTradingForm = (selectedStock, authenticatedFetch, showSnackbar, 
     }
   };
 
-  // Reset form to default values
+  // 폼을 기본값으로 초기화하는 함수
   const resetTradingForm = () => {
     loadDefaultValues();
   };
