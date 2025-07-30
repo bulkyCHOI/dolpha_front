@@ -43,6 +43,9 @@ import { useAuth } from "contexts/AuthContext";
 // Notification system
 import { useNotification } from "components/NotificationSystem/NotificationSystem";
 
+// Trading Config Modal
+import TradingConfigModal from "components/TradingConfigModal/TradingConfigModal";
+
 // DataTable 커스텀 스타일
 const StyledDataTable = styled(DataTable)`
   .rdt_Table {
@@ -54,7 +57,7 @@ const StyledDataTable = styled(DataTable)`
   .rdt_TableHeadRow {
     background-color: #f8f9fa;
     border-bottom: 2px solid #e9ecef;
-    font-weight: 600;
+    font-weight: bold;
   }
   
   .rdt_TableRow {
@@ -148,6 +151,11 @@ export default function TradingConfigs() {
   const [error, setError] = useState(null);
   const [allTradingConfigs, setAllTradingConfigs] = useState([]);
   const [currentPrices, setCurrentPrices] = useState({}); // 종목별 현재가 저장
+  
+  // Modal state
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedConfig, setSelectedConfig] = useState(null);
+  const [modalLoading, setModalLoading] = useState(false);
 
   // DataTable 컬럼 정의
   const columns = [
@@ -158,7 +166,7 @@ export default function TradingConfigs() {
       minWidth: '140px',
       cell: row => (
         <Box>
-          <MKTypography variant="body2" fontWeight="600" color="dark" sx={{ lineHeight: 1.2 }}>
+          <MKTypography variant="body2" fontWeight="bold" color="dark" sx={{ lineHeight: 1.2 }}>
             {row.stock_name}
           </MKTypography>
           <MKTypography variant="caption" color="text" opacity={0.7} sx={{ lineHeight: 1 }}>
@@ -181,7 +189,7 @@ export default function TradingConfigs() {
           sx={{ 
             fontSize: '0.7rem',
             height: '24px',
-            fontWeight: 600,
+            fontWeight: "bold",
             '& .MuiChip-label': { 
               padding: '0 8px',
               color: 'white'
@@ -204,7 +212,7 @@ export default function TradingConfigs() {
           sx={{ 
             fontSize: '0.7rem',
             height: '24px',
-            fontWeight: 600,
+            fontWeight: "bold",
             '& .MuiChip-label': { 
               padding: '0 8px',
               color: 'white'
@@ -241,7 +249,7 @@ export default function TradingConfigs() {
         <MKTypography 
           variant="body2" 
           color={row.stop_loss ? 'error' : 'text'}
-          sx={{ fontSize: '0.85rem', fontWeight: row.stop_loss ? 600 : 400 }}
+          sx={{ fontSize: '0.85rem', fontWeight: row.stop_loss ? "bold" : "regular" }}
         >
           {formatTradingValue(row.stop_loss, row.trading_mode, 'stop_loss')}
         </MKTypography>
@@ -257,7 +265,7 @@ export default function TradingConfigs() {
         <MKTypography 
           variant="body2" 
           color={row.take_profit ? 'success' : 'text'}
-          sx={{ fontSize: '0.85rem', fontWeight: row.take_profit ? 600 : 400 }}
+          sx={{ fontSize: '0.85rem', fontWeight: row.take_profit ? "bold" : "regular" }}
         >
           {formatTradingValue(row.take_profit, row.trading_mode, 'take_profit')}
         </MKTypography>
@@ -319,7 +327,7 @@ export default function TradingConfigs() {
                 variant="body2" 
                 sx={{ 
                   fontSize: '0.8rem',
-                  fontWeight: 600,
+                  fontWeight: "bold",
                   color: currentPrice ? 'dark' : 'text'
                 }}
               >
@@ -331,7 +339,7 @@ export default function TradingConfigs() {
                   sx={{ 
                     fontSize: '0.7rem',
                     color: profitRate >= 0 ? 'success.main' : 'error.main',
-                    fontWeight: 600
+                    fontWeight: "bold"
                   }}
                 >
                   {profitRate >= 0 ? '+' : ''}{profitRate.toFixed(2)}%
@@ -369,9 +377,7 @@ export default function TradingConfigs() {
               size="small" 
               color="info"
               sx={{ padding: '4px' }}
-              onClick={() => {
-                alert(`${row.stock_name} 상세 정보 (구현 예정)`);
-              }}
+              onClick={() => handleOpenModal(row)}
             >
               <VisibilityIcon sx={{ fontSize: '16px' }} />
             </IconButton>
@@ -487,6 +493,75 @@ export default function TradingConfigs() {
     }
     if (errorCount > 0) {
       showSnackbar(`${errorCount}개 종목의 현재가 조회에 실패했습니다.`, "warning");
+    }
+  };
+
+  // 모달 열기 핸들러
+  const handleOpenModal = (config) => {
+    setSelectedConfig(config);
+    setModalOpen(true);
+  };
+
+  // 모달 닫기 핸들러
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setSelectedConfig(null);
+  };
+
+  // 모달에서 설정 저장 핸들러
+  const handleModalSave = async (updatedConfig) => {
+    setModalLoading(true);
+    try {
+      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
+      
+      // API 요청을 위한 데이터 구성
+      const requestData = {
+        stock_code: updatedConfig.stock_code,
+        stock_name: updatedConfig.stock_name, // 누락되었던 필수 필드 추가
+        strategy_type: updatedConfig.strategy_type,
+        trading_mode: updatedConfig.trading_mode,
+        entry_point: parseFloat(updatedConfig.entry_point) || null,
+        max_loss: parseFloat(updatedConfig.max_loss) || null,
+        stop_loss: parseFloat(updatedConfig.stop_loss) || null,
+        take_profit: parseFloat(updatedConfig.take_profit) || null,
+        pyramiding_count: parseInt(updatedConfig.pyramiding_count) || 0,
+        pyramiding_entries: updatedConfig.pyramiding_entries || [],
+        positions: updatedConfig.positions || [100],
+        is_active: updatedConfig.is_active
+      };
+
+      const response = await authenticatedFetch(
+        `${apiBaseUrl}/api/mypage/trading-configs`, 
+        {
+          method: "POST",
+          body: JSON.stringify(requestData),
+        }
+      );
+
+      if (response.ok) {
+        const result = await response.json();
+        
+        // 로컬 상태 업데이트
+        setAllTradingConfigs(prev => 
+          prev.map(config => 
+            config.stock_code === updatedConfig.stock_code && 
+            config.strategy_type === updatedConfig.strategy_type
+              ? { ...config, ...updatedConfig }
+              : config
+          )
+        );
+        
+        showSnackbar("설정이 성공적으로 저장되었습니다.", "success");
+        return true;
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.error || '저장에 실패했습니다.');
+      }
+    } catch (error) {
+      showSnackbar(`저장 실패: ${error.message}`, "error");
+      return false;
+    } finally {
+      setModalLoading(false);
     }
   };
 
@@ -623,7 +698,7 @@ export default function TradingConfigs() {
                         borderBottomWidth: '2px',
                         borderBottomColor: '#e9ecef',
                         fontSize: '14px',
-                        fontWeight: '600'
+                        fontWeight: 'bold'
                       },
                     },
                     rows: {
@@ -687,6 +762,15 @@ export default function TradingConfigs() {
 
       <DefaultFooter content={footerRoutes} />
       <NotificationComponent />
+      
+      {/* 자동매매 설정 상세보기/수정 모달 */}
+      <TradingConfigModal
+        open={modalOpen}
+        onClose={handleCloseModal}
+        config={selectedConfig}
+        onSave={handleModalSave}
+        loading={modalLoading}
+      />
     </>
   );
 }
