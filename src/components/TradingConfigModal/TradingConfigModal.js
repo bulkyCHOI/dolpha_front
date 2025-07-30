@@ -20,10 +20,12 @@ import { Close, Refresh } from "@mui/icons-material";
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
 import { adjustToKRXTickSize, getKRXTickSize } from "utils/formatters";
+import { useTradingForm } from "hooks/useTradingForm";
+import { useAuth } from "contexts/AuthContext";
 
 /**
  * 자동매매 설정 상세보기/수정 모달 컴포넌트
- * MyPage의 TradingDefaults UI와 동일한 디자인 적용
+ * useTradingForm 훅을 사용하여 매매모드 변경 시 기본값 자동 로드 기능 제공
  */
 const TradingConfigModal = ({
   open,
@@ -32,131 +34,43 @@ const TradingConfigModal = ({
   onSave,
   loading = false,
 }) => {
-  const [formData, setFormData] = useState({
-    trading_mode: 'manual',
-    entry_point: '',
-    max_loss: '',
-    stop_loss: '',
-    take_profit: '',
-    pyramiding_count: 0,
-    pyramiding_entries: [],
-    positions: [100],
-  });
+  const { authenticatedFetch } = useAuth();
   const [message, setMessage] = useState(null);
 
-  // 모달이 열릴 때 설정 데이터 로드
+  // 가상의 selectedStock 객체 생성 (config 기반)
+  const selectedStock = config ? {
+    code: config.stock_code,
+    name: config.stock_name
+  } : null;
+
+  // useTradingForm 훅 사용 (모달 모드로 설정하여 자동 기본값 로드 비활성화)
+  const tradingForm = useTradingForm(
+    selectedStock, 
+    authenticatedFetch, 
+    (msg, type) => setMessage({ type, text: msg }),
+    config?.strategy_type || 'mtt',
+    true // isModal = true로 설정
+  );
+
+  // 모달이 열릴 때 기존 설정 데이터로 폼 초기화
   useEffect(() => {
     if (open && config) {
-      setFormData({
-        trading_mode: config.trading_mode || 'manual',
-        entry_point: config.entry_point || '',
-        max_loss: config.max_loss || '',
-        stop_loss: config.stop_loss || '',
-        take_profit: config.take_profit || '',
-        pyramiding_count: config.pyramiding_count || 0,
-        pyramiding_entries: config.pyramiding_entries || [],
-        positions: config.positions || [100],
-      });
+      // useTradingForm 훅의 loadExistingConfig 함수 사용
+      tradingForm.loadExistingConfig(config);
       setMessage(null);
     }
   }, [open, config]);
 
   // 매매모드에 따른 단위 표시
   const getUnit = () => {
-    return formData.trading_mode === 'manual' ? '%' : 'ATR';
-  };
-
-  // 폼 데이터 변경 핸들러
-  const handleInputChange = (field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
-  // 피라미딩 횟수 변경 핸들러
-  const handlePyramidingCountChange = (e) => {
-    const count = parseInt(e.target.value) || 0;
-    const totalEntries = count + 1;
-    const basePosition = Math.floor(100 / totalEntries);
-    const remainder = 100 - (basePosition * totalEntries);
-    
-    const newPositions = Array(totalEntries).fill(basePosition);
-    newPositions[0] = basePosition + remainder;
-    
-    const newPyramidingEntries = Array(count).fill("");
-    
-    setFormData(prev => ({
-      ...prev,
-      pyramiding_count: count,
-      positions: newPositions,
-      pyramiding_entries: newPyramidingEntries
-    }));
-  };
-
-  // 개별 포지션 변경 핸들러
-  const handlePositionChange = (index, value) => {
-    const newPositions = [...formData.positions];
-    newPositions[index] = parseFloat(value) || 0;
-    setFormData(prev => ({
-      ...prev,
-      positions: newPositions
-    }));
-  };
-
-  // 피라미딩 진입시점 변경 핸들러
-  const handlePyramidingEntryChange = (index, value) => {
-    const newPyramidingEntries = [...formData.pyramiding_entries];
-    newPyramidingEntries[index] = value;
-    setFormData(prev => ({
-      ...prev,
-      pyramiding_entries: newPyramidingEntries
-    }));
-  };
-
-  // 균등분할 핸들러
-  const handleEqualDivision = () => {
-    const totalEntries = (formData.pyramiding_count || 0) + 1;
-    const basePosition = Math.floor(100 / totalEntries);
-    const remainder = 100 - (basePosition * totalEntries);
-    
-    const newPositions = Array(totalEntries).fill(basePosition);
-    newPositions[0] = basePosition + remainder;
-    
-    setFormData(prev => ({
-      ...prev,
-      positions: newPositions
-    }));
+    return tradingForm.tradingMode === 'manual' ? '%' : 'ATR';
   };
 
   // 초기화 핸들러
   const handleReset = () => {
-    setFormData({
-      trading_mode: 'manual',
-      entry_point: '',
-      max_loss: '',
-      stop_loss: '',
-      take_profit: '',
-      pyramiding_count: 0,
-      pyramiding_entries: [],
-      positions: [100],
-    });
+    tradingForm.resetTradingForm();
     setMessage({ type: "info", text: "설정이 초기화되었습니다." });
   };
-
-  // 폼 유효성 검증
-  const isFormValid = () => {
-    const positionSum = formData.positions.reduce((sum, pos) => sum + (parseFloat(pos) || 0), 0);
-    return (
-      formData.entry_point && 
-      formData.max_loss && 
-      formData.stop_loss && 
-      Math.abs(positionSum - 100) < 0.01
-    );
-  };
-
-  // 포지션 합계 계산
-  const positionSum = formData.positions.reduce((sum, pos) => sum + (parseFloat(pos) || 0), 0);
 
 
   // 저장 핸들러
@@ -165,7 +79,14 @@ const TradingConfigModal = ({
       setMessage(null);
       const result = await onSave({
         ...config,
-        ...formData
+        trading_mode: tradingForm.tradingMode,
+        entry_point: tradingForm.entryPoint,
+        max_loss: tradingForm.maxLoss,
+        stop_loss: tradingForm.stopLoss,
+        take_profit: tradingForm.takeProfit,
+        pyramiding_count: tradingForm.pyramidingCount,
+        pyramiding_entries: tradingForm.pyramidingEntries,
+        positions: tradingForm.positions,
       });
       if (result) {
         setMessage({ type: "success", text: "설정이 성공적으로 저장되었습니다." });
@@ -258,8 +179,8 @@ const TradingConfigModal = ({
               <FormControl component="fieldset">
                 <RadioGroup
                   row
-                  value={formData.trading_mode}
-                  onChange={(e) => handleInputChange("trading_mode", e.target.value)}
+                  value={tradingForm.tradingMode}
+                  onChange={tradingForm.handleTradingModeChange}
                   sx={{
                     "& .MuiFormControlLabel-root": {
                       margin: "0 16px 0 0",
@@ -331,12 +252,12 @@ const TradingConfigModal = ({
                     size="small"
                     label="진입시점 (원)"
                     type="number"
-                    value={formData.entry_point}
+                    value={tradingForm.entryPoint}
                     onChange={(e) => {
                       const adjustedValue = adjustToKRXTickSize(e.target.value);
-                      handleInputChange("entry_point", adjustedValue.toString());
+                      tradingForm.setEntryPoint(adjustedValue.toString());
                     }}
-                    inputProps={{ step: getKRXTickSize(formData.entry_point) }}
+                    inputProps={{ step: getKRXTickSize(tradingForm.entryPoint) }}
                     sx={{
                       "& .MuiOutlinedInput-root": {
                         "&.Mui-focused fieldset": {
@@ -355,8 +276,8 @@ const TradingConfigModal = ({
                     size="small"
                     label="최대손실 (%)"
                     type="number"
-                    value={formData.max_loss}
-                    onChange={(e) => handleInputChange("max_loss", e.target.value)}
+                    value={tradingForm.maxLoss}
+                    onChange={(e) => tradingForm.setMaxLoss(e.target.value)}
                     sx={{
                       "& .MuiOutlinedInput-root": {
                         "&.Mui-focused fieldset": {
@@ -375,8 +296,8 @@ const TradingConfigModal = ({
                     size="small"
                     label={`손절가 (${getUnit()})`}
                     type="number"
-                    value={formData.stop_loss}
-                    onChange={(e) => handleInputChange("stop_loss", e.target.value)}
+                    value={tradingForm.stopLoss}
+                    onChange={(e) => tradingForm.setStopLoss(e.target.value)}
                     sx={{
                       "& .MuiOutlinedInput-root": {
                         "&.Mui-focused fieldset": {
@@ -395,8 +316,8 @@ const TradingConfigModal = ({
                     size="small"
                     label={`익절가 (${getUnit()})`}
                     type="number"
-                    value={formData.take_profit}
-                    onChange={(e) => handleInputChange("take_profit", e.target.value)}
+                    value={tradingForm.takeProfit}
+                    onChange={(e) => tradingForm.setTakeProfit(e.target.value)}
                     sx={{
                       "& .MuiOutlinedInput-root": {
                         "&.Mui-focused fieldset": {
@@ -437,8 +358,8 @@ const TradingConfigModal = ({
                     size="small"
                     label="피라미딩 횟수"
                     type="number"
-                    value={formData.pyramiding_count}
-                    onChange={handlePyramidingCountChange}
+                    value={tradingForm.pyramidingCount}
+                    onChange={tradingForm.handlePyramidingCountChange}
                     inputProps={{ min: 0, max: 6 }}
                     sx={{
                       "& .MuiOutlinedInput-root": {
@@ -456,7 +377,7 @@ const TradingConfigModal = ({
                   <Button
                     variant="outlined"
                     size="small"
-                    onClick={handleEqualDivision}
+                    onClick={tradingForm.handleEqualDivision}
                     fullWidth
                     sx={{
                       borderColor: "#667eea",
@@ -482,13 +403,13 @@ const TradingConfigModal = ({
                       fullWidth
                       size="small"
                       label="1차 진입시점 (원)"
-                      value={formData.entry_point}
+                      value={tradingForm.entryPoint}
                       onChange={(e) => {
                         const adjustedValue = adjustToKRXTickSize(e.target.value);
-                        handleInputChange("entry_point", adjustedValue.toString());
+                        tradingForm.setEntryPoint(adjustedValue.toString());
                       }}
                       type="number"
-                      inputProps={{ step: getKRXTickSize(formData.entry_point) }}
+                      inputProps={{ step: getKRXTickSize(tradingForm.entryPoint) }}
                       sx={{
                         "& .MuiOutlinedInput-root": {
                           "&.Mui-focused fieldset": {
@@ -507,8 +428,8 @@ const TradingConfigModal = ({
                       size="small"
                       label="1차 포지션 (%)"
                       type="number"
-                      value={formData.positions[0] || ""}
-                      onChange={(e) => handlePositionChange(0, e.target.value)}
+                      value={tradingForm.positions[0] || ""}
+                      onChange={(e) => tradingForm.handlePositionChange(0, e.target.value)}
                       inputProps={{ min: 0, max: 100, step: 0.1 }}
                       sx={{
                         "& .MuiOutlinedInput-root": {
@@ -525,7 +446,7 @@ const TradingConfigModal = ({
                 </Grid>
 
                 {/* 2차 이상 진입시점과 포지션 */}
-                {formData.pyramiding_entries?.map((entry, index) => (
+                {tradingForm.pyramidingEntries?.map((entry, index) => (
                   <Grid container spacing={2} alignItems="center" mb={1} key={index}>
                     <Grid item xs={6}>
                       <TextField
@@ -534,9 +455,9 @@ const TradingConfigModal = ({
                         label={`${index + 2}차 진입시점 (${getUnit()})`}
                         type="number"
                         value={entry}
-                        onChange={(e) => handlePyramidingEntryChange(index, e.target.value)}
-                        placeholder={formData.trading_mode === 'manual' ? '예: 4' : '예: 1.5'}
-                        inputProps={{ step: formData.trading_mode === 'manual' ? 1 : 0.1 }}
+                        onChange={(e) => tradingForm.handlePyramidingEntryChange(index, e.target.value)}
+                        placeholder={tradingForm.tradingMode === 'manual' ? '예: 4' : '예: 1.5'}
+                        inputProps={{ step: tradingForm.tradingMode === 'manual' ? 1 : 0.1 }}
                         sx={{
                           "& .MuiOutlinedInput-root": {
                             "&.Mui-focused fieldset": {
@@ -555,8 +476,8 @@ const TradingConfigModal = ({
                         size="small"
                         label={`${index + 2}차 포지션 (%)`}
                         type="number"
-                        value={formData.positions[index + 1] || ""}
-                        onChange={(e) => handlePositionChange(index + 1, e.target.value)}
+                        value={tradingForm.positions[index + 1] || ""}
+                        onChange={(e) => tradingForm.handlePositionChange(index + 1, e.target.value)}
                         inputProps={{ min: 0, max: 100, step: 0.1 }}
                         sx={{
                           "& .MuiOutlinedInput-root": {
@@ -579,13 +500,13 @@ const TradingConfigModal = ({
                 <MKTypography 
                   variant="body2" 
                   sx={{
-                    color: Math.abs(positionSum - 100) >= 0.01 ? "#f44336" : "#4caf50",
+                    color: Math.abs(tradingForm.positionSum - 100) >= 0.01 ? "#f44336" : "#4caf50",
                     fontWeight: "bold",
                   }}
                 >
-                  포지션 합계: {positionSum.toFixed(1)}%
+                  포지션 합계: {tradingForm.positionSum.toFixed(1)}%
                 </MKTypography>
-                {Math.abs(positionSum - 100) >= 0.01 && (
+                {Math.abs(tradingForm.positionSum - 100) >= 0.01 && (
                   <MKTypography variant="caption" color="error">
                     ⚠️ 포지션 합계가 100%가 되어야 합니다
                   </MKTypography>
@@ -593,7 +514,7 @@ const TradingConfigModal = ({
               </MKBox>
 
               {/* 포지션 합계 경고 */}
-              {Math.abs(positionSum - 100) >= 0.01 && (
+              {Math.abs(tradingForm.positionSum - 100) >= 0.01 && (
                 <MKBox
                   sx={{
                     p: 1,
@@ -604,7 +525,7 @@ const TradingConfigModal = ({
                   }}
                 >
                   <MKTypography variant="caption" sx={{ color: "#856404", fontWeight: "bold" }}>
-                    ⚠️ 포지션의 합이 100%가 되어야 합니다. (현재: {positionSum.toFixed(1)}%)
+                    ⚠️ 포지션의 합이 100%가 되어야 합니다. (현재: {tradingForm.positionSum.toFixed(1)}%)
                   </MKTypography>
                 </MKBox>
               )}
@@ -637,9 +558,9 @@ const TradingConfigModal = ({
         <Button
           variant="contained"
           onClick={handleSave}
-          disabled={!isFormValid() || loading}
+          disabled={!tradingForm.isFormValid() || loading}
           sx={{
-            background: isFormValid()
+            background: tradingForm.isFormValid()
               ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
               : "#ccc",
             color: "white",
@@ -650,11 +571,11 @@ const TradingConfigModal = ({
             fontSize: "0.9rem",
             fontWeight: 500,
             "&:hover": {
-              background: isFormValid()
+              background: tradingForm.isFormValid()
                 ? "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)"
                 : "#ccc",
-              transform: isFormValid() ? "translateY(-1px)" : "none",
-              boxShadow: isFormValid() ? "0 6px 20px rgba(102, 126, 234, 0.3)" : "none",
+              transform: tradingForm.isFormValid() ? "translateY(-1px)" : "none",
+              boxShadow: tradingForm.isFormValid() ? "0 6px 20px rgba(102, 126, 234, 0.3)" : "none",
             },
             "&:disabled": {
               background: "#ccc !important",

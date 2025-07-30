@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
  * Custom hook for managing trading form state and validation
  * Handles trading mode, entry points, stop loss, take profit, pyramiding configuration
  */
-export const useTradingForm = (selectedStock, authenticatedFetch, showSnackbar, strategyType = 'mtt') => {
+export const useTradingForm = (selectedStock, authenticatedFetch, showSnackbar, strategyType = 'mtt', isModal = false) => {
   // Trading form state
   const [tradingMode, setTradingMode] = useState("manual");
   const [maxLoss, setMaxLoss] = useState("");
@@ -15,12 +15,12 @@ export const useTradingForm = (selectedStock, authenticatedFetch, showSnackbar, 
   const [pyramidingEntries, setPyramidingEntries] = useState([]);
   const [positions, setPositions] = useState([100]);
 
-  // Load default values when selected stock changes
+  // Load default values when selected stock changes (모달이 아닌 경우에만)
   useEffect(() => {
-    if (selectedStock) {
+    if (selectedStock && !isModal) {
       loadDefaultValues();
     }
-  }, [selectedStock]);
+  }, [selectedStock, isModal]);
 
   // 사용자가 설정한 기본 매매 설정값을 불러오는 함수
   const loadDefaultValues = async () => {
@@ -348,7 +348,23 @@ export const useTradingForm = (selectedStock, authenticatedFetch, showSnackbar, 
 
   // 폼을 기본값으로 초기화하는 함수
   const resetTradingForm = () => {
-    loadDefaultValues();
+    if (!isModal) {
+      loadDefaultValues();
+    }
+  };
+
+  // 모달용: 기존 설정으로 폼 초기화하는 함수
+  const loadExistingConfig = (config) => {
+    if (config) {
+      setTradingMode(config.trading_mode || 'manual');
+      setEntryPoint(config.entry_point ? config.entry_point.toString() : '');
+      setMaxLoss(config.max_loss ? config.max_loss.toString() : '');
+      setStopLoss(config.stop_loss ? config.stop_loss.toString() : '');
+      setTakeProfit(config.take_profit ? config.take_profit.toString() : '');
+      setPyramidingCount(config.pyramiding_count || 0);
+      setPyramidingEntries(config.pyramiding_entries || []);
+      setPositions(config.positions || [100]);
+    }
   };
 
   return {
@@ -388,5 +404,6 @@ export const useTradingForm = (selectedStock, authenticatedFetch, showSnackbar, 
     loadAutobotConfig,
     saveAutotradingConfig,
     resetTradingForm,
+    loadExistingConfig, // 모달용 함수 추가
   };
 };

@@ -517,6 +517,7 @@ export default function TradingConfigs() {
       // API 요청을 위한 데이터 구성
       const requestData = {
         stock_code: updatedConfig.stock_code,
+        stock_name: updatedConfig.stock_name, // 누락되었던 필수 필드 추가
         strategy_type: updatedConfig.strategy_type,
         trading_mode: updatedConfig.trading_mode,
         entry_point: parseFloat(updatedConfig.entry_point) || null,
