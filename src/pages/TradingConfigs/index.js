@@ -89,8 +89,8 @@ const formatCurrency = (value) => {
 const formatTradingValue = (value, tradingMode, field) => {
   if (!value) return '-';
   
-  // Turtle 모드에서 손절가, 익절가, 최대손실은 ATR 단위
-  if ((tradingMode === 'atr' || tradingMode === 'turtle') && ['stop_loss', 'take_profit', 'max_loss'].includes(field)) {
+  // Turtle 모드에서 손절가, 익절가는 ATR 단위 (최대손실은 항상 %)
+  if ((tradingMode === 'atr' || tradingMode === 'turtle') && ['stop_loss', 'take_profit'].includes(field)) {
     return `${value} ATR`;
   }
   
@@ -110,13 +110,14 @@ const getStrategyTypeLabel = (strategyType) => {
 };
 
 const getStrategyTypeColor = (strategyType) => {
+  // 붉은색 계열로 전략 종류별 구분 - 차이를 극대화
   const colors = {
-    'mtt': 'primary',           // 파란색 - 주력 전략 (Minervini)
-    'weekly_high': 'success',   // 초록색 - 장기 전략 (52주 신고가)
-    'fifty_day_high': 'warning', // 주황색 - 중기 전략 (50일 신고가)
-    'daily_top50': 'info'       // 하늘색 - 단기 전략 (일일 Top50)
+    'mtt': '#d32f2f',              // 진한 다크 레드 - 주력 전략 (Minervini)
+    'weekly_high': '#ff5722',      // 딥 오렌지 - 장기 전략 (52주 신고가)
+    'fifty_day_high': '#ff9800',   // 밝은 오렌지 - 중기 전략 (50일 신고가)
+    'daily_top50': '#ffc107'       // 엠버(황금색) - 단기 전략 (일일 Top50)
   };
-  return colors[strategyType] || 'default';
+  return colors[strategyType] || '#9e9e9e';
 };
 
 const getTradingModeLabel = (tradingMode) => {
@@ -128,11 +129,20 @@ const getTradingModeLabel = (tradingMode) => {
 };
 
 const getTradingModeColor = (tradingMode) => {
+  // 푸른색 계열로 매매모드 구분 - 차이를 극대화
   const colors = {
-    'manual': 'error',    // 빨간색 - 수동 매매
-    'atr': 'secondary'    // 보라색 - 자동 매매 (Turtle)
+    'manual': '#2196f3',    // 밝은 파란색 - 수동 매매
+    'turtle': '#0d47a1',    // 진한 네이비 블루 - 터틀 매매
+    'atr': '#0d47a1'        // 진한 네이비 블루 - 자동 매매 (Turtle)
   };
-  return colors[tradingMode] || 'default';
+  return colors[tradingMode] || '#9e9e9e';
+};
+
+// 배경색에 따른 텍스트 색상 결정 함수
+const getTextColor = (backgroundColor) => {
+  // MTT(다크레드)와 Turtle(네이비)만 흰색, 나머지는 검은색
+  const darkColors = ['#d32f2f', '#0d47a1']; // MTT, Turtle/ATR
+  return darkColors.includes(backgroundColor) ? 'white' : 'black';
 };
 
 // 수익률 계산 함수
@@ -180,46 +190,52 @@ export default function TradingConfigs() {
       selector: row => row.strategy_type,
       sortable: true,
       minWidth: '120px',
-      cell: row => (
-        <Chip
-          label={getStrategyTypeLabel(row.strategy_type)}
-          color={getStrategyTypeColor(row.strategy_type)}
-          variant="filled"
-          size="small"
-          sx={{ 
-            fontSize: '0.7rem',
-            height: '24px',
-            fontWeight: "bold",
-            '& .MuiChip-label': { 
-              padding: '0 8px',
-              color: 'white'
-            }
-          }}
-        />
-      ),
+      cell: row => {
+        const bgColor = getStrategyTypeColor(row.strategy_type);
+        return (
+          <Chip
+            label={getStrategyTypeLabel(row.strategy_type)}
+            variant="filled"
+            size="small"
+            sx={{ 
+              fontSize: '0.7rem',
+              height: '24px',
+              fontWeight: "bold",
+              backgroundColor: bgColor,
+              '& .MuiChip-label': { 
+                padding: '0 8px',
+                color: `${getTextColor(bgColor)} !important`
+              }
+            }}
+          />
+        );
+      },
     },
     {
       name: '매매모드',
       selector: row => row.trading_mode,
       sortable: true,
       minWidth: '100px',
-      cell: row => (
-        <Chip
-          label={getTradingModeLabel(row.trading_mode)}
-          color={getTradingModeColor(row.trading_mode)}
-          variant="filled"
-          size="small"
-          sx={{ 
-            fontSize: '0.7rem',
-            height: '24px',
-            fontWeight: "bold",
-            '& .MuiChip-label': { 
-              padding: '0 8px',
-              color: 'white'
-            }
-          }}
-        />
-      ),
+      cell: row => {
+        const bgColor = getTradingModeColor(row.trading_mode);
+        return (
+          <Chip
+            label={getTradingModeLabel(row.trading_mode)}
+            variant="filled"
+            size="small"
+            sx={{ 
+              fontSize: '0.7rem',
+              height: '24px',
+              fontWeight: "bold",
+              backgroundColor: bgColor,
+              '& .MuiChip-label': { 
+                padding: '0 8px',
+                color: `${getTextColor(bgColor)} !important`
+              }
+            }}
+          />
+        );
+      },
     },
     {
       name: '상태',
