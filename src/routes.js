@@ -45,6 +45,7 @@ import MyPage from "pages/MyPage";
 import Logout from "pages/Logout";
 import MTT from "./layouts/pages/mtt";
 import WeeklyHigh from "./layouts/pages/weekly-high";
+import IssueInfo from "./layouts/pages/issue-info";
 import TopRising from "pages/TopRising";
 import FiftyDayHigh from "pages/FiftyDayHigh";
 import TradingConfigs from "pages/TradingConfigs";
@@ -101,6 +102,24 @@ const routes = [
                 <TradingConfigs />
               </ProtectedRoute>
             ),
+          },
+        ],
+      },
+    ],
+  },
+  {
+    name: "정보",
+    icon: <Icon>info</Icon>,
+    columns: 1,
+    rowsPerColumn: 3,
+    collapse: [
+      {
+        name: "시장 정보",
+        collapse: [
+          {
+            name: "이슈 정보",
+            route: "/issue-info",
+            component: <IssueInfo />,
           },
         ],
       },
