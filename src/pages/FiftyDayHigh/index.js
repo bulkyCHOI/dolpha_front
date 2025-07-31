@@ -48,6 +48,7 @@ function FiftyDayHigh() {
     openFinancialModal,
     financialData,
     financialLoading,
+    financialError,
     handleOpenFinancialModal,
     handleCloseFinancialModal,
   } = useFinancialData();
@@ -1146,6 +1147,7 @@ function FiftyDayHigh() {
         selectedStock={selectedStock}
         financialData={financialData}
         loading={financialLoading}
+        error={financialError}
       />
 
       {/* Notification System */}

@@ -48,6 +48,7 @@ function WeeklyHigh() {
     openFinancialModal,
     financialData,
     financialLoading,
+    financialError,
     handleOpenFinancialModal,
     handleCloseFinancialModal,
   } = useFinancialData();
@@ -1146,6 +1147,7 @@ function WeeklyHigh() {
         selectedStock={selectedStock}
         financialData={financialData}
         loading={financialLoading}
+        error={financialError}
       />
 
       {/* Notification System */}

@@ -48,6 +48,7 @@ function MTT() {
     openFinancialModal,
     financialData,
     financialLoading,
+    financialError,
     handleOpenFinancialModal,
     handleCloseFinancialModal,
   } = useFinancialData();
@@ -1018,6 +1019,7 @@ function MTT() {
         selectedStock={selectedStock}
         financialData={financialData}
         loading={financialLoading}
+        error={financialError}
       />
 
       {/* Notification System */}

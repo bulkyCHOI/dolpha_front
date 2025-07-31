@@ -48,6 +48,7 @@ function Presentation() {
     openFinancialModal,
     financialData,
     financialLoading,
+    financialError,
     handleOpenFinancialModal,
     handleCloseFinancialModal,
   } = useFinancialData();
@@ -989,6 +990,7 @@ function Presentation() {
         selectedStock={selectedStock}
         financialData={financialData}
         loading={financialLoading}
+        error={financialError}
       />
 
       {/* Notification System */}

@@ -25,7 +25,7 @@ import { formatFinancialAmount } from "utils/formatters";
 /**
  * 재무제표 모달 컴포넌트
  */
-const FinancialModal = ({ open, onClose, selectedStock, financialData, loading, onOpen }) => {
+const FinancialModal = ({ open, onClose, selectedStock, financialData, loading, error, onOpen }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const isSmallMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -79,6 +79,23 @@ const FinancialModal = ({ open, onClose, selectedStock, financialData, loading, 
             <CircularProgress size={40} />
             <MKTypography variant="body2" mt={2} color="text">
               재무제표 데이터를 로드하는 중...
+            </MKTypography>
+          </MKBox>
+        ) : error ? (
+          <MKBox
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "200px",
+              flexDirection: "column",
+            }}
+          >
+            <MKTypography variant="h6" color="error" mb={2}>
+              오류가 발생했습니다
+            </MKTypography>
+            <MKTypography variant="body2" color="text" textAlign="center">
+              {error}
             </MKTypography>
           </MKBox>
         ) : financialData && financialData.length > 0 ? (
