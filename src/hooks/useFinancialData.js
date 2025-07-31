@@ -21,7 +21,7 @@ export const useFinancialData = () => {
       setFinancialLoading(true);
       setFinancialError(null);
       
-      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
+      const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
       const response = await fetch(
         `${apiBaseUrl}/api/find_stock_financial?code=${stockCode}&limit=85`
       );

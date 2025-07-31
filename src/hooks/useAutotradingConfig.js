@@ -11,7 +11,7 @@ export const useAutotradingConfig = (authenticatedFetch, showSnackbar, strategyT
   const fetchAutotradingList = async () => {
     try {
       // Django API 기본 URL
-      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
+      const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
       // Django DB에서 직접 자동매매 목록을 조회하므로 서버 설정 확인은 선택적으로 처리
       // autobot이 필요한 기능(실제 거래 실행)은 별도로 서버 설정을 체크
@@ -95,7 +95,7 @@ export const useAutotradingConfig = (authenticatedFetch, showSnackbar, strategyT
       console.log(`[FRONTEND] 삭제 대상 설정:`, configToDelete);
 
       if (configToDelete) {
-        const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
+        const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
         // stock_code와 strategy_type을 사용하여 삭제
         const deleteUrl = `${apiBaseUrl}/api/mypage/trading-configs/stock/${stockCode}?strategy_type=${strategyType}`;

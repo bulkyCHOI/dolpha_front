@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
           try {
             const parsedUser = JSON.parse(userInfo);
             // 토큰 유효성 검증
-            const baseUrl = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
+            const baseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
             const testResponse = await fetch(`${baseUrl}/api/mypage/profile`, {
               method: "GET",
@@ -73,7 +73,7 @@ export const AuthProvider = ({ children }) => {
       isCallbackProcessingRef.current = true;
       setLoading(true);
 
-      const baseUrl = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
+      const baseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
       const response = await fetch(`${baseUrl}/api/auth/google/`, {
         method: "POST",
@@ -170,7 +170,7 @@ export const AuthProvider = ({ children }) => {
         throw new Error("리프레시 토큰이 없습니다.");
       }
 
-      const baseUrl = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
+      const baseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
       const response = await fetch(`${baseUrl}/api/auth/refresh/`, {
         method: "POST",
         headers: {

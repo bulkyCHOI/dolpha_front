@@ -25,7 +25,7 @@ export const useTradingForm = (selectedStock, authenticatedFetch, showSnackbar, 
   // 사용자가 설정한 기본 매매 설정값을 불러오는 함수
   const loadDefaultValues = async () => {
     try {
-      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
+      const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
       const response = await authenticatedFetch(
         `${apiBaseUrl}/api/mypage/trading-defaults/for-new-config`
       );
@@ -88,7 +88,7 @@ export const useTradingForm = (selectedStock, authenticatedFetch, showSnackbar, 
 
     // 선택한 매매 모드에 해당하는 기본값을 MyPage에서 불러와서 적용
     try {
-      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
+      const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
       const response = await authenticatedFetch(
         `${apiBaseUrl}/api/mypage/trading-defaults/for-new-config?mode=${newMode}`
       );
@@ -217,7 +217,7 @@ export const useTradingForm = (selectedStock, authenticatedFetch, showSnackbar, 
     if (!stockCode) return;
 
     try {
-      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
+      const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
       const response = await authenticatedFetch(
         `${apiBaseUrl}/api/mypage/trading-configs/stock/${stockCode}?strategy_type=${strategyType}`
       );
@@ -311,7 +311,7 @@ export const useTradingForm = (selectedStock, authenticatedFetch, showSnackbar, 
     };
 
     try {
-      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
+      const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
       const response = await authenticatedFetch(`${apiBaseUrl}/api/mypage/trading-configs`, {
         method: "POST",
         body: JSON.stringify(config),

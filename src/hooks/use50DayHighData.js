@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 
-const BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
+const BASE_URL = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
 export const use50DayHighData = () => {
   const [stockData, setStockData] = useState([]);

@@ -32,7 +32,7 @@ function Profile() {
   useEffect(() => {
     const loadUserProfile = async () => {
       try {
-        const baseUrl = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
+        const baseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
         const response = await authenticatedFetch(`${baseUrl}/api/mypage/profile`);
 
         if (!response.ok) {

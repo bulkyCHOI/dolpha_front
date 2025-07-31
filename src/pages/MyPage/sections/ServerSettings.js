@@ -40,7 +40,7 @@ function ServerSettings() {
 
   const loadServerSettings = async () => {
     try {
-      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
+      const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
       const response = await authenticatedFetch(`${apiBaseUrl}/api/mypage/server-settings`);
 
@@ -74,7 +74,7 @@ function ServerSettings() {
     setConnectionStatus("testing");
 
     try {
-      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
+      const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
       const response = await authenticatedFetch(`${apiBaseUrl}/api/mypage/server-connection-test`, {
         method: "POST",
@@ -111,7 +111,7 @@ function ServerSettings() {
     setSaveLoading(true);
 
     try {
-      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
+      const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
       const response = await authenticatedFetch(`${apiBaseUrl}/api/mypage/server-settings`, {
         method: "POST",

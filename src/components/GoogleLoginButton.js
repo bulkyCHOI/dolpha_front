@@ -8,7 +8,7 @@ const GoogleLoginButton = ({ onSuccess, onError, disabled = false }) => {
   const handleGoogleLogin = async () => {
     try {
       // Google Client ID 확인
-      const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+      const clientId = window.REACT_APP_GOOGLE_CLIENT_ID;
 
       if (!clientId || clientId === "your-google-client-id-here") {
         onError("Google Client ID가 설정되지 않았습니다. .env 파일을 확인해주세요.");

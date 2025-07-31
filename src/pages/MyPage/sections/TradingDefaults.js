@@ -115,7 +115,7 @@ function TradingDefaults() {
   const loadDefaults = async () => {
     setLoading(true);
     try {
-      const baseUrl = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
+      const baseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
       const response = await authenticatedFetch(`${baseUrl}/api/mypage/trading-defaults`);
 
       if (response.ok) {
@@ -134,7 +134,7 @@ function TradingDefaults() {
     setMessage(null);
 
     try {
-      const baseUrl = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
+      const baseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
       const response = await authenticatedFetch(`${baseUrl}/api/mypage/trading-defaults`, {
         method: "POST",
         body: JSON.stringify(defaults),
