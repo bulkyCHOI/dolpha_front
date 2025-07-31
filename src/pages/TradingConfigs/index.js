@@ -7,7 +7,6 @@
 import { useState, useEffect } from "react";
 
 // @mui material components
-import Container from "@mui/material/Container";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -22,9 +21,10 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import SettingsIcon from "@mui/icons-material/Settings";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
-// DataTable
-import DataTable from 'react-data-table-component';
-import styled from 'styled-components';
+// Enhanced components
+import FullWidthContainer from "components/FullWidthContainer";
+import EnhancedDataTable from "components/EnhancedDataTable";
+import ResponsiveTableWrapper from "components/ResponsiveTableWrapper";
 
 // Material Kit 2 React components
 import MKBox from "components/MKBox";
@@ -46,39 +46,7 @@ import { useNotification } from "components/NotificationSystem/NotificationSyste
 // Trading Config Modal
 import TradingConfigModal from "components/TradingConfigModal/TradingConfigModal";
 
-// DataTable 커스텀 스타일
-const StyledDataTable = styled(DataTable)`
-  .rdt_Table {
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .rdt_TableHeadRow {
-    background-color: #f8f9fa;
-    border-bottom: 2px solid #e9ecef;
-    font-weight: bold;
-  }
-  
-  .rdt_TableRow {
-    transition: background-color 0.2s ease;
-    &:nth-of-type(odd) {
-      background-color: #fafafa;
-    }
-    &:hover {
-      background-color: #e3f2fd !important;
-    }
-  }
-  
-  .rdt_TableCell {
-    padding: 12px 8px;
-  }
-  
-  .rdt_Pagination {
-    background-color: #f8f9fa;
-    border-top: 1px solid #e9ecef;
-  }
-`;
+// Remove the old styled component - now using EnhancedDataTable
 
 // Utility functions
 const formatCurrency = (value) => {
@@ -152,6 +120,8 @@ const calculateProfitRate = (entryPrice, currentPrice) => {
   return rate;
 };
 
+// 거래 상태 정보 로드 함수는 컴포넌트 내부로 이동
+
 export default function TradingConfigs() {
   const { user, authenticatedFetch } = useAuth();
   const { showSnackbar, NotificationComponent } = useNotification();
@@ -161,19 +131,44 @@ export default function TradingConfigs() {
   const [error, setError] = useState(null);
   const [allTradingConfigs, setAllTradingConfigs] = useState([]);
   const [currentPrices, setCurrentPrices] = useState({}); // 종목별 현재가 저장
+  const [tradingStatus, setTradingStatus] = useState({}); // 거래 상태 정보 저장
   
   // Modal state
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedConfig, setSelectedConfig] = useState(null);
   const [modalLoading, setModalLoading] = useState(false);
 
-  // DataTable 컬럼 정의
+  // 거래 상태 정보 로드 함수
+  const loadTradingStatus = async () => {
+    try {
+      const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
+      const response = await authenticatedFetch(`${apiBaseUrl}/api/mypage/trading-status`);
+      
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          setTradingStatus(result.data);
+          showSnackbar('거래 상태 정보를 업데이트했습니다.', 'success');
+        } else {
+          console.warn('거래 상태 조회 실패:', result.message);
+          setTradingStatus({});
+        }
+      } else {
+        console.warn('거래 상태 API 응답 오류:', response.status);
+        setTradingStatus({});
+      }
+    } catch (error) {
+      console.warn('거래 상태 조회 오류:', error.message);
+      setTradingStatus({});
+    }
+  };
+
+  // DataTable 컬럼 정의 - widths removed for auto-optimization
   const columns = [
     {
       name: '종목',
       selector: row => row.stock_name,
       sortable: true,
-      minWidth: '140px',
       cell: row => (
         <Box>
           <MKTypography variant="body2" fontWeight="bold" color="dark" sx={{ lineHeight: 1.2 }}>
@@ -189,7 +184,6 @@ export default function TradingConfigs() {
       name: '전략',
       selector: row => row.strategy_type,
       sortable: true,
-      minWidth: '120px',
       cell: row => {
         const bgColor = getStrategyTypeColor(row.strategy_type);
         return (
@@ -215,7 +209,6 @@ export default function TradingConfigs() {
       name: '매매모드',
       selector: row => row.trading_mode,
       sortable: true,
-      minWidth: '100px',
       cell: row => {
         const bgColor = getTradingModeColor(row.trading_mode);
         return (
@@ -241,7 +234,6 @@ export default function TradingConfigs() {
       name: '상태',
       selector: row => row.is_active,
       sortable: true,
-      minWidth: '80px',
       cell: row => (
         <Chip
           label={row.is_active ? '활성' : '비활성'}
@@ -260,7 +252,6 @@ export default function TradingConfigs() {
       selector: row => row.stop_loss,
       sortable: true,
       center: true,
-      minWidth: '90px',
       cell: row => (
         <MKTypography 
           variant="body2" 
@@ -276,7 +267,6 @@ export default function TradingConfigs() {
       selector: row => row.take_profit,
       sortable: true,
       center: true,
-      minWidth: '90px',
       cell: row => (
         <MKTypography 
           variant="body2" 
@@ -292,7 +282,6 @@ export default function TradingConfigs() {
       selector: row => row.max_loss,
       sortable: true,
       center: true,
-      minWidth: '110px',
       cell: row => (
         <MKTypography variant="body2" sx={{ fontSize: '0.85rem' }}>
           {formatTradingValue(row.max_loss, row.trading_mode, 'max_loss')}
@@ -300,23 +289,69 @@ export default function TradingConfigs() {
       ),
     },
     {
-      name: '피라미딩',
-      selector: row => row.pyramiding_count,
+      name: '진입횟수',
+      selector: row => tradingStatus[row.stock_code]?.actual_entries || 0,
       sortable: true,
       center: true,
-      minWidth: '80px',
-      cell: row => (
-        <MKTypography variant="body2" sx={{ fontSize: '0.85rem' }}>
-          {row.pyramiding_count || 0}회
-        </MKTypography>
-      ),
+      cell: row => {
+        const status = tradingStatus[row.stock_code];
+        const totalPossible = status?.total_possible_entries || 1;
+        const actualEntries = status?.actual_entries || 0;
+        
+        return (
+          <MKTypography variant="body2" sx={{ fontSize: '0.8rem', fontWeight: 'bold' }}>
+            {actualEntries}/{totalPossible}회
+          </MKTypography>
+        );
+      },
+    },
+    {
+      name: '포지션',
+      selector: row => tradingStatus[row.stock_code]?.position_sum || 0,
+      sortable: true,
+      center: true,
+      cell: row => {
+        const status = tradingStatus[row.stock_code];
+        const positionSum = status?.position_sum || 0;
+        const actualEntries = status?.actual_entries || 0;
+        
+        // 포지션 퍼센트에 따른 색상 결정
+        let chipColor = 'default';
+        let chipStyle = {};
+        
+        if (actualEntries === 0) {
+          chipColor = 'default';
+        } else if (positionSum >= 80) {
+          chipColor = 'success'; // 80% 이상: 초록색
+        } else if (positionSum >= 50) {
+          chipColor = 'warning'; // 50-79%: 주황색
+        } else if (positionSum >= 25) {
+          chipColor = 'info'; // 25-49%: 파란색
+        } else {
+          chipColor = 'error'; // 25% 미만: 빨간색
+        }
+        
+        return (
+          <Chip 
+            label={`${positionSum.toFixed(0)}%`}
+            size="small"
+            color={chipColor}
+            sx={{ 
+              fontSize: '0.7rem', 
+              height: '22px',
+              minWidth: '50px',
+              fontWeight: 'bold',
+              '& .MuiChip-label': { padding: '0 8px' }
+            }}
+          />
+        );
+      },
     },
     {
       name: '진입가',
       selector: row => row.entry_point,
       sortable: true,
       center: true,
-      minWidth: '100px',
       cell: row => (
         <MKTypography variant="body2" sx={{ fontSize: '0.8rem' }}>
           {row.entry_point ? `${formatCurrency(row.entry_point)}원` : '-'}
@@ -324,45 +359,135 @@ export default function TradingConfigs() {
       ),
     },
     {
+      name: '보유정보',
+      selector: row => tradingStatus[row.stock_code]?.total_quantity || 0,
+      sortable: true,
+      center: true,
+      cell: row => {
+        const status = tradingStatus[row.stock_code];
+        const avgPrice = status?.avg_price || 0;
+        const quantity = status?.total_quantity || 0;
+        const holdingAmount = status?.holding_amount || 0;
+        
+        return (
+          <Box>
+            {/* 첫 번째 줄: 보유금액 */}
+            <MKTypography 
+              variant="body2" 
+              fontWeight="bold" 
+              sx={{ 
+                fontSize: '0.8rem',
+                color: 'primary.main',
+                lineHeight: 1.2
+              }}
+            >
+              {holdingAmount > 0 ? `${formatCurrency(Math.round(holdingAmount))}원` : '-'}
+            </MKTypography>
+            
+            {/* 두 번째 줄: 수량 정보 */}
+            <MKTypography 
+              variant="caption" 
+              sx={{ 
+                fontSize: '0.7rem',
+                color: 'text.secondary',
+                lineHeight: 1.2
+              }}
+            >
+              {quantity > 0 ? `${formatCurrency(quantity)}주` : '-'}
+              {avgPrice > 0 && ` @ ${formatCurrency(Math.round(avgPrice))}원`}
+            </MKTypography>
+          </Box>
+        );
+      },
+    },
+    {
       name: '현재가',
       selector: row => currentPrices[row.stock_code]?.price || 0,
       sortable: true,
       center: true,
-      minWidth: '120px',
       cell: row => {
         const currentPrice = currentPrices[row.stock_code];
-        const profitRate = row.entry_point && currentPrice ? calculateProfitRate(row.entry_point, currentPrice.price) : null; 
         
         return (
           <Tooltip 
             title={currentPrice ? `데이터 소스: ${currentPrice.source || 'unknown'}` : '주가 조회 중...'}
             arrow
           >
-            <Box>
-              <MKTypography 
-                variant="body2" 
-                sx={{ 
-                  fontSize: '0.8rem',
-                  fontWeight: "bold",
-                  color: currentPrice ? 'dark' : 'text'
-                }}
-              >
-                {currentPrice ? `${formatCurrency(currentPrice.price)}원` : '조회중...'}
-              </MKTypography>
-              {profitRate !== null && (
-                <MKTypography 
-                  variant="caption" 
-                  sx={{ 
-                    fontSize: '0.7rem',
-                    color: profitRate >= 0 ? 'success.main' : 'error.main',
-                    fontWeight: "bold"
-                  }}
-                >
-                  {profitRate >= 0 ? '+' : ''}{profitRate.toFixed(2)}%
-                </MKTypography>
-              )}
-            </Box>
+            <MKTypography 
+              variant="body2" 
+              sx={{ 
+                fontSize: '0.8rem',
+                fontWeight: "bold",
+                color: currentPrice ? 'dark' : 'text'
+              }}
+            >
+              {currentPrice ? `${formatCurrency(currentPrice.price)}원` : '조회중...'}
+            </MKTypography>
           </Tooltip>
+        );
+      },
+    },
+    {
+      name: '평가손익',
+      selector: row => {
+        const status = tradingStatus[row.stock_code];
+        const currentPrice = currentPrices[row.stock_code];
+        const avgPrice = status?.avg_price || 0;
+        const quantity = status?.total_quantity || 0;
+        
+        if (!avgPrice || !currentPrice || !quantity) return 0;
+        return (currentPrice.price - avgPrice) * quantity;
+      },
+      sortable: true,
+      center: true,
+      cell: row => {
+        const status = tradingStatus[row.stock_code];
+        const currentPrice = currentPrices[row.stock_code];
+        const avgPrice = status?.avg_price || 0;
+        const quantity = status?.total_quantity || 0;
+        
+        if (!avgPrice || !currentPrice || !quantity) {
+          return (
+            <Box>
+              <MKTypography variant="body2" sx={{ fontSize: '0.8rem', color: 'text.secondary' }}>
+                -
+              </MKTypography>
+            </Box>
+          );
+        }
+        
+        const profitLoss = (currentPrice.price - avgPrice) * quantity;
+        const profitRate = ((currentPrice.price - avgPrice) / avgPrice) * 100;
+        const isProfit = profitLoss >= 0;
+        
+        return (
+          <Box>
+            {/* 첫 번째 줄: 손익금액 */}
+            <MKTypography 
+              variant="body2" 
+              fontWeight="bold"
+              sx={{ 
+                fontSize: '0.8rem',
+                color: isProfit ? 'success.main' : 'error.main',
+                lineHeight: 1.2
+              }}
+            >
+              {isProfit ? '+' : ''}{formatCurrency(Math.round(profitLoss))}원
+            </MKTypography>
+            
+            {/* 두 번째 줄: 손익률 */}
+            <MKTypography 
+              variant="caption" 
+              sx={{ 
+                fontSize: '0.7rem',
+                color: isProfit ? 'success.main' : 'error.main',
+                fontWeight: 'bold',
+                lineHeight: 1.2
+              }}
+            >
+              {isProfit ? '+' : ''}{profitRate.toFixed(2)}%
+            </MKTypography>
+          </Box>
         );
       },
     },
@@ -371,7 +496,6 @@ export default function TradingConfigs() {
       selector: row => row.created_at,
       sortable: true,
       center: true,
-      minWidth: '90px',
       cell: row => (
         <MKTypography variant="caption" color="text" sx={{ fontSize: '0.75rem' }}>
           {new Date(row.created_at).toLocaleDateString('ko-KR', {
@@ -385,7 +509,6 @@ export default function TradingConfigs() {
     {
       name: '액션',
       center: true,
-      minWidth: '80px',
       cell: row => (
         <Box display="flex" justifyContent="center" gap={0.5}>
           <Tooltip title="상세 보기">
@@ -419,7 +542,7 @@ export default function TradingConfigs() {
       setLoading(true);
       setError(null);
       
-      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
+      const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
       
       // 모든 전략 타입의 설정을 가져오기 (strategy_type 파라미터 없이)
       const response = await authenticatedFetch(`${apiBaseUrl}/api/mypage/trading-configs`);
@@ -429,9 +552,10 @@ export default function TradingConfigs() {
         setAllTradingConfigs(configs);
         showSnackbar(`${configs.length}개의 자동매매 설정을 불러왔습니다.`, "success");
         
-        // 현재가 조회 (비동기적으로 실행)
+        // 현재가 및 거래 상태 조회 (비동기적으로 실행)
         if (configs.length > 0) {
           loadCurrentPrices(configs);
+          loadTradingStatus(); // 거래 상태 정보 로드
         }
       } else {
         setAllTradingConfigs([]);
@@ -453,7 +577,7 @@ export default function TradingConfigs() {
       const symbol = `${stockCode}.KS`; // 기본적으로 KOSPI로 시도
       
       // CORS 문제를 해결하기 위해 백엔드를 통해 주가 조회
-      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
+      const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
       const response = await authenticatedFetch(`${apiBaseUrl}/api/stock-price/${stockCode}`);
       
       if (response.ok) {
@@ -528,7 +652,7 @@ export default function TradingConfigs() {
   const handleModalSave = async (updatedConfig) => {
     setModalLoading(true);
     try {
-      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
+      const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
       
       // API 요청을 위한 데이터 구성
       const requestData = {
@@ -590,7 +714,7 @@ export default function TradingConfigs() {
     if (!isConfirmed) return;
 
     try {
-      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
+      const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
       const deleteUrl = `${apiBaseUrl}/api/mypage/trading-configs/stock/${stockCode}?strategy_type=${strategyType}`;
       
       const response = await authenticatedFetch(deleteUrl, {
@@ -633,11 +757,11 @@ export default function TradingConfigs() {
   if (!user) {
     return (
       <MKBox component="section" py={6}>
-        <Container>
+        <FullWidthContainer>
           <Alert severity="warning" sx={{ mb: 3 }}>
             로그인이 필요한 페이지입니다. 로그인 후 이용해주세요.
           </Alert>
-        </Container>
+        </FullWidthContainer>
       </MKBox>
     );
   }
@@ -646,8 +770,8 @@ export default function TradingConfigs() {
     <>
       <DefaultNavbar routes={routes} sticky />
       
-      <MKBox component="section" py={12} sx={{ minHeight: "80vh" }}>
-        <Container>
+      <MKBox component="section" sx={{ minHeight: "80vh", pt: 12, pb: 4 }}>
+        <FullWidthContainer>
           {/* 페이지 헤더 */}
           <MKBox mb={4}>
             <MKTypography variant="h3" color="dark" fontWeight="bold" gutterBottom>
@@ -693,61 +817,13 @@ export default function TradingConfigs() {
                   </CardContent>
                 </Card>
               ) : (
-                <StyledDataTable
-                  columns={columns}
-                  data={allTradingConfigs}
-                  pagination
-                  paginationPerPage={10}
-                  paginationRowsPerPageOptions={[5, 10, 15, 20]}
-                  highlightOnHover
-                  striped
-                  responsive
-                  defaultSortFieldId={1}
-                  defaultSortAsc={true}
-                  noHeader={false}
-                  subHeader={false}
-                  persistTableHead
-                  customStyles={{
-                    headRow: {
-                      style: {
-                        backgroundColor: '#f8f9fa',
-                        borderBottomWidth: '2px',
-                        borderBottomColor: '#e9ecef',
-                        fontSize: '14px',
-                        fontWeight: 'bold'
-                      },
-                    },
-                    rows: {
-                      style: {
-                        minHeight: '60px',
-                        '&:nth-of-type(odd)': {
-                          backgroundColor: '#fafafa',
-                        },
-                        '&:hover': {
-                          backgroundColor: '#e3f2fd !important',
-                        },
-                      },
-                    },
-                    cells: {
-                      style: {
-                        padding: '12px 8px',
-                      },
-                    },
-                    pagination: {
-                      style: {
-                        backgroundColor: '#f8f9fa',
-                        borderTop: '1px solid #e9ecef',
-                        fontSize: '14px'
-                      },
-                    },
-                  }}
-                  paginationComponentOptions={{
-                    rowsPerPageText: '페이지당 행 수:',
-                    rangeSeparatorText: '/',
-                    noRowsPerPage: false,
-                    selectAllRowsItem: false,
-                  }}
-                />
+                <ResponsiveTableWrapper>
+                  <EnhancedDataTable
+                    columns={columns}
+                    data={allTradingConfigs}
+                    autoOptimizeColumns={true}
+                  />
+                </ResponsiveTableWrapper>
               )}
             </MKBox>
           )}
@@ -763,17 +839,26 @@ export default function TradingConfigs() {
                 전체 새로고침
               </MKButton>
               {allTradingConfigs.length > 0 && (
-                <MKButton
-                  variant="outlined"
-                  color="success"
-                  onClick={() => loadCurrentPrices(allTradingConfigs)}
-                >
-                  현재가 업데이트
-                </MKButton>
+                <>
+                  <MKButton
+                    variant="outlined"
+                    color="success"
+                    onClick={() => loadCurrentPrices(allTradingConfigs)}
+                  >
+                    현재가 업데이트
+                  </MKButton>
+                  <MKButton
+                    variant="outlined"
+                    color="warning"
+                    onClick={loadTradingStatus}
+                  >
+                    거래상태 업데이트
+                  </MKButton>
+                </>
               )}
             </MKBox>
           )}
-        </Container>
+        </FullWidthContainer>
       </MKBox>
 
       <DefaultFooter content={footerRoutes} />
