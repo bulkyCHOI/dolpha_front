@@ -710,7 +710,7 @@ function MTT() {
                           }}
                         >
                           <Grid container spacing={0}>
-                            <Grid item xs={4} sm={3.5}>
+                            <Grid item xs={3.5} sm={3}>
                               <MKTypography
                                 variant="subtitle2"
                                 color="white"
@@ -720,7 +720,7 @@ function MTT() {
                                 종목명
                               </MKTypography>
                             </Grid>
-                            <Grid item xs={2} sm={2.5}>
+                            <Grid item xs={1.5} sm={2}>
                               <MKTypography
                                 variant="subtitle2"
                                 color="white"
@@ -731,7 +731,18 @@ function MTT() {
                                 RS
                               </MKTypography>
                             </Grid>
-                            <Grid item xs={3} sm={3}>
+                            <Grid item xs={2} sm={2}>
+                              <MKTypography
+                                variant="subtitle2"
+                                color="white"
+                                fontWeight="bold"
+                                textAlign="center"
+                                sx={{ fontSize: { xs: "0.65rem", md: "0.8rem" } }}
+                              >
+                                MTT일수
+                              </MKTypography>
+                            </Grid>
+                            <Grid item xs={2.5} sm={2.5}>
                               <MKTypography
                                 variant="subtitle2"
                                 color="white"
@@ -742,7 +753,7 @@ function MTT() {
                                 매출
                               </MKTypography>
                             </Grid>
-                            <Grid item xs={3} sm={3}>
+                            <Grid item xs={2.5} sm={2.5}>
                               <MKTypography
                                 variant="subtitle2"
                                 color="white"
@@ -807,7 +818,7 @@ function MTT() {
                               }}
                             >
                               <Grid container spacing={0} alignItems="center">
-                                <Grid item xs={4} sm={3.5}>
+                                <Grid item xs={3.5} sm={3}>
                                   <MKBox>
                                     <MKTypography
                                       variant="body2"
@@ -837,7 +848,7 @@ function MTT() {
                                     </MKTypography>
                                   </MKBox>
                                 </Grid>
-                                <Grid item xs={2} sm={2.5}>
+                                <Grid item xs={1.5} sm={2}>
                                   <MKBox display="flex" justifyContent="center">
                                     <Chip
                                       label={Math.floor(row.rsRank) || "-"}
@@ -860,8 +871,8 @@ function MTT() {
                                           : "white",
                                         fontWeight: "bold",
                                         fontSize: { xs: "0.6rem", md: "0.7rem" },
-                                        minWidth: { xs: "40px", md: "35px" },
-                                        height: { xs: "32px", md: "20px" },
+                                        minWidth: { xs: "30px", md: "35px" },
+                                        height: { xs: "28px", md: "20px" },
                                         cursor: "pointer",
                                         "&:hover": {
                                           opacity: 0.8,
@@ -870,7 +881,30 @@ function MTT() {
                                     />
                                   </MKBox>
                                 </Grid>
-                                <Grid item xs={3} sm={3}>
+                                <Grid item xs={2} sm={2}>
+                                  <MKBox display="flex" justifyContent="center" alignItems="center">
+                                    <Chip
+                                      label={`${row.mtt_duration_days || 0}일`}
+                                      size="small"
+                                      sx={{
+                                        backgroundColor:
+                                          row.mtt_duration_days >= 30
+                                            ? "#4caf50"  // 30일 이상: 초록
+                                            : row.mtt_duration_days >= 14
+                                            ? "#ff9800"  // 14일 이상: 오렌지
+                                            : row.mtt_duration_days >= 7
+                                            ? "#2196f3"  // 7일 이상: 파랑
+                                            : "#9e9e9e", // 7일 미만: 회색
+                                        color: "white",
+                                        fontWeight: "bold",
+                                        fontSize: { xs: "0.6rem", md: "0.7rem" },
+                                        minWidth: { xs: "35px", md: "40px" },
+                                        height: { xs: "28px", md: "20px" },
+                                      }}
+                                    />
+                                  </MKBox>
+                                </Grid>
+                                <Grid item xs={2.5} sm={2.5}>
                                   <MKBox display="flex" justifyContent="center" alignItems="center">
                                     <MKTypography
                                       variant="body2"
@@ -887,7 +921,7 @@ function MTT() {
                                     </MKTypography>
                                   </MKBox>
                                 </Grid>
-                                <Grid item xs={3} sm={3}>
+                                <Grid item xs={2.5} sm={2.5}>
                                   <MKBox display="flex" justifyContent="center" alignItems="center">
                                     <MKTypography
                                       variant="body2"
