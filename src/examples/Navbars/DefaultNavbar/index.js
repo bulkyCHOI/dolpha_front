@@ -452,7 +452,10 @@ function DefaultNavbar({ brand, routes, transparent, light, action, sticky, rela
   );
 
   return (
-    <Container sx={sticky ? { position: "sticky", top: 0, zIndex: 10 } : null}>
+    <Container maxWidth={false} sx={{ 
+      ...(sticky ? { position: "sticky", top: 0, zIndex: 10 } : null),
+      px: 1
+    }}>
       <MKBox
         component="nav"
         role="navigation"
