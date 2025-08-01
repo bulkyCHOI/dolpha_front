@@ -1093,8 +1093,10 @@ const ChartContainer = ({
             const datasetLabel = context.dataset.label;
             if (datasetLabel === "캔들스틱") {
               const data = context.raw;
-              const changePercent = (((data.c - data.o) / data.o) * 100).toFixed(2);
-              const changePercentText = `등락율: ${changePercent > 0 ? "+" : ""}${changePercent}%`;
+              const index = context.dataIndex;
+              // API의 change 값(전일 대비 등락율) 사용 - 소수점 형태를 백분율로 변환
+              const changePercent = (ohlcvData[index]?.change || 0) * 100;
+              const changePercentText = `등락율: ${changePercent > 0 ? "+" : ""}${changePercent.toFixed(2)}%`;
               return [
                 `시가: ${new Intl.NumberFormat("ko-KR").format(data.o)}`,
                 `고가: ${new Intl.NumberFormat("ko-KR").format(data.h)}`,
@@ -1186,8 +1188,10 @@ const ChartContainer = ({
           },
           label: function (context) {
             const data = context.raw;
-            const changePercent = (((data.c - data.o) / data.o) * 100).toFixed(2);
-            const changePercentText = `등락율: ${changePercent > 0 ? "+" : ""}${changePercent}%`;
+            const index = context.dataIndex;
+            // API의 change 값(전일 대비 등락율) 사용 - 소수점 형태를 백분율로 변환
+            const changePercent = (indexOhlcvData[index]?.change || 0) * 100;
+            const changePercentText = `등락율: ${changePercent > 0 ? "+" : ""}${changePercent.toFixed(2)}%`;
             return [
               `시가: ${new Intl.NumberFormat("ko-KR").format(data.o)}`,
               `고가: ${new Intl.NumberFormat("ko-KR").format(data.h)}`,
