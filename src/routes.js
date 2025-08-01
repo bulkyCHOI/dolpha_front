@@ -49,6 +49,7 @@ import IssueInfo from "./layouts/pages/issue-info";
 import TopRising from "pages/TopRising";
 import FiftyDayHigh from "pages/FiftyDayHigh";
 import TradingConfigs from "pages/TradingConfigs";
+import DailyNewsClipping from "./layouts/pages/daily-news-clipping";
 import ProtectedRoute from "components/ProtectedRoute";
 
 const routes = [
@@ -120,6 +121,11 @@ const routes = [
             name: "이슈 정보",
             route: "/issue-info",
             component: <IssueInfo />,
+          },
+          {
+            name: "일간뉴스클리핑",
+            route: "/daily-news-clipping",
+            component: <DailyNewsClipping />,
           },
         ],
       },
