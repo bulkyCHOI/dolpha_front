@@ -86,9 +86,11 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
             </MKBox>
             <MKTypography variant="caption" color="white" sx={{ opacity: 0.9 }}>
               ATR:{" "}
-              {analysisData && analysisData.length > 0 &&
+              {analysisData &&
+              analysisData.length > 0 &&
               analysisData[analysisData.length - 1]?.atr &&
-              ohlcvData && ohlcvData.length > 0
+              ohlcvData &&
+              ohlcvData.length > 0
                 ? (() => {
                     const atr = analysisData[analysisData.length - 1].atr;
                     const currentPrice = ohlcvData[ohlcvData.length - 1]?.close;
@@ -203,9 +205,11 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
                 color="white"
                 sx={{ fontSize: "0.85rem" }}
               >
-                {analysisData && analysisData.length > 0 &&
+                {analysisData &&
+                analysisData.length > 0 &&
                 analysisData[analysisData.length - 1]?.atr &&
-                ohlcvData && ohlcvData.length > 0
+                ohlcvData &&
+                ohlcvData.length > 0
                   ? (() => {
                       const atr = analysisData[analysisData.length - 1].atr;
                       const currentPrice = ohlcvData[ohlcvData.length - 1]?.close;

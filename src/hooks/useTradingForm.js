@@ -4,7 +4,13 @@ import { useState, useEffect } from "react";
  * Custom hook for managing trading form state and validation
  * Handles trading mode, entry points, stop loss, take profit, pyramiding configuration
  */
-export const useTradingForm = (selectedStock, authenticatedFetch, showSnackbar, strategyType = 'mtt', isModal = false) => {
+export const useTradingForm = (
+  selectedStock,
+  authenticatedFetch,
+  showSnackbar,
+  strategyType = "mtt",
+  isModal = false
+) => {
   // Trading form state
   const [tradingMode, setTradingMode] = useState("manual");
   const [maxLoss, setMaxLoss] = useState("");
@@ -32,7 +38,7 @@ export const useTradingForm = (selectedStock, authenticatedFetch, showSnackbar, 
 
       if (response.ok) {
         const defaults = await response.json();
-        
+
         setTradingMode(defaults.trading_mode || "turtle");
         setMaxLoss(defaults.max_loss ? defaults.max_loss.toString() : "");
         setStopLoss(defaults.stop_loss ? defaults.stop_loss.toString() : "");
@@ -40,7 +46,9 @@ export const useTradingForm = (selectedStock, authenticatedFetch, showSnackbar, 
         setPyramidingCount(defaults.pyramiding_count || 0);
         setEntryPoint("");
         setPyramidingEntries(defaults.pyramiding_entries || []);
-        setPositions(defaults.positions && defaults.positions.length > 0 ? defaults.positions : [100]);
+        setPositions(
+          defaults.positions && defaults.positions.length > 0 ? defaults.positions : [100]
+        );
       } else {
         // 기본값을 불러올 수 없으면 모든 필드 공란
         setTradingMode("turtle");
@@ -95,14 +103,16 @@ export const useTradingForm = (selectedStock, authenticatedFetch, showSnackbar, 
 
       if (response.ok) {
         const defaults = await response.json();
-        
+
         // 선택한 매매모드의 기본값 적용 (기본값이 없으면 공란)
         setMaxLoss(defaults.max_loss ? defaults.max_loss.toString() : "");
         setStopLoss(defaults.stop_loss ? defaults.stop_loss.toString() : "");
         setTakeProfit(defaults.take_profit ? defaults.take_profit.toString() : "");
         setPyramidingCount(defaults.pyramiding_count || 0);
         setPyramidingEntries(defaults.pyramiding_entries || []);
-        setPositions(defaults.positions && defaults.positions.length > 0 ? defaults.positions : [100]);
+        setPositions(
+          defaults.positions && defaults.positions.length > 0 ? defaults.positions : [100]
+        );
       } else {
         // API 호출 실패시 공란으로 초기화
         applyEmptyDefaults();
@@ -230,7 +240,7 @@ export const useTradingForm = (selectedStock, authenticatedFetch, showSnackbar, 
         setStopLoss(config.stop_loss ? config.stop_loss.toString() : "");
         setTakeProfit(config.take_profit ? config.take_profit.toString() : "");
         setPyramidingCount(config.pyramiding_count || 0);
-        
+
         // 1차 진입시점은 entry_point 필드에서 가져옴
         setEntryPoint(config.entry_point ? config.entry_point.toString() : "");
 
@@ -356,11 +366,11 @@ export const useTradingForm = (selectedStock, authenticatedFetch, showSnackbar, 
   // 모달용: 기존 설정으로 폼 초기화하는 함수
   const loadExistingConfig = (config) => {
     if (config) {
-      setTradingMode(config.trading_mode || 'manual');
-      setEntryPoint(config.entry_point ? config.entry_point.toString() : '');
-      setMaxLoss(config.max_loss ? config.max_loss.toString() : '');
-      setStopLoss(config.stop_loss ? config.stop_loss.toString() : '');
-      setTakeProfit(config.take_profit ? config.take_profit.toString() : '');
+      setTradingMode(config.trading_mode || "manual");
+      setEntryPoint(config.entry_point ? config.entry_point.toString() : "");
+      setMaxLoss(config.max_loss ? config.max_loss.toString() : "");
+      setStopLoss(config.stop_loss ? config.stop_loss.toString() : "");
+      setTakeProfit(config.take_profit ? config.take_profit.toString() : "");
       setPyramidingCount(config.pyramiding_count || 0);
       setPyramidingEntries(config.pyramiding_entries || []);
       setPositions(config.positions || [100]);

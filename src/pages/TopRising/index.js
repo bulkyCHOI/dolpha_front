@@ -154,7 +154,7 @@ function TopRising() {
   // 아코디언 확장 시 스크롤 처리를 위한 커스텀 핸들러
   const handleAccordionChangeWithScroll = (stockCode) => {
     handleAccordionChange(stockCode);
-    
+
     // 아코디언이 확장될 때만 스크롤 처리
     if (stockCode) {
       // 약간의 지연을 두어 아코디언 확장 애니메이션 완료 후 스크롤
@@ -163,9 +163,9 @@ function TopRising() {
         if (accordionElement) {
           // 아코디언 상단이 스크롤 컨테이너의 상단과 맞춰지도록 스크롤
           accordionElement.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start',
-            inline: 'nearest'
+            behavior: "smooth",
+            block: "start",
+            inline: "nearest",
           });
         }
       }, 100);
@@ -602,21 +602,22 @@ function TopRising() {
                                 label={`+${((row.change || 0) * 100).toFixed(1)}%`}
                                 size="small"
                                 sx={{
-                                  backgroundColor: 
-                                    (row.change || 0) * 100 >= 25 
-                                      ? "#f44336"  // 25% 이상: 빨강
-                                      : (row.change || 0) * 100 >= 20 
-                                      ? "#ff5722"  // 20% 이상: 주황
-                                      : (row.change || 0) * 100 >= 15 
-                                      ? "#ffc107"  // 15% 이상: 노랑
-                                      : (row.change || 0) * 100 >= 10 
-                                      ? "#4caf50"  // 10% 이상: 초록
-                                      : (row.change || 0) * 100 >= 5 
-                                      ? "#2196f3"  // 5% 이상: 파랑
+                                  backgroundColor:
+                                    (row.change || 0) * 100 >= 25
+                                      ? "#f44336" // 25% 이상: 빨강
+                                      : (row.change || 0) * 100 >= 20
+                                      ? "#ff5722" // 20% 이상: 주황
+                                      : (row.change || 0) * 100 >= 15
+                                      ? "#ffc107" // 15% 이상: 노랑
+                                      : (row.change || 0) * 100 >= 10
+                                      ? "#4caf50" // 10% 이상: 초록
+                                      : (row.change || 0) * 100 >= 5
+                                      ? "#2196f3" // 5% 이상: 파랑
                                       : "#9e9e9e", // 5% 미만: 회색
-                                  color: (row.change || 0) * 100 >= 15 && (row.change || 0) * 100 < 20 
-                                    ? "black"  // 노란색일 때는 검은색 텍스트
-                                    : "white",
+                                  color:
+                                    (row.change || 0) * 100 >= 15 && (row.change || 0) * 100 < 20
+                                      ? "black" // 노란색일 때는 검은색 텍스트
+                                      : "white",
                                   fontWeight: "bold",
                                   fontSize: { xs: "0.55rem", md: "0.65rem" },
                                   minWidth: { xs: "45px", md: "40px" },
@@ -637,19 +638,20 @@ function TopRising() {
                                 sx={{
                                   backgroundColor:
                                     row.rsRank >= 90
-                                      ? "#f44336"  // 90 이상: 빨강
+                                      ? "#f44336" // 90 이상: 빨강
                                       : row.rsRank >= 80
-                                      ? "#ff5722"  // 80 이상: 주황
+                                      ? "#ff5722" // 80 이상: 주황
                                       : row.rsRank >= 70
-                                      ? "#ffc107"  // 70 이상: 노랑
+                                      ? "#ffc107" // 70 이상: 노랑
                                       : row.rsRank >= 60
-                                      ? "#4caf50"  // 60 이상: 초록
+                                      ? "#4caf50" // 60 이상: 초록
                                       : row.rsRank >= 50
-                                      ? "#2196f3"  // 50 이상: 파랑
+                                      ? "#2196f3" // 50 이상: 파랑
                                       : "#9e9e9e", // 50 이하: 회색
-                                  color: row.rsRank >= 70 && row.rsRank < 80 
-                                    ? "black"  // 노란색일 때는 검은색 텍스트
-                                    : "white",
+                                  color:
+                                    row.rsRank >= 70 && row.rsRank < 80
+                                      ? "black" // 노란색일 때는 검은색 텍스트
+                                      : "white",
                                   fontWeight: "bold",
                                   fontSize: { xs: "0.55rem", md: "0.65rem" },
                                   minWidth: { xs: "35px", md: "30px" },
@@ -836,14 +838,14 @@ function TopRising() {
               { label: "상승률", field: "change", width: 2 },
               { label: "RS순위", field: "rsRank", width: 2 },
               { label: "당기매출", field: "당기매출", width: 2.25 },
-              { label: "영업이익", field: "당기영업이익", width: 2.25 }
+              { label: "영업이익", field: "당기영업이익", width: 2.25 },
             ]}
             getRowData={(stock) => ({
               name: stock.name,
               change: (stock.change || 0) * 100, // 백분율로 변환
               rsRank: stock.rsRank,
-              "당기매출": stock["당기매출"],
-              "당기영업이익": stock["당기영업이익"]
+              당기매출: stock["당기매출"],
+              당기영업이익: stock["당기영업이익"],
             })}
           />
         </MKBox>

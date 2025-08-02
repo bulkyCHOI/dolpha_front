@@ -70,10 +70,7 @@ function MyPage() {
 
   return (
     <>
-      <DefaultNavbar
-        routes={routes}
-        sticky
-      />
+      <DefaultNavbar routes={routes} sticky />
       <MKBox
         minHeight={{ xs: "25vh", md: "30vh" }}
         width="100%"

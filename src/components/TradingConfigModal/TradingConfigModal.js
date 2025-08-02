@@ -27,28 +27,24 @@ import { useAuth } from "contexts/AuthContext";
  * 자동매매 설정 상세보기/수정 모달 컴포넌트
  * useTradingForm 훅을 사용하여 매매모드 변경 시 기본값 자동 로드 기능 제공
  */
-const TradingConfigModal = ({
-  open,
-  onClose,
-  config,
-  onSave,
-  loading = false,
-}) => {
+const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) => {
   const { authenticatedFetch } = useAuth();
   const [message, setMessage] = useState(null);
 
   // 가상의 selectedStock 객체 생성 (config 기반)
-  const selectedStock = config ? {
-    code: config.stock_code,
-    name: config.stock_name
-  } : null;
+  const selectedStock = config
+    ? {
+        code: config.stock_code,
+        name: config.stock_name,
+      }
+    : null;
 
   // useTradingForm 훅 사용 (모달 모드로 설정하여 자동 기본값 로드 비활성화)
   const tradingForm = useTradingForm(
-    selectedStock, 
-    authenticatedFetch, 
+    selectedStock,
+    authenticatedFetch,
     (msg, type) => setMessage({ type, text: msg }),
-    config?.strategy_type || 'mtt',
+    config?.strategy_type || "mtt",
     true // isModal = true로 설정
   );
 
@@ -63,7 +59,7 @@ const TradingConfigModal = ({
 
   // 매매모드에 따른 단위 표시
   const getUnit = () => {
-    return tradingForm.tradingMode === 'manual' ? '%' : 'ATR';
+    return tradingForm.tradingMode === "manual" ? "%" : "ATR";
   };
 
   // 초기화 핸들러
@@ -71,7 +67,6 @@ const TradingConfigModal = ({
     tradingForm.resetTradingForm();
     setMessage({ type: "info", text: "설정이 초기화되었습니다." });
   };
-
 
   // 저장 핸들러
   const handleSave = async () => {
@@ -106,22 +101,25 @@ const TradingConfigModal = ({
       maxWidth="md"
       fullWidth
       PaperProps={{
-        sx: { 
+        sx: {
           borderRadius: 3,
-          maxHeight: '90vh',
-        }
+          maxHeight: "90vh",
+        },
       }}
     >
-      <DialogTitle sx={{ 
-        p: 3, 
-        pb: 1,
-        background: "linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%)",
-        border: "1px solid rgba(102, 126, 234, 0.1)",
-        borderBottom: "none",
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-      }}>
+      <DialogTitle
+        sx={{
+          p: 3,
+          pb: 1,
+          background:
+            "linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%)",
+          border: "1px solid rgba(102, 126, 234, 0.1)",
+          borderBottom: "none",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
         <MKBox>
           <MKTypography variant="h5" fontWeight="bold">
             자동매매 설정 상세보기
@@ -148,12 +146,12 @@ const TradingConfigModal = ({
       <DialogContent sx={{ p: 3, pt: 2 }}>
         {/* 메시지 표시 */}
         {message && (
-          <Alert 
-            severity={message.type} 
-            sx={{ 
-              borderRadius: 2, 
+          <Alert
+            severity={message.type}
+            sx={{
+              borderRadius: 2,
               mb: 3,
-              whiteSpace: 'pre-line' 
+              whiteSpace: "pre-line",
             }}
           >
             {message.text}
@@ -164,13 +162,13 @@ const TradingConfigModal = ({
           {/* 좌측 컬럼 */}
           <Grid item xs={12} md={6}>
             {/* 매매모드 선택 */}
-            <MKBox 
-              sx={{ 
-                p: 2, 
-                mb: 3, 
+            <MKBox
+              sx={{
+                p: 2,
+                mb: 3,
                 border: "1px solid rgba(0, 0, 0, 0.12)",
                 borderRadius: 2,
-                backgroundColor: "rgba(0, 0, 0, 0.02)"
+                backgroundColor: "rgba(0, 0, 0, 0.02)",
               }}
             >
               <MKTypography variant="h6" fontWeight="bold" mb={2}>
@@ -196,33 +194,25 @@ const TradingConfigModal = ({
                   <FormControlLabel
                     value="manual"
                     control={<Radio size="small" />}
-                    label={
-                      <MKTypography sx={{ fontSize: "0.875rem" }}>
-                        Manual
-                      </MKTypography>
-                    }
+                    label={<MKTypography sx={{ fontSize: "0.875rem" }}>Manual</MKTypography>}
                   />
                   <FormControlLabel
                     value="turtle"
                     control={<Radio size="small" />}
-                    label={
-                      <MKTypography sx={{ fontSize: "0.875rem" }}>
-                        Turtle(ATR)
-                      </MKTypography>
-                    }
+                    label={<MKTypography sx={{ fontSize: "0.875rem" }}>Turtle(ATR)</MKTypography>}
                   />
                 </RadioGroup>
               </FormControl>
             </MKBox>
 
             {/* 리스크 관리 설정 */}
-            <MKBox 
-              sx={{ 
-                p: 2, 
-                mb: 3, 
+            <MKBox
+              sx={{
+                p: 2,
+                mb: 3,
                 border: "1px solid rgba(0, 0, 0, 0.12)",
                 borderRadius: 2,
-                backgroundColor: "rgba(0, 0, 0, 0.02)"
+                backgroundColor: "rgba(0, 0, 0, 0.02)",
               }}
             >
               <MKBox display="flex" justifyContent="space-between" alignItems="center" mb={2}>
@@ -244,7 +234,7 @@ const TradingConfigModal = ({
                   </IconButton>
                 </Tooltip>
               </MKBox>
-              
+
               <Grid container spacing={2}>
                 <Grid item xs={12}>
                   <TextField
@@ -337,19 +327,19 @@ const TradingConfigModal = ({
           {/* 우측 컬럼 */}
           <Grid item xs={12} md={6}>
             {/* 포지션 분할 설정 */}
-            <MKBox 
-              sx={{ 
-                p: 2, 
-                mb: 3, 
+            <MKBox
+              sx={{
+                p: 2,
+                mb: 3,
                 border: "1px solid rgba(0, 0, 0, 0.12)",
                 borderRadius: 2,
-                backgroundColor: "rgba(0, 0, 0, 0.02)"
+                backgroundColor: "rgba(0, 0, 0, 0.02)",
               }}
             >
               <MKTypography variant="h6" fontWeight="bold" mb={2}>
                 포지션 분할 설정
               </MKTypography>
-              
+
               {/* 첫 번째 행: 피라미딩 횟수, 균등분할 */}
               <Grid container spacing={2} alignItems="center" mb={2}>
                 <Grid item xs={7}>
@@ -455,9 +445,11 @@ const TradingConfigModal = ({
                         label={`${index + 2}차 진입시점 (${getUnit()})`}
                         type="number"
                         value={entry}
-                        onChange={(e) => tradingForm.handlePyramidingEntryChange(index, e.target.value)}
-                        placeholder={tradingForm.tradingMode === 'manual' ? '예: 4' : '예: 1.5'}
-                        inputProps={{ step: tradingForm.tradingMode === 'manual' ? 1 : 0.1 }}
+                        onChange={(e) =>
+                          tradingForm.handlePyramidingEntryChange(index, e.target.value)
+                        }
+                        placeholder={tradingForm.tradingMode === "manual" ? "예: 4" : "예: 1.5"}
+                        inputProps={{ step: tradingForm.tradingMode === "manual" ? 1 : 0.1 }}
                         sx={{
                           "& .MuiOutlinedInput-root": {
                             "&.Mui-focused fieldset": {
@@ -477,7 +469,9 @@ const TradingConfigModal = ({
                         label={`${index + 2}차 포지션 (%)`}
                         type="number"
                         value={tradingForm.positions[index + 1] || ""}
-                        onChange={(e) => tradingForm.handlePositionChange(index + 1, e.target.value)}
+                        onChange={(e) =>
+                          tradingForm.handlePositionChange(index + 1, e.target.value)
+                        }
                         inputProps={{ min: 0, max: 100, step: 0.1 }}
                         sx={{
                           "& .MuiOutlinedInput-root": {
@@ -494,11 +488,11 @@ const TradingConfigModal = ({
                   </Grid>
                 ))}
               </MKBox>
-              
+
               {/* 포지션 합계 표시 */}
               <MKBox display="flex" justifyContent="space-between" alignItems="center">
-                <MKTypography 
-                  variant="body2" 
+                <MKTypography
+                  variant="body2"
                   sx={{
                     color: Math.abs(tradingForm.positionSum - 100) >= 0.01 ? "#f44336" : "#4caf50",
                     fontWeight: "bold",
@@ -525,7 +519,8 @@ const TradingConfigModal = ({
                   }}
                 >
                   <MKTypography variant="caption" sx={{ color: "#856404", fontWeight: "bold" }}>
-                    ⚠️ 포지션의 합이 100%가 되어야 합니다. (현재: {tradingForm.positionSum.toFixed(1)}%)
+                    ⚠️ 포지션의 합이 100%가 되어야 합니다. (현재:{" "}
+                    {tradingForm.positionSum.toFixed(1)}%)
                   </MKTypography>
                 </MKBox>
               )}

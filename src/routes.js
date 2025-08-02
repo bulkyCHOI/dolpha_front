@@ -40,16 +40,16 @@ Coded by www.creative-tim.com
 import Icon from "@mui/material/Icon";
 
 // Pages
-import SignIn from "layouts/pages/authentication/sign-in";
+import SignIn from "pages/SignIn";
 import MyPage from "pages/MyPage";
 import Logout from "pages/Logout";
-import MTT from "./layouts/pages/mtt";
-import WeeklyHigh from "./layouts/pages/weekly-high";
-import IssueInfo from "./layouts/pages/issue-info";
+import MTT from "pages/MTT";
+import WeeklyHigh from "pages/WeeklyHigh";
+import IssueInfo from "pages/IssueInfo";
 import TopRising from "pages/TopRising";
 import FiftyDayHigh from "pages/FiftyDayHigh";
 import TradingConfigs from "pages/TradingConfigs";
-import DailyNewsClipping from "./layouts/pages/daily-news-clipping";
+import DailyNewsClipping from "pages/DailyNewsClipping";
 import ProtectedRoute from "components/ProtectedRoute";
 
 const routes = [
@@ -69,7 +69,7 @@ const routes = [
           },
           {
             name: "52주 신고가",
-            route: "/weekly-high", 
+            route: "/weekly-high",
             component: <WeeklyHigh />,
           },
           {

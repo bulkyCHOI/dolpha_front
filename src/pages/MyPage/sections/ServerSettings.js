@@ -153,16 +153,17 @@ function ServerSettings() {
       <Grid container spacing={3}>
         {/* 상태 요약 카드 */}
         <Grid item xs={12}>
-          <Card 
-            sx={{ 
+          <Card
+            sx={{
               p: { xs: 2, md: 3 },
-              background: connectionStatus === "connected" 
-                ? "linear-gradient(135deg, rgba(76, 175, 80, 0.08) 0%, rgba(102, 126, 234, 0.08) 100%)"
-                : connectionStatus === "failed"
-                ? "linear-gradient(135deg, rgba(244, 67, 54, 0.08) 0%, rgba(255, 152, 0, 0.08) 100%)"
-                : "linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%)",
+              background:
+                connectionStatus === "connected"
+                  ? "linear-gradient(135deg, rgba(76, 175, 80, 0.08) 0%, rgba(102, 126, 234, 0.08) 100%)"
+                  : connectionStatus === "failed"
+                  ? "linear-gradient(135deg, rgba(244, 67, 54, 0.08) 0%, rgba(255, 152, 0, 0.08) 100%)"
+                  : "linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%)",
               border: `1px solid ${
-                connectionStatus === "connected" 
+                connectionStatus === "connected"
                   ? "rgba(76, 175, 80, 0.2)"
                   : connectionStatus === "failed"
                   ? "rgba(244, 67, 54, 0.2)"
@@ -182,7 +183,13 @@ function ServerSettings() {
                   </MKTypography>
                 </MKBox>
               </Grid>
-              <Grid item xs={12} md={4} display="flex" justifyContent={{ xs: "flex-start", md: "flex-end" }}>
+              <Grid
+                item
+                xs={12}
+                md={4}
+                display="flex"
+                justifyContent={{ xs: "flex-start", md: "flex-end" }}
+              >
                 <MKBox textAlign={{ xs: "left", md: "right" }}>
                   <MKTypography variant="body2" color="text" mb={1}>
                     연결 상태
@@ -202,11 +209,11 @@ function ServerSettings() {
         {/* 상태 알림 */}
         {connectionStatus === "failed" && (
           <Grid item xs={12}>
-            <Alert 
-              severity="error" 
-              sx={{ 
+            <Alert
+              severity="error"
+              sx={{
                 borderRadius: 2,
-                "& .MuiAlert-icon": { fontSize: "1.5rem" }
+                "& .MuiAlert-icon": { fontSize: "1.5rem" },
               }}
             >
               서버 연결에 실패했습니다. IP 주소와 포트를 확인해주세요.
@@ -216,11 +223,11 @@ function ServerSettings() {
 
         {connectionStatus === "connected" && (
           <Grid item xs={12}>
-            <Alert 
-              severity="success" 
-              sx={{ 
+            <Alert
+              severity="success"
+              sx={{
                 borderRadius: 2,
-                "& .MuiAlert-icon": { fontSize: "1.5rem" }
+                "& .MuiAlert-icon": { fontSize: "1.5rem" },
               }}
             >
               서버가 정상적으로 연결되었습니다.

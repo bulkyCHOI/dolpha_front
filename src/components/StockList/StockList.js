@@ -5,15 +5,15 @@ import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
 import { formatNumber } from "utils/formatters";
 
-function StockList({ 
-  stocks, 
-  loading, 
-  error, 
-  selectedStock, 
-  onStockClick, 
-  getColumnHeaders, 
+function StockList({
+  stocks,
+  loading,
+  error,
+  selectedStock,
+  onStockClick,
+  getColumnHeaders,
   getRowData,
-  disableStripes = false 
+  disableStripes = false,
 }) {
   // 로딩 상태
   if (loading) {
@@ -79,12 +79,14 @@ function StockList({
   }
 
   // 컬럼 헤더 정의 (기본값 또는 전달받은 값 사용)
-  const columnHeaders = getColumnHeaders ? getColumnHeaders() : [
-    { label: "종목명", field: "name", width: 3.5 },
-    { label: "RS순위", field: "rsRank", width: 2.5 },
-    { label: "당기매출", field: "당기매출", width: 3 },
-    { label: "영업이익", field: "당기영업이익", width: 3 },
-  ];
+  const columnHeaders = getColumnHeaders
+    ? getColumnHeaders()
+    : [
+        { label: "종목명", field: "name", width: 3.5 },
+        { label: "RS순위", field: "rsRank", width: 2.5 },
+        { label: "당기매출", field: "당기매출", width: 3 },
+        { label: "영업이익", field: "당기영업이익", width: 3 },
+      ];
 
   // 행 데이터 변환 함수
   const getRowDataForDisplay = (stock) => {
@@ -95,8 +97,8 @@ function StockList({
     return {
       name: stock.name,
       rsRank: stock.rsRank,
-      "당기매출": stock["당기매출"],
-      "당기영업이익": stock["당기영업이익"],
+      당기매출: stock["당기매출"],
+      당기영업이익: stock["당기영업이익"],
     };
   };
 
@@ -116,10 +118,10 @@ function StockList({
         <Grid container spacing={0}>
           {columnHeaders.map((header, index) => (
             <Grid key={header.field} item xs={header.width || 12 / columnHeaders.length}>
-              <MKTypography 
-                variant="subtitle2" 
-                color="white" 
-                fontWeight="bold" 
+              <MKTypography
+                variant="subtitle2"
+                color="white"
+                fontWeight="bold"
                 textAlign={index === 0 ? "left" : "center"}
               >
                 {header.label}
@@ -165,7 +167,11 @@ function StockList({
                 backgroundColor:
                   selectedStock?.code === row.code
                     ? "linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)"
-                    : disableStripes ? "white" : (rowIndex % 2 === 0 ? "#fafafa" : "white"),
+                    : disableStripes
+                    ? "white"
+                    : rowIndex % 2 === 0
+                    ? "#fafafa"
+                    : "white",
                 "&:hover": {
                   backgroundColor: "rgba(102, 126, 234, 0.08)",
                   transform: "translateX(4px)",
@@ -211,19 +217,20 @@ function StockList({
                           sx={{
                             backgroundColor:
                               rowData[header.field] >= 90
-                                ? "#f44336"  // 90 이상: 빨강
+                                ? "#f44336" // 90 이상: 빨강
                                 : rowData[header.field] >= 80
-                                ? "#ff5722"  // 80 이상: 주황
+                                ? "#ff5722" // 80 이상: 주황
                                 : rowData[header.field] >= 70
-                                ? "#ffc107"  // 70 이상: 노랑
+                                ? "#ffc107" // 70 이상: 노랑
                                 : rowData[header.field] >= 60
-                                ? "#4caf50"  // 60 이상: 초록
+                                ? "#4caf50" // 60 이상: 초록
                                 : rowData[header.field] >= 50
-                                ? "#2196f3"  // 50 이상: 파랑
+                                ? "#2196f3" // 50 이상: 파랑
                                 : "#9e9e9e", // 50 이하: 회색
-                            color: rowData[header.field] >= 70 && rowData[header.field] < 80 
-                              ? "black"  // 노란색일 때는 검은색 텍스트
-                              : "white",
+                            color:
+                              rowData[header.field] >= 70 && rowData[header.field] < 80
+                                ? "black" // 노란색일 때는 검은색 텍스트
+                                : "white",
                             fontWeight: "bold",
                             fontSize: "0.7rem",
                             minWidth: "35px",
@@ -240,16 +247,16 @@ function StockList({
                           sx={{
                             backgroundColor:
                               rowData[header.field] >= 300
-                                ? "#f44336"      // 300%이상 빨강
+                                ? "#f44336" // 300%이상 빨강
                                 : rowData[header.field] >= 200
-                                ? "#ff9800"      // 200%이상 주황
+                                ? "#ff9800" // 200%이상 주황
                                 : rowData[header.field] >= 100
-                                ? "#ffeb3b"      // 100%이상 노랑
+                                ? "#ffeb3b" // 100%이상 노랑
                                 : rowData[header.field] >= 75
-                                ? "#4caf50"      // 75%이상 녹색
+                                ? "#4caf50" // 75%이상 녹색
                                 : rowData[header.field] >= 50
-                                ? "#2196f3"      // 50%이상 파랑
-                                : "#9e9e9e",     // 50%미만 회색
+                                ? "#2196f3" // 50%이상 파랑
+                                : "#9e9e9e", // 50%미만 회색
                             color: "white",
                             fontWeight: "bold",
                             fontSize: "0.7rem",
@@ -265,21 +272,22 @@ function StockList({
                           label={`+${(rowData[header.field] || 0).toFixed(1)}%`}
                           size="small"
                           sx={{
-                            backgroundColor: 
-                              rowData[header.field] >= 25 
-                                ? "#f44336"  // 25% 이상: 빨강
-                                : rowData[header.field] >= 20 
-                                ? "#ff5722"  // 20% 이상: 주황
-                                : rowData[header.field] >= 15 
-                                ? "#ffc107"  // 15% 이상: 노랑
-                                : rowData[header.field] >= 10 
-                                ? "#4caf50"  // 10% 이상: 초록
-                                : rowData[header.field] >= 5 
-                                ? "#2196f3"  // 5% 이상: 파랑
+                            backgroundColor:
+                              rowData[header.field] >= 25
+                                ? "#f44336" // 25% 이상: 빨강
+                                : rowData[header.field] >= 20
+                                ? "#ff5722" // 20% 이상: 주황
+                                : rowData[header.field] >= 15
+                                ? "#ffc107" // 15% 이상: 노랑
+                                : rowData[header.field] >= 10
+                                ? "#4caf50" // 10% 이상: 초록
+                                : rowData[header.field] >= 5
+                                ? "#2196f3" // 5% 이상: 파랑
                                 : "#9e9e9e", // 5% 미만: 회색
-                            color: rowData[header.field] >= 15 && rowData[header.field] < 20 
-                              ? "black"  // 노란색일 때는 검은색 텍스트
-                              : "white",
+                            color:
+                              rowData[header.field] >= 15 && rowData[header.field] < 20
+                                ? "black" // 노란색일 때는 검은색 텍스트
+                                : "white",
                             fontWeight: "bold",
                             fontSize: "0.7rem",
                             minWidth: "40px",
@@ -296,11 +304,14 @@ function StockList({
                           fontWeight="bold"
                           sx={{
                             fontSize: "0.75rem",
-                            color: typeof rowData[header.field] === 'number' && rowData[header.field] < 0 ? "#1976d2" : "inherit",
+                            color:
+                              typeof rowData[header.field] === "number" && rowData[header.field] < 0
+                                ? "#1976d2"
+                                : "inherit",
                           }}
                         >
-                          {typeof rowData[header.field] === 'number' 
-                            ? formatNumber(rowData[header.field]) 
+                          {typeof rowData[header.field] === "number"
+                            ? formatNumber(rowData[header.field])
                             : rowData[header.field] || "-"}
                         </MKTypography>
                       </MKBox>

@@ -14,7 +14,7 @@ function Logout() {
       if (isAuthenticated) {
         // 로그아웃 실행
         logout();
-        
+
         // 잠시 대기 후 홈페이지로 리다이렉트
         setTimeout(() => {
           navigate("/", { replace: true });

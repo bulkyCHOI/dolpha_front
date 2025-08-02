@@ -59,7 +59,7 @@ function FiftyDayHigh() {
     deleteAutotradingConfig,
     toggleAutotradingConfig,
     handleAccordionChange,
-  } = useAutotradingConfig(authenticatedFetch, showSnackbar, 'fifty_day_high');
+  } = useAutotradingConfig(authenticatedFetch, showSnackbar, "fifty_day_high");
 
   const {
     stockData,
@@ -76,7 +76,12 @@ function FiftyDayHigh() {
     setSelectedStock,
   } = use50DayHighData();
 
-  const tradingForm = useTradingForm(selectedStock, authenticatedFetch, showSnackbar, 'fifty_day_high');
+  const tradingForm = useTradingForm(
+    selectedStock,
+    authenticatedFetch,
+    showSnackbar,
+    "fifty_day_high"
+  );
 
   const chartInteractions = useChartInteractions(
     tradingForm.entryPoint,
@@ -163,7 +168,7 @@ function FiftyDayHigh() {
   // 아코디언 확장 시 스크롤 처리를 위한 커스텀 핸들러
   const handleAccordionChangeWithScroll = (stockCode) => {
     handleAccordionChange(stockCode);
-    
+
     // 아코디언이 확장될 때만 스크롤 처리
     if (stockCode) {
       // 약간의 지연을 두어 아코디언 확장 애니메이션 완료 후 스크롤
@@ -172,9 +177,9 @@ function FiftyDayHigh() {
         if (accordionElement) {
           // 아코디언 상단이 스크롤 컨테이너의 상단과 맞춰지도록 스크롤
           accordionElement.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start',
-            inline: 'nearest'
+            behavior: "smooth",
+            block: "start",
+            inline: "nearest",
           });
         }
       }, 100);
@@ -193,8 +198,8 @@ function FiftyDayHigh() {
     name: stock.name,
     min_50d_gain_percent: stock.min_50d_gain_percent,
     rsRank: Math.floor(stock.rsRank),
-    "당기매출": stock["당기매출"],
-    "당기영업이익": stock["당기영업이익"],
+    당기매출: stock["당기매출"],
+    당기영업이익: stock["당기영업이익"],
   });
 
   if (authLoading) {
@@ -464,9 +469,7 @@ function FiftyDayHigh() {
                 justifyContent: "center",
               }}
             >
-              <MKTypography color="error">
-                데이터 로드 중 오류가 발생했습니다: {error}
-              </MKTypography>
+              <MKTypography color="error">데이터 로드 중 오류가 발생했습니다: {error}</MKTypography>
             </MKBox>
           )}
 
@@ -599,9 +602,7 @@ function FiftyDayHigh() {
                             <MKBox>
                               <MKTypography
                                 variant="body2"
-                                fontWeight={
-                                  selectedStock?.code === row.code ? "bold" : "medium"
-                                }
+                                fontWeight={selectedStock?.code === row.code ? "bold" : "medium"}
                                 color={selectedStock?.code === row.code ? "info" : "text"}
                                 sx={{
                                   fontSize: { xs: "0.7rem", md: "0.8rem" },
@@ -633,16 +634,16 @@ function FiftyDayHigh() {
                                 sx={{
                                   backgroundColor:
                                     row.min_50d_gain_percent >= 60
-                                      ? "#f44336"      // 60%이상 빨강 (52주 300% 대응)
+                                      ? "#f44336" // 60%이상 빨강 (52주 300% 대응)
                                       : row.min_50d_gain_percent >= 40
-                                      ? "#ff9800"      // 40%이상 주황 (52주 200% 대응)
+                                      ? "#ff9800" // 40%이상 주황 (52주 200% 대응)
                                       : row.min_50d_gain_percent >= 20
-                                      ? "#ffeb3b"      // 20%이상 노랑 (52주 100% 대응)
+                                      ? "#ffeb3b" // 20%이상 노랑 (52주 100% 대응)
                                       : row.min_50d_gain_percent >= 15
-                                      ? "#4caf50"      // 15%이상 녹색 (52주 75% 대응)
+                                      ? "#4caf50" // 15%이상 녹색 (52주 75% 대응)
                                       : row.min_50d_gain_percent >= 10
-                                      ? "#2196f3"      // 10%이상 파랑 (52주 50% 대응)
-                                      : "#9e9e9e",     // 10%미만 회색
+                                      ? "#2196f3" // 10%이상 파랑 (52주 50% 대응)
+                                      : "#9e9e9e", // 10%미만 회색
                                   color: "white",
                                   fontWeight: "bold",
                                   fontSize: { xs: "0.6rem", md: "0.7rem" },
@@ -664,19 +665,20 @@ function FiftyDayHigh() {
                                 sx={{
                                   backgroundColor:
                                     row.rsRank >= 90
-                                      ? "#f44336"  // 90 이상: 빨강
+                                      ? "#f44336" // 90 이상: 빨강
                                       : row.rsRank >= 80
-                                      ? "#ff5722"  // 80 이상: 주황
+                                      ? "#ff5722" // 80 이상: 주황
                                       : row.rsRank >= 70
-                                      ? "#ffc107"  // 70 이상: 노랑
+                                      ? "#ffc107" // 70 이상: 노랑
                                       : row.rsRank >= 60
-                                      ? "#4caf50"  // 60 이상: 초록
+                                      ? "#4caf50" // 60 이상: 초록
                                       : row.rsRank >= 50
-                                      ? "#2196f3"  // 50 이상: 파랑
+                                      ? "#2196f3" // 50 이상: 파랑
                                       : "#9e9e9e", // 50 이하: 회색
-                                  color: row.rsRank >= 70 && row.rsRank < 80 
-                                    ? "black"  // 노란색일 때는 검은색 텍스트
-                                    : "white",
+                                  color:
+                                    row.rsRank >= 70 && row.rsRank < 80
+                                      ? "black" // 노란색일 때는 검은색 텍스트
+                                      : "white",
                                   fontWeight: "bold",
                                   fontSize: { xs: "0.6rem", md: "0.7rem" },
                                   minWidth: { xs: "30px", md: "35px" },

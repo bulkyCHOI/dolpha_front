@@ -85,20 +85,21 @@ function Profile() {
       <Grid container spacing={3}>
         {/* 프로필 헤더 카드 */}
         <Grid item xs={12}>
-          <Card 
-            sx={{ 
+          <Card
+            sx={{
               p: { xs: 2, md: 3 },
-              background: "linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%)",
+              background:
+                "linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%)",
               border: "1px solid rgba(102, 126, 234, 0.1)",
               borderRadius: 3,
             }}
           >
             <Grid container spacing={3} alignItems="center">
               <Grid item xs={12} sm={4} md={3} display="flex" justifyContent="center">
-                <Avatar 
-                  src={userInfo.profilePicture} 
-                  sx={{ 
-                    width: { xs: 100, md: 120 }, 
+                <Avatar
+                  src={userInfo.profilePicture}
+                  sx={{
+                    width: { xs: 100, md: 120 },
                     height: { xs: 100, md: 120 },
                     border: "4px solid rgba(102, 126, 234, 0.2)",
                     boxShadow: "0 8px 32px rgba(102, 126, 234, 0.2)",
@@ -115,7 +116,12 @@ function Profile() {
                   <MKTypography variant="h6" color="text" mb={1} opacity={0.8}>
                     {userInfo.email}
                   </MKTypography>
-                  <MKBox display="flex" alignItems="center" justifyContent={{ xs: "center", sm: "flex-start" }} gap={1}>
+                  <MKBox
+                    display="flex"
+                    alignItems="center"
+                    justifyContent={{ xs: "center", sm: "flex-start" }}
+                    gap={1}
+                  >
                     <MKTypography variant="body2" color="text">
                       가입일: {userInfo.joinDate}
                     </MKTypography>

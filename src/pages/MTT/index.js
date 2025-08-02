@@ -59,7 +59,7 @@ function MTT() {
     deleteAutotradingConfig,
     toggleAutotradingConfig,
     handleAccordionChange,
-  } = useAutotradingConfig(authenticatedFetch, showSnackbar, 'mtt');
+  } = useAutotradingConfig(authenticatedFetch, showSnackbar, "mtt");
 
   const {
     stockData,
@@ -76,7 +76,7 @@ function MTT() {
     setSelectedStock,
   } = useStockData();
 
-  const tradingForm = useTradingForm(selectedStock, authenticatedFetch, showSnackbar, 'mtt');
+  const tradingForm = useTradingForm(selectedStock, authenticatedFetch, showSnackbar, "mtt");
 
   const chartInteractions = useChartInteractions(
     tradingForm.entryPoint,
@@ -157,7 +157,7 @@ function MTT() {
   // 아코디언 확장 시 스크롤 처리를 위한 커스텀 핸들러
   const handleAccordionChangeWithScroll = (stockCode) => {
     handleAccordionChange(stockCode);
-    
+
     // 아코디언이 확장될 때만 스크롤 처리
     if (stockCode) {
       // 약간의 지연을 두어 아코디언 확장 애니메이션 완료 후 스크롤
@@ -166,9 +166,9 @@ function MTT() {
         if (accordionElement) {
           // 아코디언 상단이 스크롤 컨테이너의 상단과 맞춰지도록 스크롤
           accordionElement.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start',
-            inline: 'nearest'
+            behavior: "smooth",
+            block: "start",
+            inline: "nearest",
           });
         }
       }, 100);
@@ -856,19 +856,20 @@ function MTT() {
                                       sx={{
                                         backgroundColor:
                                           row.rsRank >= 90
-                                            ? "#f44336"  // 90 이상: 빨강
+                                            ? "#f44336" // 90 이상: 빨강
                                             : row.rsRank >= 80
-                                            ? "#ff5722"  // 80 이상: 주황
+                                            ? "#ff5722" // 80 이상: 주황
                                             : row.rsRank >= 70
-                                            ? "#ffc107"  // 70 이상: 노랑
+                                            ? "#ffc107" // 70 이상: 노랑
                                             : row.rsRank >= 60
-                                            ? "#4caf50"  // 60 이상: 초록
+                                            ? "#4caf50" // 60 이상: 초록
                                             : row.rsRank >= 50
-                                            ? "#2196f3"  // 50 이상: 파랑
+                                            ? "#2196f3" // 50 이상: 파랑
                                             : "#9e9e9e", // 50 이하: 회색
-                                        color: row.rsRank >= 70 && row.rsRank < 80 
-                                          ? "black"  // 노란색일 때는 검은색 텍스트
-                                          : "white",
+                                        color:
+                                          row.rsRank >= 70 && row.rsRank < 80
+                                            ? "black" // 노란색일 때는 검은색 텍스트
+                                            : "white",
                                         fontWeight: "bold",
                                         fontSize: { xs: "0.6rem", md: "0.7rem" },
                                         minWidth: { xs: "30px", md: "35px" },
@@ -889,11 +890,11 @@ function MTT() {
                                       sx={{
                                         backgroundColor:
                                           row.mtt_duration_days >= 30
-                                            ? "#4caf50"  // 30일 이상: 초록
+                                            ? "#4caf50" // 30일 이상: 초록
                                             : row.mtt_duration_days >= 14
-                                            ? "#ff9800"  // 14일 이상: 오렌지
+                                            ? "#ff9800" // 14일 이상: 오렌지
                                             : row.mtt_duration_days >= 7
-                                            ? "#2196f3"  // 7일 이상: 파랑
+                                            ? "#2196f3" // 7일 이상: 파랑
                                             : "#9e9e9e", // 7일 미만: 회색
                                         color: "white",
                                         fontWeight: "bold",

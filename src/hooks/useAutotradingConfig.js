@@ -3,7 +3,7 @@ import { useState } from "react";
 /**
  * 자동매매 설정 관리 훅
  */
-export const useAutotradingConfig = (authenticatedFetch, showSnackbar, strategyType = 'mtt') => {
+export const useAutotradingConfig = (authenticatedFetch, showSnackbar, strategyType = "mtt") => {
   const [autotradingList, setAutotradingList] = useState([]);
   const [expandedAccordion, setExpandedAccordion] = useState(null);
 
@@ -18,7 +18,9 @@ export const useAutotradingConfig = (authenticatedFetch, showSnackbar, strategyT
 
       // 서버 설정이 확인되면 자동매매 목록 가져오기 (strategy_type 필터 적용)
       // Django DB에서 직접 조회하도록 변경
-      const response = await authenticatedFetch(`${apiBaseUrl}/api/mypage/trading-configs?strategy_type=${strategyType}`);
+      const response = await authenticatedFetch(
+        `${apiBaseUrl}/api/mypage/trading-configs?strategy_type=${strategyType}`
+      );
 
       if (response.ok) {
         const configs = await response.json();

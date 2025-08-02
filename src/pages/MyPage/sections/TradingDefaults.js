@@ -75,13 +75,13 @@ function TradingDefaults() {
 
   // 매매모드에 따른 단위 표시
   const getUnit = () => {
-    return defaults.trading_mode === 'manual' ? '%' : 'ATR';
+    return defaults.trading_mode === "manual" ? "%" : "ATR";
   };
 
   // 현재 매매모드에 따른 설정값 가져오기
   const getCurrentModeDefaults = () => {
     const mode = defaults.trading_mode;
-    if (mode === 'manual') {
+    if (mode === "manual") {
       return {
         max_loss: defaults.manual_max_loss,
         stop_loss: defaults.manual_stop_loss,
@@ -155,46 +155,46 @@ function TradingDefaults() {
   };
 
   const handleInputChange = (field, value) => {
-    setDefaults(prev => {
+    setDefaults((prev) => {
       const newDefaults = { ...prev };
       const mode = prev.trading_mode;
-      
+
       // 매매모드에 따라 해당 모드의 필드 업데이트
-      if (field === 'trading_mode') {
+      if (field === "trading_mode") {
         newDefaults[field] = value;
       } else {
-        const modePrefix = mode === 'manual' ? 'manual_' : 'turtle_';
+        const modePrefix = mode === "manual" ? "manual_" : "turtle_";
         newDefaults[modePrefix + field] = value;
-        
+
         // 피라미딩 횟수가 변경될 때 포지션 배열 자동 업데이트
-        if (field === 'pyramiding_count') {
+        if (field === "pyramiding_count") {
           const pyramidingCount = parseInt(value) || 0;
           const totalEntries = pyramidingCount + 1;
           const basePosition = Math.floor(100 / totalEntries); // 정수로 내림
-          const remainder = 100 - (basePosition * totalEntries); // 나머지 계산
-          
+          const remainder = 100 - basePosition * totalEntries; // 나머지 계산
+
           // 새로운 포지션 배열 생성 (정수 균등분할 + 나머지를 1차에 할당)
           const newPositions = Array(totalEntries).fill(basePosition);
           newPositions[0] = basePosition + remainder; // 나머지를 1차에 추가
-          newDefaults[modePrefix + 'positions'] = newPositions;
-          
+          newDefaults[modePrefix + "positions"] = newPositions;
+
           // 피라미딩 진입시점 배열도 업데이트 (2차부터)
           const newPyramidingEntries = Array(pyramidingCount).fill("");
-          newDefaults[modePrefix + 'pyramiding_entries'] = newPyramidingEntries;
+          newDefaults[modePrefix + "pyramiding_entries"] = newPyramidingEntries;
         }
       }
-      
+
       return newDefaults;
     });
   };
 
   // 개별 포지션 변경 핸들러
   const handlePositionChange = (index, value) => {
-    setDefaults(prev => {
+    setDefaults((prev) => {
       const mode = prev.trading_mode;
-      const modePrefix = mode === 'manual' ? 'manual_' : 'turtle_';
-      const positionsField = modePrefix + 'positions';
-      
+      const modePrefix = mode === "manual" ? "manual_" : "turtle_";
+      const positionsField = modePrefix + "positions";
+
       const newPositions = [...(prev[positionsField] || [])];
       newPositions[index] = parseFloat(value) || 0;
       return { ...prev, [positionsField]: newPositions };
@@ -203,11 +203,11 @@ function TradingDefaults() {
 
   // 피라미딩 진입시점 변경 핸들러
   const handlePyramidingEntryChange = (index, value) => {
-    setDefaults(prev => {
+    setDefaults((prev) => {
       const mode = prev.trading_mode;
-      const modePrefix = mode === 'manual' ? 'manual_' : 'turtle_';
-      const entriesField = modePrefix + 'pyramiding_entries';
-      
+      const modePrefix = mode === "manual" ? "manual_" : "turtle_";
+      const entriesField = modePrefix + "pyramiding_entries";
+
       const newPyramidingEntries = [...(prev[entriesField] || [])];
       newPyramidingEntries[index] = value;
       return { ...prev, [entriesField]: newPyramidingEntries };
@@ -219,16 +219,16 @@ function TradingDefaults() {
     const currentModeDefaults = getCurrentModeDefaults();
     const totalEntries = (currentModeDefaults.pyramiding_count || 0) + 1;
     const basePosition = Math.floor(100 / totalEntries); // 정수로 내림
-    const remainder = 100 - (basePosition * totalEntries); // 나머지 계산
-    
+    const remainder = 100 - basePosition * totalEntries; // 나머지 계산
+
     const newPositions = Array(totalEntries).fill(basePosition);
     // 나머지를 1차 포지션(인덱스 0)에 추가
     newPositions[0] = basePosition + remainder;
-    
-    setDefaults(prev => {
+
+    setDefaults((prev) => {
       const mode = prev.trading_mode;
-      const modePrefix = mode === 'manual' ? 'manual_' : 'turtle_';
-      return { ...prev, [modePrefix + 'positions']: newPositions };
+      const modePrefix = mode === "manual" ? "manual_" : "turtle_";
+      return { ...prev, [modePrefix + "positions"]: newPositions };
     });
   };
 
@@ -238,29 +238,29 @@ function TradingDefaults() {
     const totalEntries = pyramidingCount + 1; // 1차만
     const newPositions = [100]; // 1차에 100% 할당
     const newPyramidingEntries = Array(pyramidingCount).fill("");
-    
-    setDefaults(prev => {
+
+    setDefaults((prev) => {
       const mode = prev.trading_mode;
-      const modePrefix = mode === 'manual' ? 'manual_' : 'turtle_';
-      return { 
+      const modePrefix = mode === "manual" ? "manual_" : "turtle_";
+      return {
         ...prev,
-        [modePrefix + 'pyramiding_count']: pyramidingCount, // 피라미딩 횟수도 0으로 재설정
-        [modePrefix + 'positions']: newPositions,
-        [modePrefix + 'pyramiding_entries']: newPyramidingEntries
+        [modePrefix + "pyramiding_count"]: pyramidingCount, // 피라미딩 횟수도 0으로 재설정
+        [modePrefix + "positions"]: newPositions,
+        [modePrefix + "pyramiding_entries"]: newPyramidingEntries,
       };
     });
   };
 
   // 포지션 합계 계산
-  const positionSum = getCurrentModeDefaults().positions?.reduce((sum, pos) => sum + (parseFloat(pos) || 0), 0) || 0;
+  const positionSum =
+    getCurrentModeDefaults().positions?.reduce((sum, pos) => sum + (parseFloat(pos) || 0), 0) || 0;
 
   const toggleSection = (section) => {
-    setExpandedSections(prev => ({
+    setExpandedSections((prev) => ({
       ...prev,
-      [section]: !prev[section]
+      [section]: !prev[section],
     }));
   };
-
 
   const renderCompactSection = (title, children) => (
     <Card sx={{ mb: 2, borderRadius: 2 }}>
@@ -291,7 +291,8 @@ function TradingDefaults() {
               자동매매 기본설정
             </MKTypography>
             <MKTypography variant="body2" color="text" opacity={0.8}>
-              새로운 자동매매 설정 시 사용될 기본값을 관리하세요. 설정된 기본값은 자동매매 설정 생성 시 자동으로 적용됩니다.
+              새로운 자동매매 설정 시 사용될 기본값을 관리하세요. 설정된 기본값은 자동매매 설정 생성
+              시 자동으로 적용됩니다.
             </MKTypography>
           </MKBox>
         </Grid>
@@ -299,7 +300,7 @@ function TradingDefaults() {
         {/* 메시지 표시 */}
         {message && (
           <Grid item xs={12}>
-            <Alert severity={message.type} sx={{ borderRadius: 2, mb: 1, whiteSpace: 'pre-line' }}>
+            <Alert severity={message.type} sx={{ borderRadius: 2, mb: 1, whiteSpace: "pre-line" }}>
               {message.text}
             </Alert>
           </Grid>
@@ -308,29 +309,27 @@ function TradingDefaults() {
         {/* 좌측 컬럼 */}
         <Grid item xs={12} md={6}>
           {/* 매매모드 선택 */}
-          {renderCompactSection("매매모드 선택", (
+          {renderCompactSection(
+            "매매모드 선택",
             <FormControl component="fieldset">
               <RadioGroup
                 row
                 value={defaults.trading_mode}
                 onChange={(e) => handleInputChange("trading_mode", e.target.value)}
               >
-                <FormControlLabel 
-                  value="manual" 
-                  control={<Radio size="small" />} 
-                  label="Manual" 
-                />
-                <FormControlLabel 
-                  value="turtle" 
-                  control={<Radio size="small" />} 
-                  label="Turtle(ATR)" 
+                <FormControlLabel value="manual" control={<Radio size="small" />} label="Manual" />
+                <FormControlLabel
+                  value="turtle"
+                  control={<Radio size="small" />}
+                  label="Turtle(ATR)"
                 />
               </RadioGroup>
             </FormControl>
-          ))}
+          )}
 
           {/* 리스크 관리 설정 */}
-          {renderCompactSection("리스크 관리 설정", (
+          {renderCompactSection(
+            "리스크 관리 설정",
             <Grid container spacing={2}>
               <Grid item xs={6}>
                 <TextField
@@ -359,7 +358,12 @@ function TradingDefaults() {
                   label={`익절가 (${getUnit()})`}
                   type="number"
                   value={getCurrentModeDefaults().take_profit || ""}
-                  onChange={(e) => handleInputChange("take_profit", e.target.value ? parseFloat(e.target.value) : null)}
+                  onChange={(e) =>
+                    handleInputChange(
+                      "take_profit",
+                      e.target.value ? parseFloat(e.target.value) : null
+                    )
+                  }
                 />
               </Grid>
               <Grid item xs={6}>
@@ -369,7 +373,9 @@ function TradingDefaults() {
                   label={`트레일링 스탑 (${getUnit()})`}
                   type="number"
                   value={getCurrentModeDefaults().trailing_stop_percent}
-                  onChange={(e) => handleInputChange("trailing_stop_percent", parseFloat(e.target.value))}
+                  onChange={(e) =>
+                    handleInputChange("trailing_stop_percent", parseFloat(e.target.value))
+                  }
                   disabled={!getCurrentModeDefaults().use_trailing_stop}
                 />
               </Grid>
@@ -386,19 +392,18 @@ function TradingDefaults() {
                 />
               </Grid>
             </Grid>
-          ))}
+          )}
         </Grid>
 
         {/* 우측 컬럼 */}
         <Grid item xs={12} md={6}>
-
           {/* 포지션 분할 설정 */}
           <Card sx={{ mb: 2, borderRadius: 2 }}>
             <MKBox p={2}>
               <MKTypography variant="h6" fontWeight="600" mb={2}>
                 포지션 분할 설정
               </MKTypography>
-              
+
               {/* 첫 번째 행: 피라미딩 횟수, 초기화, 균등분할 (6:3:3) */}
               <Grid container spacing={2} alignItems="center" mb={2}>
                 <Grid item xs={6}>
@@ -408,7 +413,9 @@ function TradingDefaults() {
                     label="피라미딩 횟수"
                     type="number"
                     value={getCurrentModeDefaults().pyramiding_count}
-                    onChange={(e) => handleInputChange("pyramiding_count", parseInt(e.target.value))}
+                    onChange={(e) =>
+                      handleInputChange("pyramiding_count", parseInt(e.target.value))
+                    }
                     inputProps={{ min: 0, max: 10 }}
                   />
                 </Grid>
@@ -463,10 +470,10 @@ function TradingDefaults() {
                       label="1차 진입시점 (원)"
                       value="진입가격은 자동매매에서 설정"
                       disabled
-                      sx={{ 
-                        "& .MuiInputBase-input.Mui-disabled": { 
-                          color: "rgba(0, 0, 0, 0.6)" 
-                        } 
+                      sx={{
+                        "& .MuiInputBase-input.Mui-disabled": {
+                          color: "rgba(0, 0, 0, 0.6)",
+                        },
                       }}
                     />
                   </Grid>
@@ -494,8 +501,8 @@ function TradingDefaults() {
                         type="number"
                         value={entry}
                         onChange={(e) => handlePyramidingEntryChange(index, e.target.value)}
-                        placeholder={defaults.trading_mode === 'manual' ? '예: 4' : '예: 1.5'}
-                        inputProps={{ step: defaults.trading_mode === 'manual' ? 1 : 0.1 }}
+                        placeholder={defaults.trading_mode === "manual" ? "예: 4" : "예: 1.5"}
+                        inputProps={{ step: defaults.trading_mode === "manual" ? 1 : 0.1 }}
                       />
                     </Grid>
                     <Grid item xs={6}>
@@ -512,7 +519,7 @@ function TradingDefaults() {
                   </Grid>
                 ))}
               </MKBox>
-              
+
               {/* 포지션 합계 표시 */}
               <MKBox display="flex" justifyContent="space-between" alignItems="center">
                 <MKTypography variant="body2" color="text">

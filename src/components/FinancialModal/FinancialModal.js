@@ -25,7 +25,15 @@ import { formatFinancialAmount } from "utils/formatters";
 /**
  * 재무제표 모달 컴포넌트
  */
-const FinancialModal = ({ open, onClose, selectedStock, financialData, loading, error, onOpen }) => {
+const FinancialModal = ({
+  open,
+  onClose,
+  selectedStock,
+  financialData,
+  loading,
+  error,
+  onOpen,
+}) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const isSmallMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -126,7 +134,11 @@ const FinancialModal = ({ open, onClose, selectedStock, financialData, loading, 
                         항목
                       </TableCell>
                       {/* 최신 5개 분기 (백엔드에서 이미 과거~현재 순으로 정렬됨) */}
-                      {[...new Set((financialData || []).map((item) => `${item.year} ${item.quarter}`))]
+                      {[
+                        ...new Set(
+                          (financialData || []).map((item) => `${item.year} ${item.quarter}`)
+                        ),
+                      ]
                         .slice(-5)
                         .map((period) => (
                           <TableCell
@@ -176,7 +188,11 @@ const FinancialModal = ({ open, onClose, selectedStock, financialData, loading, 
                         >
                           {accountName}
                         </TableCell>
-                        {[...new Set((financialData || []).map((item) => `${item.year} ${item.quarter}`))]
+                        {[
+                          ...new Set(
+                            (financialData || []).map((item) => `${item.year} ${item.quarter}`)
+                          ),
+                        ]
                           .sort((a, b) => {
                             const [yearA, quarterA] = a.split(" ");
                             const [yearB, quarterB] = b.split(" ");
@@ -247,7 +263,11 @@ const FinancialModal = ({ open, onClose, selectedStock, financialData, loading, 
                         항목
                       </TableCell>
                       {/* 최신 5개 분기 (백엔드에서 이미 과거~현재 순으로 정렬됨) */}
-                      {[...new Set((financialData || []).map((item) => `${item.year} ${item.quarter}`))]
+                      {[
+                        ...new Set(
+                          (financialData || []).map((item) => `${item.year} ${item.quarter}`)
+                        ),
+                      ]
                         .slice(-5)
                         .map((period) => (
                           <TableCell
@@ -296,7 +316,11 @@ const FinancialModal = ({ open, onClose, selectedStock, financialData, loading, 
                         >
                           {accountName}
                         </TableCell>
-                        {[...new Set((financialData || []).map((item) => `${item.year} ${item.quarter}`))]
+                        {[
+                          ...new Set(
+                            (financialData || []).map((item) => `${item.year} ${item.quarter}`)
+                          ),
+                        ]
                           .sort((a, b) => {
                             const [yearA, quarterA] = a.split(" ");
                             const [yearB, quarterB] = b.split(" ");

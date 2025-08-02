@@ -35,7 +35,7 @@ const AutotradingAccordion = ({
   showSnackbar,
   authenticatedFetch,
   tradingForm,
-  strategyType = 'mtt', // 'mtt' 또는 'weekly_high'
+  strategyType = "mtt", // 'mtt' 또는 'weekly_high'
 }) => {
   // tradingForm에서 상태와 핸들러 가져오기
   const {
