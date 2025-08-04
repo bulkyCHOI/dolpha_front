@@ -253,7 +253,6 @@ export default function TradingConfigs() {
       name: "손절",
       selector: (row) => row.stop_loss,
       sortable: true,
-      center: true,
       cell: (row) => (
         <MKTypography
           variant="body2"
@@ -268,7 +267,6 @@ export default function TradingConfigs() {
       name: "익절",
       selector: (row) => row.take_profit,
       sortable: true,
-      center: true,
       cell: (row) => (
         <MKTypography
           variant="body2"
@@ -283,7 +281,6 @@ export default function TradingConfigs() {
       name: "최대손실",
       selector: (row) => row.max_loss,
       sortable: true,
-      center: true,
       cell: (row) => (
         <MKTypography variant="body2" sx={{ fontSize: "0.85rem" }}>
           {formatTradingValue(row.max_loss, row.trading_mode, "max_loss")}
@@ -294,7 +291,6 @@ export default function TradingConfigs() {
       name: "진입횟수",
       selector: (row) => tradingStatus[row.stock_code]?.actual_entries || 0,
       sortable: true,
-      center: true,
       cell: (row) => {
         const status = tradingStatus[row.stock_code];
         const totalPossible = status?.total_possible_entries || 1;
@@ -311,7 +307,6 @@ export default function TradingConfigs() {
       name: "포지션",
       selector: (row) => tradingStatus[row.stock_code]?.position_sum || 0,
       sortable: true,
-      center: true,
       cell: (row) => {
         const status = tradingStatus[row.stock_code];
         const positionSum = status?.position_sum || 0;
@@ -353,7 +348,6 @@ export default function TradingConfigs() {
       name: "진입가",
       selector: (row) => row.entry_point,
       sortable: true,
-      center: true,
       cell: (row) => (
         <MKTypography variant="body2" sx={{ fontSize: "0.8rem" }}>
           {row.entry_point ? `${formatCurrency(row.entry_point)}원` : "-"}
@@ -364,7 +358,6 @@ export default function TradingConfigs() {
       name: "보유정보",
       selector: (row) => tradingStatus[row.stock_code]?.total_quantity || 0,
       sortable: true,
-      center: true,
       cell: (row) => {
         const status = tradingStatus[row.stock_code];
         const avgPrice = status?.avg_price || 0;
@@ -406,7 +399,6 @@ export default function TradingConfigs() {
       name: "현재가",
       selector: (row) => currentPrices[row.stock_code]?.price || 0,
       sortable: true,
-      center: true,
       cell: (row) => {
         const currentPrice = currentPrices[row.stock_code];
 
@@ -443,7 +435,6 @@ export default function TradingConfigs() {
         return (currentPrice.price - avgPrice) * quantity;
       },
       sortable: true,
-      center: true,
       cell: (row) => {
         const status = tradingStatus[row.stock_code];
         const currentPrice = currentPrices[row.stock_code];
@@ -501,7 +492,6 @@ export default function TradingConfigs() {
       name: "생성일",
       selector: (row) => row.created_at,
       sortable: true,
-      center: true,
       cell: (row) => (
         <MKTypography variant="caption" color="text" sx={{ fontSize: "0.75rem" }}>
           {new Date(row.created_at).toLocaleDateString("ko-KR", {
@@ -514,7 +504,6 @@ export default function TradingConfigs() {
     },
     {
       name: "액션",
-      center: true,
       cell: (row) => (
         <Box display="flex" justifyContent="center" gap={0.5}>
           <Tooltip title="상세 보기">

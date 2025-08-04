@@ -59,26 +59,37 @@ const EnhancedDataTable = ({ columns, data, autoOptimizeColumns = true, ...props
 
         // 종목명 컬럼 최적화
         if (column.name === "종목") {
-          optimizedColumn.minWidth = "140px";
-          optimizedColumn.maxWidth = "200px";
+          optimizedColumn.width = "170px";
+          optimizedColumn.style = {
+            minWidth: "140px",
+            maxWidth: "200px",
+          };
         }
 
         // 액션 컬럼 최적화
         if (column.name === "액션") {
-          optimizedColumn.minWidth = "80px";
-          optimizedColumn.maxWidth = "100px";
+          optimizedColumn.width = "90px";
+          optimizedColumn.style = {
+            minWidth: "80px",
+            maxWidth: "100px",
+          };
         }
 
         // 긴 텍스트 컬럼 최적화
         if (["보유정보", "평가손익"].includes(column.name)) {
-          optimizedColumn.minWidth = "120px";
           optimizedColumn.grow = 1;
+          optimizedColumn.style = {
+            minWidth: "120px",
+          };
         }
 
         // 짧은 값 컬럼 최적화
         if (["상태", "손절", "익절"].includes(column.name)) {
-          optimizedColumn.minWidth = "60px";
-          optimizedColumn.maxWidth = "80px";
+          optimizedColumn.width = "70px";
+          optimizedColumn.style = {
+            minWidth: "60px",
+            maxWidth: "80px",
+          };
         }
 
         return optimizedColumn;

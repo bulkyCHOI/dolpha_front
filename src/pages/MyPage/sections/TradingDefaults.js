@@ -265,7 +265,7 @@ function TradingDefaults() {
   const renderCompactSection = (title, children) => (
     <Card sx={{ mb: 2, borderRadius: 2 }}>
       <MKBox p={2}>
-        <MKTypography variant="h6" fontWeight="600" mb={2}>
+        <MKTypography variant="h6" fontWeight="bold" mb={2}>
           {title}
         </MKTypography>
         {children}
@@ -287,7 +287,7 @@ function TradingDefaults() {
         {/* 헤더 */}
         <Grid item xs={12}>
           <MKBox mb={2}>
-            <MKTypography variant="h5" mb={1} fontWeight="600">
+            <MKTypography variant="h5" mb={1} fontWeight="bold">
               자동매매 기본설정
             </MKTypography>
             <MKTypography variant="body2" color="text" opacity={0.8}>
@@ -400,7 +400,7 @@ function TradingDefaults() {
           {/* 포지션 분할 설정 */}
           <Card sx={{ mb: 2, borderRadius: 2 }}>
             <MKBox p={2}>
-              <MKTypography variant="h6" fontWeight="600" mb={2}>
+              <MKTypography variant="h6" fontWeight="bold" mb={2}>
                 포지션 분할 설정
               </MKTypography>
 

@@ -175,7 +175,7 @@ function ServerSettings() {
             <Grid container spacing={3} alignItems="center">
               <Grid item xs={12} md={8}>
                 <MKBox>
-                  <MKTypography variant="h4" mb={1} fontWeight="600">
+                  <MKTypography variant="h4" mb={1} fontWeight="bold">
                     Autobot 서버 설정
                   </MKTypography>
                   <MKTypography variant="body1" color="text" opacity={0.8}>
@@ -239,7 +239,7 @@ function ServerSettings() {
         <Grid item xs={12}>
           <Card sx={{ p: { xs: 2, md: 3 }, borderRadius: 3 }}>
             <MKBox mb={3}>
-              <MKTypography variant="h5" mb={1} fontWeight="600">
+              <MKTypography variant="h5" mb={1} fontWeight="bold">
                 서버 정보
               </MKTypography>
               <MKTypography variant="body2" color="text" opacity={0.7}>
