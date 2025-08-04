@@ -101,8 +101,8 @@ const EnhancedDataTable = ({ columns, data, autoOptimizeColumns = true, ...props
       columns={optimizedColumns}
       data={data}
       pagination
-      paginationPerPage={10}
-      paginationRowsPerPageOptions={[5, 10, 15, 20]}
+      paginationPerPage={20}
+      paginationRowsPerPageOptions={[10, 20, 30, 50]}
       highlightOnHover
       striped
       responsive
