@@ -125,7 +125,7 @@ const ChartContainer = ({
 
   // Candlestick color dynamic application
   useEffect(() => {
-    if (chartRef.current && ohlcvData.length > 0) {
+    if (chartRef.current && ohlcvData && ohlcvData.length > 0) {
       const chart = chartRef.current;
 
       try {
@@ -186,7 +186,7 @@ const ChartContainer = ({
     ];
 
     // Add moving average lines if analysis data is available
-    if (analysisData && analysisData.length > 0) {
+    if (analysisData && Array.isArray(analysisData) && analysisData.length > 0) {
       // 50일선
       const ma50Data = analysisData
         .filter((item) => item.ma50 !== null && item.ma50 !== undefined && !isNaN(item.ma50))
@@ -259,7 +259,7 @@ const ChartContainer = ({
 
     // Add horizontal lines to datasets
     horizontalLines.forEach((line, index) => {
-      const indexRange = ohlcvData.length > 0 ? [0, ohlcvData.length - 1] : [0, 1];
+      const indexRange = (ohlcvData && ohlcvData.length > 0) ? [0, ohlcvData.length - 1] : [0, 1];
 
       datasets.push({
         label: `진입선 ${index + 1}`,
@@ -325,14 +325,14 @@ const ChartContainer = ({
         {
           label: "거래량",
           type: "bar",
-          data: ohlcvData.map((item, index) => ({
+          data: (ohlcvData || []).map((item, index) => ({
             x: index,
             y: item.volume || 0,
           })),
-          backgroundColor: ohlcvData.map((item) =>
+          backgroundColor: (ohlcvData || []).map((item) =>
             item.close >= item.open ? "rgba(244, 67, 54, 0.6)" : "rgba(33, 150, 243, 0.6)"
           ),
-          borderColor: ohlcvData.map((item) => (item.close >= item.open ? "#f44336" : "#2196f3")),
+          borderColor: (ohlcvData || []).map((item) => (item.close >= item.open ? "#f44336" : "#2196f3")),
           borderWidth: 1,
         },
       ],
@@ -478,7 +478,7 @@ const ChartContainer = ({
       type: "line",
       data: [
         { x: 0, y: 80 },
-        { x: analysisData.length - 1, y: 80 },
+        { x: (analysisData && analysisData.length > 0 ? analysisData.length - 1 : 1), y: 80 },
       ],
       borderColor: "#ff9800",
       backgroundColor: "transparent",
@@ -705,7 +705,7 @@ const ChartContainer = ({
     event.stopPropagation();
     const { isDragging: refIsDragging, dragLineId: refDragLineId } = dragStateRef.current;
 
-    if (refIsDragging && refDragLineId && chartData && ohlcvData.length > 0) {
+    if (refIsDragging && refDragLineId && chartData && ohlcvData && ohlcvData.length > 0) {
       try {
         const chartCanvas = document.querySelector("canvas");
 
@@ -719,12 +719,11 @@ const ChartContainer = ({
           const chartHeight = 350;
           const normalizedY = Math.max(0, Math.min(1, (y - 30) / (chartHeight - 60)));
 
-          const maxPrice = Math.max(
-            ...ohlcvData.map((item) => Math.max(item.high, item.close, item.open, item.low))
-          );
-          const minPrice = Math.min(
-            ...ohlcvData.map((item) => Math.min(item.low, item.close, item.open, item.high))
-          );
+          const priceArray = (ohlcvData || []).map((item) => Math.max(item.high, item.close, item.open, item.low));
+          const maxPrice = priceArray.length > 0 ? Math.max(...priceArray) : 100000;
+          
+          const minPriceArray = (ohlcvData || []).map((item) => Math.min(item.low, item.close, item.open, item.high));
+          const minPrice = minPriceArray.length > 0 ? Math.min(...minPriceArray) : 50000;
           const priceRange = maxPrice - minPrice;
 
           const newValue = maxPrice - normalizedY * priceRange;
@@ -773,7 +772,7 @@ const ChartContainer = ({
     event.stopPropagation();
     const { isDragging: refIsDragging, dragLineId: refDragLineId } = dragStateRef.current;
 
-    if (refIsDragging && refDragLineId && chartData && ohlcvData.length > 0) {
+    if (refIsDragging && refDragLineId && chartData && ohlcvData && ohlcvData.length > 0) {
       try {
         const chartCanvas = document.querySelector("canvas");
         const touch = event.touches[0];
@@ -788,12 +787,11 @@ const ChartContainer = ({
           const chartHeight = 350;
           const normalizedY = Math.max(0, Math.min(1, (y - 30) / (chartHeight - 60)));
 
-          const maxPrice = Math.max(
-            ...ohlcvData.map((item) => Math.max(item.high, item.close, item.open, item.low))
-          );
-          const minPrice = Math.min(
-            ...ohlcvData.map((item) => Math.min(item.low, item.close, item.open, item.high))
-          );
+          const priceArray = (ohlcvData || []).map((item) => Math.max(item.high, item.close, item.open, item.low));
+          const maxPrice = priceArray.length > 0 ? Math.max(...priceArray) : 100000;
+          
+          const minPriceArray = (ohlcvData || []).map((item) => Math.min(item.low, item.close, item.open, item.high));
+          const minPrice = minPriceArray.length > 0 ? Math.min(...minPriceArray) : 50000;
           const priceRange = maxPrice - minPrice;
 
           const newValue = maxPrice - normalizedY * priceRange;
@@ -983,7 +981,7 @@ const ChartContainer = ({
         }
       }
 
-      if (isDrawingMode && ohlcvData.length > 0) {
+      if (isDrawingMode && ohlcvData && ohlcvData.length > 0) {
         try {
           let dataY;
 
@@ -1004,7 +1002,7 @@ const ChartContainer = ({
             setIsDrawingMode(false);
           }
         } catch (error) {
-          if (ohlcvData.length > 0) {
+          if (ohlcvData && ohlcvData.length > 0) {
             const lastPrice = ohlcvData[ohlcvData.length - 1].close;
             handleAddHorizontalLine(lastPrice);
             setIsDrawingMode(false);
@@ -1032,7 +1030,7 @@ const ChartContainer = ({
     scales: {
       x: {
         type: "category",
-        labels: ohlcvData.map((item) =>
+        labels: (ohlcvData || []).map((item) =>
           new Date(item.date).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })
         ),
         grid: {
@@ -1084,7 +1082,7 @@ const ChartContainer = ({
         callbacks: {
           title: function (context) {
             const index = context[0].dataIndex;
-            if (ohlcvData[index]) {
+            if (ohlcvData && ohlcvData[index]) {
               return new Date(ohlcvData[index].date).toLocaleDateString("ko-KR");
             }
             return "";
@@ -1095,7 +1093,7 @@ const ChartContainer = ({
               const data = context.raw;
               const index = context.dataIndex;
               // API의 change 값(전일 대비 등락율) 사용 - 소수점 형태를 백분율로 변환
-              const changePercent = (ohlcvData[index]?.change || 0) * 100;
+              const changePercent = ((ohlcvData && ohlcvData[index])?.change || 0) * 100;
               const changePercentText = `등락율: ${
                 changePercent > 0 ? "+" : ""
               }${changePercent.toFixed(2)}%`;
@@ -1131,7 +1129,7 @@ const ChartContainer = ({
     scales: {
       x: {
         type: "category",
-        labels: indexOhlcvData.map((item) =>
+        labels: (indexOhlcvData || []).map((item) =>
           new Date(item.date).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })
         ),
         grid: {
@@ -1183,7 +1181,7 @@ const ChartContainer = ({
         callbacks: {
           title: function (context) {
             const index = context[0].dataIndex;
-            if (indexOhlcvData[index]) {
+            if (indexOhlcvData && indexOhlcvData[index]) {
               return new Date(indexOhlcvData[index].date).toLocaleDateString("ko-KR");
             }
             return "";
@@ -1192,7 +1190,7 @@ const ChartContainer = ({
             const data = context.raw;
             const index = context.dataIndex;
             // API의 change 값(전일 대비 등락율) 사용 - 소수점 형태를 백분율로 변환
-            const changePercent = (indexOhlcvData[index]?.change || 0) * 100;
+            const changePercent = ((indexOhlcvData && indexOhlcvData[index])?.change || 0) * 100;
             const changePercentText = `등락율: ${
               changePercent > 0 ? "+" : ""
             }${changePercent.toFixed(2)}%`;
@@ -1226,7 +1224,7 @@ const ChartContainer = ({
     scales: {
       x: {
         type: "category",
-        labels: ohlcvData.map((item) =>
+        labels: (ohlcvData || []).map((item) =>
           new Date(item.date).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })
         ),
         grid: {
@@ -1278,7 +1276,7 @@ const ChartContainer = ({
         callbacks: {
           title: function (context) {
             const index = context[0].dataIndex;
-            if (ohlcvData[index]) {
+            if (ohlcvData && ohlcvData[index]) {
               return new Date(ohlcvData[index].date).toLocaleDateString("ko-KR");
             }
             return "";
@@ -1308,7 +1306,7 @@ const ChartContainer = ({
     scales: {
       x: {
         type: "category",
-        labels: analysisData.map((item) =>
+        labels: (analysisData || []).map((item) =>
           new Date(item.date).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })
         ),
         grid: {
@@ -1357,7 +1355,7 @@ const ChartContainer = ({
         callbacks: {
           title: function (context) {
             const index = context[0].dataIndex;
-            if (analysisData[index]) {
+            if (analysisData && analysisData[index]) {
               return new Date(analysisData[index].date).toLocaleDateString("ko-KR");
             }
             return "";
@@ -1391,7 +1389,7 @@ const ChartContainer = ({
     scales: {
       x: {
         type: "category",
-        labels: analysisData.map((item) =>
+        labels: (analysisData || []).map((item) =>
           new Date(item.date).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })
         ),
         grid: {
@@ -1486,7 +1484,7 @@ const ChartContainer = ({
         callbacks: {
           title: function (context) {
             const index = context[0].dataIndex;
-            if (analysisData[index]) {
+            if (analysisData && analysisData[index]) {
               return new Date(analysisData[index].date).toLocaleDateString("ko-KR");
             }
             return "";
@@ -1525,7 +1523,7 @@ const ChartContainer = ({
               차트를 로드하는 중...
             </MKTypography>
           </MKBox>
-        ) : chartData && ohlcvData.length > 0 ? (
+        ) : chartData && ohlcvData && ohlcvData.length > 0 ? (
           <>
             {/* Chart controls - positioned inside chart */}
             <MKBox
@@ -1565,7 +1563,7 @@ const ChartContainer = ({
                 </ToggleButton>
               </Tooltip>
 
-              {horizontalLines.length > 0 && (
+              {horizontalLines && horizontalLines.length > 0 && (
                 <Tooltip title="모든 수평선 삭제">
                   <IconButton
                     onClick={() => setHorizontalLines([])}
@@ -1623,16 +1621,15 @@ const ChartContainer = ({
                 } else {
                   const yScale = chartData ? chartData.datasets[0]?.data : [];
                   if (yScale.length > 0) {
-                    const maxPrice = Math.max(
-                      ...ohlcvData.map((item) =>
-                        Math.max(item.high, item.close, item.open, item.low)
-                      )
+                    const priceArrayMax = (ohlcvData || []).map((item) =>
+                      Math.max(item.high, item.close, item.open, item.low)
                     );
-                    const minPrice = Math.min(
-                      ...ohlcvData.map((item) =>
-                        Math.min(item.low, item.close, item.open, item.high)
-                      )
+                    const maxPrice = priceArrayMax.length > 0 ? Math.max(...priceArrayMax) : 100000;
+                    
+                    const priceArrayMin = (ohlcvData || []).map((item) =>
+                      Math.min(item.low, item.close, item.open, item.high)
                     );
+                    const minPrice = priceArrayMin.length > 0 ? Math.min(...priceArrayMin) : 50000;
                     const priceRange = maxPrice - minPrice;
                     const chartHeight = 350;
                     linePosition =
@@ -1897,7 +1894,7 @@ const ChartContainer = ({
             </MKBox>
 
             {/* Index chart */}
-            {indexData.length > 0 && (
+            {indexData && indexData.length > 0 && (
               <MKBox
                 sx={{
                   height: { xs: "280px", md: "350px" },
@@ -1919,7 +1916,7 @@ const ChartContainer = ({
                 >
                   <MKBox>
                     <MKTypography variant="caption" color="text">
-                      {selectedIndexCode && indexData.length > 0
+                      {selectedIndexCode && indexData && indexData.length > 0
                         ? `${
                             indexData.find((idx) => idx.code === selectedIndexCode)?.market || ""
                           } • ${selectedIndexCode}`
@@ -1956,7 +1953,7 @@ const ChartContainer = ({
                   </FormControl>
                 </MKBox>
 
-                {indexChartData && indexOhlcvData.length > 0 ? (
+                {indexChartData && indexOhlcvData && indexOhlcvData.length > 0 ? (
                   <MKBox sx={{ height: "calc(100% - 80px)" }}>
                     <Chart type="candlestick" data={indexChartData} options={indexChartOptions} />
                   </MKBox>
@@ -1981,7 +1978,7 @@ const ChartContainer = ({
             )}
 
             {/* RS Rank chart */}
-            {analysisData.length > 0 && (
+            {analysisData && analysisData.length > 0 && (
               <MKBox
                 sx={{
                   height: { xs: "250px", md: "300px" },
@@ -2014,7 +2011,7 @@ const ChartContainer = ({
             )}
 
             {/* ATR chart */}
-            {analysisData.length > 0 && (
+            {analysisData && analysisData.length > 0 && (
               <MKBox
                 sx={{
                   height: { xs: "200px", md: "250px" },

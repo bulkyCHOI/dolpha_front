@@ -48,6 +48,7 @@ import WeeklyHigh from "pages/WeeklyHigh";
 import IssueInfo from "pages/IssueInfo";
 import TopRising from "pages/TopRising";
 import FiftyDayHigh from "pages/FiftyDayHigh";
+import Favorites from "pages/Favorites";
 import TradingConfigs from "pages/TradingConfigs";
 import DailyNewsClipping from "pages/DailyNewsClipping";
 import ProtectedRoute from "components/ProtectedRoute";
@@ -81,6 +82,15 @@ const routes = [
             name: "상승률 TOP50",
             route: "/top-rising",
             component: <TopRising />,
+          },
+          {
+            name: "즐겨찾기",
+            route: "/favorites",
+            component: (
+              <ProtectedRoute>
+                <Favorites />
+              </ProtectedRoute>
+            ),
           },
         ],
       },
