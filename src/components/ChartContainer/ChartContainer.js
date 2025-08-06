@@ -535,17 +535,52 @@ const ChartContainer = ({
         data: atrRatioData,
         borderColor: "#795548",
         backgroundColor: "transparent",
-        borderWidth: 3,
-        pointRadius: 4,
-        pointHoverRadius: 8,
-        pointBackgroundColor: "#795548",
-        pointBorderColor: "white",
-        pointBorderWidth: 2,
+        borderWidth: 2,
+        pointRadius: 2,
+        pointHoverRadius: 4,
+        pointBackgroundColor: "white",
+        pointBorderColor: "#795548",
         tension: 0.1,
         yAxisID: "y1",
         order: 0, // 라인을 가장 앞에 표시
         fill: false,
         showLine: true,
+      });
+    }
+
+    return { datasets };
+  };
+
+  const createMTTData = (analysisData) => {
+    if (!analysisData || analysisData.length === 0) return null;
+
+    const datasets = [];
+
+    // MTT (Minervini Trend Template) 데이터 - boolean을 0/1로 변환
+    const mttData = analysisData
+      .filter((item) => item.is_minervini_trend !== null && item.is_minervini_trend !== undefined)
+      .map((item, index) => ({
+        x: index,
+        y: item.is_minervini_trend ? 1 : 0,
+      }));
+
+    if (mttData.length > 0) {
+      datasets.push({
+        label: "MTT 조건",
+        type: "line",
+        data: mttData,
+        borderColor: "#4CAF50",
+        backgroundColor: "transparent",
+        borderWidth: 2,
+        pointRadius: 2,
+        pointHoverRadius: 4,
+        pointBackgroundColor: "white",
+        pointBorderColor: (context) => {
+          const value = context.parsed.y;
+          return value === 1 ? "#4CAF50" : "#FF5722";
+        },
+        tension: 0,
+        stepped: true, // 계단식 라인으로 boolean 변화를 명확하게 표시
       });
     }
 
@@ -954,6 +989,7 @@ const ChartContainer = ({
   const indexChartData = createIndexCandlestickData(indexOhlcvData);
   const rsRankData = createRSRankData(analysisData);
   const atrData = createATRData(analysisData);
+  const mttData = createMTTData(analysisData);
 
   // Chart options
   const chartOptions = {
@@ -1504,6 +1540,94 @@ const ChartContainer = ({
     },
   };
 
+  const mttOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: {
+      duration: 300,
+    },
+    layout: {
+      padding: {
+        top: 5,
+        bottom: 5,
+        left: 10,
+        right: 10,
+      },
+    },
+    scales: {
+      x: {
+        type: "category",
+        labels: (analysisData || []).map((item) =>
+          new Date(item.date).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })
+        ),
+        grid: {
+          display: true,
+          color: "rgba(0,0,0,0.05)",
+        },
+        ticks: {
+          autoSkip: true,
+          autoSkipPadding: 10,
+          maxTicksLimit: 8,
+          color: "#666",
+          font: {
+            size: 10,
+          },
+          maxRotation: 0,
+          minRotation: 0,
+          padding: 5,
+        },
+      },
+      y: {
+        min: -0.1,
+        max: 1.1,
+        ticks: {
+          stepSize: 1,
+          color: "#666",
+          font: {
+            size: 10,
+          },
+          padding: 8,
+          callback: function (value) {
+            return value === 1 ? "만족" : value === 0 ? "불만족" : "";
+          },
+        },
+        grid: {
+          color: "rgba(0,0,0,0.05)",
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        display: true,
+        position: "top",
+        labels: {
+          usePointStyle: true,
+          padding: 15,
+          font: {
+            size: 11,
+          },
+        },
+      },
+      tooltip: {
+        mode: "index",
+        intersect: false,
+        callbacks: {
+          title: function (context) {
+            const index = context[0].dataIndex;
+            if (analysisData && analysisData[index]) {
+              return new Date(analysisData[index].date).toLocaleDateString("ko-KR");
+            }
+            return "";
+          },
+          label: function (context) {
+            const value = context.parsed.y;
+            return `MTT 조건: ${value === 1 ? "만족" : "불만족"}`;
+          },
+        },
+      },
+    },
+  };
+
   return (
     <MKBox sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
       {/* Main chart content */}
@@ -2037,6 +2161,39 @@ const ChartContainer = ({
                     }}
                   >
                     <MKTypography variant="body1">ATR 데이터를 로드하는 중...</MKTypography>
+                  </MKBox>
+                )}
+              </MKBox>
+            )}
+
+            {/* MTT (Minervini Trend Template) chart */}
+            {analysisData && analysisData.length > 0 && (
+              <MKBox
+                sx={{
+                  height: { xs: "150px", md: "200px" },
+                  backgroundColor: "#ffffff",
+                  border: "1px solid #e0e0e0",
+                  borderRadius: 1,
+                  p: 0.5,
+                  mt: 1,
+                }}
+              >
+                {mttData ? (
+                  <MKBox sx={{ height: "100%" }}>
+                    <Chart data={mttData} options={mttOptions} />
+                  </MKBox>
+                ) : (
+                  <MKBox
+                    sx={{
+                      height: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexDirection: "column",
+                      color: "#666",
+                    }}
+                  >
+                    <MKTypography variant="body1">MTT 데이터를 로드하는 중...</MKTypography>
                   </MKBox>
                 )}
               </MKBox>
