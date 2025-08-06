@@ -766,15 +766,166 @@ export default function TradingConfigs() {
 
       <MKBox component="section" sx={{ minHeight: "80vh", pt: 12, pb: 4 }}>
         <FullWidthContainer>
-          {/* 페이지 헤더 */}
-          <MKBox mb={4}>
-            <MKTypography variant="h3" color="dark" fontWeight="bold" gutterBottom>
-              자동매매 설정 목록
-            </MKTypography>
-            <MKTypography variant="body1" color="text" opacity={0.8}>
-              현재 설정된 자동매매 전략을 확인하고 관리할 수 있습니다.
-            </MKTypography>
-          </MKBox>
+          {/* 페이지 헤더와 투자 현황 요약을 같은 줄에 배치 */}
+          {!loading && !error && allTradingConfigs.length > 0 ? (
+            <Box display="flex" flexDirection={{ xs: "column", lg: "row" }} alignItems={{ lg: "flex-start" }} gap={4} mb={4}>
+              {/* 페이지 헤더 */}
+              <MKBox sx={{ minWidth: "300px" }}>
+                <MKTypography variant="h3" color="dark" fontWeight="bold">
+                  자동매매 설정 목록
+                </MKTypography>
+              </MKBox>
+
+              {/* 투자 현황 요약 */}
+              <Box sx={{ flex: 1 }}>
+                <Box display="flex" flexDirection="row" gap={1.5}>
+                  {/* 투자 종목 수 */}
+                  <Card sx={{ flex: 1, minHeight: "80px" }}>
+                    <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
+                      <MKTypography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
+                        투자 종목
+                      </MKTypography>
+                      <MKTypography variant="h6" fontWeight="bold" color="primary" sx={{ mt: 0.5 }}>
+                        {(() => {
+                          const investedCount = allTradingConfigs.filter(config => {
+                            const status = tradingStatus[config.stock_code];
+                            const avgPrice = status?.avg_price || 0;
+                            const quantity = status?.total_quantity || 0;
+                            return avgPrice > 0 && quantity > 0;
+                          }).length;
+                          return `${investedCount}개`;
+                        })()}
+                      </MKTypography>
+                    </CardContent>
+                  </Card>
+
+                  {/* 투자금 합계 */}
+                  <Card sx={{ flex: 1, minHeight: "80px" }}>
+                    <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
+                      <MKTypography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
+                        투자금 합계
+                      </MKTypography>
+                      <MKTypography variant="h6" fontWeight="bold" color="info" sx={{ mt: 0.5 }}>
+                      {(() => {
+                        const totalInvestment = allTradingConfigs.reduce((sum, config) => {
+                          const status = tradingStatus[config.stock_code];
+                          const avgPrice = status?.avg_price || 0;
+                          const quantity = status?.total_quantity || 0;
+                          return sum + (avgPrice * quantity);
+                        }, 0);
+                        return `${formatCurrency(Math.round(totalInvestment))}원`;
+                      })()}
+                      </MKTypography>
+                    </CardContent>
+                  </Card>
+
+                  {/* 평가손익 합계 */}
+                  <Card sx={{ flex: 1, minHeight: "80px" }}>
+                    <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
+                      <MKTypography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
+                        평가손익 합계
+                      </MKTypography>
+                      <MKTypography 
+                        variant="h6" 
+                        fontWeight="bold" 
+                        sx={{ 
+                          mt: 0.5,
+                          color: (() => {
+                            const totalProfitLoss = allTradingConfigs.reduce((sum, config) => {
+                              const status = tradingStatus[config.stock_code];
+                              const currentPrice = currentPrices[config.stock_code];
+                              const avgPrice = status?.avg_price || 0;
+                              const quantity = status?.total_quantity || 0;
+                              if (!avgPrice || !currentPrice || !quantity) return sum;
+                              return sum + ((currentPrice.price - avgPrice) * quantity);
+                            }, 0);
+                            return totalProfitLoss >= 0 ? "success.main" : "error.main";
+                          })()
+                        }}
+                      >
+                      {(() => {
+                        const totalProfitLoss = allTradingConfigs.reduce((sum, config) => {
+                          const status = tradingStatus[config.stock_code];
+                          const currentPrice = currentPrices[config.stock_code];
+                          const avgPrice = status?.avg_price || 0;
+                          const quantity = status?.total_quantity || 0;
+                          if (!avgPrice || !currentPrice || !quantity) return sum;
+                          return sum + ((currentPrice.price - avgPrice) * quantity);
+                        }, 0);
+                        return `${totalProfitLoss >= 0 ? '+' : ''}${formatCurrency(Math.round(totalProfitLoss))}원`;
+                      })()}
+                      </MKTypography>
+                    </CardContent>
+                  </Card>
+
+                  {/* 평균 손익률 */}
+                  <Card sx={{ flex: 1, minHeight: "80px" }}>
+                    <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
+                      <MKTypography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
+                        평균 손익률
+                      </MKTypography>
+                      <MKTypography 
+                        variant="h6" 
+                        fontWeight="bold" 
+                        sx={{ 
+                          mt: 0.5,
+                          color: (() => {
+                            let totalWeight = 0;
+                            let totalWeightedReturn = 0;
+                            
+                            allTradingConfigs.forEach(config => {
+                              const status = tradingStatus[config.stock_code];
+                              const currentPrice = currentPrices[config.stock_code];
+                              const avgPrice = status?.avg_price || 0;
+                              const quantity = status?.total_quantity || 0;
+                              
+                              if (avgPrice && currentPrice && quantity) {
+                                const weight = avgPrice * quantity;
+                                const returnRate = ((currentPrice.price - avgPrice) / avgPrice) * 100;
+                                totalWeight += weight;
+                                totalWeightedReturn += returnRate * weight;
+                              }
+                            });
+                            
+                            const avgReturn = totalWeight > 0 ? totalWeightedReturn / totalWeight : 0;
+                            return avgReturn >= 0 ? "success.main" : "error.main";
+                          })()
+                        }}
+                      >
+                      {(() => {
+                        let totalWeight = 0;
+                        let totalWeightedReturn = 0;
+                        
+                        allTradingConfigs.forEach(config => {
+                          const status = tradingStatus[config.stock_code];
+                          const currentPrice = currentPrices[config.stock_code];
+                          const avgPrice = status?.avg_price || 0;
+                          const quantity = status?.total_quantity || 0;
+                          
+                          if (avgPrice && currentPrice && quantity) {
+                            const weight = avgPrice * quantity; // 투자금액
+                            const returnRate = ((currentPrice.price - avgPrice) / avgPrice) * 100;
+                            totalWeight += weight;
+                            totalWeightedReturn += returnRate * weight;
+                          }
+                        });
+                        
+                        const avgReturn = totalWeight > 0 ? totalWeightedReturn / totalWeight : 0;
+                        return `${avgReturn >= 0 ? '+' : ''}${avgReturn.toFixed(2)}%`;
+                      })()}
+                      </MKTypography>
+                    </CardContent>
+                  </Card>
+                </Box>
+              </Box>
+            </Box>
+          ) : (
+            <MKBox mb={4}>
+              <MKTypography variant="h3" color="dark" fontWeight="bold">
+                자동매매 설정 목록
+              </MKTypography>
+            </MKBox>
+          )}
 
           {/* 로딩 상태 */}
           {loading && (

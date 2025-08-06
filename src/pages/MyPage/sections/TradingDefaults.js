@@ -283,7 +283,8 @@ function TradingDefaults() {
 
   return (
     <MKBox component="section">
-      <Grid container spacing={2}>
+      <Container>
+        <Grid container spacing={2}>
         {/* 헤더 */}
         <Grid item xs={12}>
           <MKBox mb={2}>
@@ -568,6 +569,7 @@ function TradingDefaults() {
           </MKBox>
         </Grid>
       </Grid>
+      </Container>
     </MKBox>
   );
 }
