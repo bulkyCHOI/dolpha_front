@@ -23,7 +23,8 @@ import { useAuth } from "contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 // Material Design Icons for stars
-import { MdStar, MdStarOutline } from "react-icons/md";
+import StarIcon from "@mui/icons-material/Star";
+import StarOutlineIcon from "@mui/icons-material/StarOutline";
 
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
@@ -582,7 +583,7 @@ function Favorites() {
                             },
                           }}
                         >
-                          {stock.is_favorite ? <MdStar /> : <MdStarOutline />}
+                          {stock.is_favorite ? <StarIcon /> : <StarOutlineIcon />}
                         </IconButton>
                       </Grid>
                       <Grid item xs={4}>
@@ -854,9 +855,9 @@ function Favorites() {
                                 }}
                               >
                                 {stock.is_favorite ? (
-                                  <MdStar size={16} />
+                                  <StarIcon sx={{ fontSize: 16 }} />
                                 ) : (
-                                  <MdStarOutline size={16} />
+                                  <StarOutlineIcon sx={{ fontSize: 16 }} />
                                 )}
                               </IconButton>
                             </MKBox>
@@ -1140,7 +1141,7 @@ function Favorites() {
                           },
                         }}
                       >
-                        {stock.is_favorite ? <MdStar size={20} /> : <MdStarOutline size={20} />}
+                        {stock.is_favorite ? <StarIcon sx={{ fontSize: 20 }} /> : <StarOutlineIcon sx={{ fontSize: 20 }} />}
                       </IconButton>
                     </Grid>
                     <Grid item xs={6}>
@@ -1294,7 +1295,7 @@ function Favorites() {
                             },
                           }}
                         >
-                          <MdStar size={20} />
+                          <StarIcon sx={{ fontSize: 20 }} />
                         </IconButton>
                       </Grid>
                       <Grid item xs={6}>
