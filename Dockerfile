@@ -2,12 +2,12 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy package.json only (not package-lock.json to avoid sync issues)
+COPY package.json ./
 
-# Install all dependencies (React development server needs dev dependencies)
+# Install all dependencies and generate new package-lock.json
 RUN npm cache clean --force && \
-    npm ci && \
+    npm install --no-package-lock-check && \
     npm cache verify
 
 # Copy source code

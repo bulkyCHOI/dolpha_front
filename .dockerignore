@@ -21,3 +21,5 @@ test_screenshots
 test_videos
 playwright-report
 .DS_Store
+# Temporarily ignore package-lock.json for Docker builds
+package-lock.json
