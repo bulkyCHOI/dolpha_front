@@ -79,6 +79,7 @@ const ChartContainer = ({
   onEntryPointChange = () => {},
   onPyramidingEntryChange = () => {},
   onShowSnackbar = () => {},
+  chartType = "default", // "default" | "htf"
 }) => {
   // Chart state
   const [chartLoading, setChartLoading] = useState(false);
@@ -154,7 +155,7 @@ const ChartContainer = ({
   }, [ohlcvData]);
 
   // Chart data creation functions
-  const createCandlestickData = (ohlcvData, analysisData) => {
+  const createCandlestickData = (ohlcvData, analysisData, chartType = "default", selectedStock = {}) => {
     if (!ohlcvData || ohlcvData.length === 0) return null;
 
     const datasets = [
@@ -279,6 +280,93 @@ const ChartContainer = ({
         borderDash: [5, 5],
       });
     });
+
+    // Add HTF pattern visualization if chartType is "htf"
+    if (chartType === "htf" && selectedStock && selectedStock.htf_pattern_detected) {
+      // HTF 패턴 시작점 마커
+      if (selectedStock.htf_pattern_start_date && ohlcvData.length > 0) {
+        const startDateStr = selectedStock.htf_pattern_start_date;
+        const startIndex = ohlcvData.findIndex(item => item.date === startDateStr);
+        
+        if (startIndex !== -1) {
+          datasets.push({
+            label: "HTF 시작점",
+            type: "scatter",
+            data: [{
+              x: startIndex,
+              y: ohlcvData[startIndex]?.low * 0.98, // 저점보다 약간 아래에 표시
+            }],
+            backgroundColor: "#4caf50",
+            borderColor: "#4caf50",
+            pointRadius: 8,
+            pointHoverRadius: 10,
+            pointStyle: "triangle",
+            order: 0,
+          });
+        }
+      }
+
+      // HTF 패턴 고점 마커
+      if (selectedStock.htf_pattern_peak_date && ohlcvData.length > 0) {
+        const peakDateStr = selectedStock.htf_pattern_peak_date;
+        const peakIndex = ohlcvData.findIndex(item => item.date === peakDateStr);
+        
+        if (peakIndex !== -1) {
+          datasets.push({
+            label: "HTF 고점",
+            type: "scatter",
+            data: [{
+              x: peakIndex,
+              y: ohlcvData[peakIndex]?.high * 1.02, // 고점보다 약간 위에 표시
+            }],
+            backgroundColor: "#f44336",
+            borderColor: "#f44336",
+            pointRadius: 8,
+            pointHoverRadius: 10,
+            pointStyle: "triangle",
+            rotation: 180, // 역삼각형으로 표시
+            order: 0,
+          });
+        }
+      }
+
+      // HTF 패턴 구간 하이라이트 (배경색)
+      if (selectedStock.htf_pattern_start_date && selectedStock.htf_pattern_peak_date && ohlcvData.length > 0) {
+        const startDateStr = selectedStock.htf_pattern_start_date;
+        const peakDateStr = selectedStock.htf_pattern_peak_date;
+        const startIndex = ohlcvData.findIndex(item => item.date === startDateStr);
+        const peakIndex = ohlcvData.findIndex(item => item.date === peakDateStr);
+        
+        if (startIndex !== -1 && peakIndex !== -1 && startIndex < peakIndex) {
+          // 상승 구간 하이라이트
+          const riseData = [];
+          for (let i = startIndex; i <= peakIndex; i++) {
+            if (ohlcvData[i]) {
+              riseData.push({
+                x: i,
+                y: ohlcvData[i].high * 1.05, // 고점보다 약간 위에 라인
+              });
+            }
+          }
+          
+          if (riseData.length > 0) {
+            datasets.push({
+              label: "HTF 상승구간",
+              type: "line",
+              data: riseData,
+              borderColor: "rgba(76, 175, 80, 0.3)",
+              backgroundColor: "rgba(76, 175, 80, 0.1)",
+              borderWidth: 3,
+              pointRadius: 0,
+              pointHoverRadius: 0,
+              tension: 0,
+              fill: "origin",
+              order: 10, // 뒤로 보내기
+            });
+          }
+        }
+      }
+    }
 
     return { datasets };
   };
@@ -984,7 +1072,7 @@ const ChartContainer = ({
   };
 
   // Create chart data
-  const chartData = createCandlestickData(ohlcvData, analysisData);
+  const chartData = createCandlestickData(ohlcvData, analysisData, chartType, selectedStock);
   const volumeData = createVolumeData(ohlcvData);
   const indexChartData = createIndexCandlestickData(indexOhlcvData);
   const rsRankData = createRSRankData(analysisData);

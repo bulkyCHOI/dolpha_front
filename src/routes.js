@@ -44,6 +44,7 @@ import SignIn from "pages/SignIn";
 import MyPage from "pages/MyPage";
 import Logout from "pages/Logout";
 import MTT from "pages/MTT";
+import HTF from "pages/HTF";
 import WeeklyHigh from "pages/WeeklyHigh";
 import IssueInfo from "pages/IssueInfo";
 import TopRising from "pages/TopRising";
@@ -67,6 +68,11 @@ const routes = [
             name: "MTT",
             route: "/mtt",
             component: <MTT />,
+          },
+          {
+            name: "HTF 패턴",
+            route: "/htf",
+            component: <HTF />,
           },
           {
             name: "52주 신고가",
