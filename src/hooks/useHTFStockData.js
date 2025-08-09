@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export const useHTFStockData = (filters = {}) => {
+export const useHTFStockData = () => {
   const [stockData, setStockData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -115,18 +115,7 @@ export const useHTFStockData = (filters = {}) => {
       setError(null);
       
       const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
-      
-      // 쿼리 매개변수 구성
-      const queryParams = new URLSearchParams();
-      if (filters.minGainPercent) queryParams.append('min_gain_percent', filters.minGainPercent);
-      if (filters.maxPullbackPercent) queryParams.append('max_pullback_percent', filters.maxPullbackPercent);
-      if (filters.sortBy) queryParams.append('sort_by', filters.sortBy);
-      if (filters.sortOrder) queryParams.append('sort_order', filters.sortOrder);
-      if (filters.searchQuery) queryParams.append('search', filters.searchQuery);
-      
-      const url = `${apiBaseUrl}/api/htf-stocks/${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
-      
-      const response = await fetch(url);
+      const response = await fetch(`${apiBaseUrl}/api/htf-stocks/`);
       if (!response.ok) {
         throw new Error("HTF 종목 데이터를 가져올 수 없습니다");
       }
@@ -165,7 +154,7 @@ export const useHTFStockData = (filters = {}) => {
   // 초기 HTF 데이터 로드
   useEffect(() => {
     fetchHTFStocks();
-  }, []); // filters 변경 시에는 수동으로 fetchHTFStocks 호출
+  }, []);
 
   // 선택된 종목의 상세 데이터 로드
   useEffect(() => {
@@ -195,6 +184,6 @@ export const useHTFStockData = (filters = {}) => {
     handleStockClick,
     handleIndexChange,
     setSelectedStock,
-    fetchHTFStocks, // 필터 변경 시 수동으로 호출할 수 있도록 export
+    fetchHTFStocks,
   };
 };

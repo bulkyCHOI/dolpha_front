@@ -12,13 +12,6 @@ import Paper from "@mui/material/Paper";
 import ListIcon from "@mui/icons-material/List";
 import ShowChartIcon from "@mui/icons-material/ShowChart";
 import SettingsIcon from "@mui/icons-material/Settings";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import TextField from "@mui/material/TextField";
-import InputAdornment from "@mui/material/InputAdornment";
-import SearchIcon from "@mui/icons-material/Search";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import { useAuth } from "contexts/AuthContext";
@@ -46,13 +39,6 @@ import { formatNumber } from "utils/formatters";
 function HTF() {
   const [activeTab, setActiveTab] = useState(0);
   const [mobileTab, setMobileTab] = useState(0); // 0: 종목, 1: 차트, 2: 자동매매
-  const [filters, setFilters] = useState({
-    minGainPercent: 100,
-    maxPullbackPercent: 25,
-    sortBy: "htf_8week_gain",
-    sortOrder: "desc",
-    searchQuery: "",
-  });
   
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -92,7 +78,7 @@ function HTF() {
     handleIndexChange,
     setSelectedStock,
     fetchHTFStocks,
-  } = useHTFStockData(filters);
+  } = useHTFStockData();
 
   const tradingForm = useTradingForm(selectedStock, authenticatedFetch, showSnackbar, "htf");
 
@@ -184,12 +170,6 @@ function HTF() {
     }
   };
 
-  const handleFilterChange = (filterType, value) => {
-    setFilters(prev => ({
-      ...prev,
-      [filterType]: value
-    }));
-  };
 
   // HTF 상승률에 따른 색상 결정
   const getGainColor = (gain) => {
@@ -232,147 +212,6 @@ function HTF() {
     }
   }, [activeTab]);
 
-  // 필터 패널 렌더링
-  const renderFilterPanel = () => (
-    <MKBox sx={{ p: 2, borderBottom: "1px solid #e0e0e0", backgroundColor: "#f8f9fa" }}>
-      <Grid container spacing={2} alignItems="center">
-        <Grid item xs={12} sm={6} md={2}>
-          <FormControl fullWidth size="small">
-            <InputLabel>최소 상승률</InputLabel>
-            <Select
-              value={filters.minGainPercent}
-              label="최소 상승률"
-              onChange={(e) => handleFilterChange("minGainPercent", e.target.value)}
-            >
-              <MenuItem value={100}>100%</MenuItem>
-              <MenuItem value={150}>150%</MenuItem>
-              <MenuItem value={200}>200%</MenuItem>
-              <MenuItem value={300}>300%</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item xs={12} sm={6} md={2}>
-          <FormControl fullWidth size="small">
-            <InputLabel>최대 조정폭</InputLabel>
-            <Select
-              value={filters.maxPullbackPercent}
-              label="최대 조정폭"
-              onChange={(e) => handleFilterChange("maxPullbackPercent", e.target.value)}
-            >
-              <MenuItem value={10}>10%</MenuItem>
-              <MenuItem value={15}>15%</MenuItem>
-              <MenuItem value={20}>20%</MenuItem>
-              <MenuItem value={25}>25%</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item xs={12} sm={6} md={2}>
-          <FormControl fullWidth size="small">
-            <InputLabel>정렬 기준</InputLabel>
-            <Select
-              value={filters.sortBy}
-              label="정렬 기준"
-              onChange={(e) => handleFilterChange("sortBy", e.target.value)}
-            >
-              <MenuItem value="htf_8week_gain">상승률순</MenuItem>
-              <MenuItem value="htf_max_pullback">조정폭순</MenuItem>
-              <MenuItem value="htf_pattern_start_date">날짜순</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <TextField
-            fullWidth
-            size="small"
-            placeholder="종목명 또는 코드 검색"
-            value={filters.searchQuery}
-            onChange={(e) => handleFilterChange("searchQuery", e.target.value)}
-            onKeyPress={(e) => {
-              if (e.key === 'Enter') {
-                fetchHTFStocks();
-              }
-            }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Grid>
-        <Grid item xs={12} sm={12} md={3}>
-          <MKBox sx={{ display: "flex", gap: 1 }}>
-            <Button
-              fullWidth
-              variant="contained"
-              onClick={fetchHTFStocks}
-              disabled={loading}
-              sx={{ 
-                background: GRADIENT_COLORS.PRIMARY,
-                "&:hover": { background: GRADIENT_COLORS.PRIMARY_HOVER }
-              }}
-            >
-              {loading ? "검색 중..." : "검색"}
-            </Button>
-            <Button
-              variant="outlined"
-              onClick={() => {
-                setFilters({
-                  minGainPercent: 100,
-                  maxPullbackPercent: 25,
-                  sortBy: "htf_8week_gain",
-                  sortOrder: "desc",
-                  searchQuery: "",
-                });
-                // 필터 초기화 후 자동으로 검색
-                setTimeout(() => {
-                  fetchHTFStocks();
-                }, 100);
-              }}
-              sx={{ 
-                minWidth: "60px",
-                color: GRADIENT_COLORS.PRIMARY,
-                borderColor: GRADIENT_COLORS.PRIMARY,
-                "&:hover": { 
-                  backgroundColor: "rgba(102, 126, 234, 0.1)",
-                  borderColor: GRADIENT_COLORS.PRIMARY_HOVER
-                }
-              }}
-            >
-              초기화
-            </Button>
-          </MKBox>
-        </Grid>
-      </Grid>
-      
-      {/* 필터 요약 정보 */}
-      <MKBox sx={{ mt: 1, display: "flex", alignItems: "center", flexWrap: "wrap", gap: 1 }}>
-        <MKTypography variant="caption" color="text.secondary">
-          필터 조건:
-        </MKTypography>
-        <MKTypography variant="caption" color="primary" fontWeight="bold">
-          상승률 ≥{filters.minGainPercent}%
-        </MKTypography>
-        <MKTypography variant="caption" color="text.secondary">•</MKTypography>
-        <MKTypography variant="caption" color="warning.main" fontWeight="bold">
-          조정폭 ≤{filters.maxPullbackPercent}%
-        </MKTypography>
-        {filters.searchQuery && (
-          <>
-            <MKTypography variant="caption" color="text.secondary">•</MKTypography>
-            <MKTypography variant="caption" color="info.main" fontWeight="bold">
-              검색: &ldquo;{filters.searchQuery}&rdquo;
-            </MKTypography>
-          </>
-        )}
-        <MKTypography variant="caption" color="text.secondary">•</MKTypography>
-        <MKTypography variant="caption" color="success.main" fontWeight="bold">
-          {stockData.length}개 종목
-        </MKTypography>
-      </MKBox>
-    </MKBox>
-  );
 
   // 모바일 종목 탭 렌더링
   const renderMobileStockTab = () => (
@@ -396,7 +235,6 @@ function HTF() {
             High Tight Flag 패턴 (8주 100%↑ + 25%↓ 조정)
           </MKTypography>
         </MKBox>
-        {renderFilterPanel()}
         <MKBox sx={{ flex: 1, overflow: "auto" }}>
           <HTFStockList
             stocks={stockData}
@@ -497,7 +335,6 @@ function HTF() {
                 ohlcvData={ohlcvData}
                 analysisData={analysisData}
                 onOpenFinancialModal={handleOpenFinancialModal}
-                showHTFInfo={true}
               />
               <ChartContainer
                 ohlcvData={ohlcvData}
@@ -783,8 +620,7 @@ function HTF() {
                         ohlcvData={ohlcvData}
                         analysisData={analysisData}
                         onOpenFinancialModal={handleOpenFinancialModal}
-                        showHTFInfo={true}
-                      />
+                              />
 
                       <ChartContainer
                         ohlcvData={ohlcvData}
@@ -894,8 +730,7 @@ function HTF() {
                     {/* HTF 목록 탭 내용 */}
                     {activeTab === 0 && (
                       <>
-                        {renderFilterPanel()}
-                        <MKBox
+                                        <MKBox
                           sx={{
                             flex: 1,
                             overflow: "auto",

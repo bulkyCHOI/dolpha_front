@@ -7,7 +7,7 @@ import Assessment from "@mui/icons-material/Assessment";
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
 
-function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinancialModal, showHTFInfo = false }) {
+function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinancialModal }) {
   const getChangeRate = () => {
     if (!ohlcvData || ohlcvData.length < 2) return null;
     const current = ohlcvData[ohlcvData.length - 1]?.close;
@@ -17,65 +17,7 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
 
   const changeRate = getChangeRate();
 
-  // HTF 정보 렌더링 함수
-  const renderHTFInfo = () => {
-    if (!showHTFInfo || !selectedStock) return null;
-    
-    return (
-      <MKBox sx={{ mt: 1, p: 1, backgroundColor: "rgba(255,255,255,0.1)", borderRadius: 1 }}>
-        <MKTypography variant="caption" color="white" sx={{ fontSize: "0.7rem", mb: 0.5, display: "block" }}>
-          HTF 패턴 정보
-        </MKTypography>
-        <Grid container spacing={1}>
-          <Grid item xs={3}>
-            <MKBox>
-              <MKTypography variant="caption" color="white" sx={{ fontSize: "0.6rem", opacity: 0.8 }}>
-                8주 상승률
-              </MKTypography>
-              <MKTypography variant="body2" fontWeight="bold" color="white" sx={{ fontSize: "0.75rem" }}>
-                {selectedStock.htf_8week_gain ? `${Math.round(selectedStock.htf_8week_gain)}%` : "-"}
-              </MKTypography>
-            </MKBox>
-          </Grid>
-          <Grid item xs={3}>
-            <MKBox>
-              <MKTypography variant="caption" color="white" sx={{ fontSize: "0.6rem", opacity: 0.8 }}>
-                최대 조정폭
-              </MKTypography>
-              <MKTypography variant="body2" fontWeight="bold" color="white" sx={{ fontSize: "0.75rem" }}>
-                {selectedStock.htf_max_pullback ? `${Math.round(selectedStock.htf_max_pullback)}%` : "-"}
-              </MKTypography>
-            </MKBox>
-          </Grid>
-          <Grid item xs={3}>
-            <MKBox>
-              <MKTypography variant="caption" color="white" sx={{ fontSize: "0.6rem", opacity: 0.8 }}>
-                패턴 시작일
-              </MKTypography>
-              <MKTypography variant="body2" fontWeight="bold" color="white" sx={{ fontSize: "0.75rem" }}>
-                {selectedStock.htf_pattern_start_date
-                  ? new Date(selectedStock.htf_pattern_start_date).toLocaleDateString("ko-KR", {
-                      month: "2-digit",
-                      day: "2-digit",
-                    })
-                  : "-"}
-              </MKTypography>
-            </MKBox>
-          </Grid>
-          <Grid item xs={3}>
-            <MKBox>
-              <MKTypography variant="caption" color="white" sx={{ fontSize: "0.6rem", opacity: 0.8 }}>
-                현재 상태
-              </MKTypography>
-              <MKTypography variant="body2" fontWeight="bold" color="white" sx={{ fontSize: "0.75rem" }}>
-                {selectedStock.htf_current_status || "-"}
-              </MKTypography>
-            </MKBox>
-          </Grid>
-        </Grid>
-      </MKBox>
-    );
-  };
+  // HTF 정보 렌더링 함수 (삭제됨)
 
   return (
     <MKBox
@@ -163,62 +105,6 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
             </MKTypography>
           </MKBox>
         </MKBox>
-        
-        {/* 모바일용 HTF 정보 */}
-        {showHTFInfo && selectedStock && (
-          <MKBox sx={{ mt: 1, p: 1, backgroundColor: "rgba(255,255,255,0.1)", borderRadius: 1 }}>
-            <MKTypography variant="caption" color="white" sx={{ fontSize: "0.7rem", mb: 0.5, display: "block" }}>
-              HTF 패턴 정보
-            </MKTypography>
-            <Grid container spacing={1}>
-              <Grid item xs={6}>
-                <MKBox>
-                  <MKTypography variant="caption" color="white" sx={{ fontSize: "0.6rem", opacity: 0.8 }}>
-                    8주 상승률
-                  </MKTypography>
-                  <MKTypography variant="body2" fontWeight="bold" color="white" sx={{ fontSize: "0.75rem" }}>
-                    {selectedStock.htf_8week_gain ? `${Math.round(selectedStock.htf_8week_gain)}%` : "-"}
-                  </MKTypography>
-                </MKBox>
-              </Grid>
-              <Grid item xs={6}>
-                <MKBox>
-                  <MKTypography variant="caption" color="white" sx={{ fontSize: "0.6rem", opacity: 0.8 }}>
-                    최대 조정폭
-                  </MKTypography>
-                  <MKTypography variant="body2" fontWeight="bold" color="white" sx={{ fontSize: "0.75rem" }}>
-                    {selectedStock.htf_max_pullback ? `${Math.round(selectedStock.htf_max_pullback)}%` : "-"}
-                  </MKTypography>
-                </MKBox>
-              </Grid>
-              <Grid item xs={6}>
-                <MKBox>
-                  <MKTypography variant="caption" color="white" sx={{ fontSize: "0.6rem", opacity: 0.8 }}>
-                    패턴 시작일
-                  </MKTypography>
-                  <MKTypography variant="body2" fontWeight="bold" color="white" sx={{ fontSize: "0.75rem" }}>
-                    {selectedStock.htf_pattern_start_date
-                      ? new Date(selectedStock.htf_pattern_start_date).toLocaleDateString("ko-KR", {
-                          month: "2-digit",
-                          day: "2-digit",
-                        })
-                      : "-"}
-                  </MKTypography>
-                </MKBox>
-              </Grid>
-              <Grid item xs={6}>
-                <MKBox>
-                  <MKTypography variant="caption" color="white" sx={{ fontSize: "0.6rem", opacity: 0.8 }}>
-                    현재 상태
-                  </MKTypography>
-                  <MKTypography variant="body2" fontWeight="bold" color="white" sx={{ fontSize: "0.75rem" }}>
-                    {selectedStock.htf_current_status || "-"}
-                  </MKTypography>
-                </MKBox>
-              </Grid>
-            </Grid>
-          </MKBox>
-        )}
       </MKBox>
 
       {/* 데스크탑: 기존 Grid 레이아웃 */}
@@ -367,9 +253,6 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
           </Grid>
         </Grid>
       </MKBox>
-      
-      {/* HTF 정보 추가 */}
-      {renderHTFInfo()}
     </MKBox>
   );
 }
