@@ -52,6 +52,7 @@ import FiftyDayHigh from "pages/FiftyDayHigh";
 import Favorites from "pages/Favorites";
 import TradingConfigs from "pages/TradingConfigs";
 import DailyNewsClipping from "pages/DailyNewsClipping";
+import MarketInfo from "pages/MarketInfo";
 import ProtectedRoute from "components/ProtectedRoute";
 
 const routes = [
@@ -128,11 +129,16 @@ const routes = [
     name: "정보",
     icon: <Icon>info</Icon>,
     columns: 1,
-    rowsPerColumn: 3,
+    rowsPerColumn: 4,
     collapse: [
       {
         name: "시장 정보",
         collapse: [
+          {
+            name: "세계 주요 지수",
+            route: "/market-info",
+            component: <MarketInfo />,
+          },
           {
             name: "이슈 정보",
             route: "/issue-info",
