@@ -39,13 +39,13 @@ import { formatNumber } from "utils/formatters";
 function HTF() {
   const [activeTab, setActiveTab] = useState(0);
   const [mobileTab, setMobileTab] = useState(0); // 0: 종목, 1: 차트, 2: 자동매매
-  
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const { isAuthenticated, authenticatedFetch, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { showSnackbar, NotificationComponent } = useNotification();
-  
+
   const {
     openFinancialModal,
     financialData,
@@ -54,7 +54,7 @@ function HTF() {
     handleOpenFinancialModal,
     handleCloseFinancialModal,
   } = useFinancialData();
-  
+
   const {
     autotradingList,
     expandedAccordion,
@@ -170,7 +170,6 @@ function HTF() {
     }
   };
 
-
   // HTF 상승률에 따른 색상 결정
   const getGainColor = (gain) => {
     if (gain >= 300) return "#d32f2f"; // 300% 이상: 진한 빨강
@@ -202,7 +201,7 @@ function HTF() {
       돌파: { color: "#2196f3", text: "돌파" },
       해당없음: { color: "#9e9e9e", text: "해당없음" },
     };
-    
+
     return statusConfig[status] || statusConfig.none;
   };
 
@@ -211,7 +210,6 @@ function HTF() {
       fetchAutotradingList();
     }
   }, [activeTab]);
-
 
   // 모바일 종목 탭 렌더링
   const renderMobileStockTab = () => (
@@ -620,7 +618,7 @@ function HTF() {
                         ohlcvData={ohlcvData}
                         analysisData={analysisData}
                         onOpenFinancialModal={handleOpenFinancialModal}
-                              />
+                      />
 
                       <ChartContainer
                         ohlcvData={ohlcvData}
@@ -730,7 +728,7 @@ function HTF() {
                     {/* HTF 목록 탭 내용 */}
                     {activeTab === 0 && (
                       <>
-                                        <MKBox
+                        <MKBox
                           sx={{
                             flex: 1,
                             overflow: "auto",

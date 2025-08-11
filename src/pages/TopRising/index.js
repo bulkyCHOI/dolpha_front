@@ -357,6 +357,7 @@ function TopRising() {
                   onEntryPointChange={tradingForm.setEntryPoint}
                   onPyramidingEntryChange={tradingForm.handlePyramidingEntryChange}
                   onShowSnackbar={showSnackbar}
+                  chartType="top-rising"
                 />
               </MKBox>
             )}
@@ -949,6 +950,7 @@ function TopRising() {
                 onEntryPointChange={tradingForm.setEntryPoint}
                 onPyramidingEntryChange={tradingForm.handlePyramidingEntryChange}
                 onShowSnackbar={showSnackbar}
+                chartType="top-rising"
               />
             </MKBox>
           )}

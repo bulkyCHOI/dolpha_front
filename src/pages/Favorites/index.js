@@ -53,7 +53,7 @@ function Favorites() {
   const { isAuthenticated, authenticatedFetch, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { showSnackbar, NotificationComponent } = useNotification();
-  
+
   const {
     openFinancialModal,
     financialData,
@@ -62,7 +62,7 @@ function Favorites() {
     handleOpenFinancialModal,
     handleCloseFinancialModal,
   } = useFinancialData();
-  
+
   const {
     autotradingList,
     expandedAccordion,
@@ -197,7 +197,7 @@ function Favorites() {
   };
 
   const handleKeyPress = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       handleSearchSubmit();
     }
   };
@@ -343,6 +343,7 @@ function Favorites() {
                   onEntryPointChange={tradingForm.setEntryPoint}
                   onPyramidingEntryChange={tradingForm.handlePyramidingEntryChange}
                   onShowSnackbar={showSnackbar}
+                  chartType="favorites"
                 />
               </MKBox>
             )}
@@ -461,9 +462,7 @@ function Favorites() {
                 justifyContent: "center",
               }}
             >
-              <MKTypography color="error">
-                데이터 로드 중 오류가 발생했습니다: {error}
-              </MKTypography>
+              <MKTypography color="error">데이터 로드 중 오류가 발생했습니다: {error}</MKTypography>
             </MKBox>
           )}
 
@@ -621,9 +620,7 @@ function Favorites() {
                             color: "#333",
                           }}
                         >
-                          {stock.current_price
-                            ? stock.current_price.toLocaleString()
-                            : "-"}
+                          {stock.current_price ? stock.current_price.toLocaleString() : "-"}
                         </MKTypography>
                       </Grid>
                       <Grid item xs={2}>
@@ -654,7 +651,9 @@ function Favorites() {
                           }}
                         >
                           {stock.change_percent
-                            ? `${stock.change_percent > 0 ? "+" : ""}${stock.change_percent.toFixed(2)}%`
+                            ? `${stock.change_percent > 0 ? "+" : ""}${stock.change_percent.toFixed(
+                                2
+                              )}%`
                             : "-"}
                         </MKTypography>
                       </Grid>
@@ -692,7 +691,6 @@ function Favorites() {
               {/* 즐겨찾기 탭 내용 */}
               {activeTab === 0 && (
                 <>
-
                   {/* 테이블 헤더 */}
                   <MKBox
                     sx={{
@@ -830,7 +828,7 @@ function Favorites() {
                             borderLeft: "3px solid #667eea",
                           },
                           ...((selectedStock?.code === (stock.code || stock.stock_code) ||
-                               selectedStock?.stock_code === (stock.code || stock.stock_code)) && {
+                            selectedStock?.stock_code === (stock.code || stock.stock_code)) && {
                             borderLeft: "3px solid #667eea",
                             boxShadow: "0 2px 12px rgba(102, 126, 234, 0.2)",
                           }),
@@ -866,10 +864,18 @@ function Favorites() {
                             <MKBox>
                               <MKTypography
                                 variant="body2"
-                                fontWeight={(selectedStock?.code === (stock.code || stock.stock_code) ||
-                                             selectedStock?.stock_code === (stock.code || stock.stock_code)) ? "bold" : "medium"}
-                                color={(selectedStock?.code === (stock.code || stock.stock_code) ||
-                                        selectedStock?.stock_code === (stock.code || stock.stock_code)) ? "info" : "text"}
+                                fontWeight={
+                                  selectedStock?.code === (stock.code || stock.stock_code) ||
+                                  selectedStock?.stock_code === (stock.code || stock.stock_code)
+                                    ? "bold"
+                                    : "medium"
+                                }
+                                color={
+                                  selectedStock?.code === (stock.code || stock.stock_code) ||
+                                  selectedStock?.stock_code === (stock.code || stock.stock_code)
+                                    ? "info"
+                                    : "text"
+                                }
                                 sx={{
                                   fontSize: { xs: "0.7rem", md: "0.8rem" },
                                   lineHeight: 1.1,
@@ -902,7 +908,9 @@ function Favorites() {
                                   fontSize: { xs: "0.7rem", md: "0.8rem" },
                                 }}
                               >
-                                {stock.current_price ? `${formatNumber(stock.current_price)}원` : "-"}
+                                {stock.current_price
+                                  ? `${formatNumber(stock.current_price)}원`
+                                  : "-"}
                               </MKTypography>
                             </MKBox>
                           </Grid>
@@ -951,7 +959,9 @@ function Favorites() {
                                 }}
                               >
                                 {stock.change_percent
-                                  ? `${stock.change_percent > 0 ? '+' : ''}${stock.change_percent.toFixed(2)}%`
+                                  ? `${
+                                      stock.change_percent > 0 ? "+" : ""
+                                    }${stock.change_percent.toFixed(2)}%`
                                   : "-"}
                               </MKTypography>
                             </MKBox>
@@ -1113,8 +1123,7 @@ function Favorites() {
                     borderBottom: "1px solid #f0f0f0",
                     cursor: "pointer",
                     backgroundColor:
-                      selectedStock?.code === stock.code ||
-                      selectedStock?.stock_code === stock.code
+                      selectedStock?.code === stock.code || selectedStock?.stock_code === stock.code
                         ? "#f8f9ff"
                         : index % 2 === 0
                         ? "#fafafa"
@@ -1141,7 +1150,11 @@ function Favorites() {
                           },
                         }}
                       >
-                        {stock.is_favorite ? <StarIcon sx={{ fontSize: 20 }} /> : <StarOutlineIcon sx={{ fontSize: 20 }} />}
+                        {stock.is_favorite ? (
+                          <StarIcon sx={{ fontSize: 20 }} />
+                        ) : (
+                          <StarOutlineIcon sx={{ fontSize: 20 }} />
+                        )}
                       </IconButton>
                     </Grid>
                     <Grid item xs={6}>
@@ -1179,9 +1192,7 @@ function Favorites() {
                             color: "#333",
                           }}
                         >
-                          {stock.current_price
-                            ? stock.current_price.toLocaleString()
-                            : "-"}
+                          {stock.current_price ? stock.current_price.toLocaleString() : "-"}
                         </MKTypography>
                         <MKTypography
                           variant="caption"
@@ -1197,7 +1208,9 @@ function Favorites() {
                           }}
                         >
                           {stock.change_percent
-                            ? `${stock.change_percent > 0 ? "+" : ""}${stock.change_percent.toFixed(2)}%`
+                            ? `${stock.change_percent > 0 ? "+" : ""}${stock.change_percent.toFixed(
+                                2
+                              )}%`
                             : "-"}
                         </MKTypography>
                       </MKBox>
@@ -1284,7 +1297,7 @@ function Favorites() {
                             handleToggleFavorite({
                               code: stock.stock_code,
                               name: stock.stock_name,
-                              is_favorite: true
+                              is_favorite: true,
                             });
                           }}
                           sx={{
@@ -1333,9 +1346,7 @@ function Favorites() {
                               color: "#333",
                             }}
                           >
-                            {stock.current_price
-                              ? stock.current_price.toLocaleString()
-                              : "-"}
+                            {stock.current_price ? stock.current_price.toLocaleString() : "-"}
                           </MKTypography>
                           <MKTypography
                             variant="caption"
@@ -1351,7 +1362,9 @@ function Favorites() {
                             }}
                           >
                             {stock.change_percent
-                              ? `${stock.change_percent > 0 ? "+" : ""}${stock.change_percent.toFixed(2)}%`
+                              ? `${
+                                  stock.change_percent > 0 ? "+" : ""
+                                }${stock.change_percent.toFixed(2)}%`
                               : "-"}
                           </MKTypography>
                         </MKBox>
@@ -1463,6 +1476,7 @@ function Favorites() {
                 onEntryPointChange={tradingForm.setEntryPoint}
                 onPyramidingEntryChange={tradingForm.handlePyramidingEntryChange}
                 onShowSnackbar={showSnackbar}
+                chartType="favorites"
               />
             </MKBox>
           )}

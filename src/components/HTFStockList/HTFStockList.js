@@ -181,7 +181,7 @@ function HTFStockList({
       >
         {stocks.map((stock, rowIndex) => {
           const statusChip = getStatusChip(stock.htf_current_status);
-          
+
           return (
             <MKBox
               key={stock.code || rowIndex}

@@ -285,290 +285,297 @@ function TradingDefaults() {
     <MKBox component="section">
       <Container>
         <Grid container spacing={2}>
-        {/* 헤더 */}
-        <Grid item xs={12}>
-          <MKBox mb={2}>
-            <MKTypography variant="h5" mb={1} fontWeight="bold">
-              자동매매 기본설정
-            </MKTypography>
-            <MKTypography variant="body2" color="text" opacity={0.8}>
-              새로운 자동매매 설정 시 사용될 기본값을 관리하세요. 설정된 기본값은 자동매매 설정 생성
-              시 자동으로 적용됩니다.
-            </MKTypography>
-          </MKBox>
-        </Grid>
-
-        {/* 메시지 표시 */}
-        {message && (
+          {/* 헤더 */}
           <Grid item xs={12}>
-            <Alert severity={message.type} sx={{ borderRadius: 2, mb: 1, whiteSpace: "pre-line" }}>
-              {message.text}
-            </Alert>
+            <MKBox mb={2}>
+              <MKTypography variant="h5" mb={1} fontWeight="bold">
+                자동매매 기본설정
+              </MKTypography>
+              <MKTypography variant="body2" color="text" opacity={0.8}>
+                새로운 자동매매 설정 시 사용될 기본값을 관리하세요. 설정된 기본값은 자동매매 설정
+                생성 시 자동으로 적용됩니다.
+              </MKTypography>
+            </MKBox>
           </Grid>
-        )}
 
-        {/* 좌측 컬럼 */}
-        <Grid item xs={12} md={6}>
-          {/* 매매모드 선택 */}
-          {renderCompactSection(
-            "매매모드 선택",
-            <FormControl component="fieldset">
-              <RadioGroup
-                row
-                value={defaults.trading_mode}
-                onChange={(e) => handleInputChange("trading_mode", e.target.value)}
+          {/* 메시지 표시 */}
+          {message && (
+            <Grid item xs={12}>
+              <Alert
+                severity={message.type}
+                sx={{ borderRadius: 2, mb: 1, whiteSpace: "pre-line" }}
               >
-                <FormControlLabel value="manual" control={<Radio size="small" />} label="Manual" />
-                <FormControlLabel
-                  value="turtle"
-                  control={<Radio size="small" />}
-                  label="Turtle(ATR)"
-                />
-              </RadioGroup>
-            </FormControl>
-          )}
-
-          {/* 리스크 관리 설정 */}
-          {renderCompactSection(
-            "리스크 관리 설정",
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <TextField
-                  fullWidth
-                  size="small"
-                  label="최대손실 (%)"
-                  type="number"
-                  value={getCurrentModeDefaults().max_loss}
-                  onChange={(e) => handleInputChange("max_loss", parseFloat(e.target.value))}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  fullWidth
-                  size="small"
-                  label={`손절가 (${getUnit()})`}
-                  type="number"
-                  value={getCurrentModeDefaults().stop_loss}
-                  onChange={(e) => handleInputChange("stop_loss", parseFloat(e.target.value))}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  fullWidth
-                  size="small"
-                  label={`익절가 (${getUnit()})`}
-                  type="number"
-                  value={getCurrentModeDefaults().take_profit || ""}
-                  onChange={(e) =>
-                    handleInputChange(
-                      "take_profit",
-                      e.target.value ? parseFloat(e.target.value) : null
-                    )
-                  }
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  fullWidth
-                  size="small"
-                  label={`트레일링 스탑 (${getUnit()})`}
-                  type="number"
-                  value={getCurrentModeDefaults().trailing_stop_percent}
-                  onChange={(e) =>
-                    handleInputChange("trailing_stop_percent", parseFloat(e.target.value))
-                  }
-                  disabled={!getCurrentModeDefaults().use_trailing_stop}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      size="small"
-                      checked={getCurrentModeDefaults().use_trailing_stop}
-                      onChange={(e) => handleInputChange("use_trailing_stop", e.target.checked)}
-                    />
-                  }
-                  label="트레일링 스탑 사용"
-                />
-              </Grid>
+                {message.text}
+              </Alert>
             </Grid>
           )}
-        </Grid>
 
-        {/* 우측 컬럼 */}
-        <Grid item xs={12} md={6}>
-          {/* 포지션 분할 설정 */}
-          <Card sx={{ mb: 2, borderRadius: 2 }}>
-            <MKBox p={2}>
-              <MKTypography variant="h6" fontWeight="bold" mb={2}>
-                포지션 분할 설정
-              </MKTypography>
+          {/* 좌측 컬럼 */}
+          <Grid item xs={12} md={6}>
+            {/* 매매모드 선택 */}
+            {renderCompactSection(
+              "매매모드 선택",
+              <FormControl component="fieldset">
+                <RadioGroup
+                  row
+                  value={defaults.trading_mode}
+                  onChange={(e) => handleInputChange("trading_mode", e.target.value)}
+                >
+                  <FormControlLabel
+                    value="manual"
+                    control={<Radio size="small" />}
+                    label="Manual"
+                  />
+                  <FormControlLabel
+                    value="turtle"
+                    control={<Radio size="small" />}
+                    label="Turtle(ATR)"
+                  />
+                </RadioGroup>
+              </FormControl>
+            )}
 
-              {/* 첫 번째 행: 피라미딩 횟수, 초기화, 균등분할 (6:3:3) */}
-              <Grid container spacing={2} alignItems="center" mb={2}>
+            {/* 리스크 관리 설정 */}
+            {renderCompactSection(
+              "리스크 관리 설정",
+              <Grid container spacing={2}>
                 <Grid item xs={6}>
                   <TextField
                     fullWidth
                     size="small"
-                    label="피라미딩 횟수"
+                    label="최대손실 (%)"
                     type="number"
-                    value={getCurrentModeDefaults().pyramiding_count}
-                    onChange={(e) =>
-                      handleInputChange("pyramiding_count", parseInt(e.target.value))
-                    }
-                    inputProps={{ min: 0, max: 10 }}
+                    value={getCurrentModeDefaults().max_loss}
+                    onChange={(e) => handleInputChange("max_loss", parseFloat(e.target.value))}
                   />
                 </Grid>
-                <Grid item xs={3}>
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    onClick={handleReset}
+                <Grid item xs={6}>
+                  <TextField
                     fullWidth
-                    sx={{
-                      borderColor: "#f44336",
-                      color: "#f44336",
-                      fontSize: "0.75rem",
-                      "&:hover": {
-                        borderColor: "#d32f2f",
-                        backgroundColor: "rgba(244, 67, 54, 0.08)",
-                      },
-                    }}
-                  >
-                    초기화
-                  </Button>
+                    size="small"
+                    label={`손절가 (${getUnit()})`}
+                    type="number"
+                    value={getCurrentModeDefaults().stop_loss}
+                    onChange={(e) => handleInputChange("stop_loss", parseFloat(e.target.value))}
+                  />
                 </Grid>
-                <Grid item xs={3}>
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    onClick={handleEqualDivision}
+                <Grid item xs={6}>
+                  <TextField
                     fullWidth
-                    sx={{
-                      borderColor: "#667eea",
-                      color: "#667eea",
-                      fontSize: "0.75rem",
-                      "&:hover": {
-                        borderColor: "#5a6fd8",
-                        backgroundColor: "rgba(102, 126, 234, 0.08)",
-                      },
-                    }}
-                  >
-                    균등분할
-                  </Button>
+                    size="small"
+                    label={`익절가 (${getUnit()})`}
+                    type="number"
+                    value={getCurrentModeDefaults().take_profit || ""}
+                    onChange={(e) =>
+                      handleInputChange(
+                        "take_profit",
+                        e.target.value ? parseFloat(e.target.value) : null
+                      )
+                    }
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    label={`트레일링 스탑 (${getUnit()})`}
+                    type="number"
+                    value={getCurrentModeDefaults().trailing_stop_percent}
+                    onChange={(e) =>
+                      handleInputChange("trailing_stop_percent", parseFloat(e.target.value))
+                    }
+                    disabled={!getCurrentModeDefaults().use_trailing_stop}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        size="small"
+                        checked={getCurrentModeDefaults().use_trailing_stop}
+                        onChange={(e) => handleInputChange("use_trailing_stop", e.target.checked)}
+                      />
+                    }
+                    label="트레일링 스탑 사용"
+                  />
                 </Grid>
               </Grid>
+            )}
+          </Grid>
 
-              {/* 진입시점과 포지션 설정 (차수별 6:6 배치) */}
-              <MKBox mb={2}>
-                {/* 1차 진입시점과 포지션 */}
-                <Grid container spacing={2} alignItems="center" mb={1}>
+          {/* 우측 컬럼 */}
+          <Grid item xs={12} md={6}>
+            {/* 포지션 분할 설정 */}
+            <Card sx={{ mb: 2, borderRadius: 2 }}>
+              <MKBox p={2}>
+                <MKTypography variant="h6" fontWeight="bold" mb={2}>
+                  포지션 분할 설정
+                </MKTypography>
+
+                {/* 첫 번째 행: 피라미딩 횟수, 초기화, 균등분할 (6:3:3) */}
+                <Grid container spacing={2} alignItems="center" mb={2}>
                   <Grid item xs={6}>
                     <TextField
                       fullWidth
                       size="small"
-                      label="1차 진입시점 (원)"
-                      value="진입가격은 자동매매에서 설정"
-                      disabled
-                      sx={{
-                        "& .MuiInputBase-input.Mui-disabled": {
-                          color: "rgba(0, 0, 0, 0.6)",
-                        },
-                      }}
+                      label="피라미딩 횟수"
+                      type="number"
+                      value={getCurrentModeDefaults().pyramiding_count}
+                      onChange={(e) =>
+                        handleInputChange("pyramiding_count", parseInt(e.target.value))
+                      }
+                      inputProps={{ min: 0, max: 10 }}
                     />
                   </Grid>
-                  <Grid item xs={6}>
-                    <TextField
-                      fullWidth
+                  <Grid item xs={3}>
+                    <Button
+                      variant="outlined"
                       size="small"
-                      label="1차 포지션 (%)"
-                      type="number"
-                      value={getCurrentModeDefaults().positions?.[0] || 0}
-                      onChange={(e) => handlePositionChange(0, e.target.value)}
-                      inputProps={{ min: 0, max: 100, step: 0.1 }}
-                    />
+                      onClick={handleReset}
+                      fullWidth
+                      sx={{
+                        borderColor: "#f44336",
+                        color: "#f44336",
+                        fontSize: "0.75rem",
+                        "&:hover": {
+                          borderColor: "#d32f2f",
+                          backgroundColor: "rgba(244, 67, 54, 0.08)",
+                        },
+                      }}
+                    >
+                      초기화
+                    </Button>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      onClick={handleEqualDivision}
+                      fullWidth
+                      sx={{
+                        borderColor: "#667eea",
+                        color: "#667eea",
+                        fontSize: "0.75rem",
+                        "&:hover": {
+                          borderColor: "#5a6fd8",
+                          backgroundColor: "rgba(102, 126, 234, 0.08)",
+                        },
+                      }}
+                    >
+                      균등분할
+                    </Button>
                   </Grid>
                 </Grid>
 
-                {/* 2차 이상 진입시점과 포지션 (피라미딩 횟수에 따라 동적) */}
-                {getCurrentModeDefaults().pyramiding_entries?.map((entry, index) => (
-                  <Grid container spacing={2} alignItems="center" mb={1} key={index}>
+                {/* 진입시점과 포지션 설정 (차수별 6:6 배치) */}
+                <MKBox mb={2}>
+                  {/* 1차 진입시점과 포지션 */}
+                  <Grid container spacing={2} alignItems="center" mb={1}>
                     <Grid item xs={6}>
                       <TextField
                         fullWidth
                         size="small"
-                        label={`${index + 2}차 진입시점 (${getUnit()})`}
-                        type="number"
-                        value={entry}
-                        onChange={(e) => handlePyramidingEntryChange(index, e.target.value)}
-                        placeholder={defaults.trading_mode === "manual" ? "예: 4" : "예: 1.5"}
-                        inputProps={{ step: defaults.trading_mode === "manual" ? 1 : 0.1 }}
+                        label="1차 진입시점 (원)"
+                        value="진입가격은 자동매매에서 설정"
+                        disabled
+                        sx={{
+                          "& .MuiInputBase-input.Mui-disabled": {
+                            color: "rgba(0, 0, 0, 0.6)",
+                          },
+                        }}
                       />
                     </Grid>
                     <Grid item xs={6}>
                       <TextField
                         fullWidth
                         size="small"
-                        label={`${index + 2}차 포지션 (%)`}
+                        label="1차 포지션 (%)"
                         type="number"
-                        value={getCurrentModeDefaults().positions?.[index + 1] || 0}
-                        onChange={(e) => handlePositionChange(index + 1, e.target.value)}
+                        value={getCurrentModeDefaults().positions?.[0] || 0}
+                        onChange={(e) => handlePositionChange(0, e.target.value)}
                         inputProps={{ min: 0, max: 100, step: 0.1 }}
                       />
                     </Grid>
                   </Grid>
-                ))}
-              </MKBox>
 
-              {/* 포지션 합계 표시 */}
-              <MKBox display="flex" justifyContent="space-between" alignItems="center">
-                <MKTypography variant="body2" color="text">
-                  포지션 합계: {positionSum.toFixed(2)}%
-                </MKTypography>
-                {Math.abs(positionSum - 100) > 0.01 && (
-                  <MKTypography variant="body2" color="error">
-                    ⚠️ 포지션 합계가 100%가 되어야 합니다
+                  {/* 2차 이상 진입시점과 포지션 (피라미딩 횟수에 따라 동적) */}
+                  {getCurrentModeDefaults().pyramiding_entries?.map((entry, index) => (
+                    <Grid container spacing={2} alignItems="center" mb={1} key={index}>
+                      <Grid item xs={6}>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          label={`${index + 2}차 진입시점 (${getUnit()})`}
+                          type="number"
+                          value={entry}
+                          onChange={(e) => handlePyramidingEntryChange(index, e.target.value)}
+                          placeholder={defaults.trading_mode === "manual" ? "예: 4" : "예: 1.5"}
+                          inputProps={{ step: defaults.trading_mode === "manual" ? 1 : 0.1 }}
+                        />
+                      </Grid>
+                      <Grid item xs={6}>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          label={`${index + 2}차 포지션 (%)`}
+                          type="number"
+                          value={getCurrentModeDefaults().positions?.[index + 1] || 0}
+                          onChange={(e) => handlePositionChange(index + 1, e.target.value)}
+                          inputProps={{ min: 0, max: 100, step: 0.1 }}
+                        />
+                      </Grid>
+                    </Grid>
+                  ))}
+                </MKBox>
+
+                {/* 포지션 합계 표시 */}
+                <MKBox display="flex" justifyContent="space-between" alignItems="center">
+                  <MKTypography variant="body2" color="text">
+                    포지션 합계: {positionSum.toFixed(2)}%
                   </MKTypography>
-                )}
+                  {Math.abs(positionSum - 100) > 0.01 && (
+                    <MKTypography variant="body2" color="error">
+                      ⚠️ 포지션 합계가 100%가 되어야 합니다
+                    </MKTypography>
+                  )}
+                </MKBox>
               </MKBox>
-            </MKBox>
-          </Card>
+            </Card>
 
-          {/* 버튼 그룹 */}
-          <MKBox mt={2} display="flex" justifyContent="flex-end" alignItems="center">
-            <Button
-              variant="contained"
-              onClick={handleSave}
-              disabled={saveLoading}
-              size="medium"
-              sx={{
-                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                color: "white",
-                px: 3,
-                py: 1,
-                borderRadius: 2,
-                textTransform: "none",
-                fontSize: "0.9rem",
-                fontWeight: 500,
-                "&:hover": {
-                  background: "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)",
-                },
-                "&:disabled": { opacity: 0.6 },
-              }}
-            >
-              {saveLoading ? (
-                <>
-                  <CircularProgress size={16} sx={{ mr: 1, color: "white" }} />
-                  저장 중...
-                </>
-              ) : (
-                "설정 저장"
-              )}
-            </Button>
-          </MKBox>
+            {/* 버튼 그룹 */}
+            <MKBox mt={2} display="flex" justifyContent="flex-end" alignItems="center">
+              <Button
+                variant="contained"
+                onClick={handleSave}
+                disabled={saveLoading}
+                size="medium"
+                sx={{
+                  background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  color: "white",
+                  px: 3,
+                  py: 1,
+                  borderRadius: 2,
+                  textTransform: "none",
+                  fontSize: "0.9rem",
+                  fontWeight: 500,
+                  "&:hover": {
+                    background: "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)",
+                  },
+                  "&:disabled": { opacity: 0.6 },
+                }}
+              >
+                {saveLoading ? (
+                  <>
+                    <CircularProgress size={16} sx={{ mr: 1, color: "white" }} />
+                    저장 중...
+                  </>
+                ) : (
+                  "설정 저장"
+                )}
+              </Button>
+            </MKBox>
+          </Grid>
         </Grid>
-      </Grid>
       </Container>
     </MKBox>
   );

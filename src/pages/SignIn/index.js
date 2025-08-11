@@ -38,14 +38,7 @@ function SignIn() {
       }}
     >
       {/* Navigation placeholder */}
-      <Box
-        position="absolute"
-        top={0}
-        left={0}
-        right={0}
-        zIndex={3}
-        p={2}
-      >
+      <Box position="absolute" top={0} left={0} right={0} zIndex={3} p={2}>
         <Container maxWidth="lg">
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Typography variant="h6" color="white" fontWeight="bold">
@@ -116,10 +109,7 @@ function SignIn() {
                 <Box component="form">
                   {/* Google Login Button */}
                   <MKBox mt={2} mb={3}>
-                    <GoogleLoginButton
-                      onSuccess={handleLoginSuccess}
-                      onError={handleLoginError}
-                    />
+                    <GoogleLoginButton onSuccess={handleLoginSuccess} onError={handleLoginError} />
                   </MKBox>
 
                   {/* Remember Me Switch */}
@@ -167,15 +157,7 @@ function SignIn() {
       </Container>
 
       {/* Footer */}
-      <Box
-        position="absolute"
-        bottom={0}
-        left={0}
-        right={0}
-        py={2}
-        textAlign="center"
-        zIndex={3}
-      >
+      <Box position="absolute" bottom={0} left={0} right={0} py={2} textAlign="center" zIndex={3}>
         <Container maxWidth="lg">
           <Typography variant="body2" color="white" sx={{ opacity: 0.8 }}>
             © 2024 Dolpha. All rights reserved.

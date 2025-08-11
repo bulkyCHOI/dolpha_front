@@ -313,6 +313,7 @@ function MTT() {
                 onEntryPointChange={tradingForm.setEntryPoint}
                 onPyramidingEntryChange={tradingForm.handlePyramidingEntryChange}
                 onShowSnackbar={showSnackbar}
+                chartType="mtt"
               />
             </MKBox>
           )}
@@ -605,6 +606,7 @@ function MTT() {
                         onEntryPointChange={tradingForm.setEntryPoint}
                         onPyramidingEntryChange={tradingForm.handlePyramidingEntryChange}
                         onShowSnackbar={showSnackbar}
+                        chartType="mtt"
                       />
                     </MKBox>
                   )}

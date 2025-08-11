@@ -387,6 +387,7 @@ function FiftyDayHigh() {
                   onEntryPointChange={tradingForm.setEntryPoint}
                   onPyramidingEntryChange={tradingForm.handlePyramidingEntryChange}
                   onShowSnackbar={showSnackbar}
+                  chartType="fifty-day-high"
                 />
               </MKBox>
             )}
@@ -966,6 +967,7 @@ function FiftyDayHigh() {
                 onEntryPointChange={tradingForm.setEntryPoint}
                 onPyramidingEntryChange={tradingForm.handlePyramidingEntryChange}
                 onShowSnackbar={showSnackbar}
+                chartType="fifty-day-high"
               />
             </MKBox>
           )}

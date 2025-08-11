@@ -113,18 +113,18 @@ export const useHTFStockData = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
       const response = await fetch(`${apiBaseUrl}/api/htf-stocks/`);
       if (!response.ok) {
         throw new Error("HTF 종목 데이터를 가져올 수 없습니다");
       }
-      
+
       const result = await response.json();
       const data = result.data || [];
-      
+
       setStockData(data);
-      
+
       // 첫 번째 종목을 기본 선택으로 설정
       if (data.length > 0 && !selectedStock) {
         setSelectedStock(data[0]);

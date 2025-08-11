@@ -387,6 +387,7 @@ function WeeklyHigh() {
                   onEntryPointChange={tradingForm.setEntryPoint}
                   onPyramidingEntryChange={tradingForm.handlePyramidingEntryChange}
                   onShowSnackbar={showSnackbar}
+                  chartType="weekly-high"
                 />
               </MKBox>
             )}
@@ -966,6 +967,7 @@ function WeeklyHigh() {
                 onEntryPointChange={tradingForm.setEntryPoint}
                 onPyramidingEntryChange={tradingForm.handlePyramidingEntryChange}
                 onShowSnackbar={showSnackbar}
+                chartType="weekly-high"
               />
             </MKBox>
           )}
