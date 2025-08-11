@@ -15,20 +15,28 @@ import "chartjs-adapter-date-fns";
 import { CandlestickController, CandlestickElement } from "chartjs-chart-financial";
 import { Chart } from "react-chartjs-2";
 
+// 변곡점 관련 import
+import {
+  createInflectionPointDataset,
+  createRiseSegmentDataset,
+} from "utils/inflectionPointAnalysis";
+import { inflectionPointPlugin, applyInflectionAnalysisToChart } from "./inflectionPointPlugin";
+import useInflectionPoints from "hooks/useInflectionPoints";
+import InflectionPointToggle from "components/InflectionPointToggle";
+
 // @mui material components
-import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import IconButton from "@mui/material/IconButton";
 import Close from "@mui/icons-material/Close";
 import Delete from "@mui/icons-material/Delete";
 import Timeline from "@mui/icons-material/Timeline";
-import ToggleButton from "@mui/material/ToggleButton";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Tooltip from "@mui/material/Tooltip";
 import Button from "@mui/material/Button";
+import ToggleButton from "@mui/material/ToggleButton";
 import { keyframes } from "@mui/system";
 
 // Material Kit 2 React components
@@ -36,7 +44,7 @@ import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
 
 // Utils
-import { formatNumber, getKRXTickSize, adjustToKRXTickSize } from "utils/formatters";
+import { adjustToKRXTickSize } from "utils/formatters";
 
 // Register Chart.js components
 ChartJS.register(
@@ -50,7 +58,8 @@ ChartJS.register(
   PointElement,
   Title,
   ChartTooltip,
-  Legend
+  Legend,
+  inflectionPointPlugin
 );
 
 // Animation for popup
@@ -82,13 +91,21 @@ const ChartContainer = ({
   chartType = "default", // "default" | "htf"
 }) => {
   // Chart state
-  const [chartLoading, setChartLoading] = useState(false);
   const [horizontalLines, setHorizontalLines] = useState([]);
   const [isDrawingMode, setIsDrawingMode] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [dragLineId, setDragLineId] = useState(null);
   const [selectedLineId, setSelectedLineId] = useState(null);
   const [showEntryPopup, setShowEntryPopup] = useState(false);
+
+  // 변곡점 기능 훅 사용
+  const {
+    showInflectionPoints,
+    inflectionAnalysisResult,
+    inflectionSettings,
+    isInflectionPointsAvailable,
+    toggleInflectionPoints,
+  } = useInflectionPoints(ohlcvData, chartType);
 
   // Chart reference
   const chartRef = useRef(null);
@@ -106,6 +123,8 @@ const ChartContainer = ({
       dragLineId,
     };
   }, [isDragging, dragLineId]);
+
+  // 변곡점 분석은 useInflectionPoints 훅에서 자동으로 처리됨
 
   // Prevent body scroll during drag
   useEffect(() => {
@@ -155,7 +174,12 @@ const ChartContainer = ({
   }, [ohlcvData]);
 
   // Chart data creation functions
-  const createCandlestickData = (ohlcvData, analysisData, chartType = "default", selectedStock = {}) => {
+  const createCandlestickData = (
+    ohlcvData,
+    analysisData,
+    chartType = "default",
+    selectedStock = {}
+  ) => {
     if (!ohlcvData || ohlcvData.length === 0) return null;
 
     const datasets = [
@@ -260,7 +284,7 @@ const ChartContainer = ({
 
     // Add horizontal lines to datasets
     horizontalLines.forEach((line, index) => {
-      const indexRange = (ohlcvData && ohlcvData.length > 0) ? [0, ohlcvData.length - 1] : [0, 1];
+      const indexRange = ohlcvData && ohlcvData.length > 0 ? [0, ohlcvData.length - 1] : [0, 1];
 
       datasets.push({
         label: `진입선 ${index + 1}`,
@@ -286,16 +310,18 @@ const ChartContainer = ({
       // HTF 패턴 시작점 마커
       if (selectedStock.htf_pattern_start_date && ohlcvData.length > 0) {
         const startDateStr = selectedStock.htf_pattern_start_date;
-        const startIndex = ohlcvData.findIndex(item => item.date === startDateStr);
-        
+        const startIndex = ohlcvData.findIndex((item) => item.date === startDateStr);
+
         if (startIndex !== -1) {
           datasets.push({
             label: "HTF 시작점",
             type: "scatter",
-            data: [{
-              x: startIndex,
-              y: ohlcvData[startIndex]?.low * 0.98, // 저점보다 약간 아래에 표시
-            }],
+            data: [
+              {
+                x: startIndex,
+                y: ohlcvData[startIndex]?.low * 0.98, // 저점보다 약간 아래에 표시
+              },
+            ],
             backgroundColor: "#4caf50",
             borderColor: "#4caf50",
             pointRadius: 8,
@@ -309,16 +335,18 @@ const ChartContainer = ({
       // HTF 패턴 고점 마커
       if (selectedStock.htf_pattern_peak_date && ohlcvData.length > 0) {
         const peakDateStr = selectedStock.htf_pattern_peak_date;
-        const peakIndex = ohlcvData.findIndex(item => item.date === peakDateStr);
-        
+        const peakIndex = ohlcvData.findIndex((item) => item.date === peakDateStr);
+
         if (peakIndex !== -1) {
           datasets.push({
             label: "HTF 고점",
             type: "scatter",
-            data: [{
-              x: peakIndex,
-              y: ohlcvData[peakIndex]?.high * 1.02, // 고점보다 약간 위에 표시
-            }],
+            data: [
+              {
+                x: peakIndex,
+                y: ohlcvData[peakIndex]?.high * 1.02, // 고점보다 약간 위에 표시
+              },
+            ],
             backgroundColor: "#f44336",
             borderColor: "#f44336",
             pointRadius: 8,
@@ -331,12 +359,16 @@ const ChartContainer = ({
       }
 
       // HTF 패턴 구간 하이라이트 (배경색)
-      if (selectedStock.htf_pattern_start_date && selectedStock.htf_pattern_peak_date && ohlcvData.length > 0) {
+      if (
+        selectedStock.htf_pattern_start_date &&
+        selectedStock.htf_pattern_peak_date &&
+        ohlcvData.length > 0
+      ) {
         const startDateStr = selectedStock.htf_pattern_start_date;
         const peakDateStr = selectedStock.htf_pattern_peak_date;
-        const startIndex = ohlcvData.findIndex(item => item.date === startDateStr);
-        const peakIndex = ohlcvData.findIndex(item => item.date === peakDateStr);
-        
+        const startIndex = ohlcvData.findIndex((item) => item.date === startDateStr);
+        const peakIndex = ohlcvData.findIndex((item) => item.date === peakDateStr);
+
         if (startIndex !== -1 && peakIndex !== -1 && startIndex < peakIndex) {
           // 상승 구간 하이라이트
           const riseData = [];
@@ -348,7 +380,7 @@ const ChartContainer = ({
               });
             }
           }
-          
+
           if (riseData.length > 0) {
             datasets.push({
               label: "HTF 상승구간",
@@ -364,6 +396,29 @@ const ChartContainer = ({
               order: 10, // 뒤로 보내기
             });
           }
+        }
+      }
+    }
+
+    // 변곡점 기능 추가 (분석 결과가 있을 때)
+    if (inflectionAnalysisResult && showInflectionPoints) {
+      // 변곡점 데이터셋 추가
+      const inflectionDataset = createInflectionPointDataset(
+        inflectionAnalysisResult.inflectionPoints,
+        ohlcvData
+      );
+      if (inflectionDataset) {
+        datasets.push(inflectionDataset);
+      }
+
+      // 100% 상승 구간 하이라이트 (분석 결과 기반)
+      if (inflectionAnalysisResult.riseSegment) {
+        const riseDataset = createRiseSegmentDataset(
+          ohlcvData,
+          inflectionAnalysisResult.riseSegment
+        );
+        if (riseDataset) {
+          datasets.push(riseDataset);
         }
       }
     }
@@ -420,7 +475,9 @@ const ChartContainer = ({
           backgroundColor: (ohlcvData || []).map((item) =>
             item.close >= item.open ? "rgba(244, 67, 54, 0.6)" : "rgba(33, 150, 243, 0.6)"
           ),
-          borderColor: (ohlcvData || []).map((item) => (item.close >= item.open ? "#f44336" : "#2196f3")),
+          borderColor: (ohlcvData || []).map((item) =>
+            item.close >= item.open ? "#f44336" : "#2196f3"
+          ),
           borderWidth: 1,
         },
       ],
@@ -566,7 +623,7 @@ const ChartContainer = ({
       type: "line",
       data: [
         { x: 0, y: 80 },
-        { x: (analysisData && analysisData.length > 0 ? analysisData.length - 1 : 1), y: 80 },
+        { x: analysisData && analysisData.length > 0 ? analysisData.length - 1 : 1, y: 80 },
       ],
       borderColor: "#ff9800",
       backgroundColor: "transparent",
@@ -842,10 +899,14 @@ const ChartContainer = ({
           const chartHeight = 350;
           const normalizedY = Math.max(0, Math.min(1, (y - 30) / (chartHeight - 60)));
 
-          const priceArray = (ohlcvData || []).map((item) => Math.max(item.high, item.close, item.open, item.low));
+          const priceArray = (ohlcvData || []).map((item) =>
+            Math.max(item.high, item.close, item.open, item.low)
+          );
           const maxPrice = priceArray.length > 0 ? Math.max(...priceArray) : 100000;
-          
-          const minPriceArray = (ohlcvData || []).map((item) => Math.min(item.low, item.close, item.open, item.high));
+
+          const minPriceArray = (ohlcvData || []).map((item) =>
+            Math.min(item.low, item.close, item.open, item.high)
+          );
           const minPrice = minPriceArray.length > 0 ? Math.min(...minPriceArray) : 50000;
           const priceRange = maxPrice - minPrice;
 
@@ -910,10 +971,14 @@ const ChartContainer = ({
           const chartHeight = 350;
           const normalizedY = Math.max(0, Math.min(1, (y - 30) / (chartHeight - 60)));
 
-          const priceArray = (ohlcvData || []).map((item) => Math.max(item.high, item.close, item.open, item.low));
+          const priceArray = (ohlcvData || []).map((item) =>
+            Math.max(item.high, item.close, item.open, item.low)
+          );
           const maxPrice = priceArray.length > 0 ? Math.max(...priceArray) : 100000;
-          
-          const minPriceArray = (ohlcvData || []).map((item) => Math.min(item.low, item.close, item.open, item.high));
+
+          const minPriceArray = (ohlcvData || []).map((item) =>
+            Math.min(item.low, item.close, item.open, item.high)
+          );
           const minPrice = minPriceArray.length > 0 ? Math.min(...minPriceArray) : 50000;
           const priceRange = maxPrice - minPrice;
 
@@ -1071,6 +1136,8 @@ const ChartContainer = ({
     );
   };
 
+  // 변곡점 관련 핸들러는 useInflectionPoints 훅에서 제공됨
+
   // Create chart data
   const chartData = createCandlestickData(ohlcvData, analysisData, chartType, selectedStock);
   const volumeData = createVolumeData(ohlcvData);
@@ -1079,8 +1146,8 @@ const ChartContainer = ({
   const atrData = createATRData(analysisData);
   const mttData = createMTTData(analysisData);
 
-  // Chart options
-  const chartOptions = {
+  // Chart options (변곡점 플러그인 옵션 적용)
+  let baseChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     animation: {
@@ -1235,6 +1302,16 @@ const ChartContainer = ({
       },
     },
   };
+
+  // 변곡점 플러그인 옵션 적용
+  const chartOptions =
+    inflectionAnalysisResult && showInflectionPoints
+      ? applyInflectionAnalysisToChart(
+          baseChartOptions,
+          inflectionAnalysisResult,
+          inflectionSettings
+        )
+      : baseChartOptions;
 
   const indexChartOptions = {
     responsive: true,
@@ -1720,22 +1797,7 @@ const ChartContainer = ({
     <MKBox sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
       {/* Main chart content */}
       <MKBox sx={{ position: "relative", flex: 1 }}>
-        {chartLoading ? (
-          <MKBox
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              height: "100%",
-              flexDirection: "column",
-            }}
-          >
-            <CircularProgress size={40} sx={{ mb: 2 }} />
-            <MKTypography variant="body2" color="text">
-              차트를 로드하는 중...
-            </MKTypography>
-          </MKBox>
-        ) : chartData && ohlcvData && ohlcvData.length > 0 ? (
+        {chartData && ohlcvData && ohlcvData.length > 0 ? (
           <>
             {/* Chart controls - positioned inside chart */}
             <MKBox
@@ -1796,6 +1858,15 @@ const ChartContainer = ({
                   </IconButton>
                 </Tooltip>
               )}
+
+              {/* 변곡점 토글 버튼 */}
+              {isInflectionPointsAvailable && (
+                <InflectionPointToggle
+                  showInflectionPoints={showInflectionPoints}
+                  onToggle={toggleInflectionPoints}
+                  size="small"
+                />
+              )}
             </MKBox>
 
             {/* Horizontal line labels */}
@@ -1837,7 +1908,7 @@ const ChartContainer = ({
                       Math.max(item.high, item.close, item.open, item.low)
                     );
                     const maxPrice = priceArrayMax.length > 0 ? Math.max(...priceArrayMax) : 100000;
-                    
+
                     const priceArrayMin = (ohlcvData || []).map((item) =>
                       Math.min(item.low, item.close, item.open, item.high)
                     );
@@ -2088,7 +2159,13 @@ const ChartContainer = ({
                 mb: 1,
               }}
             >
-              <Chart ref={chartRef} type="candlestick" data={chartData} options={chartOptions} />
+              <Chart
+                ref={chartRef}
+                type="candlestick"
+                data={chartData}
+                options={chartOptions}
+                // plugins prop은 전역 등록으로 대체
+              />
             </MKBox>
 
             {/* Volume chart */}
