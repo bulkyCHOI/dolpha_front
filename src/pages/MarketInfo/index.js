@@ -27,6 +27,9 @@ import Box from "@mui/material/Box";
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
 
+// Enhanced components
+import FullWidthContainer from "components/FullWidthContainer";
+
 // Material Kit 2 React examples
 import DefaultNavbar from "examples/Navbars/DefaultNavbar";
 import DefaultFooter from "examples/Footers/DefaultFooter";
@@ -57,7 +60,7 @@ function MarketInfo() {
         isZoomEnabled: true,
         hasSymbolTooltip: true,
         width: "100%",
-        height: "350"
+        height: "500"
       });
 
       const stockContainer = document.getElementById("tradingview_stock_heatmap");
@@ -84,7 +87,7 @@ function MarketInfo() {
         isZoomEnabled: true,
         hasSymbolTooltip: true,
         width: "100%",
-        height: "350"
+        height: "500"
       });
 
       const cryptoContainer = document.getElementById("tradingview_crypto_heatmap");
@@ -199,20 +202,17 @@ function MarketInfo() {
       />
 
       <MKBox component="section" py={12}>
-        <Container>
+        <FullWidthContainer>
           {/* 히트맵 섹션 */}
-          <Grid container spacing={3} sx={{ mb: 6 }}>
+          <Grid container spacing={1} sx={{ mb: 2 }}>
             <Grid item xs={12} lg={12}>
-              <MKTypography variant="h2" color="dark" mb={2} textAlign="center">
+              <MKTypography variant="h2" color="dark" mb={1} textAlign="center">
                 시장 히트맵
-              </MKTypography>
-              <MKTypography variant="body1" color="text" mb={4} textAlign="center">
-                주식과 암호화폐 시장의 실시간 히트맵을 확인하세요
               </MKTypography>
             </Grid>
           </Grid>
 
-          <Grid container spacing={3} sx={{ mb: 8 }}>
+          <Grid container spacing={1} sx={{ mb: 4 }}>
             {/* 주식 히트맵 */}
             <Grid item xs={12} md={6}>
               <Card sx={{ height: "100%", boxShadow: 3 }}>
@@ -226,7 +226,7 @@ function MarketInfo() {
                   >
                     S&P 500 히트맵
                   </Typography>
-                  <Box id="tradingview_stock_heatmap" sx={{ height: 350 }} />
+                  <Box id="tradingview_stock_heatmap" sx={{ height: 500 }} />
                 </CardContent>
               </Card>
             </Grid>
@@ -244,24 +244,21 @@ function MarketInfo() {
                   >
                     암호화폐 히트맵
                   </Typography>
-                  <Box id="tradingview_crypto_heatmap" sx={{ height: 350 }} />
+                  <Box id="tradingview_crypto_heatmap" sx={{ height: 500 }} />
                 </CardContent>
               </Card>
             </Grid>
           </Grid>
 
-          <Grid container spacing={3} sx={{ mb: 10 }}>
+          <Grid container spacing={1} sx={{ mb: 2 }}>
             <Grid item xs={12} lg={12}>
-              <MKTypography variant="h2" color="dark" mb={2} textAlign="center">
+              <MKTypography variant="h2" color="dark" mb={1} textAlign="center">
                 세계 주요 지수
-              </MKTypography>
-              <MKTypography variant="body1" color="text" mb={6} textAlign="center">
-                실시간 글로벌 주식 시장 지수를 확인하세요
               </MKTypography>
             </Grid>
           </Grid>
 
-          <Grid container spacing={3}>
+          <Grid container spacing={1}>
             {/* S&P 500 */}
             <Grid item xs={12} md={6}>
               <Card sx={{ height: "100%", boxShadow: 3 }}>
@@ -370,7 +367,7 @@ function MarketInfo() {
               </Card>
             </Grid> */}
           </Grid>
-        </Container>
+        </FullWidthContainer>
       </MKBox>
 
       <MKBox pt={6} px={1} mt={6}>
