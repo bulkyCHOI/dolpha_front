@@ -51,6 +51,7 @@ import TopRising from "pages/TopRising";
 import FiftyDayHigh from "pages/FiftyDayHigh";
 import Favorites from "pages/Favorites";
 import TradingConfigs from "pages/TradingConfigs";
+import TradingReviews from "pages/TradingReviews";
 import DailyNewsClipping from "pages/DailyNewsClipping";
 import MarketInfo from "pages/MarketInfo";
 import ProtectedRoute from "components/ProtectedRoute";
@@ -107,7 +108,7 @@ const routes = [
     name: "자동매매",
     icon: <Icon>smart_toy</Icon>,
     columns: 1,
-    rowsPerColumn: 1,
+    rowsPerColumn: 2,
     collapse: [
       {
         name: "관리",
@@ -118,6 +119,15 @@ const routes = [
             component: (
               <ProtectedRoute>
                 <TradingConfigs />
+              </ProtectedRoute>
+            ),
+          },
+          {
+            name: "매매복기",
+            route: "/trading-reviews",
+            component: (
+              <ProtectedRoute>
+                <TradingReviews />
               </ProtectedRoute>
             ),
           },
