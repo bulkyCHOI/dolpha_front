@@ -1148,7 +1148,7 @@ const ChartContainer = ({
   // Create chart data (메모이제이션: 의존 데이터가 바뀔 때만 재생성)
   const chartData = useMemo(
     () => createCandlestickData(ohlcvData, analysisData, chartType, selectedStock),
-    [ohlcvData, analysisData, chartType, selectedStock]
+    [ohlcvData, analysisData, chartType, selectedStock, horizontalLines]
   );
   const volumeData = useMemo(() => createVolumeData(ohlcvData), [ohlcvData]);
   const indexChartData = useMemo(() => createIndexCandlestickData(indexOhlcvData), [indexOhlcvData]);
