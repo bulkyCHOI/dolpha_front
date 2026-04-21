@@ -425,11 +425,16 @@ function LogViewer({ source, autoRefresh }) {
           <span style={{ color: "#888" }}>로그가 없습니다.</span>
         ) : (
           lines.map((line, i) => {
-            const color = line.includes("오류") || line.includes("Error")
-              ? "#f48771"
-              : line.includes("완료") || line.includes("success")
-              ? "#4ec9b0"
-              : "#d4d4d4";
+            const color =
+              line.includes("오류") || line.includes("Error") || line.includes("실패")
+                ? "#f48771"
+                : line.includes("완료") || line.includes("success") || line.includes("매수") || line.includes("매도")
+                ? "#4ec9b0"
+                : line.includes("[자동매매]")
+                ? "#dcdcaa"
+                : line.includes("[데이터수집]")
+                ? "#9cdcfe"
+                : "#d4d4d4";
             return (
               <div key={i} style={{ color }}>
                 {line}
@@ -861,7 +866,7 @@ function DataManagement() {
 
   // Tab 3 데이터
   const [processes, setProcesses] = useState([]);
-  const [logSource, setLogSource] = useState("dart");
+  const [logSource, setLogSource] = useState("scheduler");
   const [autoRefresh, setAutoRefresh] = useState(true);
   const processIntervalRef = useRef(null);
 
@@ -1083,8 +1088,9 @@ function DataManagement() {
                     value={logSource}
                     onChange={(e) => setLogSource(e.target.value)}
                     size="small"
-                    sx={{ minWidth: 180 }}
+                    sx={{ minWidth: 200 }}
                   >
+                    <MenuItem value="scheduler">🕐 스케줄러 자동실행 로그</MenuItem>
                     <MenuItem value="daily">일간 전체 파이프라인 로그</MenuItem>
                     <MenuItem value="ohlcv">OHLCV 수집 로그</MenuItem>
                     <MenuItem value="index">인덱스 수집 로그</MenuItem>
