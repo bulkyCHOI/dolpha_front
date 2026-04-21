@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export const useStockData = () => {
   const [stockData, setStockData] = useState([]);
@@ -11,7 +11,7 @@ export const useStockData = () => {
   const [selectedIndexCode, setSelectedIndexCode] = useState("");
   const [analysisData, setAnalysisData] = useState([]);
 
-  const fetchOHLCVData = async (stockCode) => {
+  const fetchOHLCVData = useCallback(async (stockCode) => {
     if (!stockCode) return [];
 
     try {
@@ -32,9 +32,32 @@ export const useStockData = () => {
       setOhlcvData([]);
       return [];
     }
-  };
+  }, []);
 
-  const fetchStockIndexData = async (stockCode) => {
+  const fetchIndexOHLCVData = useCallback(async (indexCode) => {
+    if (!indexCode) return [];
+
+    try {
+      const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
+      const response = await fetch(
+        `${apiBaseUrl}/api/find_index_ohlcv?code=${indexCode}&limit=150`
+      );
+      if (!response.ok) {
+        throw new Error("인덱스 OHLCV 데이터를 가져올 수 없습니다");
+      }
+      const result = await response.json();
+      const data = result.data || [];
+
+      const sortedData = data.sort((a, b) => new Date(a.date) - new Date(b.date));
+      setIndexOhlcvData(sortedData);
+      return sortedData;
+    } catch (err) {
+      setIndexOhlcvData([]);
+      return [];
+    }
+  }, []);
+
+  const fetchStockIndexData = useCallback(async (stockCode) => {
     if (!stockCode) return [];
 
     try {
@@ -61,32 +84,9 @@ export const useStockData = () => {
       setSelectedIndexCode("");
       return [];
     }
-  };
+  }, [fetchIndexOHLCVData]);
 
-  const fetchIndexOHLCVData = async (indexCode) => {
-    if (!indexCode) return [];
-
-    try {
-      const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
-      const response = await fetch(
-        `${apiBaseUrl}/api/find_index_ohlcv?code=${indexCode}&limit=150`
-      );
-      if (!response.ok) {
-        throw new Error("인덱스 OHLCV 데이터를 가져올 수 없습니다");
-      }
-      const result = await response.json();
-      const data = result.data || [];
-
-      const sortedData = data.sort((a, b) => new Date(a.date) - new Date(b.date));
-      setIndexOhlcvData(sortedData);
-      return sortedData;
-    } catch (err) {
-      setIndexOhlcvData([]);
-      return [];
-    }
-  };
-
-  const fetchStockAnalysisData = async (stockCode) => {
+  const fetchStockAnalysisData = useCallback(async (stockCode) => {
     if (!stockCode) return [];
 
     try {
@@ -107,9 +107,9 @@ export const useStockData = () => {
       setAnalysisData([]);
       return [];
     }
-  };
+  }, []);
 
-  const handleIndexChange = async (event) => {
+  const handleIndexChange = useCallback(async (event) => {
     const indexCode = event.target.value;
     setSelectedIndexCode(indexCode);
     if (indexCode) {
@@ -117,11 +117,11 @@ export const useStockData = () => {
     } else {
       setIndexOhlcvData([]);
     }
-  };
+  }, [fetchIndexOHLCVData]);
 
-  const handleStockClick = (stock) => {
+  const handleStockClick = useCallback((stock) => {
     setSelectedStock(stock);
-  };
+  }, []);
 
   useEffect(() => {
     const fetchStockData = async () => {
@@ -148,19 +148,16 @@ export const useStockData = () => {
     fetchStockData();
   }, []);
 
+  // selectedStock.code만 의존성으로 사용해 객체 참조 변경에 의한 불필요한 재실행 방지
+  const selectedStockCode = selectedStock?.code;
   useEffect(() => {
-    const loadData = async () => {
-      if (selectedStock && selectedStock.code) {
-        await Promise.all([
-          fetchOHLCVData(selectedStock.code),
-          fetchStockIndexData(selectedStock.code),
-          fetchStockAnalysisData(selectedStock.code),
-        ]);
-      }
-    };
-
-    loadData();
-  }, [selectedStock]);
+    if (!selectedStockCode) return;
+    Promise.all([
+      fetchOHLCVData(selectedStockCode),
+      fetchStockIndexData(selectedStockCode),
+      fetchStockAnalysisData(selectedStockCode),
+    ]);
+  }, [selectedStockCode, fetchOHLCVData, fetchStockIndexData, fetchStockAnalysisData]);
 
   return {
     stockData,

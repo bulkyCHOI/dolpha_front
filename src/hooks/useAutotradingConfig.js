@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
+
+const CACHE_TTL_MS = 60_000; // 1분 캐시
 
 /**
  * 자동매매 설정 관리 훅
@@ -7,17 +9,18 @@ export const useAutotradingConfig = (authenticatedFetch, showSnackbar, strategyT
   const [autotradingList, setAutotradingList] = useState([]);
   const [expandedAccordion, setExpandedAccordion] = useState(null);
 
-  // 자동매매 목록 가져오기
-  const fetchAutotradingList = async () => {
+  const cacheRef = useRef({ data: null, timestamp: 0 });
+
+  // 자동매매 목록 가져오기 (1분 캐시 적용)
+  const fetchAutotradingList = useCallback(async ({ force = false } = {}) => {
+    const now = Date.now();
+    if (!force && cacheRef.current.data && now - cacheRef.current.timestamp < CACHE_TTL_MS) {
+      setAutotradingList(cacheRef.current.data);
+      return;
+    }
+
     try {
-      // Django API 기본 URL
       const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
-
-      // Django DB에서 직접 자동매매 목록을 조회하므로 서버 설정 확인은 선택적으로 처리
-      // autobot이 필요한 기능(실제 거래 실행)은 별도로 서버 설정을 체크
-
-      // 서버 설정이 확인되면 자동매매 목록 가져오기 (strategy_type 필터 적용)
-      // Django DB에서 직접 조회하도록 변경
       const response = await authenticatedFetch(
         `${apiBaseUrl}/api/mypage/trading-configs?strategy_type=${strategyType}`
       );
@@ -25,15 +28,14 @@ export const useAutotradingConfig = (authenticatedFetch, showSnackbar, strategyT
       if (response.ok) {
         const configs = await response.json();
 
-        // 각 설정에 is_from_summary 플래그 추가 (DB에서 온 완전한 데이터임을 표시)
         const configsWithFlag = configs.map((config) => ({
           ...config,
-          is_from_summary: false, // DB에서 온 완전한 데이터 플래그
+          is_from_summary: false,
         }));
 
+        cacheRef.current = { data: configsWithFlag, timestamp: Date.now() };
         setAutotradingList(configsWithFlag);
 
-        // 최초 로드 시에만 알림 표시
         if (autotradingList.length === 0) {
           showSnackbar(`${configsWithFlag.length}개의 자동매매 설정을 불러왔습니다.`, "success");
         }
@@ -45,7 +47,7 @@ export const useAutotradingConfig = (authenticatedFetch, showSnackbar, strategyT
       setAutotradingList([]);
       showSnackbar(`1차 데이터 로딩 오류: ${error.message}`, "error");
     }
-  };
+  }, [authenticatedFetch, showSnackbar, strategyType]);
 
   // 통합된 주식 목록 생성 (기존 주식 + 자동매매 설정된 주식)
   const getUnifiedStockList = (stockData) => {
@@ -126,6 +128,7 @@ export const useAutotradingConfig = (authenticatedFetch, showSnackbar, strategyT
 
           // HTTP 응답이 ok면 성공으로 처리 (result.success 체크 제거)
           console.log(`[FRONTEND] 프론트엔드 상태에서 삭제 처리`);
+          cacheRef.current = { data: null, timestamp: 0 }; // 캐시 무효화
           setAutotradingList((prev) => prev.filter((item) => item.stock_code !== stockCode));
           showSnackbar(`${stockName}(${stockCode}) 자동매매 설정이 삭제되었습니다.`, "success");
 

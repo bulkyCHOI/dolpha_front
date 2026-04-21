@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -811,6 +811,7 @@ const ChartContainer = ({
     event.stopPropagation();
 
     const handleMouseMove = () => {
+      dragPriceRangeRef.current = null; // 드래그 시작 시 가격 범위 캐시 초기화
       dragStateRef.current = {
         isDragging: true,
         dragLineId: lineId,
@@ -880,75 +881,76 @@ const ChartContainer = ({
     document.addEventListener("touchend", handleTouchEnd);
   };
 
+  // 드래그 중 가격 범위를 캐시해서 매 mousemove마다 재계산 방지
+  const dragPriceRangeRef = useRef(null);
+  const dragRafIdRef = useRef(null);
+
   const handleGlobalMouseMove = (event) => {
     event.preventDefault();
     event.stopPropagation();
     const { isDragging: refIsDragging, dragLineId: refDragLineId } = dragStateRef.current;
 
-    if (refIsDragging && refDragLineId && chartData && ohlcvData && ohlcvData.length > 0) {
+    if (!refIsDragging || !refDragLineId || !chartData || !ohlcvData || ohlcvData.length === 0) return;
+
+    // 이전 rAF가 아직 pending 중이면 취소 (throttle 효과)
+    if (dragRafIdRef.current) {
+      cancelAnimationFrame(dragRafIdRef.current);
+    }
+
+    const clientY = event.clientY;
+    dragRafIdRef.current = requestAnimationFrame(() => {
+      dragRafIdRef.current = null;
       try {
         const chartCanvas = document.querySelector("canvas");
+        if (!chartCanvas) return;
 
-        if (chartCanvas) {
-          const rect = chartCanvas.getBoundingClientRect();
-          const y = event.clientY - rect.top;
+        const yScale = chartData.datasets[0]?.data || [];
+        if (yScale.length === 0) return;
 
-          const yScale = chartData.datasets[0]?.data || [];
-          if (yScale.length === 0) return;
-
-          const chartHeight = 350;
-          const normalizedY = Math.max(0, Math.min(1, (y - 30) / (chartHeight - 60)));
-
-          const priceArray = (ohlcvData || []).map((item) =>
-            Math.max(item.high, item.close, item.open, item.low)
-          );
-          const maxPrice = priceArray.length > 0 ? Math.max(...priceArray) : 100000;
-
-          const minPriceArray = (ohlcvData || []).map((item) =>
-            Math.min(item.low, item.close, item.open, item.high)
-          );
-          const minPrice = minPriceArray.length > 0 ? Math.min(...minPriceArray) : 50000;
-          const priceRange = maxPrice - minPrice;
-
-          const newValue = maxPrice - normalizedY * priceRange;
-          const adjustedValue = adjustToKRXTickSize(newValue);
-
-          setHorizontalLines((prev) =>
-            prev.map((line) => {
-              if (line.id === refDragLineId) {
-                const updatedLine = { ...line, value: adjustedValue };
-
-                if (line.type === "entry") {
-                  onEntryPointChange(adjustedValue.toString());
-                } else if (line.type === "pyramiding") {
-                  const baseEntryPrice = parseFloat(entryPoint);
-                  if (baseEntryPrice && baseEntryPrice > 0) {
-                    const percentage = (
-                      ((adjustedValue - baseEntryPrice) / baseEntryPrice) *
-                      100
-                    ).toFixed(2);
-                    const percentageStr = percentage.toString();
-
-                    if (
-                      line.pyramidingIndex !== undefined &&
-                      line.pyramidingIndex >= 0 &&
-                      line.pyramidingIndex < pyramidingEntries.length
-                    ) {
-                      onPyramidingEntryChange(line.pyramidingIndex, percentageStr);
-                    }
-                  }
-                }
-
-                return updatedLine;
-              }
-              return line;
-            })
-          );
+        // 가격 범위는 드래그 시작 시 한 번만 계산
+        if (!dragPriceRangeRef.current) {
+          const maxPrice = Math.max(...ohlcvData.map((d) => Math.max(d.high, d.close, d.open, d.low)));
+          const minPrice = Math.min(...ohlcvData.map((d) => Math.min(d.low, d.close, d.open, d.high)));
+          dragPriceRangeRef.current = { maxPrice, minPrice };
         }
+        const { maxPrice, minPrice } = dragPriceRangeRef.current;
+        const priceRange = maxPrice - minPrice;
+
+        const rect = chartCanvas.getBoundingClientRect();
+        const y = clientY - rect.top;
+        const chartHeight = 350;
+        const normalizedY = Math.max(0, Math.min(1, (y - 30) / (chartHeight - 60)));
+        const adjustedValue = adjustToKRXTickSize(maxPrice - normalizedY * priceRange);
+
+        setHorizontalLines((prev) =>
+          prev.map((line) => {
+            if (line.id !== refDragLineId) return line;
+            const updatedLine = { ...line, value: adjustedValue };
+
+            if (line.type === "entry") {
+              onEntryPointChange(adjustedValue.toString());
+            } else if (line.type === "pyramiding") {
+              const baseEntryPrice = parseFloat(entryPoint);
+              if (baseEntryPrice && baseEntryPrice > 0) {
+                const percentage = (
+                  ((adjustedValue - baseEntryPrice) / baseEntryPrice) * 100
+                ).toFixed(2);
+                if (
+                  line.pyramidingIndex !== undefined &&
+                  line.pyramidingIndex >= 0 &&
+                  line.pyramidingIndex < pyramidingEntries.length
+                ) {
+                  onPyramidingEntryChange(line.pyramidingIndex, percentage.toString());
+                }
+              }
+            }
+            return updatedLine;
+          })
+        );
       } catch (error) {
         console.warn("Error during line dragging:", error);
       }
-    }
+    });
   };
 
   const handleGlobalTouchMove = (event) => {
@@ -1096,6 +1098,11 @@ const ChartContainer = ({
       isDragging: false,
       dragLineId: null,
     };
+    dragPriceRangeRef.current = null; // 드래그 종료 시 캐시 초기화
+    if (dragRafIdRef.current) {
+      cancelAnimationFrame(dragRafIdRef.current);
+      dragRafIdRef.current = null;
+    }
 
     document.removeEventListener("mousemove", handleGlobalMouseMove);
     document.removeEventListener("mouseup", handleGlobalMouseUp);
@@ -1138,16 +1145,20 @@ const ChartContainer = ({
 
   // 변곡점 관련 핸들러는 useInflectionPoints 훅에서 제공됨
 
-  // Create chart data
-  const chartData = createCandlestickData(ohlcvData, analysisData, chartType, selectedStock);
-  const volumeData = createVolumeData(ohlcvData);
-  const indexChartData = createIndexCandlestickData(indexOhlcvData);
-  const rsRankData = createRSRankData(analysisData);
-  const atrData = createATRData(analysisData);
-  const mttData = createMTTData(analysisData);
+  // Create chart data (메모이제이션: 의존 데이터가 바뀔 때만 재생성)
+  const chartData = useMemo(
+    () => createCandlestickData(ohlcvData, analysisData, chartType, selectedStock),
+    [ohlcvData, analysisData, chartType, selectedStock]
+  );
+  const volumeData = useMemo(() => createVolumeData(ohlcvData), [ohlcvData]);
+  const indexChartData = useMemo(() => createIndexCandlestickData(indexOhlcvData), [indexOhlcvData]);
+  const rsRankData = useMemo(() => createRSRankData(analysisData), [analysisData]);
+  const atrData = useMemo(() => createATRData(analysisData), [analysisData]);
+  const mttData = useMemo(() => createMTTData(analysisData), [analysisData]);
 
-  // Chart options (변곡점 플러그인 옵션 적용)
-  let baseChartOptions = {
+  // Chart options (변곡점 플러그인 옵션 적용) - useMemo로 메모이제이션
+  const chartOptions = useMemo(() => {
+  const baseChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     animation: {
@@ -1303,17 +1314,12 @@ const ChartContainer = ({
     },
   };
 
-  // 변곡점 플러그인 옵션 적용
-  const chartOptions =
-    inflectionAnalysisResult && showInflectionPoints
-      ? applyInflectionAnalysisToChart(
-          baseChartOptions,
-          inflectionAnalysisResult,
-          inflectionSettings
-        )
+  return inflectionAnalysisResult && showInflectionPoints
+      ? applyInflectionAnalysisToChart(baseChartOptions, inflectionAnalysisResult, inflectionSettings)
       : baseChartOptions;
+  }, [ohlcvData, isDrawingMode, inflectionAnalysisResult, showInflectionPoints, inflectionSettings]);
 
-  const indexChartOptions = {
+  const indexChartOptions = useMemo(() => ({
     responsive: true,
     maintainAspectRatio: false,
     animation: {
@@ -1406,9 +1412,9 @@ const ChartContainer = ({
         },
       },
     },
-  };
+  }), [indexOhlcvData]);
 
-  const volumeOptions = {
+  const volumeOptions = useMemo(() => ({
     responsive: true,
     maintainAspectRatio: false,
     animation: {
@@ -1488,9 +1494,9 @@ const ChartContainer = ({
         },
       },
     },
-  };
+  }), [ohlcvData]);
 
-  const rsRankOptions = {
+  const rsRankOptions = useMemo(() => ({
     responsive: true,
     maintainAspectRatio: false,
     animation: {
@@ -1567,9 +1573,9 @@ const ChartContainer = ({
         },
       },
     },
-  };
+  }), [analysisData]);
 
-  const atrOptions = {
+  const atrOptions = useMemo(() => ({
     responsive: true,
     maintainAspectRatio: false,
     interaction: {
@@ -1703,9 +1709,9 @@ const ChartContainer = ({
         },
       },
     },
-  };
+  }), [analysisData]);
 
-  const mttOptions = {
+  const mttOptions = useMemo(() => ({
     responsive: true,
     maintainAspectRatio: false,
     animation: {
@@ -1791,7 +1797,7 @@ const ChartContainer = ({
         },
       },
     },
-  };
+  }), [analysisData]);
 
   return (
     <MKBox sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
@@ -2386,4 +2392,14 @@ const ChartContainer = ({
   );
 };
 
-export default ChartContainer;
+export default React.memo(ChartContainer, (prev, next) => {
+  return (
+    prev.selectedStock?.code === next.selectedStock?.code &&
+    prev.ohlcvData === next.ohlcvData &&
+    prev.analysisData === next.analysisData &&
+    prev.indexOhlcvData === next.indexOhlcvData &&
+    prev.entryPoint === next.entryPoint &&
+    prev.pyramidingEntries === next.pyramidingEntries &&
+    prev.chartType === next.chartType
+  );
+});
