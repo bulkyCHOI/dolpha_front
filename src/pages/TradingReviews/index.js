@@ -378,11 +378,13 @@ export default function TradingReviews() {
       setLoading(true);
       setError(null);
 
+      const token = localStorage.getItem("access_token");
       const response = await fetch(`${API_BASE_URL}/api/autobot/trading-summary-data`, {
         method: 'GET',
         headers: {
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
       });
 
       if (!response.ok) {

@@ -355,6 +355,47 @@ export default function TradingConfigs() {
       ),
     },
     {
+      name: "평균단가",
+      selector: (row) => tradingStatus[row.stock_code]?.avg_price || 0,
+      sortable: true,
+      cell: (row) => {
+        const avgPrice = tradingStatus[row.stock_code]?.avg_price || 0;
+        const currentPrice = currentPrices[row.stock_code]?.price || 0;
+
+        if (!avgPrice) return <MKTypography variant="body2" sx={{ fontSize: "0.8rem", color: "text.secondary" }}>-</MKTypography>;
+
+        const diff = currentPrice ? currentPrice - avgPrice : 0;
+        const diffPct = currentPrice ? (diff / avgPrice) * 100 : 0;
+        const isProfit = diff > 0;
+        const isLoss = diff < 0;
+
+        return (
+          <Box>
+            <MKTypography
+              variant="body2"
+              fontWeight="bold"
+              sx={{ fontSize: "0.8rem", color: "text.primary", lineHeight: 1.3 }}
+            >
+              {formatCurrency(avgPrice)}원
+            </MKTypography>
+            {currentPrice > 0 && (
+              <MKTypography
+                variant="caption"
+                sx={{
+                  fontSize: "0.68rem",
+                  color: isProfit ? "error.main" : isLoss ? "info.main" : "text.secondary",
+                  lineHeight: 1.2,
+                }}
+              >
+                {isProfit ? "▲" : isLoss ? "▼" : ""}{" "}
+                {isProfit ? "+" : ""}{formatCurrency(Math.round(diff))} ({isProfit ? "+" : ""}{diffPct.toFixed(2)}%)
+              </MKTypography>
+            )}
+          </Box>
+        );
+      },
+    },
+    {
       name: "보유정보",
       selector: (row) => tradingStatus[row.stock_code]?.total_quantity || 0,
       sortable: true,

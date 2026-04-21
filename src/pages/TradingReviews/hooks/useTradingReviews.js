@@ -33,7 +33,7 @@ function useTradingReviews() {
 
   // 인증 토큰 가져오기
   const getAuthToken = useCallback(() => {
-    return localStorage.getItem("token");
+    return localStorage.getItem("access_token");
   }, []);
 
   // API 헤더 생성
@@ -54,20 +54,17 @@ function useTradingReviews() {
     return response.json();
   };
 
-  // 매매복기 목록 조회 (Autobot 데이터)
+  // 매매복기 목록 조회 (Django DB 직접 조회, 인증 필요)
   const fetchTradingReviews = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
-      // Autobot 데이터를 가져오기 (인증 불필요)
       const response = await fetch(
         `${API_BASE_URL}/api/autobot/trading-summary-data`,
-        { 
+        {
           method: 'GET',
-          headers: {
-            "Content-Type": "application/json"
-          }
+          headers: getHeaders(),
         }
       );
 
@@ -146,14 +143,11 @@ function useTradingReviews() {
     try {
       setError(null);
 
-      // Autobot 데이터를 가져와서 통계 계산
       const response = await fetch(
         `${API_BASE_URL}/api/autobot/trading-summary-data`,
-        { 
+        {
           method: 'GET',
-          headers: {
-            "Content-Type": "application/json"
-          }
+          headers: getHeaders(),
         }
       );
 

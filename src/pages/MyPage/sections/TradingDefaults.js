@@ -37,7 +37,7 @@ function TradingDefaults() {
   const [defaults, setDefaults] = useState({
     trading_mode: "turtle", // 현재 선택된 매매모드
     // Manual 모드 설정
-    manual_max_loss: 8.0,
+    manual_max_loss: 2.0,
     manual_stop_loss: 8.0,
     manual_take_profit: null,
     manual_pyramiding_count: 0,
@@ -47,7 +47,7 @@ function TradingDefaults() {
     manual_use_trailing_stop: true,
     manual_trailing_stop_percent: 8.0,
     // Turtle 모드 설정
-    turtle_max_loss: 8.0,
+    turtle_max_loss: 2.0,
     turtle_stop_loss: 2.0,
     turtle_take_profit: null,
     turtle_pyramiding_count: 3,

@@ -54,6 +54,7 @@ import TradingConfigs from "pages/TradingConfigs";
 import TradingReviews from "pages/TradingReviews";
 import DailyNewsClipping from "pages/DailyNewsClipping";
 import MarketInfo from "pages/MarketInfo";
+import DataManagement from "pages/DataManagement";
 import ProtectedRoute from "components/ProtectedRoute";
 
 const routes = [
@@ -158,6 +159,24 @@ const routes = [
             name: "일간뉴스클리핑",
             route: "/daily-news-clipping",
             component: <DailyNewsClipping />,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    name: "관리",
+    icon: <Icon>storage</Icon>,
+    columns: 1,
+    rowsPerColumn: 2,
+    collapse: [
+      {
+        name: "데이터",
+        collapse: [
+          {
+            name: "데이터 관리",
+            route: "/data-management",
+            component: <DataManagement />,
           },
         ],
       },

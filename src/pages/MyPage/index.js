@@ -33,7 +33,6 @@ import routes from "routes";
 import footerRoutes from "footer.routes";
 
 // MyPage sections
-import ServerSettings from "./sections/ServerSettings";
 import Profile from "./sections/Profile";
 import TradingDefaults from "./sections/TradingDefaults";
 
@@ -60,8 +59,6 @@ function MyPage() {
       case 0:
         return <Profile />;
       case 1:
-        return <ServerSettings />;
-      case 2:
         return <TradingDefaults />;
       default:
         return <Profile />;
@@ -113,7 +110,7 @@ function MyPage() {
                 lineHeight: 1.3,
               }}
             >
-              프로필 및 서버 설정 관리
+              프로필 및 자동매매 설정 관리
             </MKTypography>
           </Grid>
         </Container>
@@ -166,7 +163,6 @@ function MyPage() {
                   }}
                 >
                   <Tab label="프로필" />
-                  <Tab label="서버 설정" />
                   <Tab label="자동매매 기본설정" />
                 </Tabs>
               </MKBox>

@@ -330,24 +330,11 @@ export const useTradingForm = (
       const result = await response.json();
 
       if (response.status === 400 || !result.success) {
-        if (result.error === "SERVER_SETTINGS_REQUIRED") {
-          if (
-            window.confirm(
-              "autobot 서버 설정을 먼저 완료해주세요.\n\n마이페이지 > 서버 설정에서 autobot 서버 IP와 포트를 설정한 후 자동매매 설정을 저장할 수 있습니다.\n\n지금 서버 설정 페이지로 이동하시겠습니까?"
-            )
-          ) {
-            navigate("/pages/my-page", { state: { activeTab: 1 } });
-          }
-          return;
-        }
         throw new Error(result.message || result.error || "설정 저장에 실패했습니다.");
       }
 
       if (result.success) {
-        showSnackbar(
-          "자동매매 설정이 성공적으로 저장되었습니다! Django DB에 저장되고 autobot 서버로 전달되었습니다.",
-          "success"
-        );
+        showSnackbar("자동매매 설정이 성공적으로 저장되었습니다.", "success");
         return true;
       }
     } catch (error) {
