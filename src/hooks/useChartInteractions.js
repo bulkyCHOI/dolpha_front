@@ -50,11 +50,6 @@ export const useChartInteractions = (
     };
     setHorizontalLines((prev) => [...prev, newLine]);
 
-    // Auto-set entry point in trading tab
-    if (activeTab === 0) {
-      onEntryPointChange(yValue.toString());
-    }
-
     // Force chart update
     setTimeout(() => {
       if (chartRef.current) {
@@ -63,34 +58,10 @@ export const useChartInteractions = (
     }, 50);
   };
 
-  const handleUpdateHorizontalLine = (id, newValue, updateTradingSettings = true) => {
+  const handleUpdateHorizontalLine = (id, newValue) => {
     setHorizontalLines((prev) =>
       prev.map((line) => (line.id === id ? { ...line, value: newValue } : line))
     );
-
-    if (updateTradingSettings) {
-      const line = horizontalLines.find((line) => line.id === id);
-      if (line) {
-        if (line.type === "entry") {
-          onEntryPointChange(newValue.toString());
-        } else if (line.type === "pyramiding") {
-          const lineIndex = horizontalLines.findIndex(
-            (l) => l.id === id && l.type === "pyramiding"
-          );
-          if (lineIndex >= 0) {
-            // Calculate percentage relative to base entry price
-            const baseEntryPrice = parseFloat(entryPoint);
-            if (baseEntryPrice && baseEntryPrice > 0) {
-              const percentage = (((newValue - baseEntryPrice) / baseEntryPrice) * 100).toFixed(2);
-              const percentageStr = percentage > 0 ? `+${percentage}` : percentage.toString();
-              onPyramidingEntryChange(lineIndex, percentageStr);
-            } else {
-              onPyramidingEntryChange(lineIndex, newValue.toString());
-            }
-          }
-        }
-      }
-    }
 
     // Force chart update
     setTimeout(() => {
@@ -217,33 +188,7 @@ export const useChartInteractions = (
   };
 
   const handleGlobalMouseUp = () => {
-    // Complete drag and update trading settings
-    const { dragLineId: refDragLineId } = dragStateRef.current;
-    if (refDragLineId) {
-      const line = horizontalLines.find((line) => line.id === refDragLineId);
-      if (line) {
-        if (line.type === "entry") {
-          onEntryPointChange(line.value.toString());
-        } else if (line.type === "pyramiding") {
-          const lineIndex = horizontalLines.findIndex(
-            (l) => l.id === refDragLineId && l.type === "pyramiding"
-          );
-          if (lineIndex >= 0) {
-            // Calculate percentage relative to base entry price
-            const baseEntryPrice = parseFloat(entryPoint);
-            if (baseEntryPrice && baseEntryPrice > 0) {
-              const percentage = (((line.value - baseEntryPrice) / baseEntryPrice) * 100).toFixed(
-                2
-              );
-              const percentageStr = percentage > 0 ? `+${percentage}` : percentage.toString();
-              onPyramidingEntryChange(lineIndex, percentageStr);
-            } else {
-              onPyramidingEntryChange(lineIndex, line.value.toString());
-            }
-          }
-        }
-      }
-    }
+    // 드래그 완료 시 진입시점 자동 업데이트 없음 - 팝업 버튼으로만 설정
 
     setIsDragging(false);
     setDragLineId(null);

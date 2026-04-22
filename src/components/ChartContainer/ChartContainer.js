@@ -743,10 +743,6 @@ const ChartContainer = ({
     };
     setHorizontalLines((prev) => [...prev, newLine]);
 
-    if (activeTab === 0) {
-      onEntryPointChange(yValue.toString());
-    }
-
     if (chartRef.current) {
       chartRef.current.update("active");
     }
@@ -756,25 +752,6 @@ const ChartContainer = ({
     setHorizontalLines((prev) =>
       prev.map((line) => (line.id === id ? { ...line, value: newValue } : line))
     );
-
-    const line = horizontalLines.find((line) => line.id === id);
-    if (line) {
-      if (line.type === "entry") {
-        onEntryPointChange(newValue.toString());
-      } else if (line.type === "pyramiding") {
-        const lineIndex = horizontalLines.findIndex((l) => l.id === id && l.type === "pyramiding");
-        if (lineIndex >= 0) {
-          const baseEntryPrice = parseFloat(entryPoint);
-          if (baseEntryPrice && baseEntryPrice > 0) {
-            const percentage = (((newValue - baseEntryPrice) / baseEntryPrice) * 100).toFixed(2);
-            const percentageStr = percentage > 0 ? `+${percentage}` : percentage.toString();
-            onPyramidingEntryChange(lineIndex, percentageStr);
-          } else {
-            onPyramidingEntryChange(lineIndex, newValue.toString());
-          }
-        }
-      }
-    }
 
     if (chartRef.current) {
       chartRef.current.update("active");
@@ -925,26 +902,7 @@ const ChartContainer = ({
         setHorizontalLines((prev) =>
           prev.map((line) => {
             if (line.id !== refDragLineId) return line;
-            const updatedLine = { ...line, value: adjustedValue };
-
-            if (line.type === "entry") {
-              onEntryPointChange(adjustedValue.toString());
-            } else if (line.type === "pyramiding") {
-              const baseEntryPrice = parseFloat(entryPoint);
-              if (baseEntryPrice && baseEntryPrice > 0) {
-                const percentage = (
-                  ((adjustedValue - baseEntryPrice) / baseEntryPrice) * 100
-                ).toFixed(2);
-                if (
-                  line.pyramidingIndex !== undefined &&
-                  line.pyramidingIndex >= 0 &&
-                  line.pyramidingIndex < pyramidingEntries.length
-                ) {
-                  onPyramidingEntryChange(line.pyramidingIndex, percentage.toString());
-                }
-              }
-            }
-            return updatedLine;
+            return { ...line, value: adjustedValue };
           })
         );
       } catch (error) {
@@ -992,27 +950,6 @@ const ChartContainer = ({
               if (line.id === refDragLineId) {
                 const updatedLine = { ...line, value: adjustedValue };
 
-                if (line.type === "entry") {
-                  onEntryPointChange(adjustedValue.toString());
-                } else if (line.type === "pyramiding") {
-                  const baseEntryPrice = parseFloat(entryPoint);
-                  if (baseEntryPrice && baseEntryPrice > 0) {
-                    const percentage = (
-                      ((adjustedValue - baseEntryPrice) / baseEntryPrice) *
-                      100
-                    ).toFixed(2);
-                    const percentageStr = percentage.toString();
-
-                    if (
-                      line.pyramidingIndex !== undefined &&
-                      line.pyramidingIndex >= 0 &&
-                      line.pyramidingIndex < pyramidingEntries.length
-                    ) {
-                      onPyramidingEntryChange(line.pyramidingIndex, percentageStr);
-                    }
-                  }
-                }
-
                 return updatedLine;
               }
               return line;
@@ -1029,28 +966,7 @@ const ChartContainer = ({
     const { isDragging: refIsDragging, dragLineId: refDragLineId } = dragStateRef.current;
 
     if (refIsDragging && refDragLineId) {
-      const line = horizontalLines.find((line) => line.id === refDragLineId);
-      if (line) {
-        if (line.type === "entry") {
-          onEntryPointChange(line.value.toString());
-        } else if (line.type === "pyramiding") {
-          const lineIndex = horizontalLines.findIndex(
-            (l) => l.id === refDragLineId && l.type === "pyramiding"
-          );
-          if (lineIndex >= 0) {
-            const baseEntryPrice = parseFloat(entryPoint);
-            if (baseEntryPrice && baseEntryPrice > 0) {
-              const percentage = (((line.value - baseEntryPrice) / baseEntryPrice) * 100).toFixed(
-                2
-              );
-              const percentageStr = percentage > 0 ? `+${percentage}` : percentage.toString();
-              onPyramidingEntryChange(lineIndex, percentageStr);
-            } else {
-              onPyramidingEntryChange(lineIndex, line.value.toString());
-            }
-          }
-        }
-      }
+      // 드래그 완료 시 진입시점 자동 업데이트 없음 - 팝업 버튼으로만 설정
     }
 
     setIsDragging(false);
@@ -1068,28 +984,7 @@ const ChartContainer = ({
     const { isDragging: refIsDragging, dragLineId: refDragLineId } = dragStateRef.current;
 
     if (refIsDragging && refDragLineId) {
-      const line = horizontalLines.find((line) => line.id === refDragLineId);
-      if (line) {
-        if (line.type === "entry") {
-          onEntryPointChange(line.value.toString());
-        } else if (line.type === "pyramiding") {
-          const lineIndex = horizontalLines.findIndex(
-            (l) => l.id === refDragLineId && l.type === "pyramiding"
-          );
-          if (lineIndex >= 0) {
-            const baseEntryPrice = parseFloat(entryPoint);
-            if (baseEntryPrice && baseEntryPrice > 0) {
-              const percentage = (((line.value - baseEntryPrice) / baseEntryPrice) * 100).toFixed(
-                2
-              );
-              const percentageStr = percentage > 0 ? `+${percentage}` : percentage.toString();
-              onPyramidingEntryChange(lineIndex, percentageStr);
-            } else {
-              onPyramidingEntryChange(lineIndex, line.value.toString());
-            }
-          }
-        }
-      }
+      // 드래그 완료 시 진입시점 자동 업데이트 없음 - 팝업 버튼으로만 설정
     }
 
     setIsDragging(false);
