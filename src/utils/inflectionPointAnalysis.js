@@ -1,136 +1,95 @@
 // inflectionPointAnalysis.js
-// HTF 차트 변곡점 분석을 위한 유틸리티 함수들
+// VCP (Volatility Contraction Pattern) 분석 유틸리티
+// Mark Minervini의 VCP 패턴 감지: Stage 2 상승 후 수축하는 스윙(T1→T2→T3→T4) 감지
 
 /**
- * 100% 이상 상승 구간을 찾는 함수
- * @param {Array} ohlcvData - OHLCV 데이터 배열
- * @returns {Object|null} - 상승 구간 정보 또는 null
+ * 100% 이상 상승 구간을 찾는 함수 (Stage 2 uptrend 확인)
  */
 export function find100PercentRiseSegment(ohlcvData) {
   if (!ohlcvData || ohlcvData.length === 0) return null;
 
-  let minPrice = Number.MAX_VALUE;
-  let minIndex = 0;
-  let riseStartIndex = -1;
-  let riseEndIndex = -1;
-
+  // 전체 데이터에서 최고 고가를 먼저 찾는다
+  let peakPrice = 0;
+  let peakIndex = 0;
   for (let i = 0; i < ohlcvData.length; i++) {
-    const currentPrice = ohlcvData[i].close;
-
-    // 새로운 최저점 발견
-    if (currentPrice < minPrice) {
-      minPrice = currentPrice;
-      minIndex = i;
-      riseStartIndex = -1; // 리셋
-    }
-
-    // 100% 상승 확인
-    const risePercentage = ((currentPrice - minPrice) / minPrice) * 100;
-    if (risePercentage >= 100 && riseStartIndex === -1) {
-      riseStartIndex = minIndex;
-      riseEndIndex = i;
-
-      return {
-        startIndex: riseStartIndex,
-        endIndex: riseEndIndex,
-        startDate: ohlcvData[riseStartIndex].date,
-        endDate: ohlcvData[riseEndIndex].date,
-        minPrice: minPrice,
-        peakPrice: currentPrice,
-        risePercentage: risePercentage,
-      };
+    if (ohlcvData[i].high > peakPrice) {
+      peakPrice = ohlcvData[i].high;
+      peakIndex = i;
     }
   }
 
-  return null; // 100% 상승 구간 없음
+  // 최고 고가 이전 구간에서 최저 저가를 찾는다
+  let minPrice = Number.MAX_VALUE;
+  let minIndex = 0;
+  for (let i = 0; i <= peakIndex; i++) {
+    if (ohlcvData[i].low > 0 && ohlcvData[i].low < minPrice) {
+      minPrice = ohlcvData[i].low;
+      minIndex = i;
+    }
+  }
+
+  const risePercentage = ((peakPrice - minPrice) / minPrice) * 100;
+  if (risePercentage < 100) return null;
+
+  return {
+    startIndex: minIndex,
+    endIndex: peakIndex,
+    startDate: ohlcvData[minIndex].date,
+    endDate: ohlcvData[peakIndex].date,
+    minPrice,
+    peakPrice,
+    risePercentage,
+  };
 }
 
 /**
  * 지역 최고점 확인 함수
- * @param {Array} ohlcvData - OHLCV 데이터 배열
- * @param {number} index - 확인할 인덱스
- * @param {number} windowSize - 윈도우 크기
- * @returns {boolean}
  */
 export function isLocalMaximum(ohlcvData, index, windowSize) {
-  if (index < windowSize || index >= ohlcvData.length - windowSize) {
-    return false;
-  }
-
-  const currentPrice = ohlcvData[index].high; // 고가 기준
-
-  // 앞뒤 windowSize만큼 확인
+  if (index < windowSize || index >= ohlcvData.length - windowSize) return false;
+  const currentPrice = ohlcvData[index].high;
   for (let i = index - windowSize; i <= index + windowSize; i++) {
     if (i === index) continue;
-
-    if (ohlcvData[i].high >= currentPrice) {
-      return false; // 더 높은 가격이 있으면 지역최고점 아님
-    }
+    if (ohlcvData[i].high >= currentPrice) return false;
   }
   return true;
 }
 
 /**
  * 지역 최저점 확인 함수
- * @param {Array} ohlcvData - OHLCV 데이터 배열
- * @param {number} index - 확인할 인덱스
- * @param {number} windowSize - 윈도우 크기
- * @returns {boolean}
  */
 export function isLocalMinimum(ohlcvData, index, windowSize) {
-  if (index < windowSize || index >= ohlcvData.length - windowSize) {
-    return false;
-  }
-
-  const currentPrice = ohlcvData[index].low; // 저가 기준
-
-  // 앞뒤 windowSize만큼 확인
+  if (index < windowSize || index >= ohlcvData.length - windowSize) return false;
+  const currentPrice = ohlcvData[index].low;
+  if (currentPrice <= 0) return false; // 거래 정지일(low=0) 제외
   for (let i = index - windowSize; i <= index + windowSize; i++) {
     if (i === index) continue;
-
-    if (ohlcvData[i].low <= currentPrice) {
-      return false; // 더 낮은 가격이 있으면 지역최저점 아님
-    }
+    if (ohlcvData[i].low <= 0) continue; // 거래 정지일 이웃은 비교에서 제외
+    if (ohlcvData[i].low <= currentPrice) return false;
   }
   return true;
 }
 
 /**
- * 의미있는 변곡점만 필터링하고 상승/하락이 번갈아 나타나도록 하는 함수
- * @param {Array} inflectionPoints - 변곡점 배열
- * @param {number} minChangePercent - 최소 변동률 (%)
- * @returns {Array} - 필터링된 변곡점 배열
+ * 연속된 같은 타입 스윙을 병합: 가장 극단적인 값만 유지
  */
-export function filterSignificantInflections(inflectionPoints, minChangePercent) {
-  if (inflectionPoints.length <= 1) return inflectionPoints;
+function filterAlternatingSwings(swings) {
+  if (swings.length === 0) return [];
 
-  const filtered = [];
-  let lastType = null;
+  const filtered = [swings[0]];
 
-  for (let i = 0; i < inflectionPoints.length; i++) {
-    const curr = inflectionPoints[i];
+  for (let i = 1; i < swings.length; i++) {
+    const curr = swings[i];
+    const prev = filtered[filtered.length - 1];
 
-    // 첫 번째 변곡점은 무조건 추가
-    if (filtered.length === 0) {
-      filtered.push(curr);
-      lastType = curr.type;
-      continue;
-    }
-
-    // 이전 변곡점과 타입이 다른 경우만 고려 (상승/하락 번갈아)
-    if (curr.type !== lastType) {
-      const prev = filtered[filtered.length - 1];
-
-      // 고점은 high 가격, 저점은 low 가격으로 변동률 계산
-      const prevPrice = prev.type === "peak" ? prev.high : prev.low;
-      const currPrice = curr.type === "peak" ? curr.high : curr.low;
-      const changePercent = Math.abs(((currPrice - prevPrice) / prevPrice) * 100);
-
-      // 최소 변동률 이상인 경우만 추가
-      if (changePercent >= minChangePercent) {
-        filtered.push(curr);
-        lastType = curr.type;
+    if (curr.type === prev.type) {
+      if (curr.type === "peak" && curr.high > prev.high) {
+        filtered[filtered.length - 1] = curr;
+      } else if (curr.type === "trough" && curr.low < prev.low) {
+        filtered[filtered.length - 1] = curr;
       }
+    } else {
+      filtered.push(curr);
     }
   }
 
@@ -138,197 +97,237 @@ export function filterSignificantInflections(inflectionPoints, minChangePercent)
 }
 
 /**
- * 변곡점을 찾는 메인 함수
- * @param {Array} ohlcvData - OHLCV 데이터 배열
- * @param {number} startIndex - 시작 인덱스 (100% 상승 구간 이후)
- * @param {number} windowSize - 윈도우 크기 (기본값: 5)
- * @param {number} minChangePercent - 최소 변동률 (기본값: 3%)
- * @returns {Array} - 변곡점 배열
+ * Stage 2 peak 이후 VCP 베이스 내 스윙(고점/저점) 감지
  */
-export function findInflectionPoints(ohlcvData, startIndex, windowSize = 5, minChangePercent = 3) {
-  if (!ohlcvData || ohlcvData.length === 0 || startIndex < 0) return [];
+function findVCPSwings(ohlcvData, startIndex, windowSize) {
+  const rawSwings = [];
 
-  const inflectionPoints = [];
-
-  // startIndex 이후부터 변곡점 찾기
   for (let i = Math.max(startIndex, windowSize); i < ohlcvData.length - windowSize; i++) {
-    const currentData = ohlcvData[i];
-
-    // 지역 최고점 확인
-    const isLocalMax = isLocalMaximum(ohlcvData, i, windowSize);
-    // 지역 최저점 확인
-    const isLocalMin = isLocalMinimum(ohlcvData, i, windowSize);
-
-    if (isLocalMax || isLocalMin) {
-      inflectionPoints.push({
+    const d = ohlcvData[i];
+    if (isLocalMaximum(ohlcvData, i, windowSize)) {
+      rawSwings.push({
         index: i,
-        date: currentData.date,
-        price: currentData.close,
-        high: currentData.high,
-        low: currentData.low,
-        type: isLocalMax ? "peak" : "trough",
+        type: "peak",
+        high: d.high,
+        low: d.low,
+        close: d.close,
+        volume: d.volume || 0,
+        date: d.date,
+      });
+    } else if (isLocalMinimum(ohlcvData, i, windowSize) && d.low > 0) {
+      rawSwings.push({
+        index: i,
+        type: "trough",
+        high: d.high,
+        low: d.low,
+        close: d.close,
+        volume: d.volume || 0,
+        date: d.date,
       });
     }
   }
 
-  // 의미있는 변곡점만 필터링
-  return filterSignificantInflections(inflectionPoints, minChangePercent);
+  return filterAlternatingSwings(rawSwings);
 }
 
 /**
- * 변곡점간 퍼센트 변화를 계산하는 함수
- * @param {Array} inflectionPoints - 변곡점 배열
- * @returns {Array} - 퍼센트 변화 배열
+ * 스윙 배열에서 T 수축 구간을 감지
+ * 각 T = 스윙고점 → 스윙저점 (하락 구간)
  */
-export function calculatePercentageChanges(inflectionPoints) {
-  if (inflectionPoints.length <= 1) return [];
+function detectTContractions(swings) {
+  const tContractions = [];
 
-  const changes = [];
+  for (let i = 0; i < swings.length - 1; i++) {
+    const from = swings[i];
+    const to = swings[i + 1];
 
-  for (let i = 1; i < inflectionPoints.length; i++) {
-    const prev = inflectionPoints[i - 1];
-    const curr = inflectionPoints[i];
+    if (from.type === "peak" && to.type === "trough") {
+      const depth = ((from.high - to.low) / from.high) * 100;
+      const tNumber = tContractions.length + 1;
+      const prevDepth = tNumber > 1 ? tContractions[tNumber - 2].depth : null;
+      const isContracting = prevDepth === null || depth < prevDepth;
 
-    // 고점은 high 가격, 저점은 low 가격 사용
-    const prevPrice = prev.type === "peak" ? prev.high : prev.low;
-    const currPrice = curr.type === "peak" ? curr.high : curr.low;
-
-    const changePercent = ((currPrice - prevPrice) / prevPrice) * 100;
-    const direction = changePercent > 0 ? "up" : "down";
-
-    changes.push({
-      fromIndex: prev.index,
-      toIndex: curr.index,
-      fromDate: prev.date,
-      toDate: curr.date,
-      fromPrice: prevPrice,
-      toPrice: currPrice,
-      changePercent: changePercent,
-      direction: direction,
-      magnitude: Math.abs(changePercent),
-    });
+      tContractions.push({
+        tNumber,
+        label: `T${tNumber}`,
+        swingHigh: from,
+        swingLow: to,
+        depth,
+        isContracting,
+      });
+    }
   }
 
-  return changes;
+  return tContractions;
 }
 
 /**
- * 변곡점 분석을 위한 메인 처리 함수
- * @param {Array} ohlcvData - OHLCV 데이터 배열
- * @param {Object} options - 옵션
- * @returns {Object|null} - 분석 결과
+ * 피벗 포인트 계산: 베이스 내 최초 스윙 고점 (저항선)
  */
-export function processInflectionPointsForHTF(ohlcvData, options = {}) {
-  const { windowSize = 5, minChangePercent = 3, enable100PercentRise = true } = options;
+function findPivotPoint(swings) {
+  const firstPeak = swings.find((s) => s.type === "peak");
+  if (!firstPeak) return null;
+
+  return {
+    index: firstPeak.index,
+    price: firstPeak.high,
+    date: firstPeak.date,
+  };
+}
+
+/**
+ * T 구간별 평균 거래량 분석 (VCP는 우측으로 갈수록 거래량 감소)
+ */
+function analyzeVolumeTrend(ohlcvData, tContractions) {
+  if (tContractions.length === 0) return { isDecreasing: null, tVolumeAverages: [] };
+
+  const tVolumeAverages = tContractions.map((t) => {
+    const start = t.swingHigh.index;
+    const end = t.swingLow.index;
+    let total = 0;
+    let count = 0;
+    for (let i = start; i <= end; i++) {
+      if (ohlcvData[i] && ohlcvData[i].volume) {
+        total += ohlcvData[i].volume;
+        count++;
+      }
+    }
+    return count > 0 ? total / count : 0;
+  });
+
+  const isDecreasing = tVolumeAverages.every(
+    (vol, i) => i === 0 || vol < tVolumeAverages[i - 1]
+  );
+
+  return { isDecreasing, tVolumeAverages };
+}
+
+/**
+ * VCP 패턴 분석 메인 함수
+ * @param {Array} ohlcvData - OHLCV 데이터
+ * @param {Object} options - 옵션
+ * @returns {Object|null} - VCP 분석 결과
+ */
+export function processVCPPattern(ohlcvData, options = {}) {
+  const { windowSize = 5, enable100PercentRise = true } = options;
 
   try {
     let startIndex = 0;
     let riseSegment = null;
 
-    // 1. 100% 상승 구간 찾기 (옵션에 따라)
     if (enable100PercentRise) {
       riseSegment = find100PercentRiseSegment(ohlcvData);
       if (!riseSegment) {
-        console.log("HTF: 100% 상승 구간을 찾을 수 없습니다.");
+        console.log("VCP: 100% 상승 구간(Stage 2)을 찾을 수 없습니다.");
         return null;
       }
       startIndex = riseSegment.endIndex;
-      console.log(`HTF: 100% 상승 구간 발견 (${riseSegment.startIndex} ~ ${riseSegment.endIndex})`);
     }
 
-    // 2. 변곡점 감지
-    const inflectionPoints = findInflectionPoints(
-      ohlcvData,
-      startIndex,
-      windowSize,
-      minChangePercent
-    );
+    const stage2Peak = riseSegment
+      ? {
+          index: riseSegment.endIndex,
+          price: ohlcvData[riseSegment.endIndex].high,
+          date: ohlcvData[riseSegment.endIndex].date,
+        }
+      : null;
 
-    if (inflectionPoints.length === 0) {
-      console.log("HTF: 변곡점을 찾을 수 없습니다.");
+    const swings = findVCPSwings(ohlcvData, startIndex, windowSize);
+
+    if (swings.length < 2) {
+      console.log("VCP: 베이스 내 스윙 포인트가 부족합니다.");
       return null;
     }
 
-    console.log(`HTF: 찾은 변곡점 개수: ${inflectionPoints.length}`);
+    const tContractions = detectTContractions(swings);
 
-    // 3. 퍼센트 변화 계산
-    const percentageChanges = calculatePercentageChanges(inflectionPoints);
+    if (tContractions.length === 0) {
+      console.log("VCP: T 수축 구간을 찾을 수 없습니다.");
+      return null;
+    }
+
+    const pivotPoint = findPivotPoint(swings);
+    const volumeTrend = analyzeVolumeTrend(ohlcvData, tContractions);
+    const isValidVCP =
+      tContractions.length >= 2 &&
+      tContractions.every((t, i) => i === 0 || t.depth < tContractions[i - 1].depth);
+
+    console.log(`VCP: T 수축 ${tContractions.length}개 감지, 유효 VCP: ${isValidVCP}`);
 
     return {
       riseSegment,
-      inflectionPoints,
-      percentageChanges,
+      stage2Peak,
+      vcpSwings: swings,
+      tContractions,
+      pivotPoint,
+      volumeTrend,
+      isValidVCP,
+      // 하위 호환성 유지
+      inflectionPoints: swings,
+      percentageChanges: [],
       summary: {
         riseSegmentExists: !!riseSegment,
-        inflectionPointCount: inflectionPoints.length,
+        tCount: tContractions.length,
+        isValidVCP,
+        inflectionPointCount: swings.length,
         averageChange:
-          percentageChanges.length > 0
-            ? percentageChanges.reduce((sum, change) => sum + Math.abs(change.changePercent), 0) /
-              percentageChanges.length
+          tContractions.length > 0
+            ? tContractions.reduce((s, t) => s + t.depth, 0) / tContractions.length
             : 0,
       },
     };
   } catch (error) {
-    console.error("HTF 변곡점 처리 중 오류:", error);
+    console.error("VCP 패턴 처리 중 오류:", error);
     return null;
   }
 }
 
+// 하위 호환 alias
+export const processInflectionPointsForHTF = processVCPPattern;
+
 /**
- * Chart.js용 변곡점 데이터셋 생성 (오프셋 적용)
- * @param {Array} inflectionPoints - 변곡점 배열
- * @param {Array} ohlcvData - 전체 OHLCV 데이터 (오프셋 계산용)
- * @returns {Object} - Chart.js 데이터셋
+ * VCP 스윙 포인트용 Chart.js scatter 데이터셋 생성
  */
 export function createInflectionPointDataset(inflectionPoints, ohlcvData) {
   if (!inflectionPoints || inflectionPoints.length === 0) return null;
 
-  // 전체 가격 범위를 구해서 적절한 오프셋 계산
   let priceRange = 0;
   if (ohlcvData && ohlcvData.length > 0) {
     const prices = ohlcvData.flatMap((item) => [item.high, item.low]);
-    const maxPrice = Math.max(...prices);
-    const minPrice = Math.min(...prices);
-    priceRange = maxPrice - minPrice;
+    priceRange = Math.max(...prices) - Math.min(...prices);
   }
 
-  // 오프셋: 가격 범위의 1.5% (상승점은 위로, 하락점은 아래로)
   const offsetPercent = 0.015;
 
   return {
-    label: "변곡점",
+    label: "VCP 스윙",
     type: "scatter",
     data: inflectionPoints.map((point) => {
       const basePrice = point.type === "peak" ? point.high : point.low;
       const offset = priceRange * offsetPercent;
-      const offsetPrice = point.type === "peak" ? basePrice + offset : basePrice - offset;
-
       return {
         x: point.index,
-        y: offsetPrice,
+        y: point.type === "peak" ? basePrice + offset : basePrice - offset,
         inflectionData: point,
-        originalPrice: basePrice, // 원래 가격 저장
+        originalPrice: basePrice,
       };
     }),
-    backgroundColor: inflectionPoints.map((point) =>
-      point.type === "peak" ? "rgba(239, 68, 68, 0.9)" : "rgba(33, 150, 243, 0.9)"
+    backgroundColor: inflectionPoints.map((p) =>
+      p.type === "peak" ? "rgba(239, 68, 68, 0.9)" : "rgba(33, 150, 243, 0.9)"
     ),
-    borderColor: inflectionPoints.map((point) => (point.type === "peak" ? "#ef4444" : "#2196f3")),
+    borderColor: inflectionPoints.map((p) => (p.type === "peak" ? "#ef4444" : "#2196f3")),
     borderWidth: 2,
-    pointRadius: 8,
-    pointHoverRadius: 10,
-    pointStyle: inflectionPoints.map((point) => (point.type === "peak" ? "triangle" : "triangle")),
-    order: 0, // 최상위 표시
+    pointRadius: 7,
+    pointHoverRadius: 9,
+    pointStyle: "triangle",
+    pointRotation: inflectionPoints.map((p) => (p.type === "peak" ? 0 : 180)),
+    order: 0,
     showLine: false,
-    pointRotation: inflectionPoints.map((point) => (point.type === "peak" ? 0 : 180)), // 하락점은 역삼각형
   };
 }
 
 /**
- * 100% 상승 구간 하이라이트용 데이터셋 생성
- * @param {Array} ohlcvData - OHLCV 데이터 배열
- * @param {Object} riseSegment - 상승 구간 정보
- * @returns {Object} - Chart.js 데이터셋
+ * 100% 상승 구간 하이라이트 데이터셋
  */
 export function createRiseSegmentDataset(ohlcvData, riseSegment) {
   if (!riseSegment || !ohlcvData) return null;
@@ -336,19 +335,16 @@ export function createRiseSegmentDataset(ohlcvData, riseSegment) {
   const data = [];
   for (let i = riseSegment.startIndex; i <= riseSegment.endIndex; i++) {
     if (ohlcvData[i]) {
-      data.push({
-        x: i,
-        y: ohlcvData[i].high * 1.03, // 고점보다 약간 위에 표시
-      });
+      data.push({ x: i, y: ohlcvData[i].high * 1.03 });
     }
   }
 
   return {
-    label: "100% 상승구간",
+    label: "Stage 2 상승구간",
     type: "line",
-    data: data,
+    data,
     borderColor: "rgba(76, 175, 80, 0.6)",
-    backgroundColor: "rgba(76, 175, 80, 0.2)",
+    backgroundColor: "rgba(76, 175, 80, 0.15)",
     borderWidth: 3,
     pointRadius: 0,
     pointHoverRadius: 0,

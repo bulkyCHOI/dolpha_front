@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { processInflectionPointsForHTF } from "utils/inflectionPointAnalysis";
+import { processVCPPattern } from "utils/inflectionPointAnalysis";
 
 /**
  * 변곡점 분석 및 관리를 위한 커스텀 훅
@@ -22,7 +22,7 @@ export const useInflectionPoints = (ohlcvData = [], chartType = "default") => {
   // 변곡점 분석 실행
   useEffect(() => {
     if (ohlcvData && ohlcvData.length > 0 && showInflectionPoints) {
-      const analysisResult = processInflectionPointsForHTF(ohlcvData, inflectionSettings);
+      const analysisResult = processVCPPattern(ohlcvData, inflectionSettings);
 
       if (analysisResult) {
         setInflectionAnalysisResult(analysisResult);

@@ -1,8 +1,48 @@
 // inflectionPointPlugin.js
-// Chart.js용 변곡점 표시 커스텀 플러그인
+// VCP (Volatility Contraction Pattern) 시각화 Chart.js 플러그인
 
 /**
- * 변곡점간 퍼센트 변화를 시각화하는 Chart.js 플러그인
+ * 둥근 모서리 사각형 헬퍼
+ */
+function drawRoundedRect(ctx, x, y, w, h, r) {
+  if (w < 2 * r) r = w / 2;
+  if (h < 2 * r) r = h / 2;
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+/**
+ * 텍스트 배경 박스 그리기
+ */
+function drawLabelBox(ctx, text, cx, cy, bgColor, fontSize = 11) {
+  ctx.font = `bold ${fontSize}px Arial, sans-serif`;
+  const metrics = ctx.measureText(text);
+  const padX = 6;
+  const padY = 4;
+  const bw = metrics.width + padX * 2;
+  const bh = fontSize + padY * 2;
+  const bx = cx - bw / 2;
+  const by = cy - bh / 2;
+
+  ctx.globalAlpha = 0.88;
+  ctx.fillStyle = bgColor;
+  drawRoundedRect(ctx, bx, by, bw, bh, 4);
+  ctx.fill();
+
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = "#ffffff";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(text, cx, cy);
+}
+
+/**
+ * VCP 패턴 시각화 플러그인
  */
 export const inflectionPointPlugin = {
   id: "inflectionPointPlugin",
@@ -12,303 +52,195 @@ export const inflectionPointPlugin = {
 
     const {
       ctx,
-      chartArea: { left, top, width, height },
+      chartArea: { left, top, right, bottom },
       scales: { x, y },
     } = chart;
 
     const {
-      inflectionPoints = [],
-      percentageChanges = [],
+      tContractions = [],
+      vcpSwings = [],
+      pivotPoint = null,
       showConnectionLines = true,
       showPercentageLabels = true,
-      lineStyle = {},
-      labelStyle = {},
     } = options;
 
-    if (inflectionPoints.length === 0 || percentageChanges.length === 0) {
-      return;
-    }
+    if (tContractions.length === 0 && vcpSwings.length === 0) return;
 
     ctx.save();
 
-    // 기본 스타일 설정
-    const defaultLineStyle = {
-      upColor: "#ef4444", // 상승: 빨간색
-      downColor: "#2196f3", // 하락: 파란색
-      lineWidth: 2,
-      lineDash: [8, 4],
-      alpha: 0.7,
-    };
-
-    const defaultLabelStyle = {
-      fontSize: 11,
-      fontFamily: "Arial, sans-serif",
-      fontWeight: "bold",
-      textColor: "#ffffff",
-      backgroundColor: "rgba(0, 0, 0, 0.7)",
-      borderRadius: 4,
-      padding: 6,
-    };
-
-    const finalLineStyle = { ...defaultLineStyle, ...lineStyle };
-    const finalLabelStyle = { ...defaultLabelStyle, ...labelStyle };
-
-    // 변곡점간 연결 라인과 퍼센트 라벨 그리기
-    percentageChanges.forEach((change, index) => {
+    // ── 1. T 수축 구간 시각화 ──────────────────────────────────────────
+    tContractions.forEach((t) => {
       try {
-        // 좌표 계산
-        const fromPixelX = x.getPixelForValue(change.fromIndex);
-        const fromPixelY = y.getPixelForValue(change.fromPrice);
-        const toPixelX = x.getPixelForValue(change.toIndex);
-        const toPixelY = y.getPixelForValue(change.toPrice);
+        const highX = x.getPixelForValue(t.swingHigh.index);
+        const highY = y.getPixelForValue(t.swingHigh.high);
+        const lowX = x.getPixelForValue(t.swingLow.index);
+        const lowY = y.getPixelForValue(t.swingLow.low);
 
-        // 차트 영역 내부에 있는지 확인
+        // 차트 영역 범위 확인
         if (
-          fromPixelX < left ||
-          fromPixelX > left + width ||
-          toPixelX < left ||
-          toPixelX > left + width
-        ) {
-          return;
-        }
+          highX < left || highX > right ||
+          lowX < left || lowX > right
+        ) return;
 
-        // 연결 라인 그리기
+        // 수축 깊이에 따른 색상 (T1 진한 빨강 → T4 연한 주황)
+        const depthColors = ["#dc2626", "#ea580c", "#d97706", "#ca8a04"];
+        const color = depthColors[Math.min(t.tNumber - 1, depthColors.length - 1)];
+
+        // ── 세로 브라켓: 스윙고점 → 스윙저점 ──
         if (showConnectionLines) {
+          // 고점 수평선
+          ctx.globalAlpha = 0.5;
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 1.5;
+          ctx.setLineDash([4, 3]);
           ctx.beginPath();
-          ctx.globalAlpha = finalLineStyle.alpha;
-          ctx.strokeStyle =
-            change.direction === "up" ? finalLineStyle.upColor : finalLineStyle.downColor;
-          ctx.lineWidth = finalLineStyle.lineWidth;
-          ctx.setLineDash(finalLineStyle.lineDash);
-
-          ctx.moveTo(fromPixelX, fromPixelY);
-          ctx.lineTo(toPixelX, toPixelY);
+          ctx.moveTo(Math.max(highX - 12, left), highY);
+          ctx.lineTo(Math.min(highX + 12, right), highY);
           ctx.stroke();
-          ctx.setLineDash([]); // 실선으로 복원
+
+          // 저점 수평선
+          ctx.beginPath();
+          ctx.moveTo(Math.max(lowX - 12, left), lowY);
+          ctx.lineTo(Math.min(lowX + 12, right), lowY);
+          ctx.stroke();
+
+          // 세로 연결선 (T 범위 표시)
+          const midX = (highX + lowX) / 2;
+          ctx.globalAlpha = 0.4;
+          ctx.setLineDash([6, 4]);
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(midX, highY);
+          ctx.lineTo(midX, lowY);
+          ctx.stroke();
+
+          ctx.setLineDash([]);
         }
 
-        // 퍼센트 변화 라벨 표시
+        // ── T 라벨 + 깊이% ──
         if (showPercentageLabels) {
-          const midX = (fromPixelX + toPixelX) / 2;
-          const midY = (fromPixelY + toPixelY) / 2;
+          const midX = (highX + lowX) / 2;
+          const midY = (highY + lowY) / 2;
 
-          // 라벨 텍스트 준비 - 상승/하락 구분하여 표시
-          const isRising = change.direction === "up";
-          const directionIcon = isRising ? "▲" : "▼"; // 유니코드 삼각형 사용
-          const changeText = `${Math.abs(change.changePercent).toFixed(1)}%`;
+          const depthText = `${t.label} (${t.depth.toFixed(1)}%)`;
+          drawLabelBox(ctx, depthText, midX, midY, color, 11);
 
-          // 아이콘과 텍스트 크기 측정
-          ctx.font = `${finalLabelStyle.fontWeight} ${finalLabelStyle.fontSize}px ${finalLabelStyle.fontFamily}`;
-          const iconMetrics = ctx.measureText(directionIcon);
-          const textMetrics = ctx.measureText(changeText);
-          const iconWidth = iconMetrics.width;
-          const textWidth = textMetrics.width;
-          const spacing = 4; // 아이콘과 텍스트 간격
-          const totalWidth = iconWidth + spacing + textWidth;
-          const textHeight = finalLabelStyle.fontSize;
-
-          // 라벨 배경 그리기 - 상승/하락에 따라 색상 변경
-          const labelPadding = finalLabelStyle.padding;
-          const labelWidth = totalWidth + labelPadding * 2;
-          const labelHeight = textHeight + labelPadding * 2;
-
-          const labelX = midX - labelWidth / 2;
-          const labelY = midY - labelHeight / 2 - 15; // 라인 위쪽으로 더 이동
-
-          ctx.globalAlpha = 0.9;
-          // 상승은 빨간색 배경, 하락은 파란색 배경
-          ctx.fillStyle = isRising ? "rgba(239, 68, 68, 0.8)" : "rgba(33, 150, 243, 0.8)";
-
-          // 둥근 모서리 사각형
-          this.drawRoundedRect(
-            ctx,
-            labelX,
-            labelY,
-            labelWidth,
-            labelHeight,
-            finalLabelStyle.borderRadius
-          );
-
-          ctx.fill();
-
-          // 아이콘 그리기 (상승/하락에 따라 색상 다르게)
-          ctx.globalAlpha = 1;
-          ctx.fillStyle = isRising ? "#ffffff" : "#2196f3"; // 상승은 흰색, 하락은 파란색
-          ctx.textAlign = "left";
-          ctx.textBaseline = "middle";
-          const iconX = midX - totalWidth / 2;
-          ctx.fillText(directionIcon, iconX, labelY + labelHeight / 2);
-
-          // 텍스트 그리기
-          ctx.fillStyle = "#ffffff";
-          ctx.textAlign = "left";
-          ctx.textBaseline = "middle";
-          const textX = iconX + iconWidth + spacing;
-          ctx.fillText(changeText, textX, labelY + labelHeight / 2);
+          // 유효 VCP 여부 표시 (수축 여부)
+          if (!t.isContracting) {
+            const warnText = "⚠";
+            ctx.globalAlpha = 0.8;
+            ctx.fillStyle = "#f59e0b";
+            ctx.font = "bold 13px Arial";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(warnText, midX + 30, midY);
+          }
         }
-      } catch (error) {
-        console.warn("변곡점 플러그인 렌더링 오류:", error);
+      } catch (e) {
+        console.warn("VCP T 구간 렌더링 오류:", e);
       }
     });
 
+    // ── 2. 스윙 고점 연결선 (내림차순 저항선) ──────────────────────────
+    if (showConnectionLines && vcpSwings.length >= 2) {
+      const peaks = vcpSwings.filter((s) => s.type === "peak");
+      if (peaks.length >= 2) {
+        ctx.globalAlpha = 0.45;
+        ctx.strokeStyle = "#ef4444";
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([8, 4]);
+        ctx.beginPath();
+        let started = false;
+        peaks.forEach((p) => {
+          const px = x.getPixelForValue(p.index);
+          const py = y.getPixelForValue(p.high);
+          if (px < left || px > right) return;
+          if (!started) {
+            ctx.moveTo(px, py);
+            started = true;
+          } else {
+            ctx.lineTo(px, py);
+          }
+        });
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // ── 스윙 저점 연결선 (오름차순 지지선) ──
+      const troughs = vcpSwings.filter((s) => s.type === "trough");
+      if (troughs.length >= 2) {
+        ctx.globalAlpha = 0.45;
+        ctx.strokeStyle = "#2196f3";
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([8, 4]);
+        ctx.beginPath();
+        let started = false;
+        troughs.forEach((t) => {
+          const px = x.getPixelForValue(t.index);
+          const py = y.getPixelForValue(t.low);
+          if (px < left || px > right) return;
+          if (!started) {
+            ctx.moveTo(px, py);
+            started = true;
+          } else {
+            ctx.lineTo(px, py);
+          }
+        });
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    }
+
+    // ── 3. 피벗 포인트 수평선 ──────────────────────────────────────────
+    if (pivotPoint) {
+      try {
+        const pivotPx = x.getPixelForValue(pivotPoint.index);
+        const pivotPy = y.getPixelForValue(pivotPoint.price);
+
+        if (pivotPy >= top && pivotPy <= bottom) {
+          ctx.globalAlpha = 0.7;
+          ctx.strokeStyle = "#8b5cf6";
+          ctx.lineWidth = 2;
+          ctx.setLineDash([10, 5]);
+          ctx.beginPath();
+          ctx.moveTo(Math.max(pivotPx, left), pivotPy);
+          ctx.lineTo(right, pivotPy);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          // Pivot 라벨
+          if (showPercentageLabels) {
+            const priceStr = new Intl.NumberFormat("ko-KR").format(Math.round(pivotPoint.price));
+            drawLabelBox(ctx, `Pivot ${priceStr}`, right - 55, pivotPy - 14, "#7c3aed", 10);
+          }
+        }
+      } catch (e) {
+        console.warn("피벗 포인트 렌더링 오류:", e);
+      }
+    }
+
     ctx.restore();
   },
-
-  /**
-   * 둥근 모서리 사각형을 그리는 헬퍼 함수
-   */
-  drawRoundedRect(ctx, x, y, width, height, radius) {
-    if (width < 2 * radius) radius = width / 2;
-    if (height < 2 * radius) radius = height / 2;
-
-    ctx.beginPath();
-    ctx.moveTo(x + radius, y);
-    ctx.arcTo(x + width, y, x + width, y + height, radius);
-    ctx.arcTo(x + width, y + height, x, y + height, radius);
-    ctx.arcTo(x, y + height, x, y, radius);
-    ctx.arcTo(x, y, x + width, y, radius);
-    ctx.closePath();
-  },
 };
 
 /**
- * 변곡점 토글 버튼 생성을 위한 헬퍼 함수
- * @param {Function} onToggle - 토글 콜백 함수
- * @returns {Object} - 버튼 설정 객체
- */
-export function createInflectionToggleButton(onToggle) {
-  return {
-    id: "inflectionToggle",
-    text: "변곡점",
-    icon: "📈",
-    active: false,
-    onClick: onToggle,
-  };
-}
-
-/**
- * 변곡점 설정 패널 생성을 위한 헬퍼 함수
- * @param {Object} currentSettings - 현재 설정
- * @param {Function} onSettingsChange - 설정 변경 콜백
- * @returns {Object} - 설정 패널 구성
- */
-export function createInflectionSettingsPanel(currentSettings, onSettingsChange) {
-  return {
-    title: "변곡점 설정",
-    settings: [
-      {
-        type: "range",
-        label: "감지 민감도",
-        key: "windowSize",
-        min: 3,
-        max: 10,
-        value: currentSettings.windowSize || 5,
-        description: "작을수록 더 많은 변곡점을 감지합니다",
-      },
-      {
-        type: "range",
-        label: "최소 변동률 (%)",
-        key: "minChangePercent",
-        min: 1,
-        max: 10,
-        value: currentSettings.minChangePercent || 3,
-        description: "이 값보다 작은 변동은 무시합니다",
-      },
-      {
-        type: "toggle",
-        label: "연결선 표시",
-        key: "showConnectionLines",
-        value: currentSettings.showConnectionLines !== false,
-      },
-      {
-        type: "toggle",
-        label: "퍼센트 라벨 표시",
-        key: "showPercentageLabels",
-        value: currentSettings.showPercentageLabels !== false,
-      },
-      {
-        type: "toggle",
-        label: "100% 상승 구간만",
-        key: "enable100PercentRise",
-        value: currentSettings.enable100PercentRise !== false,
-        description: "100% 상승 구간 이후 변곡점만 표시",
-      },
-    ],
-    onChange: onSettingsChange,
-  };
-}
-
-/**
- * 변곡점 데이터를 Chart.js 툴팁에서 표시하기 위한 콜백
- * @param {Object} context - Chart.js 툴팁 컨텍스트
- * @returns {Array} - 툴팁 라벨 배열
- */
-export function inflectionPointTooltipCallback(context) {
-  const data = context.raw;
-  const inflectionData = data.inflectionData;
-
-  if (!inflectionData) return [];
-
-  const typeText = inflectionData.type === "peak" ? "상승 변곡점" : "하락 변곡점";
-  const priceKey = inflectionData.type === "peak" ? "high" : "low";
-  const priceValue = inflectionData[priceKey];
-  const icon = inflectionData.type === "peak" ? "🔺" : "🔻";
-
-  return [
-    `${icon} ${typeText}`,
-    `날짜: ${new Date(inflectionData.date).toLocaleDateString("ko-KR")}`,
-    `${inflectionData.type === "peak" ? "고가" : "저가"}: ${new Intl.NumberFormat("ko-KR").format(
-      priceValue
-    )}원`,
-    `종가: ${new Intl.NumberFormat("ko-KR").format(inflectionData.price)}원`,
-  ];
-}
-
-/**
- * 변곡점 플러그인 기본 옵션
- */
-export const defaultInflectionOptions = {
-  enabled: false,
-  inflectionPoints: [],
-  percentageChanges: [],
-  showConnectionLines: true,
-  showPercentageLabels: true,
-  lineStyle: {
-    upColor: "#ef4444",
-    downColor: "#2196f3",
-    lineWidth: 2,
-    lineDash: [8, 4],
-    alpha: 0.7,
-  },
-  labelStyle: {
-    fontSize: 11,
-    fontFamily: "Arial, sans-serif",
-    fontWeight: "bold",
-    textColor: "#ffffff",
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
-    borderRadius: 4,
-    padding: 6,
-  },
-};
-
-/**
- * 변곡점 분석 결과를 Chart.js 옵션에 적용하는 함수
- * @param {Object} chartOptions - 기존 차트 옵션
- * @param {Object} analysisResult - 변곡점 분석 결과
- * @param {Object} userSettings - 사용자 설정
- * @returns {Object} - 업데이트된 차트 옵션
+ * VCP 분석 결과를 Chart.js 옵션에 적용
  */
 export function applyInflectionAnalysisToChart(chartOptions, analysisResult, userSettings = {}) {
-  if (!analysisResult || !analysisResult.inflectionPoints) {
-    return chartOptions;
-  }
+  if (!analysisResult) return chartOptions;
+
+  const {
+    showConnectionLines = true,
+    showPercentageLabels = true,
+  } = userSettings;
 
   const pluginOptions = {
-    ...defaultInflectionOptions,
     enabled: true,
-    inflectionPoints: analysisResult.inflectionPoints,
-    percentageChanges: analysisResult.percentageChanges,
-    ...userSettings,
+    tContractions: analysisResult.tContractions || [],
+    vcpSwings: analysisResult.vcpSwings || analysisResult.inflectionPoints || [],
+    pivotPoint: analysisResult.pivotPoint || null,
+    showConnectionLines,
+    showPercentageLabels,
   };
 
   return {
@@ -318,4 +250,35 @@ export function applyInflectionAnalysisToChart(chartOptions, analysisResult, use
       inflectionPointPlugin: pluginOptions,
     },
   };
+}
+
+/**
+ * 기본 플러그인 옵션
+ */
+export const defaultInflectionOptions = {
+  enabled: false,
+  tContractions: [],
+  vcpSwings: [],
+  pivotPoint: null,
+  showConnectionLines: true,
+  showPercentageLabels: true,
+};
+
+/**
+ * VCP 툴팁 콜백
+ */
+export function inflectionPointTooltipCallback(context) {
+  const data = context.raw;
+  const inflectionData = data.inflectionData;
+  if (!inflectionData) return [];
+
+  const typeText = inflectionData.type === "peak" ? "스윙 고점" : "스윙 저점";
+  const priceValue = inflectionData.type === "peak" ? inflectionData.high : inflectionData.low;
+  const icon = inflectionData.type === "peak" ? "🔺" : "🔻";
+
+  return [
+    `${icon} ${typeText}`,
+    `날짜: ${new Date(inflectionData.date).toLocaleDateString("ko-KR")}`,
+    `가격: ${new Intl.NumberFormat("ko-KR").format(priceValue)}원`,
+  ];
 }

@@ -2,9 +2,6 @@ import React from "react";
 import ToggleButton from "@mui/material/ToggleButton";
 import Tooltip from "@mui/material/Tooltip";
 
-/**
- * 변곡점 표시/숨기기 토글 버튼 컴포넌트
- */
 const InflectionPointToggle = ({
   showInflectionPoints = false,
   onToggle,
@@ -12,7 +9,7 @@ const InflectionPointToggle = ({
   size = "small",
 }) => {
   return (
-    <Tooltip title={showInflectionPoints ? "변곡점 숨기기" : "변곡점 표시"}>
+    <Tooltip title={showInflectionPoints ? "VCP 패턴 숨기기" : "VCP 패턴 찾기"}>
       <ToggleButton
         value="inflectionPoints"
         selected={showInflectionPoints}

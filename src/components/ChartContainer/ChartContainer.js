@@ -16,10 +16,7 @@ import { CandlestickController, CandlestickElement } from "chartjs-chart-financi
 import { Chart } from "react-chartjs-2";
 
 // 변곡점 관련 import
-import {
-  createInflectionPointDataset,
-  createRiseSegmentDataset,
-} from "utils/inflectionPointAnalysis";
+import { createInflectionPointDataset } from "utils/inflectionPointAnalysis";
 import { inflectionPointPlugin, applyInflectionAnalysisToChart } from "./inflectionPointPlugin";
 import useInflectionPoints from "hooks/useInflectionPoints";
 import InflectionPointToggle from "components/InflectionPointToggle";
@@ -412,16 +409,7 @@ const ChartContainer = ({
         datasets.push(inflectionDataset);
       }
 
-      // 100% 상승 구간 하이라이트 (분석 결과 기반)
-      if (inflectionAnalysisResult.riseSegment) {
-        const riseDataset = createRiseSegmentDataset(
-          ohlcvData,
-          inflectionAnalysisResult.riseSegment
-        );
-        if (riseDataset) {
-          datasets.push(riseDataset);
-        }
-      }
+
     }
 
     return { datasets };
@@ -1044,7 +1032,7 @@ const ChartContainer = ({
   // Create chart data (메모이제이션: 의존 데이터가 바뀔 때만 재생성)
   const chartData = useMemo(
     () => createCandlestickData(ohlcvData, analysisData, chartType, selectedStock),
-    [ohlcvData, analysisData, chartType, selectedStock, horizontalLines]
+    [ohlcvData, analysisData, chartType, selectedStock, horizontalLines, inflectionAnalysisResult, showInflectionPoints]
   );
   const volumeData = useMemo(() => createVolumeData(ohlcvData), [ohlcvData]);
   const indexChartData = useMemo(() => createIndexCandlestickData(indexOhlcvData), [indexOhlcvData]);
