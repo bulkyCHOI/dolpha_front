@@ -308,6 +308,7 @@ function MTT() {
                 selectedStock={selectedStock}
                 entryPoint={tradingForm.entryPoint}
                 pyramidingEntries={tradingForm.pyramidingEntries}
+                tradingMode={tradingForm.tradingMode}
                 activeTab={activeTab}
                 onIndexChange={handleIndexChange}
                 onEntryPointChange={tradingForm.setEntryPoint}
@@ -601,6 +602,7 @@ function MTT() {
                         selectedStock={selectedStock}
                         entryPoint={tradingForm.entryPoint}
                         pyramidingEntries={tradingForm.pyramidingEntries}
+                        tradingMode={tradingForm.tradingMode}
                         activeTab={activeTab}
                         onIndexChange={handleIndexChange}
                         onEntryPointChange={tradingForm.setEntryPoint}

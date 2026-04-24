@@ -343,6 +343,7 @@ function HTF() {
                 selectedStock={selectedStock}
                 entryPoint={tradingForm.entryPoint}
                 pyramidingEntries={tradingForm.pyramidingEntries}
+                tradingMode={tradingForm.tradingMode}
                 activeTab={activeTab}
                 onIndexChange={handleIndexChange}
                 onEntryPointChange={tradingForm.setEntryPoint}
@@ -629,6 +630,7 @@ function HTF() {
                         selectedStock={selectedStock}
                         entryPoint={tradingForm.entryPoint}
                         pyramidingEntries={tradingForm.pyramidingEntries}
+                        tradingMode={tradingForm.tradingMode}
                         activeTab={activeTab}
                         onIndexChange={handleIndexChange}
                         onEntryPointChange={tradingForm.setEntryPoint}

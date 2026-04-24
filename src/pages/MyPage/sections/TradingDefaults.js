@@ -25,6 +25,9 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import Chip from "@mui/material/Chip";
 
 // Material Kit 2 React components
 import MKBox from "components/MKBox";
@@ -45,6 +48,7 @@ function TradingDefaults() {
     manual_positions: [100],
     manual_pyramiding_entries: [],
     manual_use_trailing_stop: true,
+    manual_trailing_stop_trigger: 8.0,
     manual_trailing_stop_percent: 8.0,
     // Turtle 모드 설정
     turtle_max_loss: 2.0,
@@ -55,6 +59,7 @@ function TradingDefaults() {
     turtle_positions: [25, 25, 25, 25],
     turtle_pyramiding_entries: ["", "", ""],
     turtle_use_trailing_stop: true,
+    turtle_trailing_stop_trigger: 2.0,
     turtle_trailing_stop_percent: 3.0,
     // 공통 설정
     default_entry_trigger: 1.0,
@@ -64,6 +69,16 @@ function TradingDefaults() {
   const [loading, setLoading] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
   const [message, setMessage] = useState(null);
+
+  // 계좌 설정 state
+  const [accountSettings, setAccountSettings] = useState({
+    kis_mode: "VIRTUAL",
+    real_account_no: "",
+    virtual_account_no: "",
+    current_account_no: "",
+  });
+  const [accountSaveLoading, setAccountSaveLoading] = useState(false);
+  const [accountMessage, setAccountMessage] = useState(null);
   const [expandedSections, setExpandedSections] = useState({
     strategy: true,
     risk: true,
@@ -91,6 +106,7 @@ function TradingDefaults() {
         positions: defaults.manual_positions,
         pyramiding_entries: defaults.manual_pyramiding_entries,
         use_trailing_stop: defaults.manual_use_trailing_stop,
+        trailing_stop_trigger: defaults.manual_trailing_stop_trigger,
         trailing_stop_percent: defaults.manual_trailing_stop_percent,
       };
     } else {
@@ -103,6 +119,7 @@ function TradingDefaults() {
         positions: defaults.turtle_positions,
         pyramiding_entries: defaults.turtle_pyramiding_entries,
         use_trailing_stop: defaults.turtle_use_trailing_stop,
+        trailing_stop_trigger: defaults.turtle_trailing_stop_trigger,
         trailing_stop_percent: defaults.turtle_trailing_stop_percent,
       };
     }
@@ -110,7 +127,50 @@ function TradingDefaults() {
 
   useEffect(() => {
     loadDefaults();
+    loadAccountSettings();
   }, []);
+
+  const loadAccountSettings = async () => {
+    try {
+      const baseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
+      const response = await authenticatedFetch(`${baseUrl}/api/mypage/account-settings`);
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) setAccountSettings(result.data);
+      }
+    } catch (error) {
+      console.warn("계좌 설정 로드 실패:", error.message);
+    }
+  };
+
+  const handleAccountModeSave = async () => {
+    setAccountSaveLoading(true);
+    setAccountMessage(null);
+    try {
+      const baseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
+      const response = await authenticatedFetch(`${baseUrl}/api/mypage/account-settings`, {
+        method: "POST",
+        body: JSON.stringify({ kis_mode: accountSettings.kis_mode }),
+      });
+      const result = await response.json();
+      if (result.success) {
+        const newMode = result.kis_mode;
+        const currentNo =
+          newMode === "REAL" ? accountSettings.real_account_no : accountSettings.virtual_account_no;
+        setAccountSettings((prev) => ({ ...prev, kis_mode: newMode, current_account_no: currentNo }));
+        setAccountMessage({
+          type: result.warning ? "warning" : "success",
+          text: result.warning || `${newMode === "REAL" ? "실계좌" : "가상계좌"}로 변경되었습니다.`,
+        });
+      } else {
+        setAccountMessage({ type: "error", text: result.error || "변경 실패" });
+      }
+    } catch (error) {
+      setAccountMessage({ type: "error", text: `저장 실패: ${error.message}` });
+    } finally {
+      setAccountSaveLoading(false);
+    }
+  };
 
   const loadDefaults = async () => {
     setLoading(true);
@@ -298,21 +358,112 @@ function TradingDefaults() {
             </MKBox>
           </Grid>
 
-          {/* 메시지 표시 */}
-          {message && (
-            <Grid item xs={12}>
-              <Alert
-                severity={message.type}
-                sx={{ borderRadius: 2, mb: 1, whiteSpace: "pre-line" }}
-              >
-                {message.text}
-              </Alert>
-            </Grid>
-          )}
-
-          {/* 좌측 컬럼 */}
+          {/* 계좌 설정 + 매매모드 선택 (1:1) */}
           <Grid item xs={12} md={6}>
-            {/* 매매모드 선택 */}
+            <Card sx={{ mb: 2, borderRadius: 2 }}>
+              <MKBox p={2}>
+                <MKTypography variant="h6" fontWeight="bold" mb={2}>
+                  계좌 설정
+                </MKTypography>
+                <Grid container spacing={2} alignItems="center">
+                  <Grid item xs={12} sm="auto">
+                    <MKTypography variant="body2" fontWeight="medium" mb={0.5}>
+                      거래 계좌
+                    </MKTypography>
+                    <ToggleButtonGroup
+                      value={accountSettings.kis_mode}
+                      exclusive
+                      onChange={(_, val) => {
+                        if (val) {
+                          const newNo =
+                            val === "REAL"
+                              ? accountSettings.real_account_no
+                              : accountSettings.virtual_account_no;
+                          setAccountSettings((prev) => ({
+                            ...prev,
+                            kis_mode: val,
+                            current_account_no: newNo,
+                          }));
+                        }
+                      }}
+                      size="small"
+                    >
+                      <ToggleButton
+                        value="VIRTUAL"
+                        sx={{ px: 2.5, textTransform: "none", fontWeight: 600 }}
+                      >
+                        가상계좌
+                      </ToggleButton>
+                      <ToggleButton
+                        value="REAL"
+                        sx={{ px: 2.5, textTransform: "none", fontWeight: 600 }}
+                      >
+                        실계좌
+                      </ToggleButton>
+                    </ToggleButtonGroup>
+                  </Grid>
+                  <Grid item xs={12} sm="auto">
+                    <MKTypography variant="body2" fontWeight="medium" mb={0.5}>
+                      계좌번호
+                    </MKTypography>
+                    <MKBox display="flex" alignItems="center" gap={1}>
+                      <MKTypography
+                        variant="body1"
+                        fontWeight="bold"
+                        sx={{ fontFamily: "monospace", letterSpacing: 1 }}
+                      >
+                        {accountSettings.current_account_no || "—"}
+                      </MKTypography>
+                      <Chip
+                        label={accountSettings.kis_mode === "REAL" ? "실계좌" : "가상계좌"}
+                        size="small"
+                        color={accountSettings.kis_mode === "REAL" ? "error" : "info"}
+                        sx={{ fontWeight: 600, fontSize: "0.7rem" }}
+                      />
+                    </MKBox>
+                    <MKTypography variant="caption" color="text" opacity={0.6} display="block" mt={0.3}>
+                      실계좌: {accountSettings.real_account_no || "—"} &nbsp;|&nbsp; 가상계좌:{" "}
+                      {accountSettings.virtual_account_no || "—"}
+                    </MKTypography>
+                  </Grid>
+                  <Grid item xs={12} sm="auto" sx={{ ml: { sm: "auto" } }}>
+                    <Button
+                      variant="contained"
+                      onClick={handleAccountModeSave}
+                      disabled={accountSaveLoading}
+                      size="small"
+                      sx={{
+                        background: "linear-gradient(135deg, #11998e 0%, #38ef7d 100%)",
+                        color: "white",
+                        px: 2.5,
+                        borderRadius: 2,
+                        textTransform: "none",
+                        fontWeight: 600,
+                        "&:hover": {
+                          background: "linear-gradient(135deg, #0d8a7e 0%, #2fd16d 100%)",
+                        },
+                        "&:disabled": { opacity: 0.6 },
+                      }}
+                    >
+                      {accountSaveLoading ? (
+                        <CircularProgress size={14} sx={{ color: "white" }} />
+                      ) : (
+                        "적용"
+                      )}
+                    </Button>
+                  </Grid>
+                </Grid>
+                {accountMessage && (
+                  <Alert severity={accountMessage.type} sx={{ mt: 1.5, borderRadius: 1.5 }}>
+                    {accountMessage.text}
+                  </Alert>
+                )}
+              </MKBox>
+            </Card>
+          </Grid>
+
+          {/* 매매모드 선택 */}
+          <Grid item xs={12} md={6}>
             {renderCompactSection(
               "매매모드 선택",
               <FormControl component="fieldset">
@@ -334,12 +485,28 @@ function TradingDefaults() {
                 </RadioGroup>
               </FormControl>
             )}
+          </Grid>
 
+          {/* 메시지 표시 */}
+          {message && (
+            <Grid item xs={12}>
+              <Alert
+                severity={message.type}
+                sx={{ borderRadius: 2, mb: 1, whiteSpace: "pre-line" }}
+              >
+                {message.text}
+              </Alert>
+            </Grid>
+          )}
+
+          {/* 좌측 컬럼 */}
+          <Grid item xs={12} md={6}>
             {/* 리스크 관리 설정 */}
             {renderCompactSection(
               "리스크 관리 설정",
               <Grid container spacing={2}>
-                <Grid item xs={6}>
+                {/* 1행: 최대손실, 손절가, 익절가 */}
+                <Grid item xs={4}>
                   <TextField
                     fullWidth
                     size="small"
@@ -349,7 +516,7 @@ function TradingDefaults() {
                     onChange={(e) => handleInputChange("max_loss", parseFloat(e.target.value))}
                   />
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={4}>
                   <TextField
                     fullWidth
                     size="small"
@@ -359,7 +526,7 @@ function TradingDefaults() {
                     onChange={(e) => handleInputChange("stop_loss", parseFloat(e.target.value))}
                   />
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={4}>
                   <TextField
                     fullWidth
                     size="small"
@@ -374,6 +541,33 @@ function TradingDefaults() {
                     }
                   />
                 </Grid>
+                {/* 2행: 트레일링 스탑 사용 토글 */}
+                <Grid item xs={12}>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        size="small"
+                        checked={getCurrentModeDefaults().use_trailing_stop}
+                        onChange={(e) => handleInputChange("use_trailing_stop", e.target.checked)}
+                      />
+                    }
+                    label="트레일링 스탑 사용"
+                  />
+                </Grid>
+                {/* 3행: 트레일링 스탑 시작 조건, 트레일링 스탑 */}
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    label={`트레일링 스탑 시작 조건 (${getUnit()})`}
+                    type="number"
+                    value={getCurrentModeDefaults().trailing_stop_trigger}
+                    onChange={(e) =>
+                      handleInputChange("trailing_stop_trigger", parseFloat(e.target.value))
+                    }
+                    disabled={!getCurrentModeDefaults().use_trailing_stop}
+                  />
+                </Grid>
                 <Grid item xs={6}>
                   <TextField
                     fullWidth
@@ -385,18 +579,6 @@ function TradingDefaults() {
                       handleInputChange("trailing_stop_percent", parseFloat(e.target.value))
                     }
                     disabled={!getCurrentModeDefaults().use_trailing_stop}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        size="small"
-                        checked={getCurrentModeDefaults().use_trailing_stop}
-                        onChange={(e) => handleInputChange("use_trailing_stop", e.target.checked)}
-                      />
-                    }
-                    label="트레일링 스탑 사용"
                   />
                 </Grid>
               </Grid>

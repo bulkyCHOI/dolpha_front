@@ -293,7 +293,7 @@ export default function TradingConfigs() {
       sortable: true,
       cell: (row) => {
         const status = tradingStatus[row.stock_code];
-        const totalPossible = status?.total_possible_entries || 1;
+        const totalPossible = (row.pyramiding_count ?? 0) + 1;
         const actualEntries = status?.actual_entries || 0;
 
         return (

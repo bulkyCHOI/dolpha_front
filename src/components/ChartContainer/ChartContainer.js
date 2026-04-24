@@ -89,6 +89,7 @@ const ChartContainer = ({
   onPyramidingEntryChange = () => {},
   onShowSnackbar = () => {},
   chartType = "default", // "default" | "htf"
+  tradingMode = "manual",
 }) => {
   // Chart state
   const [horizontalLines, setHorizontalLines] = useState([]);
@@ -1998,8 +1999,8 @@ const ChartContainer = ({
                     1차 진입시점으로 설정
                   </Button>
 
-                  {/* 피라미딩 진입시점 버튼들 - 동적 생성 */}
-                  {pyramidingEntries.map((_, index) => (
+                  {/* 피라미딩 진입시점 버튼들 - turtle/atr 모드에서는 ATR 배수로 자동 계산되므로 숨김 */}
+                  {tradingMode === "manual" && pyramidingEntries.map((_, index) => (
                     <Button
                       key={index}
                       size="small"
@@ -2295,6 +2296,7 @@ export default React.memo(ChartContainer, (prev, next) => {
     prev.indexOhlcvData === next.indexOhlcvData &&
     prev.entryPoint === next.entryPoint &&
     prev.pyramidingEntries === next.pyramidingEntries &&
+    prev.tradingMode === next.tradingMode &&
     prev.chartType === next.chartType
   );
 });

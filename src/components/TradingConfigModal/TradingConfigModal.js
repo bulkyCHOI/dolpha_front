@@ -448,8 +448,8 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                         onChange={(e) =>
                           tradingForm.handlePyramidingEntryChange(index, e.target.value)
                         }
-                        placeholder={tradingForm.tradingMode === "manual" ? "예: 4" : "예: 1.5"}
-                        inputProps={{ step: tradingForm.tradingMode === "manual" ? 1 : 0.1 }}
+                        placeholder={tradingForm.tradingMode === "manual" ? "예: 4" : "예: 1"}
+                        inputProps={{ step: 1 }}
                         sx={{
                           "& .MuiOutlinedInput-root": {
                             "&.Mui-focused fieldset": {

@@ -430,11 +430,12 @@ const AutotradingAccordion = ({
                       <Grid container spacing={1} key={index} sx={{ mb: 1 }}>
                         <Grid item xs={12} sm={6}>
                           <TextField
-                            label={`${index + 2}차 진입시점 (%)`}
+                            label={`${index + 2}차 진입시점 (${tradingMode === "manual" ? "%" : "ATR"})`}
                             value={entry}
                             onChange={(e) => handlePyramidingEntryChange(index, e.target.value)}
                             size="small"
                             type="number"
+                            inputProps={{ step: tradingMode === "manual" ? 0.1 : 1 }}
                             sx={{
                               width: "100%",
                               "& .MuiOutlinedInput-root": {
@@ -856,11 +857,12 @@ const AutotradingAccordion = ({
                           <Grid container spacing={1} key={index} sx={{ mb: 1 }}>
                             <Grid item xs={6}>
                               <TextField
-                                label={`${index + 2}차 진입시점 (%)`}
+                                label={`${index + 2}차 진입시점 (${tradingMode === "manual" ? "%" : "ATR"})`}
                                 value={entry}
                                 onChange={(e) => handlePyramidingEntryChange(index, e.target.value)}
                                 size="small"
                                 type="number"
+                                inputProps={{ step: tradingMode === "manual" ? 0.1 : 1 }}
                                 sx={{
                                   width: "100%",
                                   "& .MuiOutlinedInput-root": {
@@ -1352,11 +1354,12 @@ const AutotradingAccordion = ({
                         <Grid container spacing={1} key={index} sx={{ mb: 1 }}>
                           <Grid item xs={6}>
                             <TextField
-                              label={`${index + 2}차 진입시점 (%)`}
+                              label={`${index + 2}차 진입시점 (${tradingMode === "manual" ? "%" : "ATR"})`}
                               value={entry}
                               onChange={(e) => handlePyramidingEntryChange(index, e.target.value)}
                               size="small"
                               type="number"
+                              inputProps={{ step: tradingMode === "manual" ? 0.1 : 1 }}
                               sx={{
                                 width: "100%",
                                 "& .MuiOutlinedInput-root": {
