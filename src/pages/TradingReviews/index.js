@@ -19,6 +19,7 @@ import Box from "@mui/material/Box";
 
 // @mui icons
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import DeleteIcon from "@mui/icons-material/Delete";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import ShowChartIcon from "@mui/icons-material/ShowChart";
@@ -322,28 +323,6 @@ export default function TradingReviews() {
       ),
     },
     {
-      name: "승률",
-      selector: (row) => row.win_rate,
-      sortable: true,
-      cell: (row) => {
-        const winRate = row.win_rate || 0;
-        let color = "text";
-        if (winRate >= 60) color = "success";
-        else if (winRate >= 40) color = "warning";
-        else if (winRate > 0) color = "error";
-        
-        return (
-          <MKTypography
-            variant="body2"
-            color={color}
-            sx={{ fontSize: "0.8rem", fontWeight: "bold" }}
-          >
-            {formatPercent(winRate)}
-          </MKTypography>
-        );
-      },
-    },
-    {
       name: "평균보유일",
       selector: (row) => row.avg_holding_days,
       sortable: true,
@@ -365,6 +344,16 @@ export default function TradingReviews() {
               onClick={() => handleViewDetail(row)}
             >
               <VisibilityIcon sx={{ fontSize: "16px" }} />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="삭제">
+            <IconButton
+              size="small"
+              color="error"
+              sx={{ padding: "4px" }}
+              onClick={() => handleDelete(row)}
+            >
+              <DeleteIcon sx={{ fontSize: "16px" }} />
             </IconButton>
           </Tooltip>
         </Box>
@@ -444,6 +433,32 @@ export default function TradingReviews() {
     });
   };
 
+  // 삭제 핸들러
+  const handleDelete = async (row) => {
+    if (!window.confirm(`"${row.stock_name}" 매매복기를 삭제하시겠습니까?`)) return;
+
+    try {
+      const token = localStorage.getItem("access_token");
+      const response = await fetch(`${API_BASE_URL}/api/autobot/trading-summary/${row.id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      setTradingReviews((prev) => prev.filter((r) => r.id !== row.id));
+      showSnackbar(`"${row.stock_name}" 매매복기가 삭제되었습니다.`, "success");
+    } catch (err) {
+      console.error("매매복기 삭제 실패:", err);
+      showSnackbar("삭제에 실패했습니다.", "error");
+    }
+  };
+
   // 상세 보기 핸들러
   const handleViewDetail = (row) => {
     const detail = `
@@ -467,7 +482,6 @@ export default function TradingReviews() {
 === 성과 분석 ===
 진입 횟수: ${row.entry_count}회
 청산 횟수: ${row.exit_count}회
-승률: ${formatPercent(row.win_rate || 0)}
 최대 낙폭: ${row.max_drawdown ? formatPercent(row.max_drawdown) : "-"}
 최고 수익률: ${row.max_profit_percent ? formatPercent(row.max_profit_percent) : "-"}
 
@@ -566,24 +580,6 @@ export default function TradingReviews() {
                     </CardContent>
                   </Card>
 
-                  {/* 승률 */}
-                  <Card sx={{ flex: 1, minWidth: "120px", minHeight: "80px" }}>
-                    <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
-                      <MKTypography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
-                        승률
-                      </MKTypography>
-                      <MKTypography
-                        variant="h6"
-                        fontWeight="bold"
-                        sx={{
-                          mt: 0.5,
-                          color: stats.win_rate >= 50 ? "success.main" : "error.main",
-                        }}
-                      >
-                        {formatPercent(stats.win_rate)}
-                      </MKTypography>
-                    </CardContent>
-                  </Card>
                 </Box>
               </Box>
             </Box>

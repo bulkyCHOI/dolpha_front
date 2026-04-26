@@ -20,6 +20,8 @@ import Box from "@mui/material/Box";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SettingsIcon from "@mui/icons-material/Settings";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import StarIcon from "@mui/icons-material/Star";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
 
 // Enhanced components
 import FullWidthContainer from "components/FullWidthContainer";
@@ -134,6 +136,7 @@ export default function TradingConfigs() {
   const [allTradingConfigs, setAllTradingConfigs] = useState([]);
   const [currentPrices, setCurrentPrices] = useState({}); // 종목별 현재가 저장
   const [tradingStatus, setTradingStatus] = useState({}); // 거래 상태 정보 저장
+  const [favoriteCodes, setFavoriteCodes] = useState(new Set()); // 즐겨찾기 종목코드 집합
 
   // Modal state
   const [modalOpen, setModalOpen] = useState(false);
@@ -162,6 +165,60 @@ export default function TradingConfigs() {
     } catch (error) {
       console.warn("거래 상태 조회 오류:", error.message);
       setTradingStatus({});
+    }
+  };
+
+  // 즐겨찾기 목록 로드
+  const loadFavorites = async () => {
+    try {
+      const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
+      const response = await authenticatedFetch(`${apiBaseUrl}/api/mypage/favorites`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          setFavoriteCodes(new Set((data.favorites || []).map((f) => f.stock_code)));
+        }
+      }
+    } catch (err) {
+      console.warn("즐겨찾기 로드 실패:", err.message);
+    }
+  };
+
+  // 즐겨찾기 토글
+  const handleToggleFavorite = async (row) => {
+    const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
+    const isFav = favoriteCodes.has(row.stock_code);
+
+    try {
+      if (isFav) {
+        const response = await authenticatedFetch(
+          `${apiBaseUrl}/api/mypage/favorites/${row.stock_code}`,
+          { method: "DELETE" }
+        );
+        if (response.ok) {
+          setFavoriteCodes((prev) => {
+            const next = new Set(prev);
+            next.delete(row.stock_code);
+            return next;
+          });
+          showSnackbar(`"${row.stock_name}" 즐겨찾기에서 제거했습니다.`, "info");
+        }
+      } else {
+        const response = await authenticatedFetch(`${apiBaseUrl}/api/mypage/favorites`, {
+          method: "POST",
+          body: JSON.stringify({
+            stock_code: row.stock_code,
+            stock_name: row.stock_name,
+            memo: "",
+          }),
+        });
+        if (response.ok) {
+          setFavoriteCodes((prev) => new Set([...prev, row.stock_code]));
+          showSnackbar(`"${row.stock_name}" 즐겨찾기에 추가했습니다.`, "success");
+        }
+      }
+    } catch (err) {
+      showSnackbar(`즐겨찾기 설정 실패: ${err.message}`, "error");
     }
   };
 
@@ -545,30 +602,46 @@ export default function TradingConfigs() {
     },
     {
       name: "액션",
-      cell: (row) => (
-        <Box display="flex" justifyContent="center" gap={0.5}>
-          <Tooltip title="상세 보기">
-            <IconButton
-              size="small"
-              color="info"
-              sx={{ padding: "4px" }}
-              onClick={() => handleOpenModal(row)}
-            >
-              <VisibilityIcon sx={{ fontSize: "16px" }} />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="삭제">
-            <IconButton
-              size="small"
-              color="error"
-              sx={{ padding: "4px" }}
-              onClick={() => handleDeleteConfig(row.stock_code, row.stock_name, row.strategy_type)}
-            >
-              <DeleteIcon sx={{ fontSize: "16px" }} />
-            </IconButton>
-          </Tooltip>
-        </Box>
-      ),
+      cell: (row) => {
+        const isFav = favoriteCodes.has(row.stock_code);
+        return (
+          <Box display="flex" justifyContent="center" gap={0.5}>
+            <Tooltip title={isFav ? "즐겨찾기 해제" : "즐겨찾기 추가"}>
+              <IconButton
+                size="small"
+                sx={{ padding: "4px", color: isFav ? "#f5a623" : "action.disabled" }}
+                onClick={() => handleToggleFavorite(row)}
+              >
+                {isFav ? (
+                  <StarIcon sx={{ fontSize: "16px" }} />
+                ) : (
+                  <StarBorderIcon sx={{ fontSize: "16px" }} />
+                )}
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="상세 보기">
+              <IconButton
+                size="small"
+                color="info"
+                sx={{ padding: "4px" }}
+                onClick={() => handleOpenModal(row)}
+              >
+                <VisibilityIcon sx={{ fontSize: "16px" }} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="삭제">
+              <IconButton
+                size="small"
+                color="error"
+                sx={{ padding: "4px" }}
+                onClick={() => handleDeleteConfig(row.stock_code, row.stock_name, row.strategy_type)}
+              >
+                <DeleteIcon sx={{ fontSize: "16px" }} />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        );
+      },
     },
   ];
 
@@ -774,6 +847,7 @@ export default function TradingConfigs() {
   useEffect(() => {
     if (user) {
       loadAllTradingConfigs();
+      loadFavorites();
     }
   }, [user]);
 

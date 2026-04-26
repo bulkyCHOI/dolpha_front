@@ -64,6 +64,29 @@ function TradingDefaults() {
     // 공통 설정
     default_entry_trigger: 1.0,
     default_exit_trigger: 2.0,
+    // 분할 익절 설정
+    staged_exit_type: "none",
+    ma_stage1_period: 5,
+    ma_stage1_sell_pct: 30.0,
+    ma_stage2_period: 20,
+    ma_stage2_sell_pct: 50.0,
+    ma_stage3_period: 60,
+    ma_stage3_sell_pct: 100.0,
+    dc_stage1_short: 5,
+    dc_stage1_long: 10,
+    dc_stage1_sell_pct: 30.0,
+    dc_stage2_short: 10,
+    dc_stage2_long: 30,
+    dc_stage2_sell_pct: 50.0,
+    dc_stage3_short: 30,
+    dc_stage3_long: 60,
+    dc_stage3_sell_pct: 100.0,
+    nl_stage1_days: 5,
+    nl_stage1_sell_pct: 30.0,
+    nl_stage2_days: 10,
+    nl_stage2_sell_pct: 50.0,
+    nl_stage3_days: 20,
+    nl_stage3_sell_pct: 100.0,
   });
 
   const [loading, setLoading] = useState(false);
@@ -311,6 +334,11 @@ function TradingDefaults() {
     });
   };
 
+  // 분할 익절 필드 핸들러 (모드 prefix 없는 공통 필드)
+  const handleStagedExitChange = (field, value) => {
+    setDefaults((prev) => ({ ...prev, [field]: value }));
+  };
+
   // 포지션 합계 계산
   const positionSum =
     getCurrentModeDefaults().positions?.reduce((sum, pos) => sum + (parseFloat(pos) || 0), 0) || 0;
@@ -347,8 +375,8 @@ function TradingDefaults() {
         <Grid container spacing={2}>
           {/* 헤더 */}
           <Grid item xs={12}>
-            <MKBox mb={2}>
-              <MKTypography variant="h5" mb={1} fontWeight="bold">
+            <MKBox mb={1}>
+              <MKTypography variant="h5" mb={0.5} fontWeight="bold">
                 자동매매 기본설정
               </MKTypography>
               <MKTypography variant="body2" color="text" opacity={0.8}>
@@ -358,271 +386,234 @@ function TradingDefaults() {
             </MKBox>
           </Grid>
 
-          {/* 계좌 설정 + 매매모드 선택 (1:1) */}
-          <Grid item xs={12} md={6}>
-            <Card sx={{ mb: 2, borderRadius: 2 }}>
+          {/* ── Row 1: 계좌 설정 + 매매모드 (하나의 카드) ── */}
+          <Grid item xs={12}>
+            <Card sx={{ borderRadius: 2 }}>
               <MKBox p={2}>
-                <MKTypography variant="h6" fontWeight="bold" mb={2}>
-                  계좌 설정
-                </MKTypography>
-                <Grid container spacing={2} alignItems="center">
-                  <Grid item xs={12} sm="auto">
-                    <MKTypography variant="body2" fontWeight="medium" mb={0.5}>
-                      거래 계좌
+                <Grid container spacing={0} alignItems="stretch">
+                  {/* 계좌 설정 */}
+                  <Grid
+                    item xs={12} md={9}
+                    sx={{ pr: { md: 3 }, borderRight: { md: "1px solid rgba(0,0,0,0.10)" } }}
+                  >
+                    <MKTypography variant="h6" fontWeight="bold" mb={1.5}>
+                      계좌 설정
                     </MKTypography>
-                    <ToggleButtonGroup
-                      value={accountSettings.kis_mode}
-                      exclusive
-                      onChange={(_, val) => {
-                        if (val) {
-                          const newNo =
-                            val === "REAL"
-                              ? accountSettings.real_account_no
-                              : accountSettings.virtual_account_no;
-                          setAccountSettings((prev) => ({
-                            ...prev,
-                            kis_mode: val,
-                            current_account_no: newNo,
-                          }));
-                        }
-                      }}
-                      size="small"
-                    >
-                      <ToggleButton
-                        value="VIRTUAL"
-                        sx={{ px: 2.5, textTransform: "none", fontWeight: 600 }}
-                      >
-                        가상계좌
-                      </ToggleButton>
-                      <ToggleButton
-                        value="REAL"
-                        sx={{ px: 2.5, textTransform: "none", fontWeight: 600 }}
-                      >
-                        실계좌
-                      </ToggleButton>
-                    </ToggleButtonGroup>
+                    <Grid container spacing={2} alignItems="center">
+                      <Grid item xs={12} sm="auto">
+                        <MKTypography variant="body2" fontWeight="medium" mb={0.5}>
+                          거래 계좌
+                        </MKTypography>
+                        <ToggleButtonGroup
+                          value={accountSettings.kis_mode}
+                          exclusive
+                          onChange={(_, val) => {
+                            if (val) {
+                              const newNo =
+                                val === "REAL"
+                                  ? accountSettings.real_account_no
+                                  : accountSettings.virtual_account_no;
+                              setAccountSettings((prev) => ({
+                                ...prev,
+                                kis_mode: val,
+                                current_account_no: newNo,
+                              }));
+                            }
+                          }}
+                          size="small"
+                        >
+                          <ToggleButton value="VIRTUAL" sx={{ px: 2.5, textTransform: "none", fontWeight: 600 }}>
+                            가상계좌
+                          </ToggleButton>
+                          <ToggleButton value="REAL" sx={{ px: 2.5, textTransform: "none", fontWeight: 600 }}>
+                            실계좌
+                          </ToggleButton>
+                        </ToggleButtonGroup>
+                      </Grid>
+                      <Grid item xs={12} sm="auto">
+                        <MKTypography variant="body2" fontWeight="medium" mb={0.5}>
+                          계좌번호
+                        </MKTypography>
+                        <MKBox display="flex" alignItems="center" gap={1}>
+                          <MKTypography
+                            variant="body1"
+                            fontWeight="bold"
+                            sx={{ fontFamily: "monospace", letterSpacing: 1 }}
+                          >
+                            {accountSettings.current_account_no || "—"}
+                          </MKTypography>
+                          <Chip
+                            label={accountSettings.kis_mode === "REAL" ? "실계좌" : "가상계좌"}
+                            size="small"
+                            color={accountSettings.kis_mode === "REAL" ? "error" : "info"}
+                            sx={{ fontWeight: 600, fontSize: "0.7rem" }}
+                          />
+                        </MKBox>
+                        <MKTypography variant="caption" color="text" opacity={0.6} display="block" mt={0.3}>
+                          실계좌: {accountSettings.real_account_no || "—"} &nbsp;|&nbsp; 가상계좌:{" "}
+                          {accountSettings.virtual_account_no || "—"}
+                        </MKTypography>
+                      </Grid>
+                      <Grid item xs={12} sm="auto" sx={{ ml: { sm: "auto" } }}>
+                        <Button
+                          variant="contained"
+                          onClick={handleAccountModeSave}
+                          disabled={accountSaveLoading}
+                          size="small"
+                          sx={{
+                            background: "linear-gradient(135deg, #11998e 0%, #38ef7d 100%)",
+                            color: "white",
+                            px: 2.5,
+                            borderRadius: 2,
+                            textTransform: "none",
+                            fontWeight: 600,
+                            "&:hover": { background: "linear-gradient(135deg, #0d8a7e 0%, #2fd16d 100%)" },
+                            "&:disabled": { opacity: 0.6 },
+                          }}
+                        >
+                          {accountSaveLoading ? (
+                            <CircularProgress size={14} sx={{ color: "white" }} />
+                          ) : (
+                            "적용"
+                          )}
+                        </Button>
+                      </Grid>
+                    </Grid>
+                    {accountMessage && (
+                      <Alert severity={accountMessage.type} sx={{ mt: 1.5, borderRadius: 1.5 }}>
+                        {accountMessage.text}
+                      </Alert>
+                    )}
                   </Grid>
-                  <Grid item xs={12} sm="auto">
-                    <MKTypography variant="body2" fontWeight="medium" mb={0.5}>
-                      계좌번호
+
+                  {/* 매매모드 선택 */}
+                  <Grid
+                    item xs={12} md={3}
+                    sx={{ pl: { md: 3 }, pt: { xs: 2, md: 0 } }}
+                  >
+                    <MKTypography variant="h6" fontWeight="bold" mb={1.5}>
+                      매매모드
                     </MKTypography>
-                    <MKBox display="flex" alignItems="center" gap={1}>
-                      <MKTypography
-                        variant="body1"
-                        fontWeight="bold"
-                        sx={{ fontFamily: "monospace", letterSpacing: 1 }}
+                    <FormControl component="fieldset">
+                      <RadioGroup
+                        value={defaults.trading_mode}
+                        onChange={(e) => handleInputChange("trading_mode", e.target.value)}
                       >
-                        {accountSettings.current_account_no || "—"}
-                      </MKTypography>
-                      <Chip
-                        label={accountSettings.kis_mode === "REAL" ? "실계좌" : "가상계좌"}
-                        size="small"
-                        color={accountSettings.kis_mode === "REAL" ? "error" : "info"}
-                        sx={{ fontWeight: 600, fontSize: "0.7rem" }}
-                      />
-                    </MKBox>
-                    <MKTypography variant="caption" color="text" opacity={0.6} display="block" mt={0.3}>
-                      실계좌: {accountSettings.real_account_no || "—"} &nbsp;|&nbsp; 가상계좌:{" "}
-                      {accountSettings.virtual_account_no || "—"}
-                    </MKTypography>
-                  </Grid>
-                  <Grid item xs={12} sm="auto" sx={{ ml: { sm: "auto" } }}>
-                    <Button
-                      variant="contained"
-                      onClick={handleAccountModeSave}
-                      disabled={accountSaveLoading}
-                      size="small"
-                      sx={{
-                        background: "linear-gradient(135deg, #11998e 0%, #38ef7d 100%)",
-                        color: "white",
-                        px: 2.5,
-                        borderRadius: 2,
-                        textTransform: "none",
-                        fontWeight: 600,
-                        "&:hover": {
-                          background: "linear-gradient(135deg, #0d8a7e 0%, #2fd16d 100%)",
-                        },
-                        "&:disabled": { opacity: 0.6 },
-                      }}
-                    >
-                      {accountSaveLoading ? (
-                        <CircularProgress size={14} sx={{ color: "white" }} />
-                      ) : (
-                        "적용"
-                      )}
-                    </Button>
+                        <FormControlLabel
+                          value="manual"
+                          control={<Radio size="small" />}
+                          label="Manual"
+                        />
+                        <FormControlLabel
+                          value="turtle"
+                          control={<Radio size="small" />}
+                          label="Turtle (ATR)"
+                        />
+                      </RadioGroup>
+                    </FormControl>
                   </Grid>
                 </Grid>
-                {accountMessage && (
-                  <Alert severity={accountMessage.type} sx={{ mt: 1.5, borderRadius: 1.5 }}>
-                    {accountMessage.text}
-                  </Alert>
-                )}
               </MKBox>
             </Card>
           </Grid>
 
-          {/* 매매모드 선택 */}
-          <Grid item xs={12} md={6}>
-            {renderCompactSection(
-              "매매모드 선택",
-              <FormControl component="fieldset">
-                <RadioGroup
-                  row
-                  value={defaults.trading_mode}
-                  onChange={(e) => handleInputChange("trading_mode", e.target.value)}
-                >
-                  <FormControlLabel
-                    value="manual"
-                    control={<Radio size="small" />}
-                    label="Manual"
-                  />
-                  <FormControlLabel
-                    value="turtle"
-                    control={<Radio size="small" />}
-                    label="Turtle(ATR)"
-                  />
-                </RadioGroup>
-              </FormControl>
-            )}
-          </Grid>
+          {/* ── Row 2: 3-column 설정 카드 ── */}
 
-          {/* 메시지 표시 */}
-          {message && (
-            <Grid item xs={12}>
-              <Alert
-                severity={message.type}
-                sx={{ borderRadius: 2, mb: 1, whiteSpace: "pre-line" }}
-              >
-                {message.text}
-              </Alert>
-            </Grid>
-          )}
-
-          {/* 좌측 컬럼 */}
-          <Grid item xs={12} md={6}>
-            {/* 리스크 관리 설정 */}
-            {renderCompactSection(
-              "리스크 관리 설정",
-              <Grid container spacing={2}>
-                {/* 1행: 최대손실, 손절가, 익절가 */}
-                <Grid item xs={4}>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    label="최대손실 (%)"
-                    type="number"
-                    value={getCurrentModeDefaults().max_loss}
-                    onChange={(e) => handleInputChange("max_loss", parseFloat(e.target.value))}
-                  />
-                </Grid>
-                <Grid item xs={4}>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    label={`손절가 (${getUnit()})`}
-                    type="number"
-                    value={getCurrentModeDefaults().stop_loss}
-                    onChange={(e) => handleInputChange("stop_loss", parseFloat(e.target.value))}
-                  />
-                </Grid>
-                <Grid item xs={4}>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    label={`익절가 (${getUnit()})`}
-                    type="number"
-                    value={getCurrentModeDefaults().take_profit || ""}
-                    onChange={(e) =>
-                      handleInputChange(
-                        "take_profit",
-                        e.target.value ? parseFloat(e.target.value) : null
-                      )
-                    }
-                  />
-                </Grid>
-                {/* 2행: 트레일링 스탑 사용 토글 */}
-                <Grid item xs={12}>
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        size="small"
-                        checked={getCurrentModeDefaults().use_trailing_stop}
-                        onChange={(e) => handleInputChange("use_trailing_stop", e.target.checked)}
-                      />
-                    }
-                    label="트레일링 스탑 사용"
-                  />
-                </Grid>
-                {/* 3행: 트레일링 스탑 시작 조건, 트레일링 스탑 */}
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    label={`트레일링 스탑 시작 조건 (${getUnit()})`}
-                    type="number"
-                    value={getCurrentModeDefaults().trailing_stop_trigger}
-                    onChange={(e) =>
-                      handleInputChange("trailing_stop_trigger", parseFloat(e.target.value))
-                    }
-                    disabled={!getCurrentModeDefaults().use_trailing_stop}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    label={`트레일링 스탑 (${getUnit()})`}
-                    type="number"
-                    value={getCurrentModeDefaults().trailing_stop_percent}
-                    onChange={(e) =>
-                      handleInputChange("trailing_stop_percent", parseFloat(e.target.value))
-                    }
-                    disabled={!getCurrentModeDefaults().use_trailing_stop}
-                  />
-                </Grid>
-              </Grid>
-            )}
-          </Grid>
-
-          {/* 우측 컬럼 */}
-          <Grid item xs={12} md={6}>
-            {/* 포지션 분할 설정 */}
-            <Card sx={{ mb: 2, borderRadius: 2 }}>
+          {/* 리스크 관리 */}
+          <Grid item xs={12} md={4}>
+            <Card sx={{ height: "100%", borderRadius: 2 }}>
               <MKBox p={2}>
                 <MKTypography variant="h6" fontWeight="bold" mb={2}>
-                  포지션 분할 설정
+                  리스크 관리
+                </MKTypography>
+                <Grid container spacing={2}>
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth size="small" label="최대손실 (%)" type="number"
+                      value={getCurrentModeDefaults().max_loss}
+                      onChange={(e) => handleInputChange("max_loss", parseFloat(e.target.value))}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth size="small" label={`손절가 (${getUnit()})`} type="number"
+                      value={getCurrentModeDefaults().stop_loss}
+                      onChange={(e) => handleInputChange("stop_loss", parseFloat(e.target.value))}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth size="small" label={`익절가 (${getUnit()})`} type="number"
+                      value={getCurrentModeDefaults().take_profit || ""}
+                      onChange={(e) =>
+                        handleInputChange("take_profit", e.target.value ? parseFloat(e.target.value) : null)
+                      }
+                      disabled={defaults.staged_exit_type !== "none"}
+                      placeholder={defaults.staged_exit_type !== "none" ? "분할 익절 사용 중" : ""}
+                      sx={defaults.staged_exit_type !== "none" ? {
+                        "& .MuiInputBase-root.Mui-disabled": { backgroundColor: "#f0f0f0" },
+                        "& .MuiInputBase-input.Mui-disabled": { color: "rgba(0,0,0,0.45)", WebkitTextFillColor: "rgba(0,0,0,0.45)" },
+                        "& .MuiInputLabel-root.Mui-disabled": { color: "rgba(0,0,0,0.4)" },
+                      } : {}}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Divider sx={{ mb: 0.5 }} />
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          size="small"
+                          checked={getCurrentModeDefaults().use_trailing_stop}
+                          onChange={(e) => handleInputChange("use_trailing_stop", e.target.checked)}
+                        />
+                      }
+                      label="트레일링 스탑 사용"
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth size="small" label={`시작 조건 (${getUnit()})`} type="number"
+                      value={getCurrentModeDefaults().trailing_stop_trigger}
+                      onChange={(e) => handleInputChange("trailing_stop_trigger", parseFloat(e.target.value))}
+                      disabled={!getCurrentModeDefaults().use_trailing_stop}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth size="small" label={`트레일링 스탑 (${getUnit()})`} type="number"
+                      value={getCurrentModeDefaults().trailing_stop_percent}
+                      onChange={(e) => handleInputChange("trailing_stop_percent", parseFloat(e.target.value))}
+                      disabled={!getCurrentModeDefaults().use_trailing_stop}
+                    />
+                  </Grid>
+                </Grid>
+              </MKBox>
+            </Card>
+          </Grid>
+
+          {/* 포지션 분할 */}
+          <Grid item xs={12} md={4}>
+            <Card sx={{ height: "100%", borderRadius: 2 }}>
+              <MKBox p={2}>
+                <MKTypography variant="h6" fontWeight="bold" mb={2}>
+                  포지션 분할
                 </MKTypography>
 
-                {/* 첫 번째 행: 피라미딩 횟수, 초기화, 균등분할 (6:3:3) */}
                 <Grid container spacing={2} alignItems="center" mb={2}>
                   <Grid item xs={6}>
                     <TextField
-                      fullWidth
-                      size="small"
-                      label="피라미딩 횟수"
-                      type="number"
+                      fullWidth size="small" label="피라미딩 횟수" type="number"
                       value={getCurrentModeDefaults().pyramiding_count}
-                      onChange={(e) =>
-                        handleInputChange("pyramiding_count", parseInt(e.target.value))
-                      }
+                      onChange={(e) => handleInputChange("pyramiding_count", parseInt(e.target.value))}
                       inputProps={{ min: 0, max: 10 }}
                     />
                   </Grid>
                   <Grid item xs={3}>
                     <Button
-                      variant="outlined"
-                      size="small"
-                      onClick={handleReset}
-                      fullWidth
+                      variant="outlined" size="small" onClick={handleReset} fullWidth
                       sx={{
-                        borderColor: "#f44336",
-                        color: "#f44336",
-                        fontSize: "0.75rem",
-                        "&:hover": {
-                          borderColor: "#d32f2f",
-                          backgroundColor: "rgba(244, 67, 54, 0.08)",
-                        },
+                        borderColor: "#f44336", color: "#f44336", fontSize: "0.75rem",
+                        "&:hover": { borderColor: "#d32f2f", backgroundColor: "rgba(244,67,54,0.08)" },
                       }}
                     >
                       초기화
@@ -630,65 +621,44 @@ function TradingDefaults() {
                   </Grid>
                   <Grid item xs={3}>
                     <Button
-                      variant="outlined"
-                      size="small"
-                      onClick={handleEqualDivision}
-                      fullWidth
+                      variant="outlined" size="small" onClick={handleEqualDivision} fullWidth
                       sx={{
-                        borderColor: "#667eea",
-                        color: "#667eea",
-                        fontSize: "0.75rem",
-                        "&:hover": {
-                          borderColor: "#5a6fd8",
-                          backgroundColor: "rgba(102, 126, 234, 0.08)",
-                        },
+                        borderColor: "#667eea", color: "#667eea", fontSize: "0.75rem",
+                        "&:hover": { borderColor: "#5a6fd8", backgroundColor: "rgba(102,126,234,0.08)" },
                       }}
                     >
-                      균등분할
+                      균등
                     </Button>
                   </Grid>
                 </Grid>
 
-                {/* 진입시점과 포지션 설정 (차수별 6:6 배치) */}
                 <MKBox mb={2}>
-                  {/* 1차 진입시점과 포지션 */}
                   <Grid container spacing={2} alignItems="center" mb={1}>
                     <Grid item xs={6}>
                       <TextField
-                        fullWidth
-                        size="small"
-                        label="1차 진입시점 (원)"
-                        value="진입가격은 자동매매에서 설정"
-                        disabled
+                        fullWidth size="small" label="1차 진입시점 (원)"
+                        value="자동매매에서 설정" disabled
                         sx={{
-                          "& .MuiInputBase-input.Mui-disabled": {
-                            color: "rgba(0, 0, 0, 0.6)",
-                          },
+                          "& .MuiInputBase-root.Mui-disabled": { backgroundColor: "#f0f0f0" },
+                          "& .MuiInputBase-input.Mui-disabled": { color: "rgba(0,0,0,0.45)", WebkitTextFillColor: "rgba(0,0,0,0.45)" },
+                          "& .MuiInputLabel-root.Mui-disabled": { color: "rgba(0,0,0,0.4)" },
                         }}
                       />
                     </Grid>
                     <Grid item xs={6}>
                       <TextField
-                        fullWidth
-                        size="small"
-                        label="1차 포지션 (%)"
-                        type="number"
+                        fullWidth size="small" label="1차 포지션 (%)" type="number"
                         value={getCurrentModeDefaults().positions?.[0] || 0}
                         onChange={(e) => handlePositionChange(0, e.target.value)}
                         inputProps={{ min: 0, max: 100, step: 0.1 }}
                       />
                     </Grid>
                   </Grid>
-
-                  {/* 2차 이상 진입시점과 포지션 (피라미딩 횟수에 따라 동적) */}
                   {getCurrentModeDefaults().pyramiding_entries?.map((entry, index) => (
                     <Grid container spacing={2} alignItems="center" mb={1} key={index}>
                       <Grid item xs={6}>
                         <TextField
-                          fullWidth
-                          size="small"
-                          label={`${index + 2}차 진입시점 (${getUnit()})`}
-                          type="number"
+                          fullWidth size="small" label={`${index + 2}차 진입시점 (${getUnit()})`} type="number"
                           value={entry}
                           onChange={(e) => handlePyramidingEntryChange(index, e.target.value)}
                           placeholder={defaults.trading_mode === "manual" ? "예: 4" : "예: 1.5"}
@@ -697,10 +667,7 @@ function TradingDefaults() {
                       </Grid>
                       <Grid item xs={6}>
                         <TextField
-                          fullWidth
-                          size="small"
-                          label={`${index + 2}차 포지션 (%)`}
-                          type="number"
+                          fullWidth size="small" label={`${index + 2}차 포지션 (%)`} type="number"
                           value={getCurrentModeDefaults().positions?.[index + 1] || 0}
                           onChange={(e) => handlePositionChange(index + 1, e.target.value)}
                           inputProps={{ min: 0, max: 100, step: 0.1 }}
@@ -710,22 +677,230 @@ function TradingDefaults() {
                   ))}
                 </MKBox>
 
-                {/* 포지션 합계 표시 */}
                 <MKBox display="flex" justifyContent="space-between" alignItems="center">
                   <MKTypography variant="body2" color="text">
-                    포지션 합계: {positionSum.toFixed(2)}%
+                    합계: {positionSum.toFixed(2)}%
                   </MKTypography>
                   {Math.abs(positionSum - 100) > 0.01 && (
                     <MKTypography variant="body2" color="error">
-                      ⚠️ 포지션 합계가 100%가 되어야 합니다
+                      ⚠️ 합계가 100%여야 합니다
                     </MKTypography>
                   )}
                 </MKBox>
               </MKBox>
             </Card>
+          </Grid>
 
-            {/* 버튼 그룹 */}
-            <MKBox mt={2} display="flex" justifyContent="flex-end" alignItems="center">
+          {/* 분할 익절 */}
+          <Grid item xs={12} md={4}>
+            <Card sx={{ height: "100%", borderRadius: 2 }}>
+              <MKBox p={2}>
+                <MKTypography variant="h6" fontWeight="bold" mb={2}>
+                  분할 익절
+                </MKTypography>
+
+                <MKBox mb={2}>
+                  <ToggleButtonGroup
+                    value={defaults.staged_exit_type}
+                    exclusive
+                    onChange={(_, val) => { if (val) handleStagedExitChange("staged_exit_type", val); }}
+                    size="small"
+                    sx={{ flexWrap: "wrap", gap: 0.5 }}
+                  >
+                    {[
+                      { value: "none", label: "미사용" },
+                      { value: "ma", label: "이동평균선" },
+                      { value: "dead_cross", label: "데드크로스" },
+                      { value: "new_low", label: "N일 신저가" },
+                    ].map(({ value, label }) => (
+                      <ToggleButton
+                        key={value} value={value}
+                        sx={{ px: 1.5, py: 0.5, textTransform: "none", fontWeight: 600, fontSize: "0.8rem" }}
+                      >
+                        {label}
+                      </ToggleButton>
+                    ))}
+                  </ToggleButtonGroup>
+                </MKBox>
+
+                {defaults.staged_exit_type !== "none" && (() => {
+                  const useTS = getCurrentModeDefaults().use_trailing_stop;
+                  const stages = [
+                    { num: 1, label: "1단계" },
+                    { num: 2, label: "2단계" },
+                    { num: 3, label: "3단계" },
+                  ];
+                  return (
+                    <>
+                      {useTS && (
+                        <Alert severity="info" sx={{ mb: 1.5, borderRadius: 1.5, fontSize: "0.78rem", py: 0.5 }}>
+                          트레일링 스탑 ON → <strong>3단계는 트레일링 스탑이 대체</strong>합니다.
+                        </Alert>
+                      )}
+
+                      {/* 헤더 */}
+                      <Grid container spacing={1} mb={0.5} sx={{ px: 0.5 }}>
+                        <Grid item xs={3}>
+                          <MKTypography variant="caption" color="text" fontWeight="bold">단계</MKTypography>
+                        </Grid>
+                        {defaults.staged_exit_type === "ma" && (
+                          <>
+                            <Grid item xs={5}><MKTypography variant="caption" color="text" fontWeight="bold">MA 기간 (일)</MKTypography></Grid>
+                            <Grid item xs={4}><MKTypography variant="caption" color="text" fontWeight="bold">매도 %</MKTypography></Grid>
+                          </>
+                        )}
+                        {defaults.staged_exit_type === "dead_cross" && (
+                          <>
+                            <Grid item xs={3}><MKTypography variant="caption" color="text" fontWeight="bold">단기</MKTypography></Grid>
+                            <Grid item xs={3}><MKTypography variant="caption" color="text" fontWeight="bold">장기</MKTypography></Grid>
+                            <Grid item xs={3}><MKTypography variant="caption" color="text" fontWeight="bold">매도 %</MKTypography></Grid>
+                          </>
+                        )}
+                        {defaults.staged_exit_type === "new_low" && (
+                          <>
+                            <Grid item xs={5}><MKTypography variant="caption" color="text" fontWeight="bold">N일</MKTypography></Grid>
+                            <Grid item xs={4}><MKTypography variant="caption" color="text" fontWeight="bold">매도 %</MKTypography></Grid>
+                          </>
+                        )}
+                      </Grid>
+
+                      {stages.map(({ num, label }) => {
+                        const isStage3 = num === 3;
+                        const isDisabled = isStage3 && useTS;
+
+                        if (isDisabled) {
+                          return (
+                            <MKBox
+                              key={num}
+                              display="flex"
+                              alignItems="center"
+                              gap={1}
+                              mb={1}
+                              sx={{
+                                px: 1.5, py: 1,
+                                bgcolor: "rgba(255,152,0,0.07)",
+                                border: "1px dashed rgba(255,152,0,0.45)",
+                                borderRadius: 1.5,
+                              }}
+                            >
+                              <MKTypography variant="body2" fontWeight="bold" sx={{ minWidth: 40, color: "#b26a00" }}>
+                                {label}
+                              </MKTypography>
+                              <Chip
+                                label="트레일링 스탑 대체"
+                                size="small"
+                                sx={{
+                                  bgcolor: "rgba(255,152,0,0.15)",
+                                  color: "#b26a00",
+                                  fontWeight: 700,
+                                  fontSize: "0.72rem",
+                                  border: "1px solid rgba(255,152,0,0.35)",
+                                }}
+                              />
+                            </MKBox>
+                          );
+                        }
+
+                        return (
+                          <MKBox
+                            key={num}
+                            sx={{
+                              mb: 1,
+                              px: 0.5, py: 0.5,
+                              bgcolor: "rgba(102,126,234,0.04)",
+                              border: "1px solid rgba(102,126,234,0.15)",
+                              borderRadius: 1.5,
+                            }}
+                          >
+                            <Grid container spacing={1} alignItems="center">
+                              <Grid item xs={3}>
+                                <MKTypography variant="body2" fontWeight="medium" sx={{ pl: 0.5 }}>
+                                  {label}
+                                </MKTypography>
+                              </Grid>
+
+                              {defaults.staged_exit_type === "ma" && (
+                                <>
+                                  <Grid item xs={5}>
+                                    <TextField fullWidth size="small" type="number"
+                                      value={defaults[`ma_stage${num}_period`]}
+                                      onChange={(e) => handleStagedExitChange(`ma_stage${num}_period`, parseInt(e.target.value) || 0)}
+                                      inputProps={{ min: 1 }}
+                                    />
+                                  </Grid>
+                                  <Grid item xs={4}>
+                                    <TextField fullWidth size="small" type="number"
+                                      value={defaults[`ma_stage${num}_sell_pct`]}
+                                      onChange={(e) => handleStagedExitChange(`ma_stage${num}_sell_pct`, parseFloat(e.target.value) || 0)}
+                                      inputProps={{ min: 1, max: 100, step: 1 }}
+                                    />
+                                  </Grid>
+                                </>
+                              )}
+
+                              {defaults.staged_exit_type === "dead_cross" && (
+                                <>
+                                  <Grid item xs={3}>
+                                    <TextField fullWidth size="small" type="number"
+                                      value={defaults[`dc_stage${num}_short`]}
+                                      onChange={(e) => handleStagedExitChange(`dc_stage${num}_short`, parseInt(e.target.value) || 0)}
+                                      inputProps={{ min: 1 }}
+                                    />
+                                  </Grid>
+                                  <Grid item xs={3}>
+                                    <TextField fullWidth size="small" type="number"
+                                      value={defaults[`dc_stage${num}_long`]}
+                                      onChange={(e) => handleStagedExitChange(`dc_stage${num}_long`, parseInt(e.target.value) || 0)}
+                                      inputProps={{ min: 1 }}
+                                    />
+                                  </Grid>
+                                  <Grid item xs={3}>
+                                    <TextField fullWidth size="small" type="number"
+                                      value={defaults[`dc_stage${num}_sell_pct`]}
+                                      onChange={(e) => handleStagedExitChange(`dc_stage${num}_sell_pct`, parseFloat(e.target.value) || 0)}
+                                      inputProps={{ min: 1, max: 100, step: 1 }}
+                                    />
+                                  </Grid>
+                                </>
+                              )}
+
+                              {defaults.staged_exit_type === "new_low" && (
+                                <>
+                                  <Grid item xs={5}>
+                                    <TextField fullWidth size="small" type="number"
+                                      value={defaults[`nl_stage${num}_days`]}
+                                      onChange={(e) => handleStagedExitChange(`nl_stage${num}_days`, parseInt(e.target.value) || 0)}
+                                      inputProps={{ min: 1 }}
+                                    />
+                                  </Grid>
+                                  <Grid item xs={4}>
+                                    <TextField fullWidth size="small" type="number"
+                                      value={defaults[`nl_stage${num}_sell_pct`]}
+                                      onChange={(e) => handleStagedExitChange(`nl_stage${num}_sell_pct`, parseFloat(e.target.value) || 0)}
+                                      inputProps={{ min: 1, max: 100, step: 1 }}
+                                    />
+                                  </Grid>
+                                </>
+                              )}
+                            </Grid>
+                          </MKBox>
+                        );
+                      })}
+                    </>
+                  );
+                })()}
+              </MKBox>
+            </Card>
+          </Grid>
+
+          {/* ── Row 3: 메시지 + 저장 버튼 ── */}
+          <Grid item xs={12}>
+            {message && (
+              <Alert severity={message.type} sx={{ mb: 1.5, borderRadius: 2, whiteSpace: "pre-line" }}>
+                {message.text}
+              </Alert>
+            )}
+            <MKBox display="flex" justifyContent="flex-end">
               <Button
                 variant="contained"
                 onClick={handleSave}
@@ -740,9 +915,7 @@ function TradingDefaults() {
                   textTransform: "none",
                   fontSize: "0.9rem",
                   fontWeight: 500,
-                  "&:hover": {
-                    background: "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)",
-                  },
+                  "&:hover": { background: "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)" },
                   "&:disabled": { opacity: 0.6 },
                 }}
               >
