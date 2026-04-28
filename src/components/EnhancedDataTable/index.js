@@ -36,9 +36,19 @@ const StyledEnhancedDataTable = styled(DataTable)`
     text-overflow: ellipsis;
   }
 
-  .rdt_TableHead .rdt_TableCell {
+  .rdt_TableCol {
     padding: 16px 8px;
     font-weight: bold;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+    word-break: keep-all;
+  }
+
+  .rdt_TableCol_Sortable {
+    white-space: normal !important;
+    overflow: visible !important;
+    word-break: keep-all;
   }
 
   .rdt_Pagination {
@@ -127,6 +137,14 @@ const EnhancedDataTable = ({ columns, data, autoOptimizeColumns = true, ...props
             borderBottomColor: "#e9ecef",
             fontSize: "14px",
             fontWeight: "bold",
+          },
+        },
+        headCells: {
+          style: {
+            whiteSpace: "normal",
+            overflow: "visible",
+            textOverflow: "unset",
+            wordBreak: "keep-all",
           },
         },
         rows: {

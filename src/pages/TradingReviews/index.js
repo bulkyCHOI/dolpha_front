@@ -16,6 +16,16 @@ import Chip from "@mui/material/Chip";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import Box from "@mui/material/Box";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
+import Divider from "@mui/material/Divider";
+import CloseIcon from "@mui/icons-material/Close";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 
 // @mui icons
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -120,6 +130,13 @@ export default function TradingReviews() {
   const [tradingReviews, setTradingReviews] = useState([]);
   const [stats, setStats] = useState(null);
 
+  // 상세 모달 State
+  const [detailModalOpen, setDetailModalOpen] = useState(false);
+  const [selectedReview, setSelectedReview] = useState(null);
+  const [tradeEntries, setTradeEntries] = useState([]);
+  const [detailLoading, setDetailLoading] = useState(false);
+  const [detailTab, setDetailTab] = useState(0);
+
   // API Base URL
   const API_BASE_URL = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
@@ -129,6 +146,7 @@ export default function TradingReviews() {
       name: "종목",
       selector: (row) => row.stock_name,
       sortable: true,
+      minWidth: "150px",
       cell: (row) => (
         <Box>
           <MKTypography variant="body2" fontWeight="bold" color="dark" sx={{ lineHeight: 1.2 }}>
@@ -144,6 +162,7 @@ export default function TradingReviews() {
       name: "거래모드",
       selector: (row) => row.trading_mode,
       sortable: true,
+      minWidth: "90px",
       cell: (row) => {
         const bgColor = getTradingModeColor(row.trading_mode);
         return (
@@ -169,6 +188,7 @@ export default function TradingReviews() {
       name: "최종상태",
       selector: (row) => row.final_status,
       sortable: true,
+      minWidth: "90px",
       cell: (row) => (
         <Chip
           label={getFinalStatusLabel(row.final_status)}
@@ -186,6 +206,7 @@ export default function TradingReviews() {
       name: "첫진입일",
       selector: (row) => row.first_entry_date,
       sortable: true,
+      minWidth: "110px",
       cell: (row) => (
         <MKTypography variant="body2" sx={{ fontSize: "0.8rem" }}>
           {formatDate(row.first_entry_date)}
@@ -196,6 +217,7 @@ export default function TradingReviews() {
       name: "최종청산일",
       selector: (row) => row.last_exit_date,
       sortable: true,
+      minWidth: "110px",
       cell: (row) => (
         <MKTypography variant="body2" sx={{ fontSize: "0.8rem" }}>
           {formatDate(row.last_exit_date)}
@@ -206,6 +228,7 @@ export default function TradingReviews() {
       name: "보유일수",
       selector: (row) => row.holding_days,
       sortable: true,
+      minWidth: "80px",
       cell: (row) => (
         <MKTypography variant="body2" sx={{ fontSize: "0.8rem" }}>
           {row.holding_days ? `${row.holding_days.toFixed(1)}일` : "-"}
@@ -216,6 +239,7 @@ export default function TradingReviews() {
       name: "매수금액",
       selector: (row) => row.total_buy_amount,
       sortable: true,
+      minWidth: "130px",
       cell: (row) => (
         <MKTypography variant="body2" color="info" sx={{ fontSize: "0.8rem", fontWeight: "bold" }}>
           {formatCurrency(row.total_buy_amount)}원
@@ -226,6 +250,7 @@ export default function TradingReviews() {
       name: "매도금액",
       selector: (row) => row.total_sell_amount,
       sortable: true,
+      minWidth: "130px",
       cell: (row) => (
         <MKTypography variant="body2" color="warning" sx={{ fontSize: "0.8rem", fontWeight: "bold" }}>
           {formatCurrency(row.total_sell_amount)}원
@@ -236,6 +261,7 @@ export default function TradingReviews() {
       name: "손익금액",
       selector: (row) => row.total_profit_loss,
       sortable: true,
+      minWidth: "140px",
       cell: (row) => {
         const isProfit = row.total_profit_loss >= 0;
         return (
@@ -261,6 +287,7 @@ export default function TradingReviews() {
       name: "수익률",
       selector: (row) => row.profit_loss_percent,
       sortable: true,
+      minWidth: "80px",
       cell: (row) => {
         const isProfit = row.profit_loss_percent >= 0;
         return (
@@ -279,6 +306,7 @@ export default function TradingReviews() {
       name: "최대낙폭",
       selector: (row) => row.max_drawdown,
       sortable: true,
+      minWidth: "90px",
       cell: (row) => (
         <MKTypography
           variant="body2"
@@ -293,6 +321,7 @@ export default function TradingReviews() {
       name: "최고수익률",
       selector: (row) => row.max_profit_percent,
       sortable: true,
+      minWidth: "90px",
       cell: (row) => (
         <MKTypography
           variant="body2"
@@ -307,6 +336,7 @@ export default function TradingReviews() {
       name: "진입/청산",
       selector: (row) => row.entry_count,
       sortable: true,
+      minWidth: "90px",
       cell: (row) => (
         <Box>
           <MKTypography variant="body2" sx={{ fontSize: "0.8rem", lineHeight: 1.2 }}>
@@ -326,6 +356,7 @@ export default function TradingReviews() {
       name: "평균보유일",
       selector: (row) => row.avg_holding_days,
       sortable: true,
+      minWidth: "90px",
       cell: (row) => (
         <MKTypography variant="body2" sx={{ fontSize: "0.8rem" }}>
           {row.avg_holding_days ? `${row.avg_holding_days.toFixed(1)}일` : "-"}
@@ -460,35 +491,42 @@ export default function TradingReviews() {
   };
 
   // 상세 보기 핸들러
-  const handleViewDetail = (row) => {
-    const detail = `
-=== ${row.stock_name} (${row.stock_code}) 매매 상세 ===
+  const handleViewDetail = async (row) => {
+    setSelectedReview(row);
+    setDetailTab(0);
+    setTradeEntries([]);
+    setDetailModalOpen(true);
+    setDetailLoading(true);
 
-거래 모드: ${getTradingModeLabel(row.trading_mode)}
-최종 상태: ${getFinalStatusLabel(row.final_status)}
+    try {
+      const token = localStorage.getItem("access_token");
+      const response = await fetch(
+        `${API_BASE_URL}/api/autobot/trading-summary/${row.id}/entries`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            ...(token && { Authorization: `Bearer ${token}` }),
+          },
+        }
+      );
 
-=== 거래 기간 ===
-첫 진입일: ${formatDate(row.first_entry_date)}
-최종 청산일: ${formatDate(row.last_exit_date)}
-보유 일수: ${row.holding_days ? `${row.holding_days.toFixed(1)}일` : "-"}
-평균 보유일: ${row.avg_holding_days ? `${row.avg_holding_days.toFixed(1)}일` : "-"}
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          setTradeEntries(result.data || []);
+        }
+      }
+    } catch (err) {
+      console.error("거래 내역 조회 실패:", err);
+    } finally {
+      setDetailLoading(false);
+    }
+  };
 
-=== 거래 현황 ===
-총 매수 금액: ${formatCurrency(row.total_buy_amount)}원
-총 매도 금액: ${formatCurrency(row.total_sell_amount)}원
-순 손익: ${row.total_profit_loss >= 0 ? '+' : ''}${formatCurrency(row.total_profit_loss)}원
-수익률: ${row.profit_loss_percent >= 0 ? '+' : ''}${formatPercent(row.profit_loss_percent)}
-
-=== 성과 분석 ===
-진입 횟수: ${row.entry_count}회
-청산 횟수: ${row.exit_count}회
-최대 낙폭: ${row.max_drawdown ? formatPercent(row.max_drawdown) : "-"}
-최고 수익률: ${row.max_profit_percent ? formatPercent(row.max_profit_percent) : "-"}
-
-메모: ${row.memo || "없음"}
-    `;
-
-    alert(detail);
+  const handleCloseDetail = () => {
+    setDetailModalOpen(false);
+    setSelectedReview(null);
+    setTradeEntries([]);
   };
 
   // 초기 로드
@@ -643,6 +681,450 @@ export default function TradingReviews() {
 
       <DefaultFooter content={footerRoutes} />
       <NotificationComponent />
+
+      {/* 상세 보기 모달 */}
+      <Dialog
+        open={detailModalOpen}
+        onClose={handleCloseDetail}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{ sx: { borderRadius: 2, maxHeight: "90vh" } }}
+      >
+        {selectedReview && (
+          <>
+            <DialogTitle sx={{ pb: 1 }}>
+              <Box display="flex" alignItems="center" justifyContent="space-between">
+                <Box>
+                  <MKTypography variant="h5" fontWeight="bold" color="dark">
+                    {selectedReview.stock_name}
+                  </MKTypography>
+                  <MKTypography variant="caption" color="text" opacity={0.7}>
+                    {selectedReview.stock_code} · {getTradingModeLabel(selectedReview.trading_mode)} ·{" "}
+                    <Chip
+                      label={getFinalStatusLabel(selectedReview.final_status)}
+                      color={getFinalStatusColor(selectedReview.final_status)}
+                      size="small"
+                      sx={{ fontSize: "0.65rem", height: "20px", ml: 0.5 }}
+                    />
+                  </MKTypography>
+                </Box>
+                <IconButton onClick={handleCloseDetail} size="small">
+                  <CloseIcon />
+                </IconButton>
+              </Box>
+              <Tabs
+                value={detailTab}
+                onChange={(_, v) => setDetailTab(v)}
+                sx={{ mt: 1 }}
+                textColor="primary"
+                indicatorColor="primary"
+              >
+                <Tab label="거래 종합정보" />
+                <Tab label="거래현황" />
+              </Tabs>
+            </DialogTitle>
+
+            <DialogContent dividers sx={{ p: 0 }}>
+              {/* ── 탭 0: 거래 종합정보 ── */}
+              {detailTab === 0 && (
+                <Box sx={{ p: 3 }}>
+                  {/* 거래 기간 */}
+                  <MKTypography variant="subtitle2" fontWeight="bold" color="text" mb={1}>
+                    거래 기간
+                  </MKTypography>
+                  <Box
+                    display="grid"
+                    gridTemplateColumns="repeat(auto-fill, minmax(160px, 1fr))"
+                    gap={1.5}
+                    mb={3}
+                  >
+                    {[
+                      { label: "첫 진입일", value: formatDate(selectedReview.first_entry_date) },
+                      { label: "최종 청산일", value: formatDate(selectedReview.last_exit_date) },
+                      {
+                        label: "보유 일수",
+                        value: selectedReview.holding_days
+                          ? `${selectedReview.holding_days.toFixed(1)}일`
+                          : "-",
+                      },
+                      {
+                        label: "평균 보유일",
+                        value: selectedReview.avg_holding_days
+                          ? `${selectedReview.avg_holding_days.toFixed(1)}일`
+                          : "-",
+                      },
+                    ].map(({ label, value }) => (
+                      <Card key={label} variant="outlined" sx={{ borderRadius: 1.5 }}>
+                        <CardContent sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}>
+                          <MKTypography variant="caption" color="text.secondary">
+                            {label}
+                          </MKTypography>
+                          <MKTypography variant="body2" fontWeight="bold">
+                            {value}
+                          </MKTypography>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </Box>
+
+                  <Divider sx={{ mb: 2 }} />
+
+                  {/* 거래 금액 */}
+                  <MKTypography variant="subtitle2" fontWeight="bold" color="text" mb={1}>
+                    거래 금액
+                  </MKTypography>
+                  <Box
+                    display="grid"
+                    gridTemplateColumns="repeat(auto-fill, minmax(160px, 1fr))"
+                    gap={1.5}
+                    mb={3}
+                  >
+                    {[
+                      {
+                        label: "총 매수 금액",
+                        value: `${formatCurrency(selectedReview.total_buy_amount)}원`,
+                      },
+                      {
+                        label: "총 매도 금액",
+                        value: `${formatCurrency(selectedReview.total_sell_amount)}원`,
+                      },
+                    ].map(({ label, value }) => (
+                      <Card key={label} variant="outlined" sx={{ borderRadius: 1.5 }}>
+                        <CardContent sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}>
+                          <MKTypography variant="caption" color="text.secondary">
+                            {label}
+                          </MKTypography>
+                          <MKTypography variant="body2" fontWeight="bold">
+                            {value}
+                          </MKTypography>
+                        </CardContent>
+                      </Card>
+                    ))}
+                    {/* 순 손익 - 컬러 강조 */}
+                    <Card variant="outlined" sx={{ borderRadius: 1.5 }}>
+                      <CardContent sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}>
+                        <MKTypography variant="caption" color="text.secondary">
+                          순 손익
+                        </MKTypography>
+                        <MKTypography
+                          variant="body2"
+                          fontWeight="bold"
+                          sx={{
+                            color:
+                              selectedReview.total_profit_loss >= 0
+                                ? "success.main"
+                                : "error.main",
+                          }}
+                        >
+                          {selectedReview.total_profit_loss >= 0 ? "+" : ""}
+                          {formatCurrency(selectedReview.total_profit_loss)}원
+                        </MKTypography>
+                      </CardContent>
+                    </Card>
+                    <Card variant="outlined" sx={{ borderRadius: 1.5 }}>
+                      <CardContent sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}>
+                        <MKTypography variant="caption" color="text.secondary">
+                          수익률
+                        </MKTypography>
+                        <MKTypography
+                          variant="body2"
+                          fontWeight="bold"
+                          sx={{
+                            color:
+                              selectedReview.profit_loss_percent >= 0
+                                ? "success.main"
+                                : "error.main",
+                          }}
+                        >
+                          {selectedReview.profit_loss_percent >= 0 ? "+" : ""}
+                          {formatPercent(selectedReview.profit_loss_percent)}
+                        </MKTypography>
+                      </CardContent>
+                    </Card>
+                  </Box>
+
+                  <Divider sx={{ mb: 2 }} />
+
+                  {/* 성과 분석 */}
+                  <MKTypography variant="subtitle2" fontWeight="bold" color="text" mb={1}>
+                    성과 분석
+                  </MKTypography>
+                  <Box
+                    display="grid"
+                    gridTemplateColumns="repeat(auto-fill, minmax(140px, 1fr))"
+                    gap={1.5}
+                    mb={3}
+                  >
+                    {[
+                      { label: "진입 횟수", value: `${selectedReview.entry_count}회` },
+                      { label: "청산 횟수", value: `${selectedReview.exit_count}회` },
+                      {
+                        label: "최대 낙폭",
+                        value: selectedReview.max_drawdown
+                          ? formatPercent(selectedReview.max_drawdown)
+                          : "-",
+                      },
+                      {
+                        label: "최고 수익률",
+                        value: selectedReview.max_profit_percent
+                          ? formatPercent(selectedReview.max_profit_percent)
+                          : "-",
+                      },
+                    ].map(({ label, value }) => (
+                      <Card key={label} variant="outlined" sx={{ borderRadius: 1.5 }}>
+                        <CardContent sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}>
+                          <MKTypography variant="caption" color="text.secondary">
+                            {label}
+                          </MKTypography>
+                          <MKTypography variant="body2" fontWeight="bold">
+                            {value}
+                          </MKTypography>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </Box>
+
+                  {/* 메모 */}
+                  {selectedReview.memo && (
+                    <>
+                      <Divider sx={{ mb: 2 }} />
+                      <MKTypography variant="subtitle2" fontWeight="bold" color="text" mb={1}>
+                        메모
+                      </MKTypography>
+                      <Box
+                        sx={{
+                          p: 2,
+                          bgcolor: "grey.50",
+                          borderRadius: 1.5,
+                          border: "1px solid",
+                          borderColor: "grey.200",
+                        }}
+                      >
+                        <MKTypography variant="body2" color="text">
+                          {selectedReview.memo}
+                        </MKTypography>
+                      </Box>
+                    </>
+                  )}
+                </Box>
+              )}
+
+              {/* ── 탭 1: 거래현황 ── */}
+              {detailTab === 1 && (
+                <Box sx={{ p: 3 }}>
+                  {detailLoading ? (
+                    <Box display="flex" justifyContent="center" py={4}>
+                      <CircularProgress size={32} />
+                    </Box>
+                  ) : tradeEntries.length === 0 ? (
+                    <Box textAlign="center" py={4}>
+                      <MKTypography variant="body2" color="text" opacity={0.6}>
+                        거래 내역이 없습니다.
+                      </MKTypography>
+                    </Box>
+                  ) : (
+                    <Box sx={{ position: "relative" }}>
+                      {/* 타임라인 세로선 */}
+                      <Box
+                        sx={{
+                          position: "absolute",
+                          left: 20,
+                          top: 0,
+                          bottom: 0,
+                          width: 2,
+                          bgcolor: "grey.200",
+                          zIndex: 0,
+                        }}
+                      />
+                      {tradeEntries.map((entry, idx) => {
+                        const isBuy = entry.trade_type === "BUY";
+                        const entryTypeLabels = {
+                          INITIAL: "최초진입",
+                          PYRAMIDING: "피라미딩",
+                          EXIT_PARTIAL: "부분청산",
+                          EXIT_FULL: "전량청산",
+                          STOP_LOSS: "손절",
+                          TRAILING_STOP: "트레일링스탑",
+                        };
+                        const statusLabels = {
+                          SUBMITTED: "접수",
+                          FILLED: "체결",
+                          PARTIAL: "부분체결",
+                          CANCELLED: "취소",
+                          FAILED: "실패",
+                        };
+                        const timeStr = entry.filled_at || entry.ordered_at || entry.created_at;
+
+                        return (
+                          <Box
+                            key={entry.id}
+                            display="flex"
+                            gap={2}
+                            mb={2}
+                            sx={{ position: "relative", zIndex: 1 }}
+                          >
+                            {/* 타임라인 아이콘 */}
+                            <Box
+                              sx={{
+                                width: 40,
+                                height: 40,
+                                borderRadius: "50%",
+                                bgcolor: isBuy ? "success.main" : "error.main",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                flexShrink: 0,
+                                boxShadow: 1,
+                              }}
+                            >
+                              {isBuy ? (
+                                <ArrowUpwardIcon sx={{ color: "white", fontSize: 18 }} />
+                              ) : (
+                                <ArrowDownwardIcon sx={{ color: "white", fontSize: 18 }} />
+                              )}
+                            </Box>
+
+                            {/* 내용 카드 */}
+                            <Card
+                              variant="outlined"
+                              sx={{
+                                flex: 1,
+                                borderRadius: 1.5,
+                                borderColor: isBuy ? "success.light" : "error.light",
+                              }}
+                            >
+                              <CardContent sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}>
+                                {/* 헤더 행 */}
+                                <Box
+                                  display="flex"
+                                  alignItems="center"
+                                  justifyContent="space-between"
+                                  mb={0.5}
+                                >
+                                  <Box display="flex" alignItems="center" gap={0.8}>
+                                    <MKTypography
+                                      variant="body2"
+                                      fontWeight="bold"
+                                      sx={{ color: isBuy ? "success.main" : "error.main" }}
+                                    >
+                                      {isBuy ? "매수" : "매도"}
+                                    </MKTypography>
+                                    <Chip
+                                      label={entryTypeLabels[entry.entry_type] || entry.entry_type}
+                                      size="small"
+                                      variant="outlined"
+                                      sx={{ fontSize: "0.65rem", height: "18px" }}
+                                    />
+                                    <Chip
+                                      label={statusLabels[entry.status] || entry.status}
+                                      size="small"
+                                      color={entry.status === "FILLED" ? "success" : "default"}
+                                      sx={{ fontSize: "0.65rem", height: "18px" }}
+                                    />
+                                  </Box>
+                                  <MKTypography variant="caption" color="text.secondary">
+                                    {timeStr
+                                      ? new Date(timeStr).toLocaleString("ko-KR", {
+                                          month: "short",
+                                          day: "numeric",
+                                          hour: "2-digit",
+                                          minute: "2-digit",
+                                        })
+                                      : "-"}
+                                  </MKTypography>
+                                </Box>
+
+                                {/* 거래 수치 */}
+                                <Box display="flex" gap={3} flexWrap="wrap">
+                                  <Box>
+                                    <MKTypography variant="caption" color="text.secondary">
+                                      체결가
+                                    </MKTypography>
+                                    <MKTypography variant="body2" fontWeight="bold">
+                                      {formatCurrency(entry.filled_price)}원
+                                    </MKTypography>
+                                  </Box>
+                                  <Box>
+                                    <MKTypography variant="caption" color="text.secondary">
+                                      수량
+                                    </MKTypography>
+                                    <MKTypography variant="body2" fontWeight="bold">
+                                      {entry.filled_quantity}주
+                                    </MKTypography>
+                                  </Box>
+                                  <Box>
+                                    <MKTypography variant="caption" color="text.secondary">
+                                      체결금액
+                                    </MKTypography>
+                                    <MKTypography variant="body2" fontWeight="bold">
+                                      {formatCurrency(entry.filled_amount)}원
+                                    </MKTypography>
+                                  </Box>
+                                  {entry.profit_loss !== null && entry.profit_loss !== undefined && (
+                                    <Box>
+                                      <MKTypography variant="caption" color="text.secondary">
+                                        손익
+                                      </MKTypography>
+                                      <MKTypography
+                                        variant="body2"
+                                        fontWeight="bold"
+                                        sx={{
+                                          color:
+                                            entry.profit_loss >= 0 ? "success.main" : "error.main",
+                                        }}
+                                      >
+                                        {entry.profit_loss >= 0 ? "+" : ""}
+                                        {formatCurrency(entry.profit_loss)}원
+                                        {entry.profit_loss_percent !== null && (
+                                          <span style={{ marginLeft: 4, fontWeight: "normal" }}>
+                                            ({entry.profit_loss_percent >= 0 ? "+" : ""}
+                                            {formatPercent(entry.profit_loss_percent)})
+                                          </span>
+                                        )}
+                                      </MKTypography>
+                                    </Box>
+                                  )}
+                                  {entry.stop_price && (
+                                    <Box>
+                                      <MKTypography variant="caption" color="text.secondary">
+                                        손절가
+                                      </MKTypography>
+                                      <MKTypography variant="body2" fontWeight="bold">
+                                        {formatCurrency(entry.stop_price)}원
+                                      </MKTypography>
+                                    </Box>
+                                  )}
+                                </Box>
+
+                                {/* 비고 */}
+                                {entry.note && (
+                                  <MKTypography
+                                    variant="caption"
+                                    color="text.secondary"
+                                    sx={{ mt: 0.5, display: "block" }}
+                                  >
+                                    {entry.note}
+                                  </MKTypography>
+                                )}
+                              </CardContent>
+                            </Card>
+                          </Box>
+                        );
+                      })}
+                    </Box>
+                  )}
+                </Box>
+              )}
+            </DialogContent>
+
+            <DialogActions sx={{ px: 3, py: 2 }}>
+              <MKButton variant="outlined" color="secondary" onClick={handleCloseDetail}>
+                닫기
+              </MKButton>
+            </DialogActions>
+          </>
+        )}
+      </Dialog>
     </>
   );
 }
