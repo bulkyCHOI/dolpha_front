@@ -5,7 +5,7 @@
  * - 인증 불필요 (Autobot 데이터 직접 조회)
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -26,6 +26,9 @@ import Divider from "@mui/material/Divider";
 import CloseIcon from "@mui/icons-material/Close";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import EditIcon from "@mui/icons-material/Edit";
+import CheckIcon from "@mui/icons-material/Check";
+import TextField from "@mui/material/TextField";
 
 // @mui icons
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -136,6 +139,9 @@ export default function TradingReviews() {
   const [tradeEntries, setTradeEntries] = useState([]);
   const [detailLoading, setDetailLoading] = useState(false);
   const [detailTab, setDetailTab] = useState(0);
+
+  // 매매사유 편집 State: { [entryId]: { editing: bool, value: string, saving: bool } }
+  const [noteStates, setNoteStates] = useState({});
 
   // API Base URL
   const API_BASE_URL = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
@@ -527,6 +533,39 @@ export default function TradingReviews() {
     setDetailModalOpen(false);
     setSelectedReview(null);
     setTradeEntries([]);
+    setNoteStates({});
+  };
+
+  const startEditNote = (entry) => {
+    setNoteStates((prev) => ({
+      ...prev,
+      [entry.id]: { editing: true, value: entry.note || "", saving: false },
+    }));
+  };
+
+  const saveNote = async (entryId) => {
+    const state = noteStates[entryId];
+    if (!state) return;
+    setNoteStates((prev) => ({ ...prev, [entryId]: { ...prev[entryId], saving: true } }));
+    try {
+      const token = localStorage.getItem("access_token");
+      const res = await fetch(`${API_BASE_URL}/api/autobot/trade-entry/${entryId}/note`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+        body: JSON.stringify({ note: state.value }),
+      });
+      if (!res.ok) throw new Error("저장 실패");
+      setTradeEntries((prev) =>
+        prev.map((e) => (e.id === entryId ? { ...e, note: state.value } : e))
+      );
+      setNoteStates((prev) => ({ ...prev, [entryId]: { editing: false, value: state.value, saving: false } }));
+    } catch {
+      setNoteStates((prev) => ({ ...prev, [entryId]: { ...prev[entryId], saving: false } }));
+      showSnackbar("매매사유 저장에 실패했습니다.", "error");
+    }
   };
 
   // 초기 로드
@@ -1096,16 +1135,74 @@ export default function TradingReviews() {
                                   )}
                                 </Box>
 
-                                {/* 비고 */}
-                                {entry.note && (
-                                  <MKTypography
-                                    variant="caption"
-                                    color="text.secondary"
-                                    sx={{ mt: 0.5, display: "block" }}
-                                  >
-                                    {entry.note}
-                                  </MKTypography>
-                                )}
+                                {/* 매매사유 */}
+                                {(() => {
+                                  const ns = noteStates[entry.id];
+                                  const isEditing = ns?.editing;
+                                  const isSaving = ns?.saving;
+                                  const currentNote = isEditing ? ns.value : (entry.note || "");
+                                  return (
+                                    <Box sx={{ mt: 1, pt: 1, borderTop: "1px solid", borderColor: "grey.100" }}>
+                                      <Box display="flex" alignItems="center" justifyContent="space-between" mb={0.5}>
+                                        <MKTypography variant="caption" color="text.secondary" fontWeight="bold">
+                                          매매사유
+                                        </MKTypography>
+                                        {!isEditing ? (
+                                          <IconButton
+                                            size="small"
+                                            onClick={() => startEditNote(entry)}
+                                            sx={{ p: 0.3 }}
+                                            title="편집"
+                                          >
+                                            <EditIcon sx={{ fontSize: 14, color: "text.secondary" }} />
+                                          </IconButton>
+                                        ) : (
+                                          <IconButton
+                                            size="small"
+                                            onClick={() => saveNote(entry.id)}
+                                            disabled={isSaving}
+                                            sx={{ p: 0.3 }}
+                                            title="저장"
+                                          >
+                                            <CheckIcon sx={{ fontSize: 14, color: "success.main" }} />
+                                          </IconButton>
+                                        )}
+                                      </Box>
+                                      {isEditing ? (
+                                        <TextField
+                                          multiline
+                                          minRows={2}
+                                          maxRows={5}
+                                          fullWidth
+                                          size="small"
+                                          placeholder="매매 사유를 입력하세요 (예: RS 개선 확인, 지지선 반등, ATR 기준 충족)"
+                                          value={ns.value}
+                                          onChange={(e) =>
+                                            setNoteStates((prev) => ({
+                                              ...prev,
+                                              [entry.id]: { ...prev[entry.id], value: e.target.value },
+                                            }))
+                                          }
+                                          onKeyDown={(e) => {
+                                            if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) saveNote(entry.id);
+                                          }}
+                                          disabled={isSaving}
+                                          sx={{ "& .MuiInputBase-input": { fontSize: "0.8rem" } }}
+                                          autoFocus
+                                        />
+                                      ) : (
+                                        <MKTypography
+                                          variant="caption"
+                                          color={currentNote ? "text" : "text.secondary"}
+                                          sx={{ display: "block", cursor: "pointer", minHeight: 20 }}
+                                          onClick={() => startEditNote(entry)}
+                                        >
+                                          {currentNote || "클릭하여 사유를 입력하세요"}
+                                        </MKTypography>
+                                      )}
+                                    </Box>
+                                  );
+                                })()}
                               </CardContent>
                             </Card>
                           </Box>

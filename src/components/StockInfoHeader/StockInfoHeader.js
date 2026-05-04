@@ -15,6 +15,15 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
     return ((current - previous) / previous) * 100;
   };
 
+  const formatMarketCap = (value) => {
+    if (!value || value === 0) return "-";
+    const 조 = 1_000_000_000_000;
+    const 억 = 100_000_000;
+    if (value >= 조) return `${(value / 조).toFixed(1)}조`;
+    if (value >= 억) return `${Math.round(value / 억)}억`;
+    return new Intl.NumberFormat("ko-KR").format(value);
+  };
+
   const changeRate = getChangeRate();
 
   // HTF 정보 렌더링 함수 (삭제됨)
@@ -111,7 +120,7 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
       <MKBox sx={{ display: { xs: "none", md: "block" } }}>
         <Grid container spacing={1} alignItems="center">
           {/* 종목명 & 코드 */}
-          <Grid item xs={12} sm={2.28}>
+          <Grid item xs={12} sm={1.6}>
             <MKBox>
               <MKTypography variant="caption" color="white" sx={{ fontSize: "0.7rem" }}>
                 종목명
@@ -133,7 +142,7 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
           </Grid>
 
           {/* 마켓 정보 */}
-          <Grid item xs={12} sm={2.28}>
+          <Grid item xs={12} sm={1.6}>
             <MKBox>
               <MKTypography variant="caption" color="white" sx={{ fontSize: "0.7rem" }}>
                 마켓
@@ -150,7 +159,7 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
           </Grid>
 
           {/* 종가 */}
-          <Grid item xs={12} sm={2.28}>
+          <Grid item xs={12} sm={1.6}>
             <MKBox>
               <MKTypography variant="caption" color="white" sx={{ fontSize: "0.7rem" }}>
                 종가
@@ -169,7 +178,7 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
           </Grid>
 
           {/* 등락율 */}
-          <Grid item xs={12} sm={2.28}>
+          <Grid item xs={12} sm={1.6}>
             <MKBox>
               <MKTypography variant="caption" color="white" sx={{ fontSize: "0.7rem" }}>
                 등락율
@@ -196,7 +205,7 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
           </Grid>
 
           {/* ATR */}
-          <Grid item xs={12} sm={2.28}>
+          <Grid item xs={12} sm={1.6}>
             <MKBox>
               <MKTypography variant="caption" color="white" sx={{ fontSize: "0.7rem" }}>
                 ATR
@@ -225,8 +234,44 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
             </MKBox>
           </Grid>
 
+          {/* 시가총액 */}
+          <Grid item xs={12} sm={1.6}>
+            <MKBox>
+              <MKTypography variant="caption" color="white" sx={{ fontSize: "0.7rem" }}>
+                시가총액
+              </MKTypography>
+              <MKTypography
+                variant="body2"
+                fontWeight="bold"
+                color="white"
+                sx={{ fontSize: "0.85rem" }}
+              >
+                {formatMarketCap(selectedStock.market_cap)}
+              </MKTypography>
+            </MKBox>
+          </Grid>
+
+          {/* 영업이익율 */}
+          <Grid item xs={12} sm={1.6}>
+            <MKBox>
+              <MKTypography variant="caption" color="white" sx={{ fontSize: "0.7rem" }}>
+                영업이익율
+              </MKTypography>
+              <MKTypography
+                variant="body2"
+                fontWeight="bold"
+                color="white"
+                sx={{ fontSize: "0.85rem" }}
+              >
+                {selectedStock.영업이익율 != null && selectedStock.영업이익율 !== 0
+                  ? `${selectedStock.영업이익율.toFixed(1)}%`
+                  : "-"}
+              </MKTypography>
+            </MKBox>
+          </Grid>
+
           {/* 재무제표 버튼 */}
-          <Grid item xs={12} sm={0.6}>
+          <Grid item xs={12} sm={0.8}>
             <MKBox
               sx={{
                 display: "flex",
