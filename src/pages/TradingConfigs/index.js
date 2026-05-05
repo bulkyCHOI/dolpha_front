@@ -296,7 +296,7 @@ export default function TradingConfigs() {
       cell: (row) => (
         <Chip
           label={row.is_active ? "활성" : "비활성"}
-          color={row.is_active ? "success" : "default"}
+          color={row.is_active ? "info" : "default"}
           size="small"
           sx={{
             fontSize: "0.7rem",
@@ -313,8 +313,11 @@ export default function TradingConfigs() {
       cell: (row) => (
         <MKTypography
           variant="body2"
-          color={row.stop_loss ? "error" : "text"}
-          sx={{ fontSize: "0.85rem", fontWeight: row.stop_loss ? "bold" : "regular" }}
+          sx={{
+            fontSize: "0.85rem",
+            fontWeight: row.stop_loss ? "bold" : "regular",
+            color: row.stop_loss ? "info.main" : "text.secondary",
+          }}
         >
           {formatTradingValue(row.stop_loss, row.trading_mode, "stop_loss")}
         </MKTypography>
@@ -327,8 +330,11 @@ export default function TradingConfigs() {
       cell: (row) => (
         <MKTypography
           variant="body2"
-          color={row.take_profit ? "success" : "text"}
-          sx={{ fontSize: "0.85rem", fontWeight: row.take_profit ? "bold" : "regular" }}
+          sx={{
+            fontSize: "0.85rem",
+            fontWeight: row.take_profit ? "bold" : "regular",
+            color: row.take_profit ? "error.main" : "text.secondary",
+          }}
         >
           {formatTradingValue(row.take_profit, row.trading_mode, "take_profit")}
         </MKTypography>
@@ -376,13 +382,13 @@ export default function TradingConfigs() {
         if (actualEntries === 0) {
           chipColor = "default";
         } else if (positionSum >= 80) {
-          chipColor = "success"; // 80% 이상: 초록색
+          chipColor = "error"; // 80% 이상: 빨강 (풀 포지션)
         } else if (positionSum >= 50) {
           chipColor = "warning"; // 50-79%: 주황색
         } else if (positionSum >= 25) {
           chipColor = "info"; // 25-49%: 파란색
         } else {
-          chipColor = "error"; // 25% 미만: 빨간색
+          chipColor = "default"; // 25% 미만: 회색
         }
 
         return (
@@ -412,47 +418,6 @@ export default function TradingConfigs() {
       ),
     },
     {
-      name: "평균단가",
-      selector: (row) => tradingStatus[row.stock_code]?.avg_price || 0,
-      sortable: true,
-      cell: (row) => {
-        const avgPrice = tradingStatus[row.stock_code]?.avg_price || 0;
-        const currentPrice = currentPrices[row.stock_code]?.price || 0;
-
-        if (!avgPrice) return <MKTypography variant="body2" sx={{ fontSize: "0.8rem", color: "text.secondary" }}>-</MKTypography>;
-
-        const diff = currentPrice ? currentPrice - avgPrice : 0;
-        const diffPct = currentPrice ? (diff / avgPrice) * 100 : 0;
-        const isProfit = diff > 0;
-        const isLoss = diff < 0;
-
-        return (
-          <Box>
-            <MKTypography
-              variant="body2"
-              fontWeight="bold"
-              sx={{ fontSize: "0.8rem", color: "text.primary", lineHeight: 1.3 }}
-            >
-              {formatCurrency(avgPrice)}원
-            </MKTypography>
-            {currentPrice > 0 && (
-              <MKTypography
-                variant="caption"
-                sx={{
-                  fontSize: "0.68rem",
-                  color: isProfit ? "error.main" : isLoss ? "info.main" : "text.secondary",
-                  lineHeight: 1.2,
-                }}
-              >
-                {isProfit ? "▲" : isLoss ? "▼" : ""}{" "}
-                {isProfit ? "+" : ""}{formatCurrency(Math.round(diff))} ({isProfit ? "+" : ""}{diffPct.toFixed(2)}%)
-              </MKTypography>
-            )}
-          </Box>
-        );
-      },
-    },
-    {
       name: "보유정보",
       selector: (row) => tradingStatus[row.stock_code]?.total_quantity || 0,
       sortable: true,
@@ -470,7 +435,7 @@ export default function TradingConfigs() {
               fontWeight="bold"
               sx={{
                 fontSize: "0.8rem",
-                color: "primary.main",
+                color: "success.main",
                 lineHeight: 1.2,
               }}
             >
@@ -499,6 +464,10 @@ export default function TradingConfigs() {
       sortable: true,
       cell: (row) => {
         const currentPrice = currentPrices[row.stock_code];
+        const change = currentPrice?.change || 0;
+        const changePercent = currentPrice?.changePercent || 0;
+        const isUp = change > 0;
+        const isDown = change < 0;
 
         return (
           <Tooltip
@@ -507,16 +476,31 @@ export default function TradingConfigs() {
             }
             arrow
           >
-            <MKTypography
-              variant="body2"
-              sx={{
-                fontSize: "0.8rem",
-                fontWeight: "bold",
-                color: currentPrice ? "dark" : "text",
-              }}
-            >
-              {currentPrice ? `${formatCurrency(currentPrice.price)}원` : "조회중..."}
-            </MKTypography>
+            <Box>
+              <MKTypography
+                variant="body2"
+                sx={{
+                  fontSize: "0.8rem",
+                  fontWeight: "bold",
+                  color: isUp ? "error.main" : isDown ? "info.main" : "text.primary",
+                  lineHeight: 1.3,
+                }}
+              >
+                {currentPrice ? `${formatCurrency(currentPrice.price)}원` : "조회중..."}
+              </MKTypography>
+              {currentPrice && (isUp || isDown) && (
+                <MKTypography
+                  variant="caption"
+                  sx={{
+                    fontSize: "0.68rem",
+                    color: isUp ? "error.main" : "info.main",
+                    lineHeight: 1.2,
+                  }}
+                >
+                  {isUp ? "▲" : "▼"} {isUp ? "+" : ""}{formatCurrency(Math.round(change))} ({isUp ? "+" : ""}{changePercent.toFixed(2)}%)
+                </MKTypography>
+              )}
+            </Box>
           </Tooltip>
         );
       },
@@ -561,7 +545,7 @@ export default function TradingConfigs() {
               fontWeight="bold"
               sx={{
                 fontSize: "0.8rem",
-                color: isProfit ? "success.main" : "error.main",
+                color: isProfit ? "error.main" : "info.main",
                 lineHeight: 1.2,
               }}
             >
@@ -574,7 +558,7 @@ export default function TradingConfigs() {
               variant="caption"
               sx={{
                 fontSize: "0.7rem",
-                color: isProfit ? "success.main" : "error.main",
+                color: isProfit ? "error.main" : "info.main",
                 fontWeight: "bold",
                 lineHeight: 1.2,
               }}
@@ -900,6 +884,22 @@ export default function TradingConfigs() {
               {/* 투자 현황 요약 */}
               <Box sx={{ flex: 1 }}>
                 <Box display="flex" flexDirection="row" gap={1.5}>
+                  {/* 투자 대상 */}
+                  <Card sx={{ flex: 1, minHeight: "80px" }}>
+                    <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
+                      <MKTypography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ fontSize: "0.7rem" }}
+                      >
+                        투자 대상
+                      </MKTypography>
+                      <MKTypography variant="h6" fontWeight="bold" color="primary" sx={{ mt: 0.5 }}>
+                        {allTradingConfigs.length}개
+                      </MKTypography>
+                    </CardContent>
+                  </Card>
+
                   {/* 투자 종목 수 */}
                   <Card sx={{ flex: 1, minHeight: "80px" }}>
                     <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
@@ -934,7 +934,7 @@ export default function TradingConfigs() {
                       >
                         투자금 합계
                       </MKTypography>
-                      <MKTypography variant="h6" fontWeight="bold" color="info" sx={{ mt: 0.5 }}>
+                      <MKTypography variant="h6" fontWeight="bold" color="success" sx={{ mt: 0.5 }}>
                         {(() => {
                           const totalInvestment = allTradingConfigs.reduce((sum, config) => {
                             const status = tradingStatus[config.stock_code];
@@ -972,7 +972,7 @@ export default function TradingConfigs() {
                               if (!avgPrice || !currentPrice || !quantity) return sum;
                               return sum + (currentPrice.price - avgPrice) * quantity;
                             }, 0);
-                            return totalProfitLoss >= 0 ? "success.main" : "error.main";
+                            return totalProfitLoss >= 0 ? "error.main" : "info.main";
                           })(),
                         }}
                       >
@@ -1029,7 +1029,7 @@ export default function TradingConfigs() {
 
                             const avgReturn =
                               totalWeight > 0 ? totalWeightedReturn / totalWeight : 0;
-                            return avgReturn >= 0 ? "success.main" : "error.main";
+                            return avgReturn >= 0 ? "error.main" : "info.main";
                           })(),
                         }}
                       >
@@ -1124,7 +1124,7 @@ export default function TradingConfigs() {
                 <>
                   <MKButton
                     variant="outlined"
-                    color="success"
+                    color="info"
                     onClick={() => loadCurrentPrices(allTradingConfigs)}
                   >
                     현재가 업데이트
