@@ -5,7 +5,7 @@
  * - 인증 불필요 (Autobot 데이터 직접 조회)
  */
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -23,12 +23,42 @@ import DialogActions from "@mui/material/DialogActions";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import Divider from "@mui/material/Divider";
+import Grid from "@mui/material/Grid";
+import Skeleton from "@mui/material/Skeleton";
 import CloseIcon from "@mui/icons-material/Close";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import EditIcon from "@mui/icons-material/Edit";
 import CheckIcon from "@mui/icons-material/Check";
 import TextField from "@mui/material/TextField";
+import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
+import TrendingFlatIcon from "@mui/icons-material/TrendingFlat";
+import SsidChartIcon from "@mui/icons-material/SsidChart";
+
+// Chart.js (계좌 잔고 추이 라인 차트)
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip as ChartTooltip,
+  Legend,
+  Filler,
+} from "chart.js";
+import { Line } from "react-chartjs-2";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  ChartTooltip,
+  Legend,
+  Filler
+);
 
 // @mui icons
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -133,12 +163,24 @@ export default function TradingReviews() {
   const [tradingReviews, setTradingReviews] = useState([]);
   const [stats, setStats] = useState(null);
 
+  // 계좌 잔고
+  const [accountBalance, setAccountBalance] = useState(null);
+  const [balanceLoading, setBalanceLoading] = useState(false);
+
+  // 현재 보유종목
+  const [holdingPositions, setHoldingPositions] = useState({});
+  const [holdingLoading, setHoldingLoading] = useState(false);
+
   // 상세 모달 State
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
   const [tradeEntries, setTradeEntries] = useState([]);
   const [detailLoading, setDetailLoading] = useState(false);
   const [detailTab, setDetailTab] = useState(0);
+
+  // 계좌 일별 스냅샷 (라인 차트)
+  const [accountSnapshots, setAccountSnapshots] = useState([]);
+  const [snapshotsLoading, setSnapshotsLoading] = useState(false);
 
   // 매매사유 편집 State: { [entryId]: { editing: bool, value: string, saving: bool } }
   const [noteStates, setNoteStates] = useState({});
@@ -398,6 +440,57 @@ export default function TradingReviews() {
     },
   ];
 
+  // 계좌 잔고 조회
+  const fetchAccountBalance = useCallback(async () => {
+    setBalanceLoading(true);
+    try {
+      const token = localStorage.getItem("access_token");
+      const res = await fetch(`${API_BASE_URL}/api/mypage/account-balance`, {
+        headers: { "Content-Type": "application/json", ...(token && { Authorization: `Bearer ${token}` }) },
+      });
+      const result = await res.json();
+      if (result.success) setAccountBalance(result.data);
+    } catch (err) {
+      console.error("계좌 잔고 조회 실패:", err);
+    } finally {
+      setBalanceLoading(false);
+    }
+  }, [API_BASE_URL]);
+
+  // 현재 보유종목 조회
+  const fetchHoldingPositions = useCallback(async () => {
+    setHoldingLoading(true);
+    try {
+      const token = localStorage.getItem("access_token");
+      const res = await fetch(`${API_BASE_URL}/api/mypage/trading-status`, {
+        headers: { "Content-Type": "application/json", ...(token && { Authorization: `Bearer ${token}` }) },
+      });
+      const result = await res.json();
+      if (result.success) setHoldingPositions(result.data || {});
+    } catch (err) {
+      console.error("보유종목 조회 실패:", err);
+    } finally {
+      setHoldingLoading(false);
+    }
+  }, [API_BASE_URL]);
+
+  // 계좌 일별 스냅샷 조회
+  const fetchAccountSnapshots = useCallback(async () => {
+    setSnapshotsLoading(true);
+    try {
+      const token = localStorage.getItem("access_token");
+      const res = await fetch(`${API_BASE_URL}/api/mypage/account-snapshots?days=90`, {
+        headers: { "Content-Type": "application/json", ...(token && { Authorization: `Bearer ${token}` }) },
+      });
+      const result = await res.json();
+      if (result.success) setAccountSnapshots(result.data || []);
+    } catch (err) {
+      console.error("계좌 스냅샷 조회 실패:", err);
+    } finally {
+      setSnapshotsLoading(false);
+    }
+  }, [API_BASE_URL]);
+
   // 매매복기 데이터 조회
   const fetchTradingReviews = async () => {
     try {
@@ -571,7 +664,419 @@ export default function TradingReviews() {
   // 초기 로드
   useEffect(() => {
     fetchTradingReviews();
-  }, []);
+    fetchAccountBalance();
+    fetchHoldingPositions();
+    fetchAccountSnapshots();
+  }, [fetchAccountBalance, fetchHoldingPositions, fetchAccountSnapshots]);
+
+  // 계좌 요약 카드 렌더
+  const renderAccountSummary = () => {
+    const balanceItems = accountBalance
+      ? [
+          {
+            label: "총 평가금액",
+            value: `${formatCurrency(Math.round(accountBalance.TotalMoney))}원`,
+            color: "dark",
+          },
+          {
+            label: "주식 평가금액",
+            value: `${formatCurrency(Math.round(accountBalance.StockMoney))}원`,
+            color: "info",
+          },
+          {
+            label: "예수금",
+            value: `${formatCurrency(Math.round(accountBalance.RemainMoney))}원`,
+            color: "dark",
+          },
+          {
+            label: "평가손익",
+            value: `${accountBalance.StockRevenue >= 0 ? "+" : ""}${formatCurrency(Math.round(accountBalance.StockRevenue))}원`,
+            color: accountBalance.StockRevenue >= 0 ? "success" : "error",
+          },
+          {
+            label: "수익률",
+            value: (() => {
+              const cost = accountBalance.StockMoney - accountBalance.StockRevenue;
+              if (!cost) return "-";
+              const rate = (accountBalance.StockRevenue / cost) * 100;
+              return `${rate >= 0 ? "+" : ""}${rate.toFixed(2)}%`;
+            })(),
+            color: accountBalance.StockRevenue >= 0 ? "success" : "error",
+          },
+        ]
+      : [];
+
+    return (
+      <Card sx={{ mb: 3, p: 0.5 }}>
+        <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
+          <Box display="flex" alignItems="center" gap={1} mb={1.5}>
+            <AccountBalanceIcon sx={{ fontSize: 18, color: "text.secondary" }} />
+            <MKTypography variant="subtitle2" fontWeight="bold" color="text">
+              계좌 요약
+            </MKTypography>
+          </Box>
+          {balanceLoading ? (
+            <Box display="flex" gap={1.5}>
+              {[...Array(5)].map((_, i) => (
+                <Skeleton key={i} variant="rounded" width={120} height={60} />
+              ))}
+            </Box>
+          ) : !accountBalance ? (
+            <MKTypography variant="caption" color="text.secondary">
+              계좌 정보를 불러올 수 없습니다.
+            </MKTypography>
+          ) : (
+            <Box display="flex" gap={1.5} flexWrap="wrap">
+              {balanceItems.map(({ label, value, color }) => (
+                <Card key={label} variant="outlined" sx={{ minWidth: 120, flex: 1 }}>
+                  <CardContent sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}>
+                    <MKTypography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
+                      {label}
+                    </MKTypography>
+                    <MKTypography
+                      variant="body2"
+                      fontWeight="bold"
+                      color={color}
+                      sx={{ mt: 0.3, fontSize: "0.85rem" }}
+                    >
+                      {value}
+                    </MKTypography>
+                  </CardContent>
+                </Card>
+              ))}
+            </Box>
+          )}
+        </CardContent>
+      </Card>
+    );
+  };
+
+  // 보유종목 섹션 렌더
+  const renderHoldingPositions = () => {
+    const codes = Object.keys(holdingPositions);
+    if (!holdingLoading && codes.length === 0) return null;
+
+    return (
+      <Card sx={{ mb: 3 }}>
+        <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
+          <Box display="flex" alignItems="center" gap={1} mb={1.5}>
+            <TrendingFlatIcon sx={{ fontSize: 18, color: "text.secondary" }} />
+            <MKTypography variant="subtitle2" fontWeight="bold" color="text">
+              현재 보유종목
+            </MKTypography>
+            {!holdingLoading && (
+              <Chip label={`${codes.length}종목`} size="small" color="info" sx={{ height: 20, fontSize: "0.65rem" }} />
+            )}
+          </Box>
+          {holdingLoading ? (
+            <Box display="flex" gap={1.5} flexWrap="wrap">
+              {[...Array(3)].map((_, i) => (
+                <Skeleton key={i} variant="rounded" width={240} height={200} />
+              ))}
+            </Box>
+          ) : (
+            <Box display="flex" gap={1.5} flexWrap="wrap">
+              {codes.map((code) => {
+                const pos = holdingPositions[code];
+                const stockName = pos.stock_name || code;
+                const plAmount = pos.profit_loss_amount;
+                const plRate = pos.profit_loss_rate;
+                const isProfit = plAmount != null ? plAmount >= 0 : null;
+                const plColor = isProfit == null ? "text.secondary" : isProfit ? "#ef5350" : "#1976d2";
+                const isAtr = pos.trading_mode === "atr" || pos.trading_mode === "turtle";
+
+
+                return (
+                  <Card
+                    key={code}
+                    variant="outlined"
+                    sx={{
+                      minWidth: 220,
+                      flex: "0 1 240px",
+                      borderLeft: "3px solid",
+                      borderLeftColor: isProfit == null ? "grey.400" : isProfit ? "error.main" : "info.main",
+                    }}
+                  >
+                    <CardContent sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}>
+                      {/* 종목명 + 종목코드 */}
+                      <Box display="flex" alignItems="baseline" gap={0.8} mb={0.3}>
+                        <MKTypography variant="body2" fontWeight="bold" color="dark" sx={{ lineHeight: 1.3 }}>
+                          {stockName}
+                        </MKTypography>
+                        <MKTypography variant="caption" color="text.secondary" sx={{ flexShrink: 0 }}>
+                          {code}
+                        </MKTypography>
+                      </Box>
+
+                      {/* 현재가 + 손익 */}
+                      {pos.current_price != null && (
+                        <Box display="flex" alignItems="center" justifyContent="space-between" mb={0.6}>
+                          <MKTypography variant="body2" fontWeight="bold" color="dark">
+                            {formatCurrency(pos.current_price)}원
+                          </MKTypography>
+                          {plAmount != null && (
+                            <Box textAlign="right">
+                              <MKTypography variant="caption" fontWeight="bold" sx={{ color: plColor, display: "block", lineHeight: 1.2 }}>
+                                {plAmount >= 0 ? "+" : ""}{formatCurrency(plAmount)}원
+                              </MKTypography>
+                              {plRate != null && (
+                                <MKTypography variant="caption" sx={{ color: plColor, display: "block", lineHeight: 1.2 }}>
+                                  ({plRate >= 0 ? "+" : ""}{plRate.toFixed(2)}%)
+                                </MKTypography>
+                              )}
+                            </Box>
+                          )}
+                        </Box>
+                      )}
+
+                      <Divider sx={{ my: 0.6 }} />
+
+                      {/* 기본 정보 */}
+                      <Box display="flex" justifyContent="space-between">
+                        <MKTypography variant="caption" color="text.secondary">평단가</MKTypography>
+                        <MKTypography variant="caption" fontWeight="bold">{formatCurrency(pos.avg_price)}원</MKTypography>
+                      </Box>
+                      <Box display="flex" justifyContent="space-between">
+                        <MKTypography variant="caption" color="text.secondary">수량</MKTypography>
+                        <MKTypography variant="caption" fontWeight="bold">{pos.total_quantity}주</MKTypography>
+                      </Box>
+                      <Box display="flex" justifyContent="space-between">
+                        <MKTypography variant="caption" color="text.secondary">보유금액</MKTypography>
+                        <MKTypography variant="caption" fontWeight="bold">
+                          {formatCurrency(Math.round(pos.holding_amount))}원
+                        </MKTypography>
+                      </Box>
+                      <Box display="flex" justifyContent="space-between">
+                        <MKTypography variant="caption" color="text.secondary">진입</MKTypography>
+                        <MKTypography variant="caption" fontWeight="bold">
+                          {pos.actual_entries}/{pos.total_possible_entries}차
+                        </MKTypography>
+                      </Box>
+
+                      <Divider sx={{ my: 0.6 }} />
+
+                      {/* 손절가 / 트레일링 스탑 */}
+                      {pos.stop_price != null && (
+                        <Box display="flex" justifyContent="space-between">
+                          <MKTypography variant="caption" color="text.secondary">
+                            손절가{isAtr && pos.atr ? ` (${pos.atr.toFixed(0)} ATR기준)` : ""}
+                          </MKTypography>
+                          <MKTypography variant="caption" fontWeight="bold" sx={{ color: "#d32f2f" }}>
+                            {formatCurrency(pos.stop_price)}원
+                          </MKTypography>
+                        </Box>
+                      )}
+                      {pos.trailing_stop_price != null && (
+                        <Box display="flex" justifyContent="space-between">
+                          <MKTypography variant="caption" color="text.secondary">Trailing Stop</MKTypography>
+                          <MKTypography variant="caption" fontWeight="bold" sx={{ color: "#e65100" }}>
+                            {formatCurrency(pos.trailing_stop_price)}원
+                          </MKTypography>
+                        </Box>
+                      )}
+
+                      {/* 분할 매수 진입가 (차수별, 가격+비중) */}
+                      {(pos.entry_slots || []).some((s) => s.price != null) && (
+                        <>
+                          <Divider sx={{ my: 0.6 }} />
+                          <MKTypography variant="caption" color="text.secondary" sx={{ display: "block", mb: 0.3 }}>
+                            분할 매수가
+                          </MKTypography>
+                          {(pos.entry_slots || []).map((slot, idx) => {
+                            if (slot.price == null) return null;
+                            return (
+                              <Box key={idx} display="flex" justifyContent="space-between">
+                                <MKTypography variant="caption" color="text.secondary">
+                                  {slot.label}{slot.weight != null ? ` (${slot.weight}%)` : ""}
+                                </MKTypography>
+                                <MKTypography
+                                  variant="caption"
+                                  fontWeight={slot.is_done ? "bold" : "regular"}
+                                  sx={{ color: slot.is_done ? "success.main" : "text.secondary", textDecoration: slot.is_done ? "line-through" : "none" }}
+                                >
+                                  {formatCurrency(slot.price)}원{slot.is_done ? " ✓" : ""}
+                                </MKTypography>
+                              </Box>
+                            );
+                          })}
+                        </>
+                      )}
+
+                      {/* 분할 매도 설정 */}
+                      {pos.staged_exit_info && (
+                        <>
+                          <Divider sx={{ my: 0.6 }} />
+                          <MKTypography variant="caption" color="text.secondary" sx={{ display: "block", mb: 0.3 }}>
+                            분할 매도 ({pos.staged_exit_info.type_label})
+                          </MKTypography>
+                          {pos.staged_exit_info.stages.map((stage) => (
+                            <Box key={stage.stage} display="flex" justifyContent="space-between">
+                              <MKTypography variant="caption" color="text.secondary">
+                                {stage.stage}단계: {stage.trigger}
+                              </MKTypography>
+                              <MKTypography
+                                variant="caption"
+                                fontWeight={stage.is_done ? "bold" : "regular"}
+                                sx={{ color: stage.is_done ? "text.secondary" : "warning.main", textDecoration: stage.is_done ? "line-through" : "none" }}
+                              >
+                                {stage.sell_pct}%{stage.is_done ? " ✓" : ""}
+                              </MKTypography>
+                            </Box>
+                          ))}
+                        </>
+                      )}
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </Box>
+          )}
+        </CardContent>
+      </Card>
+    );
+  };
+
+  const renderAccountChart = () => {
+    if (snapshotsLoading) {
+      return (
+        <Grid container spacing={2} sx={{ mb: 3 }}>
+          {[0, 1].map((i) => (
+            <Grid item xs={12} md={6} key={i}>
+              <Card>
+                <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
+                  <Skeleton variant="rectangular" height={220} />
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      );
+    }
+    if (accountSnapshots.length === 0) return null;
+
+    const labels = accountSnapshots.map((s) => s.date);
+    const toMillions = (v) => Math.round(v / 10000);
+
+    const xScale = {
+      ticks: {
+        maxTicksLimit: 10,
+        font: { size: 10 },
+        callback: (_, i) => labels[i]?.slice(5),
+      },
+      grid: { display: false },
+    };
+
+    const makeOptions = (y0Label, y1Label, y0Color, y1Color) => ({
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: "index", intersect: false },
+      plugins: {
+        legend: { position: "top", labels: { font: { size: 11 }, usePointStyle: true, padding: 12 } },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => ` ${ctx.dataset.label}: ${ctx.parsed.y.toLocaleString()}만원`,
+          },
+        },
+      },
+      scales: {
+        x: xScale,
+        y: {
+          position: "left",
+          ticks: { font: { size: 10 }, color: y0Color, callback: (v) => `${v.toLocaleString()}만` },
+          grid: { color: "rgba(0,0,0,0.05)" },
+        },
+        y1: {
+          position: "right",
+          ticks: { font: { size: 10 }, color: y1Color, callback: (v) => `${v.toLocaleString()}만` },
+          grid: { drawOnChartArea: false },
+        },
+      },
+    });
+
+    // 차트 1: 총 평가금액(좌) + 주식 평가금액(우)
+    const chart1Data = {
+      labels,
+      datasets: [
+        {
+          label: "총 평가금액",
+          data: accountSnapshots.map((s) => toMillions(s.total_money)),
+          borderColor: "#1976d2",
+          backgroundColor: "rgba(25,118,210,0.08)",
+          fill: true,
+          tension: 0.3,
+          pointRadius: 3,
+          yAxisID: "y",
+        },
+        {
+          label: "주식 평가금액",
+          data: accountSnapshots.map((s) => toMillions(s.stock_money)),
+          borderColor: "#f57c00",
+          backgroundColor: "rgba(245,124,0,0.06)",
+          fill: false,
+          tension: 0.3,
+          pointRadius: 3,
+          yAxisID: "y1",
+        },
+      ],
+    };
+
+    // 차트 2: 예수금(좌) + 순이익(우)
+    const chart2Data = {
+      labels,
+      datasets: [
+        {
+          label: "예수금",
+          data: accountSnapshots.map((s) => toMillions(s.remain_money)),
+          borderColor: "#388e3c",
+          backgroundColor: "rgba(56,142,60,0.08)",
+          fill: true,
+          tension: 0.3,
+          pointRadius: 3,
+          yAxisID: "y",
+        },
+        {
+          label: "순이익",
+          data: accountSnapshots.map((s) => toMillions(s.stock_revenue)),
+          borderColor: "#9c27b0",
+          backgroundColor: "rgba(156,39,176,0.06)",
+          fill: false,
+          tension: 0.3,
+          pointRadius: 3,
+          borderDash: [5, 3],
+          yAxisID: "y1",
+        },
+      ],
+    };
+
+    const chart1Options = makeOptions("총 평가금액", "주식 평가금액", "#1976d2", "#f57c00");
+    const chart2Options = makeOptions("예수금", "순이익", "#388e3c", "#9c27b0");
+
+    return (
+      <Card sx={{ mb: 3 }}>
+        <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
+          <Box display="flex" alignItems="center" gap={1} mb={1.5}>
+            <SsidChartIcon sx={{ fontSize: 18, color: "text.secondary" }} />
+            <MKTypography variant="subtitle2" fontWeight="bold" color="text">
+              계좌 일별 현황
+            </MKTypography>
+            <Chip label={`최근 ${accountSnapshots.length}일`} size="small" sx={{ height: 20, fontSize: "0.65rem" }} />
+          </Box>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6}>
+              <Box sx={{ height: 220 }}>
+                <Line data={chart1Data} options={chart1Options} />
+              </Box>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Box sx={{ height: 220 }}>
+                <Line data={chart2Data} options={chart2Options} />
+              </Box>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
+    );
+  };
 
   return (
     <>
@@ -579,6 +1084,15 @@ export default function TradingReviews() {
 
       <MKBox component="section" sx={{ minHeight: "80vh", pt: 12, pb: 4 }}>
         <FullWidthContainer>
+          {/* 계좌 요약 */}
+          {renderAccountSummary()}
+
+          {/* 현재 보유종목 */}
+          {renderHoldingPositions()}
+
+          {/* 계좌 일별 현황 차트 */}
+          {renderAccountChart()}
+
           {/* 페이지 헤더와 통계 요약 */}
           {!loading && !error && stats && (
             <Box

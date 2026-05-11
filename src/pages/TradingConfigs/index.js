@@ -358,52 +358,35 @@ export default function TradingConfigs() {
         const status = tradingStatus[row.stock_code];
         const totalPossible = (row.pyramiding_count ?? 0) + 1;
         const actualEntries = status?.actual_entries || 0;
-
-        return (
-          <MKTypography variant="body2" sx={{ fontSize: "0.8rem", fontWeight: "bold" }}>
-            {actualEntries}/{totalPossible}회
-          </MKTypography>
-        );
-      },
-    },
-    {
-      name: "포지션",
-      selector: (row) => tradingStatus[row.stock_code]?.position_sum || 0,
-      sortable: true,
-      cell: (row) => {
-        const status = tradingStatus[row.stock_code];
         const positionSum = status?.position_sum || 0;
-        const actualEntries = status?.actual_entries || 0;
 
-        // 포지션 퍼센트에 따른 색상 결정
         let chipColor = "default";
-        let chipStyle = {};
-
-        if (actualEntries === 0) {
-          chipColor = "default";
-        } else if (positionSum >= 80) {
-          chipColor = "error"; // 80% 이상: 빨강 (풀 포지션)
-        } else if (positionSum >= 50) {
-          chipColor = "warning"; // 50-79%: 주황색
-        } else if (positionSum >= 25) {
-          chipColor = "info"; // 25-49%: 파란색
-        } else {
-          chipColor = "default"; // 25% 미만: 회색
+        if (actualEntries > 0) {
+          if (positionSum >= 80) chipColor = "error";
+          else if (positionSum >= 50) chipColor = "warning";
+          else if (positionSum >= 25) chipColor = "info";
         }
 
         return (
-          <Chip
-            label={`${positionSum.toFixed(0)}%`}
-            size="small"
-            color={chipColor}
-            sx={{
-              fontSize: "0.7rem",
-              height: "22px",
-              minWidth: "50px",
-              fontWeight: "bold",
-              "& .MuiChip-label": { padding: "0 8px" },
-            }}
-          />
+          <Box>
+            <MKTypography variant="body2" sx={{ fontSize: "0.8rem", fontWeight: "bold", lineHeight: 1.3 }}>
+              {actualEntries}/{totalPossible}회
+            </MKTypography>
+            {actualEntries > 0 && (
+              <Chip
+                label={`${positionSum.toFixed(0)}%`}
+                size="small"
+                color={chipColor}
+                sx={{
+                  fontSize: "0.65rem",
+                  height: "18px",
+                  minWidth: "44px",
+                  fontWeight: "bold",
+                  "& .MuiChip-label": { padding: "0 6px" },
+                }}
+              />
+            )}
+          </Box>
         );
       },
     },
@@ -502,6 +485,67 @@ export default function TradingConfigs() {
               )}
             </Box>
           </Tooltip>
+        );
+      },
+    },
+    {
+      name: "고점/낙폭",
+      selector: (row) => row.trailing_stop_peak_price || 0,
+      sortable: true,
+      cell: (row) => {
+        const peak = row.trailing_stop_peak_price;
+        const currentPrice = currentPrices[row.stock_code]?.price;
+
+        if (!peak) {
+          return (
+            <MKTypography variant="body2" sx={{ fontSize: "0.8rem", color: "text.secondary" }}>
+              -
+            </MKTypography>
+          );
+        }
+
+        const dropPct = currentPrice ? ((currentPrice - peak) / peak) * 100 : null;
+        const isTurtleMode = row.trading_mode === "turtle" || row.trading_mode === "atr";
+        const atr = tradingStatus[row.stock_code]?.atr;
+        const dropAtr =
+          isTurtleMode && atr && atr > 0 && currentPrice
+            ? (currentPrice - peak) / atr
+            : null;
+
+        return (
+          <Box>
+            <MKTypography
+              variant="body2"
+              sx={{ fontSize: "0.8rem", fontWeight: "bold", lineHeight: 1.3 }}
+            >
+              {formatCurrency(Math.round(peak))}원
+            </MKTypography>
+            {dropPct !== null && (
+              <MKTypography
+                variant="caption"
+                sx={{
+                  fontSize: "0.68rem",
+                  color: dropPct < 0 ? "info.main" : "error.main",
+                  lineHeight: 1.2,
+                }}
+              >
+                {dropPct >= 0 ? "▲" : "▼"} {dropPct >= 0 ? "+" : ""}{dropPct.toFixed(1)}%
+              </MKTypography>
+            )}
+            {dropAtr !== null && (
+              <MKTypography
+                variant="caption"
+                sx={{
+                  fontSize: "0.65rem",
+                  color: dropAtr < 0 ? "info.main" : "error.main",
+                  lineHeight: 1.2,
+                  display: "block",
+                }}
+              >
+                {dropAtr >= 0 ? "▲" : "▼"} {dropAtr >= 0 ? "+" : ""}{dropAtr.toFixed(2)} ATR
+              </MKTypography>
+            )}
+          </Box>
         );
       },
     },
@@ -835,12 +879,13 @@ export default function TradingConfigs() {
     }
   }, [user]);
 
-  // 현재가 실시간 업데이트 (5분마다)
+  // 현재가 + 설정(고점 등) 실시간 업데이트 (5분마다)
   useEffect(() => {
     if (allTradingConfigs.length > 0) {
       const interval = setInterval(() => {
         loadCurrentPrices(allTradingConfigs);
-      }, 5 * 60 * 1000); // 5분마다 업데이트
+        loadAllTradingConfigs();
+      }, 5 * 60 * 1000);
 
       return () => clearInterval(interval);
     }
