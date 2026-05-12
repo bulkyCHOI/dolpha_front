@@ -22,6 +22,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
+import ShowChartIcon from "@mui/icons-material/ShowChart";
 
 // Enhanced components
 import FullWidthContainer from "components/FullWidthContainer";
@@ -47,6 +48,9 @@ import { useNotification } from "components/NotificationSystem/NotificationSyste
 
 // Trading Config Modal
 import TradingConfigModal from "components/TradingConfigModal/TradingConfigModal";
+
+// TradingView 차트 위젯
+import StockChartModal from "components/StockChartModal";
 
 // Remove the old styled component - now using EnhancedDataTable
 
@@ -142,6 +146,10 @@ export default function TradingConfigs() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedConfig, setSelectedConfig] = useState(null);
   const [modalLoading, setModalLoading] = useState(false);
+
+  // TradingView 차트 모달 state
+  const [chartModalOpen, setChartModalOpen] = useState(false);
+  const [chartModalStock, setChartModalStock] = useState(null);
 
   // 거래 상태 정보 로드 함수
   const loadTradingStatus = async () => {
@@ -630,6 +638,7 @@ export default function TradingConfigs() {
     },
     {
       name: "액션",
+      width: "160px",
       cell: (row) => {
         const isFav = favoriteCodes.has(row.stock_code);
         return (
@@ -655,6 +664,19 @@ export default function TradingConfigs() {
                 onClick={() => handleOpenModal(row)}
               >
                 <VisibilityIcon sx={{ fontSize: "16px" }} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="TradingView 차트">
+              <IconButton
+                size="small"
+                color="success"
+                sx={{ padding: "4px" }}
+                onClick={() => {
+                  setChartModalStock(row);
+                  setChartModalOpen(true);
+                }}
+              >
+                <ShowChartIcon sx={{ fontSize: "16px" }} />
               </IconButton>
             </Tooltip>
             <Tooltip title="삭제">
@@ -1186,6 +1208,14 @@ export default function TradingConfigs() {
 
       <DefaultFooter content={footerRoutes} />
       <NotificationComponent />
+
+      {/* 주식 차트 모달 (일봉 + 분봉) */}
+      <StockChartModal
+        open={chartModalOpen}
+        onClose={() => setChartModalOpen(false)}
+        stockCode={chartModalStock?.stock_code}
+        stockName={chartModalStock?.stock_name}
+      />
 
       {/* 자동매매 설정 상세보기/수정 모달 */}
       <TradingConfigModal

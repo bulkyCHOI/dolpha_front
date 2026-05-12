@@ -78,10 +78,9 @@ const EnhancedDataTable = ({ columns, data, autoOptimizeColumns = true, ...props
 
         // 액션 컬럼 최적화
         if (column.name === "액션") {
-          optimizedColumn.width = "90px";
+          optimizedColumn.width = "160px";
           optimizedColumn.style = {
-            minWidth: "80px",
-            maxWidth: "100px",
+            minWidth: "160px",
           };
         }
 

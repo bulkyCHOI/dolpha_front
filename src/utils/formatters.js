@@ -204,3 +204,8 @@ export const formatVolume = (value) => {
     return numValue.toLocaleString('ko-KR');
   }
 };
+
+export const getTradingViewUrl = (stockCode, market) => {
+  const prefix = market === 'KOSDAQ' ? 'KOSDAQ' : 'KRX';
+  return `https://www.tradingview.com/chart/?symbol=${prefix}:${stockCode}`;
+};
