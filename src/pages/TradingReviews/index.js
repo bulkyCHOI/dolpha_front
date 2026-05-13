@@ -35,25 +35,27 @@ import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import TrendingFlatIcon from "@mui/icons-material/TrendingFlat";
 import SsidChartIcon from "@mui/icons-material/SsidChart";
 
-// Chart.js (계좌 잔고 추이 라인 차트)
+// Chart.js (계좌 잔고 추이 라인/바 차트)
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
+  BarElement,
   Title,
   Tooltip as ChartTooltip,
   Legend,
   Filler,
 } from "chart.js";
-import { Line } from "react-chartjs-2";
+import { Line, Bar } from "react-chartjs-2";
 
 ChartJS.register(
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
+  BarElement,
   Title,
   ChartTooltip,
   Legend,
@@ -84,6 +86,9 @@ import DefaultFooter from "examples/Footers/DefaultFooter";
 // Routes
 import routes from "routes";
 import footerRoutes from "footer.routes";
+
+// Auth
+import { useAuth } from "contexts/AuthContext";
 
 // Notification system
 import { useNotification } from "components/NotificationSystem/NotificationSystem";
@@ -156,6 +161,7 @@ const getTextColor = (backgroundColor) => {
 
 export default function TradingReviews() {
   const { showSnackbar, NotificationComponent } = useNotification();
+  const { authenticatedFetch, loading: authLoading } = useAuth();
 
   // State
   const [loading, setLoading] = useState(true);
@@ -181,6 +187,9 @@ export default function TradingReviews() {
   // 계좌 일별 스냅샷 (라인 차트)
   const [accountSnapshots, setAccountSnapshots] = useState([]);
   const [snapshotsLoading, setSnapshotsLoading] = useState(false);
+
+  // 일자별 확정 손익 (매도 체결 기준)
+  const [dailyPnl, setDailyPnl] = useState([]);
 
   // 매매사유 편집 State: { [entryId]: { editing: bool, value: string, saving: bool } }
   const [noteStates, setNoteStates] = useState({});
@@ -444,10 +453,7 @@ export default function TradingReviews() {
   const fetchAccountBalance = useCallback(async () => {
     setBalanceLoading(true);
     try {
-      const token = localStorage.getItem("access_token");
-      const res = await fetch(`${API_BASE_URL}/api/mypage/account-balance`, {
-        headers: { "Content-Type": "application/json", ...(token && { Authorization: `Bearer ${token}` }) },
-      });
+      const res = await authenticatedFetch(`${API_BASE_URL}/api/mypage/account-balance`);
       const result = await res.json();
       if (result.success) setAccountBalance(result.data);
     } catch (err) {
@@ -461,10 +467,7 @@ export default function TradingReviews() {
   const fetchHoldingPositions = useCallback(async () => {
     setHoldingLoading(true);
     try {
-      const token = localStorage.getItem("access_token");
-      const res = await fetch(`${API_BASE_URL}/api/mypage/trading-status`, {
-        headers: { "Content-Type": "application/json", ...(token && { Authorization: `Bearer ${token}` }) },
-      });
+      const res = await authenticatedFetch(`${API_BASE_URL}/api/mypage/trading-status`);
       const result = await res.json();
       if (result.success) setHoldingPositions(result.data || {});
     } catch (err) {
@@ -474,16 +477,22 @@ export default function TradingReviews() {
     }
   }, [API_BASE_URL]);
 
-  // 계좌 일별 스냅샷 조회
+  // 계좌 일별 스냅샷 조회 (페이지 접근 시 오늘 스냅샷 저장 후 조회)
   const fetchAccountSnapshots = useCallback(async () => {
     setSnapshotsLoading(true);
     try {
-      const token = localStorage.getItem("access_token");
-      const res = await fetch(`${API_BASE_URL}/api/mypage/account-snapshots?days=90`, {
-        headers: { "Content-Type": "application/json", ...(token && { Authorization: `Bearer ${token}` }) },
+      await authenticatedFetch(`${API_BASE_URL}/api/mypage/account-snapshots/save-today`, {
+        method: "POST",
       });
-      const result = await res.json();
-      if (result.success) setAccountSnapshots(result.data || []);
+
+      const [snapshotRes, pnlRes] = await Promise.all([
+        authenticatedFetch(`${API_BASE_URL}/api/mypage/account-snapshots?days=90`),
+        authenticatedFetch(`${API_BASE_URL}/api/mypage/daily-realized-pnl?days=90`),
+      ]);
+      const snapshotResult = await snapshotRes.json();
+      const pnlResult = await pnlRes.json();
+      if (snapshotResult.success) setAccountSnapshots(snapshotResult.data || []);
+      if (pnlResult.success) setDailyPnl(pnlResult.data || []);
     } catch (err) {
       console.error("계좌 스냅샷 조회 실패:", err);
     } finally {
@@ -492,18 +501,13 @@ export default function TradingReviews() {
   }, [API_BASE_URL]);
 
   // 매매복기 데이터 조회
-  const fetchTradingReviews = async () => {
+  const fetchTradingReviews = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const token = localStorage.getItem("access_token");
-      const response = await fetch(`${API_BASE_URL}/api/autobot/trading-summary-data`, {
+      const response = await authenticatedFetch(`${API_BASE_URL}/api/autobot/trading-summary-data`, {
         method: 'GET',
-        headers: {
-          "Content-Type": "application/json",
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
       });
 
       if (!response.ok) {
@@ -511,7 +515,7 @@ export default function TradingReviews() {
       }
 
       const result = await response.json();
-      
+
       if (result && result.success && result.data) {
         setTradingReviews(result.data);
         calculateStats(result.data);
@@ -527,7 +531,7 @@ export default function TradingReviews() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [API_BASE_URL]);
 
   // 통계 계산
   const calculateStats = (data) => {
@@ -568,13 +572,8 @@ export default function TradingReviews() {
     if (!window.confirm(`"${row.stock_name}" 매매복기를 삭제하시겠습니까?`)) return;
 
     try {
-      const token = localStorage.getItem("access_token");
-      const response = await fetch(`${API_BASE_URL}/api/autobot/trading-summary/${row.id}`, {
+      const response = await authenticatedFetch(`${API_BASE_URL}/api/trading-summary/${row.id}`, {
         method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
       });
 
       if (!response.ok) {
@@ -598,15 +597,8 @@ export default function TradingReviews() {
     setDetailLoading(true);
 
     try {
-      const token = localStorage.getItem("access_token");
-      const response = await fetch(
-        `${API_BASE_URL}/api/autobot/trading-summary/${row.id}/entries`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            ...(token && { Authorization: `Bearer ${token}` }),
-          },
-        }
+      const response = await authenticatedFetch(
+        `${API_BASE_URL}/api/autobot/trading-summary/${row.id}/entries`
       );
 
       if (response.ok) {
@@ -641,13 +633,8 @@ export default function TradingReviews() {
     if (!state) return;
     setNoteStates((prev) => ({ ...prev, [entryId]: { ...prev[entryId], saving: true } }));
     try {
-      const token = localStorage.getItem("access_token");
-      const res = await fetch(`${API_BASE_URL}/api/autobot/trade-entry/${entryId}/note`, {
+      const res = await authenticatedFetch(`${API_BASE_URL}/api/autobot/trade-entry/${entryId}/note`, {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
         body: JSON.stringify({ note: state.value }),
       });
       if (!res.ok) throw new Error("저장 실패");
@@ -661,13 +648,14 @@ export default function TradingReviews() {
     }
   };
 
-  // 초기 로드
+  // 초기 로드 — authLoading이 false로 바뀌는 시점에 단 1회 실행
   useEffect(() => {
+    if (authLoading) return;
     fetchTradingReviews();
     fetchAccountBalance();
     fetchHoldingPositions();
     fetchAccountSnapshots();
-  }, [fetchAccountBalance, fetchHoldingPositions, fetchAccountSnapshots]);
+  }, [authLoading]);
 
   // 계좌 요약 카드 렌더
   const renderAccountSummary = () => {
@@ -966,7 +954,7 @@ export default function TradingReviews() {
       grid: { display: false },
     };
 
-    const makeOptions = (y0Label, y1Label, y0Color, y1Color) => ({
+    const makeDualOptions = (y0Label, y1Label, y0Color, y1Color) => ({
       responsive: true,
       maintainAspectRatio: false,
       interaction: { mode: "index", intersect: false },
@@ -1020,36 +1008,73 @@ export default function TradingReviews() {
       ],
     };
 
-    // 차트 2: 예수금(좌) + 순이익(우)
+    // 차트 2: 일자별 확정 손익(막대) + 누적 손익(라인)
+    // dailyPnl: [{ date, daily_pnl }] — 매도가 있는 날짜만 포함
+    const pnlByDate = Object.fromEntries(dailyPnl.map((d) => [d.date, d.daily_pnl]));
+    const dailyProfitData = labels.map((date) => toMillions(pnlByDate[date] ?? 0));
+    const cumulativeProfitData = dailyProfitData.reduce((acc, v, i) => {
+      acc.push((acc[i - 1] ?? 0) + v);
+      return acc;
+    }, []);
+    const barColors = dailyProfitData.map((v) =>
+      v >= 0 ? "rgba(56,142,60,0.75)" : "rgba(211,47,47,0.75)"
+    );
+    const lastCumulative = cumulativeProfitData[cumulativeProfitData.length - 1] ?? 0;
+    const lineColor = lastCumulative >= 0 ? "rgba(56,142,60,1)" : "rgba(211,47,47,1)";
+
     const chart2Data = {
       labels,
       datasets: [
         {
-          label: "예수금",
-          data: accountSnapshots.map((s) => toMillions(s.remain_money)),
-          borderColor: "#388e3c",
-          backgroundColor: "rgba(56,142,60,0.08)",
-          fill: true,
-          tension: 0.3,
-          pointRadius: 3,
+          type: "bar",
+          label: "일자별 확정 손익",
+          data: dailyProfitData,
+          backgroundColor: barColors,
+          borderColor: barColors,
+          borderWidth: 1,
           yAxisID: "y",
         },
         {
-          label: "순이익",
-          data: accountSnapshots.map((s) => toMillions(s.stock_revenue)),
-          borderColor: "#9c27b0",
-          backgroundColor: "rgba(156,39,176,0.06)",
-          fill: false,
+          type: "line",
+          label: "누적 손익",
+          data: cumulativeProfitData,
+          borderColor: lineColor,
+          backgroundColor: "transparent",
           tension: 0.3,
-          pointRadius: 3,
-          borderDash: [5, 3],
-          yAxisID: "y1",
+          pointRadius: 2,
+          borderWidth: 2,
+          yAxisID: "y",
         },
       ],
     };
 
-    const chart1Options = makeOptions("총 평가금액", "주식 평가금액", "#1976d2", "#f57c00");
-    const chart2Options = makeOptions("예수금", "순이익", "#388e3c", "#9c27b0");
+    const chart2Options = {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: "index", intersect: false },
+      plugins: {
+        legend: { position: "top", labels: { font: { size: 11 }, usePointStyle: true, padding: 12 } },
+        tooltip: {
+          callbacks: {
+            label: (ctx) =>
+              ` ${ctx.dataset.label}: ${ctx.parsed.y >= 0 ? "+" : ""}${ctx.parsed.y.toLocaleString()}만원`,
+          },
+        },
+      },
+      scales: {
+        x: xScale,
+        y: {
+          position: "left",
+          ticks: {
+            font: { size: 10 },
+            callback: (v) => `${v >= 0 ? "+" : ""}${v.toLocaleString()}만`,
+          },
+          grid: { color: "rgba(0,0,0,0.05)" },
+        },
+      },
+    };
+
+    const chart1Options = makeDualOptions("총 평가금액", "주식 평가금액", "#1976d2", "#f57c00");
 
     return (
       <Card sx={{ mb: 3 }}>
@@ -1069,7 +1094,7 @@ export default function TradingReviews() {
             </Grid>
             <Grid item xs={12} md={6}>
               <Box sx={{ height: 220 }}>
-                <Line data={chart2Data} options={chart2Options} />
+                <Bar data={chart2Data} options={chart2Options} />
               </Box>
             </Grid>
           </Grid>
@@ -1213,7 +1238,7 @@ export default function TradingReviews() {
                     columns={columns}
                     data={tradingReviews}
                     autoOptimizeColumns={true}
-                    defaultSortFieldId={4} // 첫진입일로 기본 정렬
+                    defaultSortFieldId={5} // 최종청산일로 기본 정렬
                     defaultSortAsc={false} // 최신순 정렬
                   />
                 </ResponsiveTableWrapper>
