@@ -84,6 +84,9 @@ function LightweightChart({ data, mode = "daily", loading = false, initialVisibl
         borderColor: "#d0d0d0",
         timeVisible: mode === "intraday",
         secondsVisible: false,
+        rightOffset: mode === "intraday" ? 0 : 10,
+        // 새 봉 추가 시 자동 스크롤 방지 → setVisibleRange 고정 유지
+        shiftVisibleRangeOnNewBar: false,
       },
       localization: { locale: "ko-KR" },
     });
@@ -147,8 +150,11 @@ function LightweightChart({ data, mode = "daily", loading = false, initialVisibl
     if (!Array.isArray(data) || data.length === 0) {
       candleSeriesRef.current.setData([]);
       volumeSeriesRef.current.setData([]);
+      didInitialFitRef.current = false;
       return;
     }
+
+    const isIntraday = mode === "intraday";
 
     const candleData = data.map((d) => ({
       time: d.time,
@@ -170,15 +176,33 @@ function LightweightChart({ data, mode = "daily", loading = false, initialVisibl
     // 최초 1회만 초기 뷰 범위 설정. 폴링/현재가 갱신 시 사용자 줌/팬 상태 유지.
     if (!didInitialFitRef.current && chartRef.current) {
       const total = candleData.length;
-      if (initialVisibleBars && total > initialVisibleBars) {
+      if (isIntraday) {
+        const firstTime = candleData[0]?.time;
+        if (typeof firstTime === "number") {
+          const d = new Date(firstTime * 1000);
+          const y = d.getUTCFullYear();
+          const mo = d.getUTCMonth();
+          const day = d.getUTCDate();
+          const from = Math.floor(Date.UTC(y, mo, day, 9, 0, 0) / 1000);
+          const to = Math.floor(Date.UTC(y, mo, day, 15, 30, 0) / 1000);
+          // rAF: setData 렌더링 완료 후 범위 적용 (setData 직후 auto-scroll 덮어쓰기 방지)
+          requestAnimationFrame(() => {
+            if (chartRef.current) {
+              chartRef.current.timeScale().setVisibleRange({ from, to });
+            }
+          });
+          didInitialFitRef.current = true;
+        }
+      } else if (initialVisibleBars && total > initialVisibleBars) {
         chartRef.current.timeScale().setVisibleLogicalRange({
           from: total - initialVisibleBars,
           to: total - 1,
         });
+        didInitialFitRef.current = true;
       } else {
         chartRef.current.timeScale().fitContent();
+        didInitialFitRef.current = true;
       }
-      didInitialFitRef.current = true;
     }
   }, [data, initialVisibleBars]);
 

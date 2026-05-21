@@ -4,7 +4,7 @@
  * - 인증된 사용자만 접근 가능
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -56,7 +56,7 @@ import StockChartModal from "components/StockChartModal";
 
 // Utility functions
 const formatCurrency = (value) => {
-  if (!value) return "-";
+  if (value === null || value === undefined) return "-";
   return new Intl.NumberFormat("ko-KR").format(value);
 };
 
@@ -99,6 +99,7 @@ const getStrategyTypeColor = (strategyType) => {
 const getTradingModeLabel = (tradingMode) => {
   const labels = {
     manual: "Manual",
+    turtle: "Turtle",
     atr: "Turtle(ATR)",
   };
   return labels[tradingMode] || tradingMode;
@@ -138,6 +139,7 @@ export default function TradingConfigs() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [allTradingConfigs, setAllTradingConfigs] = useState([]);
+  const allTradingConfigsRef = useRef([]);
   const [currentPrices, setCurrentPrices] = useState({}); // 종목별 현재가 저장
   const [tradingStatus, setTradingStatus] = useState({}); // 거래 상태 정보 저장
   const [favoriteCodes, setFavoriteCodes] = useState(new Set()); // 즐겨찾기 종목코드 집합
@@ -360,7 +362,7 @@ export default function TradingConfigs() {
     },
     {
       name: "진입횟수",
-      selector: (row) => tradingStatus[row.stock_code]?.actual_entries || 0,
+      selector: (row) => tradingStatus[row.stock_code]?.actual_entries ?? 0,
       sortable: true,
       cell: (row) => {
         const status = tradingStatus[row.stock_code];
@@ -410,7 +412,7 @@ export default function TradingConfigs() {
     },
     {
       name: "보유정보",
-      selector: (row) => tradingStatus[row.stock_code]?.total_quantity || 0,
+      selector: (row) => tradingStatus[row.stock_code]?.total_quantity ?? 0,
       sortable: true,
       cell: (row) => {
         const status = tradingStatus[row.stock_code];
@@ -451,7 +453,7 @@ export default function TradingConfigs() {
     },
     {
       name: "현재가",
-      selector: (row) => currentPrices[row.stock_code]?.price || 0,
+      selector: (row) => currentPrices[row.stock_code]?.price ?? 0,
       sortable: true,
       cell: (row) => {
         const currentPrice = currentPrices[row.stock_code];
@@ -463,7 +465,11 @@ export default function TradingConfigs() {
         return (
           <Tooltip
             title={
-              currentPrice ? `데이터 소스: ${currentPrice.source || "unknown"}` : "주가 조회 중..."
+              currentPrice
+                ? `데이터 소스: ${currentPrice.source || "unknown"}`
+                : currentPrice === null
+                ? "현재가 조회 실패"
+                : "주가 조회 중..."
             }
             arrow
           >
@@ -477,7 +483,11 @@ export default function TradingConfigs() {
                   lineHeight: 1.3,
                 }}
               >
-                {currentPrice ? `${formatCurrency(currentPrice.price)}원` : "조회중..."}
+                {currentPrice
+                  ? `${formatCurrency(currentPrice.price)}원`
+                  : currentPrice === null
+                  ? "-"
+                  : "조회중..."}
               </MKTypography>
               {currentPrice && (isUp || isDown) && (
                 <MKTypography
@@ -498,7 +508,7 @@ export default function TradingConfigs() {
     },
     {
       name: "고점/낙폭",
-      selector: (row) => row.trailing_stop_peak_price || 0,
+      selector: (row) => row.trailing_stop_peak_price ?? 0,
       sortable: true,
       cell: (row) => {
         const peak = row.trailing_stop_peak_price;
@@ -729,69 +739,56 @@ export default function TradingConfigs() {
     }
   };
 
-  // 현재가 조회 함수 (Yahoo Finance API 사용)
-  const fetchCurrentPrice = async (stockCode) => {
-    try {
-      // 한국 주식의 경우 .KS (KOSPI) 또는 .KQ (KOSDAQ) 접미사 추가
-      const symbol = `${stockCode}.KS`; // 기본적으로 KOSPI로 시도
-
-      // CORS 문제를 해결하기 위해 백엔드를 통해 주가 조회
-      const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
-      const response = await authenticatedFetch(`${apiBaseUrl}/api/stock-price/${stockCode}`);
-
-      if (response.ok) {
-        const data = await response.json();
-        return {
-          price: data.price,
-          change: data.change,
-          changePercent: data.changePercent,
-          source: data.source,
-          marketState: data.market_state,
-        };
-      } else {
-        // 백엔드 API가 없는 경우 fallback (개발용)
-        return null;
-      }
-    } catch (error) {
-      return null;
-    }
-  };
-
-  // 모든 종목의 현재가 조회
+  // 모든 종목의 현재가를 일괄 조회 (서버에서 순차 처리하여 KIS Rate Limit 대응)
   const loadCurrentPrices = async (configs) => {
     if (!configs || configs.length === 0) return;
 
-    const pricePromises = configs.map(async (config) => {
-      try {
-        const price = await fetchCurrentPrice(config.stock_code);
-        return { stockCode: config.stock_code, price, success: !!price };
-      } catch (error) {
-        return { stockCode: config.stock_code, price: null, success: false, error: error.message };
+    const uniqueStockCodes = [...new Set(configs.map((c) => c.stock_code))];
+    const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
+
+    try {
+      const response = await authenticatedFetch(`${apiBaseUrl}/api/stock-prices/batch`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ stock_codes: uniqueStockCodes }),
+      });
+
+      if (!response.ok) {
+        showSnackbar("현재가 조회에 실패했습니다.", "error");
+        return;
       }
-    });
 
-    const priceResults = await Promise.all(pricePromises);
-    const pricesMap = {};
-    let successCount = 0;
-    let errorCount = 0;
+      const data = await response.json();
+      const pricesMap = {};
+      let successCount = 0;
+      let errorCount = 0;
 
-    priceResults.forEach(({ stockCode, price, success, error }) => {
-      if (success && price) {
-        pricesMap[stockCode] = price;
-        successCount++;
-      } else {
-        errorCount++;
+      Object.entries(data.prices).forEach(([stockCode, result]) => {
+        if (result.success) {
+          pricesMap[stockCode] = {
+            price: result.price,
+            change: result.change,
+            changePercent: result.changePercent,
+            source: result.source,
+            marketState: result.market_state,
+          };
+          successCount++;
+        } else {
+          pricesMap[stockCode] = null;
+          errorCount++;
+        }
+      });
+
+      setCurrentPrices(pricesMap);
+
+      if (successCount > 0) {
+        showSnackbar(`${successCount}개 종목의 현재가를 업데이트했습니다.`, "success");
       }
-    });
-
-    setCurrentPrices(pricesMap);
-
-    // 결과 알림
-    if (successCount > 0) {
-      showSnackbar(`${successCount}개 종목의 현재가를 업데이트했습니다.`, "success");
-    }
-    if (errorCount > 0) {
-      showSnackbar(`${errorCount}개 종목의 현재가 조회에 실패했습니다.`, "warning");
+      if (errorCount > 0) {
+        showSnackbar(`${errorCount}개 종목의 현재가 조회에 실패했습니다.`, "warning");
+      }
+    } catch (error) {
+      showSnackbar(`현재가 조회 오류: ${error.message}`, "error");
     }
   };
 
@@ -901,17 +898,22 @@ export default function TradingConfigs() {
     }
   }, [user]);
 
-  // 현재가 + 설정(고점 등) 실시간 업데이트 (5분마다)
+  // allTradingConfigs ref 동기화 (interval 콜백이 항상 최신 값을 참조하도록)
   useEffect(() => {
-    if (allTradingConfigs.length > 0) {
-      const interval = setInterval(() => {
-        loadCurrentPrices(allTradingConfigs);
-        loadAllTradingConfigs();
-      }, 5 * 60 * 1000);
-
-      return () => clearInterval(interval);
-    }
+    allTradingConfigsRef.current = allTradingConfigs;
   }, [allTradingConfigs]);
+
+  // 현재가 + 설정(고점 등) 실시간 업데이트 (5분마다) - 최초 1회만 등록
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (allTradingConfigsRef.current.length > 0) {
+        loadCurrentPrices(allTradingConfigsRef.current);
+        loadAllTradingConfigs();
+      }
+    }, 5 * 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   // 로그인하지 않은 경우
   if (!user) {

@@ -95,7 +95,7 @@ import { useNotification } from "components/NotificationSystem/NotificationSyste
 
 // Utility functions
 const formatCurrency = (value) => {
-  if (!value) return "-";
+  if (value === null || value === undefined) return "-";
   return new Intl.NumberFormat("ko-KR").format(value);
 };
 
@@ -547,8 +547,9 @@ export default function TradingReviews() {
     const total_profit_loss = data.reduce((sum, item) => sum + (item.total_profit_loss || 0), 0);
     const avg_profit_loss = total_count > 0 ? total_profit_loss / total_count : 0;
     
-    const profitable_count = data.filter(item => (item.total_profit_loss || 0) > 0).length;
-    const win_rate = total_count > 0 ? (profitable_count / total_count * 100) : 0;
+    const closed_items = data.filter(item => item.final_status === 'CLOSED');
+    const profitable_count = closed_items.filter(item => (item.total_profit_loss || 0) > 0).length;
+    const win_rate = closed_count > 0 ? (profitable_count / closed_count * 100) : 0;
 
     const total_buy_amount = data.reduce((sum, item) => sum + (item.total_buy_amount || 0), 0);
     const total_sell_amount = data.reduce((sum, item) => sum + (item.total_sell_amount || 0), 0);
@@ -563,7 +564,7 @@ export default function TradingReviews() {
       profitable_count,
       total_buy_amount,
       total_sell_amount,
-      loss_count: total_count - profitable_count
+      loss_count: closed_count - profitable_count
     });
   };
 

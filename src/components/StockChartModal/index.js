@@ -23,6 +23,21 @@ async function fetchJson(url) {
   return res.json();
 }
 
+function mapMinuteRow(r) {
+  // lightweight-charts는 timestamp를 UTC로 표시 → KST 시각을 "UTC인 척" 보내야 09:00이 그대로 보임
+  const [datepart, timepart] = r.datetime.split(" ");
+  const [y, m, d] = datepart.split("-").map(Number);
+  const [hh, mm, ss] = timepart.split(":").map(Number);
+  return {
+    time: Math.floor(Date.UTC(y, m - 1, d, hh, mm, ss) / 1000),
+    open: Number(r.open),
+    high: Number(r.high),
+    low: Number(r.low),
+    close: Number(r.close),
+    volume: Number(r.volume),
+  };
+}
+
 function StockChartModal({ open, onClose, stockCode, stockName }) {
   const [dailyData, setDailyData] = useState([]);
   const [minuteData, setMinuteData] = useState([]);
@@ -32,6 +47,8 @@ function StockChartModal({ open, onClose, stockCode, stockName }) {
   const [error, setError] = useState(null);
 
   const refreshTimerRef = useRef(null);
+  const eventSourceRef = useRef(null);
+  const minuteAccumRef = useRef([]);
 
   useEffect(() => {
     if (!open || !stockCode) return;
@@ -62,33 +79,56 @@ function StockChartModal({ open, onClose, stockCode, stockName }) {
       }
     };
 
-    const loadMinute = async () => {
-      setMinuteLoading(true);
-      try {
-        const res = await fetchJson(
-          `${apiBase}/api/find_stock_minute?code=${stockCode}`
-        );
-        const rows = res?.data || [];
-        const mapped = rows.map((r) => {
-          // lightweight-charts는 timestamp를 UTC로 표시 → KST 시각을 "UTC인 척" 보내야 09:00이 그대로 보임
-          const [datepart, timepart] = r.datetime.split(" ");
-          const [y, m, d] = datepart.split("-").map(Number);
-          const [hh, mm, ss] = timepart.split(":").map(Number);
-          return {
-            time: Math.floor(Date.UTC(y, m - 1, d, hh, mm, ss) / 1000),
-            open: Number(r.open),
-            high: Number(r.high),
-            low: Number(r.low),
-            close: Number(r.close),
-            volume: Number(r.volume),
-          };
-        });
-        if (!cancelled) setMinuteData(mapped);
-      } catch (e) {
-        if (!cancelled) setError(`분봉 데이터 로드 실패: ${e.message}`);
-      } finally {
-        if (!cancelled) setMinuteLoading(false);
+    const loadMinute = () => {
+      // 기존 SSE 연결 종료
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+        eventSourceRef.current = null;
       }
+
+      minuteAccumRef.current = [];
+      setMinuteLoading(true);
+
+      const source = new EventSource(`${apiBase}/api/find_stock_minute_stream?code=${stockCode}`);
+      eventSourceRef.current = source;
+
+      source.onmessage = (e) => {
+        if (cancelled) {
+          source.close();
+          return;
+        }
+        const msg = JSON.parse(e.data);
+
+        if (msg.status === "done") {
+          source.close();
+          eventSourceRef.current = null;
+          setMinuteLoading(false);
+          return;
+        }
+
+        if (msg.status === "error") {
+          source.close();
+          eventSourceRef.current = null;
+          setError(`분봉 데이터 로드 실패: ${msg.message}`);
+          setMinuteLoading(false);
+          return;
+        }
+
+        if (msg.status === "ok" && msg.data) {
+          const mapped = msg.data.map(mapMinuteRow);
+          // 누적 후 시간 오름차순 정렬
+          minuteAccumRef.current = [...minuteAccumRef.current, ...mapped].sort(
+            (a, b) => a.time - b.time
+          );
+          setMinuteData([...minuteAccumRef.current]);
+        }
+      };
+
+      source.onerror = () => {
+        if (!cancelled) setMinuteLoading(false);
+        source.close();
+        eventSourceRef.current = null;
+      };
     };
 
     const loadCurrentPrice = async () => {
@@ -103,6 +143,9 @@ function StockChartModal({ open, onClose, stockCode, stockName }) {
     };
 
     setError(null);
+    setDailyData([]);
+    setMinuteData([]);
+    setCurrentPrice(null);
     loadDaily();
     loadMinute();
     loadCurrentPrice();
@@ -114,6 +157,10 @@ function StockChartModal({ open, onClose, stockCode, stockName }) {
 
     return () => {
       cancelled = true;
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+        eventSourceRef.current = null;
+      }
       if (refreshTimerRef.current) {
         clearInterval(refreshTimerRef.current);
         refreshTimerRef.current = null;
@@ -179,10 +226,14 @@ function StockChartModal({ open, onClose, stockCode, stockName }) {
           </Box>
           <Box sx={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
             <Typography variant="caption" color="text.secondary" mb={0.5}>
-              1분봉 (당일, {Math.round(MINUTE_REFRESH_MS / 1000)}초마다 갱신)
+              1분봉 (정규장 09:00~15:30, {Math.round(MINUTE_REFRESH_MS / 1000)}초마다 갱신)
             </Typography>
             <Box sx={{ flex: 1, minHeight: 0, border: "1px solid #eee", borderRadius: 1 }}>
-              <LightweightChart data={minuteData} mode="intraday" loading={minuteLoading} />
+              <LightweightChart
+                data={minuteData}
+                mode="intraday"
+                loading={minuteLoading}
+              />
             </Box>
           </Box>
         </Box>

@@ -15,6 +15,8 @@ import {
   Tooltip,
   CircularProgress,
   Alert,
+  Switch,
+  Chip,
 } from "@mui/material";
 import { Close, Refresh } from "@mui/icons-material";
 import MKBox from "components/MKBox";
@@ -30,6 +32,7 @@ import { useAuth } from "contexts/AuthContext";
 const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) => {
   const { authenticatedFetch } = useAuth();
   const [message, setMessage] = useState(null);
+  const [isActive, setIsActive] = useState(true);
 
   // 가상의 selectedStock 객체 생성 (config 기반)
   const selectedStock = config
@@ -51,8 +54,8 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
   // 모달이 열릴 때 기존 설정 데이터로 폼 초기화
   useEffect(() => {
     if (open && config) {
-      // useTradingForm 훅의 loadExistingConfig 함수 사용
       tradingForm.loadExistingConfig(config);
+      setIsActive(config.is_active ?? true);
       setMessage(null);
     }
   }, [open, config]);
@@ -82,6 +85,7 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
         pyramiding_count: tradingForm.pyramidingCount,
         pyramiding_entries: tradingForm.pyramidingEntries,
         positions: tradingForm.positions,
+        is_active: isActive,
       });
       if (result) {
         setMessage({ type: "success", text: "설정이 성공적으로 저장되었습니다." });
@@ -130,17 +134,35 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
             </MKTypography>
           )}
         </MKBox>
-        <IconButton
-          onClick={onClose}
-          sx={{
-            color: "rgba(0, 0, 0, 0.54)",
-            "&:hover": {
-              backgroundColor: "rgba(0, 0, 0, 0.04)",
-            },
-          }}
-        >
-          <Close />
-        </IconButton>
+        <MKBox display="flex" alignItems="center" gap={1}>
+          <Tooltip title={isActive ? "클릭하면 비활성화됩니다" : "클릭하면 활성화됩니다"}>
+            <MKBox display="flex" alignItems="center" gap={0.5}>
+              <Chip
+                label={isActive ? "활성" : "비활성"}
+                color={isActive ? "success" : "default"}
+                size="small"
+                sx={{ fontWeight: "bold", fontSize: "0.75rem" }}
+              />
+              <Switch
+                checked={isActive}
+                onChange={(e) => setIsActive(e.target.checked)}
+                color="success"
+                size="small"
+              />
+            </MKBox>
+          </Tooltip>
+          <IconButton
+            onClick={onClose}
+            sx={{
+              color: "rgba(0, 0, 0, 0.54)",
+              "&:hover": {
+                backgroundColor: "rgba(0, 0, 0, 0.04)",
+              },
+            }}
+          >
+            <Close />
+          </IconButton>
+        </MKBox>
       </DialogTitle>
 
       <DialogContent sx={{ p: 3, pt: 2 }}>
