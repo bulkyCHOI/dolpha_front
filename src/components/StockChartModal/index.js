@@ -13,6 +13,16 @@ const DAILY_LIMIT = 20000;
 const DAILY_INITIAL_VISIBLE = 150;
 const MINUTE_REFRESH_MS = 30 * 1000;
 
+/** 정규장 여부 (09:00 ~ 15:30 KST) */
+function isMarketHours() {
+  const now = new Date();
+  // KST = UTC+9
+  const kstHour = (now.getUTCHours() + 9) % 24;
+  const kstMin  = now.getUTCMinutes();
+  const kstTime = kstHour * 100 + kstMin;
+  return kstTime >= 900 && kstTime < 1530;
+}
+
 function getApiBase() {
   return window.REACT_APP_API_BASE_URL || "http://localhost:8000";
 }
@@ -116,10 +126,10 @@ function StockChartModal({ open, onClose, stockCode, stockName }) {
 
         if (msg.status === "ok" && msg.data) {
           const mapped = msg.data.map(mapMinuteRow);
-          // 누적 후 시간 오름차순 정렬
-          minuteAccumRef.current = [...minuteAccumRef.current, ...mapped].sort(
-            (a, b) => a.time - b.time
-          );
+          // 중복 제거(time 키 기준) + 시간 오름차순 정렬
+          const merged = new Map(minuteAccumRef.current.map((b) => [b.time, b]));
+          for (const b of mapped) merged.set(b.time, b);
+          minuteAccumRef.current = [...merged.values()].sort((a, b) => a.time - b.time);
           setMinuteData([...minuteAccumRef.current]);
         }
       };
@@ -149,6 +159,13 @@ function StockChartModal({ open, onClose, stockCode, stockName }) {
     loadDaily();
     loadMinute();
     loadCurrentPrice();
+
+    // 정규장 중 차트 오픈 시 백필 실행 (누락된 분봉 DB에 채움 → 30초 후 갱신 때 반영)
+    if (isMarketHours()) {
+      fetch(`${apiBase}/api/backfill_minute_ohlcv?code=${stockCode}`).catch(() => {
+        // 백필 실패는 무시 (차트 데이터 자체는 SSE 또는 KIS 직접 조회로 제공)
+      });
+    }
 
     refreshTimerRef.current = setInterval(() => {
       loadMinute();
