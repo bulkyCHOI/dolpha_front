@@ -1,8 +1,42 @@
 import { useEffect, useRef, useState } from "react";
 import { createChart, CandlestickSeries, HistogramSeries } from "lightweight-charts";
+import BandFillPrimitive from "./BandFillPrimitive";
 
 const UP_COLOR = "#ef4444";
 const DOWN_COLOR = "#3b82f6";
+
+const MA60_PERIOD = 60;
+
+/**
+ * 일봉 데이터에서 MA60 × 1.5 / × 1.75 밴드를 계산합니다.
+ * @param {Array<{time, close}>} data
+ * @returns {{ lower: Array<{time, price}>, upper: Array<{time, price}> }}
+ */
+function computeMA60Band(data) {
+  if (!data || data.length < MA60_PERIOD) return { lower: [], upper: [] };
+
+  const lower = [];
+  const upper = [];
+
+  // 초기 윈도우 합산
+  let windowSum = 0;
+  for (let i = 0; i < MA60_PERIOD; i++) windowSum += data[i].close;
+
+  // 첫 번째 MA60 (index = 59)
+  const firstMa = windowSum / MA60_PERIOD;
+  lower.push({ time: data[MA60_PERIOD - 1].time, price: firstMa * 1.5 });
+  upper.push({ time: data[MA60_PERIOD - 1].time, price: firstMa * 1.75 });
+
+  // 슬라이딩 윈도우 O(n)
+  for (let i = MA60_PERIOD; i < data.length; i++) {
+    windowSum += data[i].close - data[i - MA60_PERIOD].close;
+    const ma = windowSum / MA60_PERIOD;
+    lower.push({ time: data[i].time, price: ma * 1.5 });
+    upper.push({ time: data[i].time, price: ma * 1.75 });
+  }
+
+  return { lower, upper };
+}
 
 function formatNumber(n) {
   if (n == null || Number.isNaN(n)) return "-";
@@ -60,6 +94,7 @@ function LightweightChart({ data, mode = "daily", loading = false, initialVisibl
   const chartRef = useRef(null);
   const candleSeriesRef = useRef(null);
   const volumeSeriesRef = useRef(null);
+  const bandPrimitiveRef = useRef(null);
   const didInitialFitRef = useRef(false);
 
   // 호버 캔들 (없으면 마지막 캔들 표시 — TradingView와 동일)
@@ -131,9 +166,14 @@ function LightweightChart({ data, mode = "daily", loading = false, initialVisibl
     };
     chart.subscribeCrosshairMove(handleCrosshairMove);
 
+    // MA60 매도추천 밴드 프리미티브 (일봉 전용 — candleSeries에 부착)
+    const bandPrimitive = new BandFillPrimitive();
+    candleSeries.attachPrimitive(bandPrimitive);
+
     chartRef.current = chart;
     candleSeriesRef.current = candleSeries;
     volumeSeriesRef.current = volumeSeries;
+    bandPrimitiveRef.current = bandPrimitive;
     didInitialFitRef.current = false;
 
     return () => {
@@ -142,6 +182,7 @@ function LightweightChart({ data, mode = "daily", loading = false, initialVisibl
       chartRef.current = null;
       candleSeriesRef.current = null;
       volumeSeriesRef.current = null;
+      bandPrimitiveRef.current = null;
     };
   }, [mode]);
 
@@ -150,6 +191,7 @@ function LightweightChart({ data, mode = "daily", loading = false, initialVisibl
     if (!Array.isArray(data) || data.length === 0) {
       candleSeriesRef.current.setData([]);
       volumeSeriesRef.current.setData([]);
+      if (bandPrimitiveRef.current) bandPrimitiveRef.current.updateBand([], []);
       didInitialFitRef.current = false;
       return;
     }
@@ -172,6 +214,16 @@ function LightweightChart({ data, mode = "daily", loading = false, initialVisibl
 
     candleSeriesRef.current.setData(candleData);
     volumeSeriesRef.current.setData(volumeData);
+
+    // MA60 매도추천 밴드 갱신 (일봉 전용)
+    if (bandPrimitiveRef.current) {
+      if (mode === "daily") {
+        const { lower, upper } = computeMA60Band(data);
+        bandPrimitiveRef.current.updateBand(lower, upper);
+      } else {
+        bandPrimitiveRef.current.updateBand([], []);
+      }
+    }
 
     // 최초 1회만 초기 뷰 범위 설정. 폴링/현재가 갱신 시 사용자 줌/팬 상태 유지.
     if (!didInitialFitRef.current && chartRef.current) {
