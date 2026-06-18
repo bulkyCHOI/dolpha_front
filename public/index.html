@@ -47,9 +47,9 @@ Software.
       window.REACT_APP_API_BASE_URL = "%REACT_APP_API_BASE_URL%";
       window.REACT_APP_GOOGLE_CLIENT_ID = "%REACT_APP_GOOGLE_CLIENT_ID%";
 
-      // 빌드 시점에 환경 변수가 치환되지 않은 경우 기본값 설정
+      // 빌드 시점에 환경 변수가 치환되지 않은 경우 호스트 기반 자동 분기
       if (window.REACT_APP_API_BASE_URL.startsWith("%")) {
-        window.REACT_APP_API_BASE_URL = "http://localhost:8000";
+        window.REACT_APP_API_BASE_URL = "http://" + window.location.hostname + ":8000";
       }
       if (window.REACT_APP_GOOGLE_CLIENT_ID.startsWith("%")) {
         window.REACT_APP_GOOGLE_CLIENT_ID = "your-google-client-id-here";
