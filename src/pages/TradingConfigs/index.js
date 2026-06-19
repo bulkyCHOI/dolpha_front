@@ -178,6 +178,38 @@ export default function TradingConfigs() {
     }
   };
 
+  // KIS 실계좌 기준 잘못 비활성화된 종목 복구
+  const handleRecoverPositions = async () => {
+    try {
+      const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
+      const response = await authenticatedFetch(`${apiBaseUrl}/api/mypage/reconcile-positions`, {
+        method: "POST",
+      });
+      const result = await response.json();
+      if (result.success) {
+        const count = result.recovered?.length ?? 0;
+        const peakCount = result.peak_fixed?.length ?? 0;
+        const total = count + peakCount;
+        let msg;
+        if (count > 0 && peakCount > 0) {
+          msg = `${count}개 종목 복구, ${peakCount}개 고점 보정 완료 — 새로고침합니다.`;
+        } else if (count > 0) {
+          msg = `${count}개 종목 복구 완료 — 새로고침합니다.`;
+        } else if (peakCount > 0) {
+          msg = `${peakCount}개 종목 고점 보정 완료 — 새로고침합니다.`;
+        } else {
+          msg = "복구할 항목 없음 (KIS 보유 종목과 DB가 일치합니다)";
+        }
+        showSnackbar(msg, total > 0 ? "success" : "info");
+        if (total > 0) loadAllTradingConfigs();
+      } else {
+        showSnackbar(`복구 실패: ${result.error}`, "error");
+      }
+    } catch (err) {
+      showSnackbar(`복구 요청 오류: ${err.message}`, "error");
+    }
+  };
+
   // 즐겨찾기 목록 로드
   const loadFavorites = async () => {
     try {
@@ -1185,7 +1217,7 @@ export default function TradingConfigs() {
 
           {/* 새로고침 버튼 */}
           {!loading && (
-            <MKBox textAlign="center" mt={4} display="flex" justifyContent="center" gap={2}>
+            <MKBox textAlign="center" mt={4} display="flex" justifyContent="center" gap={2} flexWrap="wrap">
               <MKButton variant="outlined" color="info" onClick={loadAllTradingConfigs}>
                 전체 새로고침
               </MKButton>
@@ -1203,6 +1235,9 @@ export default function TradingConfigs() {
                   </MKButton>
                 </>
               )}
+              <MKButton variant="outlined" color="error" onClick={handleRecoverPositions}>
+                포지션 복구 (KIS 대조)
+              </MKButton>
             </MKBox>
           )}
         </FullWidthContainer>

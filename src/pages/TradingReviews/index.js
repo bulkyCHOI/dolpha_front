@@ -478,12 +478,28 @@ export default function TradingReviews() {
   }, [API_BASE_URL]);
 
   // 계좌 일별 스냅샷 조회 (페이지 접근 시 오늘 스냅샷 저장 후 조회)
+  // save-today 응답의 balance를 재사용해 별도 GetBalance 호출 방지 (KIS API 경합 방지)
   const fetchAccountSnapshots = useCallback(async () => {
     setSnapshotsLoading(true);
+    setBalanceLoading(true);
     try {
-      await authenticatedFetch(`${API_BASE_URL}/api/mypage/account-snapshots/save-today`, {
+      const saveRes = await authenticatedFetch(`${API_BASE_URL}/api/mypage/account-snapshots/save-today`, {
         method: "POST",
       });
+      const saveResult = await saveRes.json();
+      if (saveResult.success && saveResult.balance) {
+        setAccountBalance(saveResult.balance);
+      } else {
+        // fallback: save-today에 balance 없으면 별도 조회
+        try {
+          const balRes = await authenticatedFetch(`${API_BASE_URL}/api/mypage/account-balance`);
+          const balResult = await balRes.json();
+          if (balResult.success) setAccountBalance(balResult.data);
+        } catch (e) {
+          console.error("계좌 잔고 조회 실패:", e);
+        }
+      }
+      setBalanceLoading(false);
 
       const [snapshotRes, pnlRes] = await Promise.all([
         authenticatedFetch(`${API_BASE_URL}/api/mypage/account-snapshots?days=90`),
@@ -495,6 +511,7 @@ export default function TradingReviews() {
       if (pnlResult.success) setDailyPnl(pnlResult.data || []);
     } catch (err) {
       console.error("계좌 스냅샷 조회 실패:", err);
+      setBalanceLoading(false);
     } finally {
       setSnapshotsLoading(false);
     }
@@ -650,10 +667,10 @@ export default function TradingReviews() {
   };
 
   // 초기 로드 — authLoading이 false로 바뀌는 시점에 단 1회 실행
+  // fetchAccountBalance는 fetchAccountSnapshots 내부에서 처리 (KIS API 경합 방지)
   useEffect(() => {
     if (authLoading) return;
     fetchTradingReviews();
-    fetchAccountBalance();
     fetchHoldingPositions();
     fetchAccountSnapshots();
   }, [authLoading]);
