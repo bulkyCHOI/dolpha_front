@@ -28,3 +28,4 @@ yarn.lock
 commit.sh
 src/pages/Presentation/index.js.backup
 tests/
+nohup.out
