@@ -36,9 +36,19 @@ import StockList from "components/StockList/StockList";
 import { GRADIENT_COLORS } from "constants/styles";
 import { formatNumber } from "utils/formatters";
 
+const PERIODS = [
+  { value: "daily", label: "일간" },
+  { value: "weekly", label: "주간" },
+  { value: "monthly", label: "월간" },
+  { value: "quarterly", label: "분기" },
+  { value: "semiannual", label: "반기" },
+  { value: "annual", label: "연간" },
+];
+
 function TopRising() {
   const [activeTab, setActiveTab] = useState(0);
   const [mobileTab, setMobileTab] = useState(0); // 0: 종목, 1: 차트, 2: 자동매매
+  const [period, setPeriod] = useState("daily");
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const { isAuthenticated, authenticatedFetch, loading: authLoading } = useAuth();
@@ -74,7 +84,7 @@ function TopRising() {
     handleStockClick,
     handleIndexChange,
     setSelectedStock,
-  } = useTopRisingData();
+  } = useTopRisingData(period);
 
   const tradingForm = useTradingForm(selectedStock, authenticatedFetch, showSnackbar, "top_rising");
 
@@ -450,6 +460,33 @@ function TopRising() {
               {/* 상승률 TOP 탭 내용 */}
               {activeTab === 0 && (
                 <>
+                  {/* 기간 선택 탭 */}
+                  <MKBox sx={{ flexShrink: 0, borderBottom: "1px solid #e0e0e0", px: 0.5 }}>
+                    <Tabs
+                      value={period}
+                      onChange={(_, v) => setPeriod(v)}
+                      variant="scrollable"
+                      scrollButtons="auto"
+                      sx={{
+                        minHeight: "36px",
+                        "& .MuiTabs-indicator": { backgroundColor: "#667eea", height: "2px" },
+                        "& .MuiTab-root": {
+                          minHeight: "36px",
+                          fontSize: "0.75rem",
+                          fontWeight: "bold",
+                          color: "#888",
+                          padding: "6px 12px",
+                          minWidth: "auto",
+                          "&.Mui-selected": { color: "#667eea" },
+                        },
+                      }}
+                    >
+                      {PERIODS.map((p) => (
+                        <Tab key={p.value} value={p.value} label={p.label} />
+                      ))}
+                    </Tabs>
+                  </MKBox>
+
                   {/* 테이블 헤더 */}
                   <MKBox
                     sx={{
@@ -819,10 +856,33 @@ function TopRising() {
           overflow: "hidden",
         }}
       >
-        <MKBox sx={{ px: 2, py: 1.5, borderBottom: "1px solid #e0e0e0" }}>
-          <MKTypography variant="h6" fontWeight="bold">
+        <MKBox sx={{ px: 2, py: 1, borderBottom: "1px solid #e0e0e0", flexShrink: 0 }}>
+          <MKTypography variant="h6" fontWeight="bold" sx={{ mb: 0.5 }}>
             상승률 TOP 50
           </MKTypography>
+          <Tabs
+            value={period}
+            onChange={(_, v) => setPeriod(v)}
+            variant="scrollable"
+            scrollButtons="auto"
+            sx={{
+              minHeight: "32px",
+              "& .MuiTabs-indicator": { backgroundColor: "#667eea", height: "2px" },
+              "& .MuiTab-root": {
+                minHeight: "32px",
+                fontSize: "0.7rem",
+                fontWeight: "bold",
+                color: "#888",
+                padding: "4px 10px",
+                minWidth: "auto",
+                "&.Mui-selected": { color: "#667eea" },
+              },
+            }}
+          >
+            {PERIODS.map((p) => (
+              <Tab key={p.value} value={p.value} label={p.label} />
+            ))}
+          </Tabs>
         </MKBox>
         <MKBox sx={{ flex: 1, overflow: "auto" }}>
           <StockList

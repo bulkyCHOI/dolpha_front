@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 
 const BASE_URL = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
-export const useTopRisingData = () => {
+export const useTopRisingData = (period = "daily") => {
   const [stockData, setStockData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -19,7 +19,7 @@ export const useTopRisingData = () => {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`${BASE_URL}/api/find_stock_top_rising`);
+      const response = await fetch(`${BASE_URL}/api/find_stock_top_rising?period=${period}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -50,7 +50,7 @@ export const useTopRisingData = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [period]);
 
   // OHLCV 데이터 조회
   const fetchOHLCVData = useCallback(async (code) => {
@@ -151,7 +151,7 @@ export const useTopRisingData = () => {
     [fetchIndexOHLCVData]
   );
 
-  // 컴포넌트 마운트 시 데이터 로딩
+  // period 변경 시 데이터 리로드
   useEffect(() => {
     fetchTopRisingStocks();
   }, [fetchTopRisingStocks]);

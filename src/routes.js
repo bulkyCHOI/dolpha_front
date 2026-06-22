@@ -88,7 +88,7 @@ const routes = [
             component: <FiftyDayHigh />,
           },
           {
-            name: "상승률 TOP50",
+            name: "상승률 TOP 50",
             route: "/top-rising",
             component: <TopRising />,
           },
