@@ -197,7 +197,7 @@ function TopRising() {
     );
   }
 
-  if (loading) {
+  if (loading && stockData.length === 0) {
     return (
       <MKBox
         component="section"
@@ -429,6 +429,35 @@ function TopRising() {
             </Tabs>
           </MKBox>
 
+          {/* 기간 선택 탭 - 로딩 중에도 항상 표시 */}
+          {activeTab === 0 && stockData.length > 0 && (
+            <MKBox sx={{ flexShrink: 0, borderBottom: "1px solid #e0e0e0", px: 0.5 }}>
+              <Tabs
+                value={period}
+                onChange={(_, v) => setPeriod(v)}
+                variant="scrollable"
+                scrollButtons="auto"
+                sx={{
+                  minHeight: "36px",
+                  "& .MuiTabs-indicator": { backgroundColor: "#667eea", height: "2px" },
+                  "& .MuiTab-root": {
+                    minHeight: "36px",
+                    fontSize: "0.75rem",
+                    fontWeight: "bold",
+                    color: "#888",
+                    padding: "6px 12px",
+                    minWidth: "auto",
+                    "&.Mui-selected": { color: "#667eea" },
+                  },
+                }}
+              >
+                {PERIODS.map((p) => (
+                  <Tab key={p.value} value={p.value} label={p.label} />
+                ))}
+              </Tabs>
+            </MKBox>
+          )}
+
           {loading && (
             <MKBox
               sx={{
@@ -460,33 +489,6 @@ function TopRising() {
               {/* 상승률 TOP 탭 내용 */}
               {activeTab === 0 && (
                 <>
-                  {/* 기간 선택 탭 */}
-                  <MKBox sx={{ flexShrink: 0, borderBottom: "1px solid #e0e0e0", px: 0.5 }}>
-                    <Tabs
-                      value={period}
-                      onChange={(_, v) => setPeriod(v)}
-                      variant="scrollable"
-                      scrollButtons="auto"
-                      sx={{
-                        minHeight: "36px",
-                        "& .MuiTabs-indicator": { backgroundColor: "#667eea", height: "2px" },
-                        "& .MuiTab-root": {
-                          minHeight: "36px",
-                          fontSize: "0.75rem",
-                          fontWeight: "bold",
-                          color: "#888",
-                          padding: "6px 12px",
-                          minWidth: "auto",
-                          "&.Mui-selected": { color: "#667eea" },
-                        },
-                      }}
-                    >
-                      {PERIODS.map((p) => (
-                        <Tab key={p.value} value={p.value} label={p.label} />
-                      ))}
-                    </Tabs>
-                  </MKBox>
-
                   {/* 테이블 헤더 */}
                   <MKBox
                     sx={{

@@ -23,6 +23,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import ShowChartIcon from "@mui/icons-material/ShowChart";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 
 // Enhanced components
 import FullWidthContainer from "components/FullWidthContainer";
@@ -51,6 +52,9 @@ import TradingConfigModal from "components/TradingConfigModal/TradingConfigModal
 
 // TradingView 차트 위젯
 import StockChartModal from "components/StockChartModal";
+
+// 매매동향 모달
+import InvestorFlowModal from "components/InvestorFlowModal";
 
 // Remove the old styled component - now using EnhancedDataTable
 
@@ -152,6 +156,10 @@ export default function TradingConfigs() {
   // TradingView 차트 모달 state
   const [chartModalOpen, setChartModalOpen] = useState(false);
   const [chartModalStock, setChartModalStock] = useState(null);
+
+  // 매매동향 모달 state
+  const [flowModalOpen, setFlowModalOpen] = useState(false);
+  const [flowModalStock, setFlowModalStock] = useState(null);
 
   // 거래 상태 정보 로드 함수
   const loadTradingStatus = async () => {
@@ -721,6 +729,19 @@ export default function TradingConfigs() {
                 <ShowChartIcon sx={{ fontSize: "16px" }} />
               </IconButton>
             </Tooltip>
+            <Tooltip title="매매동향">
+              <IconButton
+                size="small"
+                color="secondary"
+                sx={{ padding: "4px" }}
+                onClick={() => {
+                  setFlowModalStock(row);
+                  setFlowModalOpen(true);
+                }}
+              >
+                <TrendingUpIcon sx={{ fontSize: "16px" }} />
+              </IconButton>
+            </Tooltip>
             <Tooltip title="삭제">
               <IconButton
                 size="small"
@@ -1252,6 +1273,14 @@ export default function TradingConfigs() {
         onClose={() => setChartModalOpen(false)}
         stockCode={chartModalStock?.stock_code}
         stockName={chartModalStock?.stock_name}
+      />
+
+      {/* 매매동향 모달 */}
+      <InvestorFlowModal
+        open={flowModalOpen}
+        onClose={() => setFlowModalOpen(false)}
+        stockCode={flowModalStock?.stock_code}
+        stockName={flowModalStock?.stock_name}
       />
 
       {/* 자동매매 설정 상세보기/수정 모달 */}
