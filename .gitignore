@@ -29,3 +29,6 @@ commit.sh
 src/pages/Presentation/index.js.backup
 tests/
 nohup.out
+
+# dev 서버 로그
+frontend.log
