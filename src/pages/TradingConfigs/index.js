@@ -15,6 +15,8 @@ import Chip from "@mui/material/Chip";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import Box from "@mui/material/Box";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
 
 // @mui icons
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -85,6 +87,7 @@ const getStrategyTypeLabel = (strategyType) => {
     weekly_high: "52주 신고가",
     fifty_day_high: "50일 신고가",
     daily_top50: "일일 Top50",
+    theme_surge: "급등테마주",
   };
   return labels[strategyType] || strategyType;
 };
@@ -96,6 +99,7 @@ const getStrategyTypeColor = (strategyType) => {
     weekly_high: "#ff5722", // 딥 오렌지 - 장기 전략 (52주 신고가)
     fifty_day_high: "#ff9800", // 밝은 오렌지 - 중기 전략 (50일 신고가)
     daily_top50: "#ffc107", // 엠버(황금색) - 단기 전략 (일일 Top50)
+    theme_surge: "#7b1fa2", // 퍼플 - 급등테마주 전략
   };
   return colors[strategyType] || "#9e9e9e";
 };
@@ -122,7 +126,7 @@ const getTradingModeColor = (tradingMode) => {
 // 배경색에 따른 텍스트 색상 결정 함수
 const getTextColor = (backgroundColor) => {
   // MTT(다크레드)와 Turtle(네이비)만 흰색, 나머지는 검은색
-  const darkColors = ["#d32f2f", "#0d47a1"]; // MTT, Turtle/ATR
+  const darkColors = ["#d32f2f", "#0d47a1", "#7b1fa2"]; // MTT, Turtle/ATR, 급등테마주
   return darkColors.includes(backgroundColor) ? "white" : "black";
 };
 
@@ -143,6 +147,7 @@ export default function TradingConfigs() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [allTradingConfigs, setAllTradingConfigs] = useState([]);
+  const [activeTab, setActiveTab] = useState(0); // 0: 일반 전략, 1: 급등테마주
   const allTradingConfigsRef = useRef([]);
   const [currentPrices, setCurrentPrices] = useState({}); // 종목별 현재가 저장
   const [tradingStatus, setTradingStatus] = useState({}); // 거래 상태 정보 저장
@@ -419,7 +424,10 @@ export default function TradingConfigs() {
 
         return (
           <Box>
-            <MKTypography variant="body2" sx={{ fontSize: "0.8rem", fontWeight: "bold", lineHeight: 1.3 }}>
+            <MKTypography
+              variant="body2"
+              sx={{ fontSize: "0.8rem", fontWeight: "bold", lineHeight: 1.3 }}
+            >
               {actualEntries}/{totalPossible}회
             </MKTypography>
             {actualEntries > 0 && (
@@ -538,7 +546,9 @@ export default function TradingConfigs() {
                     lineHeight: 1.2,
                   }}
                 >
-                  {isUp ? "▲" : "▼"} {isUp ? "+" : ""}{formatCurrency(Math.round(change))} ({isUp ? "+" : ""}{changePercent.toFixed(2)}%)
+                  {isUp ? "▲" : "▼"} {isUp ? "+" : ""}
+                  {formatCurrency(Math.round(change))} ({isUp ? "+" : ""}
+                  {changePercent.toFixed(2)}%)
                 </MKTypography>
               )}
             </Box>
@@ -566,9 +576,7 @@ export default function TradingConfigs() {
         const isTurtleMode = row.trading_mode === "turtle" || row.trading_mode === "atr";
         const atr = tradingStatus[row.stock_code]?.atr;
         const dropAtr =
-          isTurtleMode && atr && atr > 0 && currentPrice
-            ? (currentPrice - peak) / atr
-            : null;
+          isTurtleMode && atr && atr > 0 && currentPrice ? (currentPrice - peak) / atr : null;
 
         return (
           <Box>
@@ -587,7 +595,8 @@ export default function TradingConfigs() {
                   lineHeight: 1.2,
                 }}
               >
-                {dropPct >= 0 ? "▲" : "▼"} {dropPct >= 0 ? "+" : ""}{dropPct.toFixed(1)}%
+                {dropPct >= 0 ? "▲" : "▼"} {dropPct >= 0 ? "+" : ""}
+                {dropPct.toFixed(1)}%
               </MKTypography>
             )}
             {dropAtr !== null && (
@@ -600,7 +609,8 @@ export default function TradingConfigs() {
                   display: "block",
                 }}
               >
-                {dropAtr >= 0 ? "▲" : "▼"} {dropAtr >= 0 ? "+" : ""}{dropAtr.toFixed(2)} ATR
+                {dropAtr >= 0 ? "▲" : "▼"} {dropAtr >= 0 ? "+" : ""}
+                {dropAtr.toFixed(2)} ATR
               </MKTypography>
             )}
           </Box>
@@ -747,7 +757,9 @@ export default function TradingConfigs() {
                 size="small"
                 color="error"
                 sx={{ padding: "4px" }}
-                onClick={() => handleDeleteConfig(row.stock_code, row.stock_name, row.strategy_type)}
+                onClick={() =>
+                  handleDeleteConfig(row.stock_code, row.stock_name, row.strategy_type)
+                }
               >
                 <DeleteIcon sx={{ fontSize: "16px" }} />
               </IconButton>
@@ -981,6 +993,16 @@ export default function TradingConfigs() {
     );
   }
 
+  // 탭별 설정 분리 (급등테마주는 별도 탭으로 구분)
+  const THEME_SURGE_STRATEGY = "theme_surge";
+  const themeSurgeConfigs = allTradingConfigs.filter(
+    (config) => config.strategy_type === THEME_SURGE_STRATEGY
+  );
+  const generalConfigs = allTradingConfigs.filter(
+    (config) => config.strategy_type !== THEME_SURGE_STRATEGY
+  );
+  const displayedConfigs = activeTab === 1 ? themeSurgeConfigs : generalConfigs;
+
   return (
     <>
       <DefaultNavbar routes={routes} sticky />
@@ -988,7 +1010,7 @@ export default function TradingConfigs() {
       <MKBox component="section" sx={{ minHeight: "80vh", pt: 12, pb: 4 }}>
         <FullWidthContainer>
           {/* 페이지 헤더와 투자 현황 요약을 같은 줄에 배치 */}
-          {!loading && !error && allTradingConfigs.length > 0 ? (
+          {!loading && !error && displayedConfigs.length > 0 ? (
             <Box
               display="flex"
               flexDirection={{ xs: "column", lg: "row" }}
@@ -1017,7 +1039,7 @@ export default function TradingConfigs() {
                         투자 대상
                       </MKTypography>
                       <MKTypography variant="h6" fontWeight="bold" color="primary" sx={{ mt: 0.5 }}>
-                        {allTradingConfigs.length}개
+                        {displayedConfigs.length}개
                       </MKTypography>
                     </CardContent>
                   </Card>
@@ -1034,7 +1056,7 @@ export default function TradingConfigs() {
                       </MKTypography>
                       <MKTypography variant="h6" fontWeight="bold" color="primary" sx={{ mt: 0.5 }}>
                         {(() => {
-                          const investedCount = allTradingConfigs.filter((config) => {
+                          const investedCount = displayedConfigs.filter((config) => {
                             const status = tradingStatus[config.stock_code];
                             const avgPrice = status?.avg_price || 0;
                             const quantity = status?.total_quantity || 0;
@@ -1058,7 +1080,7 @@ export default function TradingConfigs() {
                       </MKTypography>
                       <MKTypography variant="h6" fontWeight="bold" color="success" sx={{ mt: 0.5 }}>
                         {(() => {
-                          const totalInvestment = allTradingConfigs.reduce((sum, config) => {
+                          const totalInvestment = displayedConfigs.reduce((sum, config) => {
                             const status = tradingStatus[config.stock_code];
                             const avgPrice = status?.avg_price || 0;
                             const quantity = status?.total_quantity || 0;
@@ -1086,7 +1108,7 @@ export default function TradingConfigs() {
                         sx={{
                           mt: 0.5,
                           color: (() => {
-                            const totalProfitLoss = allTradingConfigs.reduce((sum, config) => {
+                            const totalProfitLoss = displayedConfigs.reduce((sum, config) => {
                               const status = tradingStatus[config.stock_code];
                               const currentPrice = currentPrices[config.stock_code];
                               const avgPrice = status?.avg_price || 0;
@@ -1099,7 +1121,7 @@ export default function TradingConfigs() {
                         }}
                       >
                         {(() => {
-                          const totalProfitLoss = allTradingConfigs.reduce((sum, config) => {
+                          const totalProfitLoss = displayedConfigs.reduce((sum, config) => {
                             const status = tradingStatus[config.stock_code];
                             const currentPrice = currentPrices[config.stock_code];
                             const avgPrice = status?.avg_price || 0;
@@ -1134,7 +1156,7 @@ export default function TradingConfigs() {
                             let totalWeight = 0;
                             let totalWeightedReturn = 0;
 
-                            allTradingConfigs.forEach((config) => {
+                            displayedConfigs.forEach((config) => {
                               const status = tradingStatus[config.stock_code];
                               const currentPrice = currentPrices[config.stock_code];
                               const avgPrice = status?.avg_price || 0;
@@ -1159,7 +1181,7 @@ export default function TradingConfigs() {
                           let totalWeight = 0;
                           let totalWeightedReturn = 0;
 
-                          allTradingConfigs.forEach((config) => {
+                          displayedConfigs.forEach((config) => {
                             const status = tradingStatus[config.stock_code];
                             const currentPrice = currentPrices[config.stock_code];
                             const avgPrice = status?.avg_price || 0;
@@ -1204,19 +1226,46 @@ export default function TradingConfigs() {
             </Alert>
           )}
 
+          {/* 전략 구분 탭 */}
+          {!loading && !error && (
+            <MKBox mb={2}>
+              <Tabs
+                value={activeTab}
+                onChange={(event, newValue) => setActiveTab(newValue)}
+                textColor="inherit"
+                sx={{
+                  borderBottom: 1,
+                  borderColor: "divider",
+                  "& .MuiTab-root": { fontWeight: "bold", textTransform: "none" },
+                  "& .MuiTabs-indicator": {
+                    backgroundColor: activeTab === 1 ? "#7b1fa2" : "#d32f2f",
+                  },
+                  "& .Mui-selected": { color: activeTab === 1 ? "#7b1fa2" : "#d32f2f" },
+                }}
+              >
+                <Tab label={`일반 전략 (${generalConfigs.length})`} />
+                <Tab label={`급등테마주 (${themeSurgeConfigs.length})`} />
+              </Tabs>
+            </MKBox>
+          )}
+
           {/* 자동매매 설정 DataTable */}
           {!loading && !error && (
             <MKBox>
-              {allTradingConfigs.length === 0 ? (
+              {displayedConfigs.length === 0 ? (
                 <Card>
                   <CardContent>
                     <MKBox textAlign="center" py={6}>
                       <SettingsIcon sx={{ fontSize: 60, color: "text.secondary", mb: 2 }} />
                       <MKTypography variant="h5" color="text" mb={2}>
-                        설정된 자동매매가 없습니다
+                        {activeTab === 1
+                          ? "설정된 급등테마주 자동매매가 없습니다"
+                          : "설정된 자동매매가 없습니다"}
                       </MKTypography>
                       <MKTypography variant="body1" color="text" opacity={0.7} mb={3}>
-                        아직 설정된 자동매매 전략이 없습니다.
+                        {activeTab === 1
+                          ? "아직 설정된 급등테마주 전략이 없습니다."
+                          : "아직 설정된 자동매매 전략이 없습니다."}
                       </MKTypography>
                       <MKButton variant="gradient" color="info">
                         자동매매 설정하기
@@ -1228,7 +1277,7 @@ export default function TradingConfigs() {
                 <ResponsiveTableWrapper>
                   <EnhancedDataTable
                     columns={columns}
-                    data={allTradingConfigs}
+                    data={displayedConfigs}
                     autoOptimizeColumns={true}
                   />
                 </ResponsiveTableWrapper>
@@ -1238,7 +1287,14 @@ export default function TradingConfigs() {
 
           {/* 새로고침 버튼 */}
           {!loading && (
-            <MKBox textAlign="center" mt={4} display="flex" justifyContent="center" gap={2} flexWrap="wrap">
+            <MKBox
+              textAlign="center"
+              mt={4}
+              display="flex"
+              justifyContent="center"
+              gap={2}
+              flexWrap="wrap"
+            >
               <MKButton variant="outlined" color="info" onClick={loadAllTradingConfigs}>
                 전체 새로고침
               </MKButton>

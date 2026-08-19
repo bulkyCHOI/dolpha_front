@@ -48,6 +48,7 @@ import HTF from "pages/HTF";
 import WeeklyHigh from "pages/WeeklyHigh";
 import IssueInfo from "pages/IssueInfo";
 import TopRising from "pages/TopRising";
+import ThemeSurge from "pages/ThemeSurge";
 import FiftyDayHigh from "pages/FiftyDayHigh";
 import Favorites from "pages/Favorites";
 import TradingConfigs from "pages/TradingConfigs";
@@ -91,6 +92,11 @@ const routes = [
             name: "상승률 TOP 50",
             route: "/top-rising",
             component: <TopRising />,
+          },
+          {
+            name: "급등테마주",
+            route: "/theme-surge",
+            component: <ThemeSurge />,
           },
           {
             name: "즐겨찾기",
