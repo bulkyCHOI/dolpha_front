@@ -70,8 +70,8 @@ export default function useTradingViewChart({
     });
     chartRef.current = chart;
 
-    const handleClick = (param) => onClickRef.current?.(param, chart);
-    const handleMove = (param) => onCrosshairMoveRef.current?.(param, chart);
+    const handleClick = (param) => onClickRef.current?.(param, chart, seriesMapRef.current);
+    const handleMove = (param) => onCrosshairMoveRef.current?.(param, chart, seriesMapRef.current);
     chart.subscribeClick(handleClick);
     chart.subscribeCrosshairMove(handleMove);
 

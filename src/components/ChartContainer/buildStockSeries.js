@@ -1,0 +1,345 @@
+/**
+ * 종목 분석 차트(캔들 · 거래량 · RS · ATR · MTT)의 시리즈 spec 빌더.
+ *
+ * OHLCV / 분석 데이터를 TradingViewChart가 이해하는 선언적 spec으로 변환한다.
+ * 모든 시리즈는 날짜(time)를 키로 정렬되므로, 지표별 결측치가 있어도
+ * 캔들과 x축이 어긋나지 않는다.
+ */
+import {
+  DOWN_COLOR,
+  DOWN_COLOR_FADED,
+  INDICATOR_COLORS,
+  MARKER_COLORS,
+  MA_COLORS,
+  UP_COLOR,
+  UP_COLOR_FADED,
+} from "components/TradingViewChart/chartTheme";
+
+/** pane 인덱스 정의 — 위에서 아래 순서 */
+export const PANE = {
+  PRICE: 0,
+  VOLUME: 1,
+  RS: 2,
+  ATR: 3,
+  MTT: 4,
+};
+
+/** 이동평균선 정의 — 차트 시리즈와 범례가 함께 사용한다. */
+export const MA_FIELDS = [
+  { field: "ma50", label: "50일선", color: MA_COLORS.ma50 },
+  { field: "ma150", label: "150일선", color: MA_COLORS.ma150 },
+  { field: "ma200", label: "200일선", color: MA_COLORS.ma200 },
+];
+
+/** RS Rank 계열 정의 — 차트 시리즈와 범례가 함께 사용한다. */
+export const RS_FIELDS = [
+  { field: "rsRank", label: "RS", color: INDICATOR_COLORS.rsRank },
+  { field: "rsRank1m", label: "1M", color: INDICATOR_COLORS.rsRank1m },
+  { field: "rsRank3m", label: "3M", color: INDICATOR_COLORS.rsRank3m },
+  { field: "rsRank6m", label: "6M", color: INDICATOR_COLORS.rsRank6m },
+  { field: "rsRank12m", label: "12M", color: INDICATOR_COLORS.rsRank12m },
+];
+
+const LINE_BASE_OPTIONS = {
+  lineWidth: 2,
+  priceLineVisible: false,
+  lastValueVisible: false,
+  crosshairMarkerVisible: true,
+};
+
+/** 거래정지일 보정: O/H/L이 0이고 종가만 있는 날은 종가로 채운다. */
+function normalizeCandle(item) {
+  const isHalted = (item.open === 0 || item.high === 0 || item.low === 0) && item.close > 0;
+  return {
+    time: item.date,
+    open: isHalted ? item.close : item.open,
+    high: isHalted ? item.close : item.high,
+    low: isHalted ? item.close : item.low,
+    close: item.close,
+  };
+}
+
+function isValidNumber(value) {
+  return value !== null && value !== undefined && !Number.isNaN(Number(value));
+}
+
+/** analysisData에서 지정 필드를 라인 데이터로 뽑는다. */
+function toLineData(analysisData, field, transform) {
+  return (analysisData ?? [])
+    .filter((item) => item.date && isValidNumber(item[field]))
+    .map((item) => ({
+      time: item.date,
+      value: transform ? transform(item[field]) : Number(item[field]),
+    }));
+}
+
+export function buildCandleSeries(ohlcvData) {
+  return (ohlcvData ?? []).filter((item) => item?.date).map(normalizeCandle);
+}
+
+export function buildVolumeSeries(ohlcvData) {
+  return (ohlcvData ?? [])
+    .filter((item) => item?.date)
+    .map((item) => ({
+      time: item.date,
+      value: item.volume ?? 0,
+      color: item.close >= item.open ? UP_COLOR_FADED : DOWN_COLOR_FADED,
+    }));
+}
+
+/** HTF 패턴 시작점/고점 마커 */
+export function buildHtfMarkers(chartType, selectedStock) {
+  // API 응답에는 htf_pattern_detected 필드가 없다.
+  // 패턴 날짜가 내려오는지로 판단한다.
+  if (chartType !== "htf") return [];
+  if (!selectedStock?.htf_pattern_start_date && !selectedStock?.htf_pattern_peak_date) return [];
+
+  const markers = [];
+  if (selectedStock.htf_pattern_start_date) {
+    markers.push({
+      time: selectedStock.htf_pattern_start_date,
+      position: "belowBar",
+      color: MARKER_COLORS.htfStart,
+      shape: "arrowUp",
+      text: "HTF 시작",
+    });
+  }
+  if (selectedStock.htf_pattern_peak_date) {
+    markers.push({
+      time: selectedStock.htf_pattern_peak_date,
+      position: "aboveBar",
+      color: MARKER_COLORS.htfPeak,
+      shape: "arrowDown",
+      text: "HTF 고점",
+    });
+  }
+  return markers;
+}
+
+/** VCP 변곡점 마커 */
+export function buildInflectionMarkers(inflectionAnalysisResult, ohlcvData) {
+  const points = inflectionAnalysisResult?.inflectionPoints;
+  if (!points || points.length === 0) return [];
+
+  return points
+    .map((point) => {
+      const bar = ohlcvData?.[point.index];
+      if (!bar?.date) return null;
+      const isPeak = point.type === "peak";
+      return {
+        time: bar.date,
+        position: isPeak ? "aboveBar" : "belowBar",
+        color: isPeak ? MARKER_COLORS.inflectionUp : MARKER_COLORS.inflectionDown,
+        shape: isPeak ? "arrowDown" : "arrowUp",
+        size: 1,
+      };
+    })
+    .filter(Boolean);
+}
+
+/** 사용자가 그린 수평선 + 진입가를 가격선으로 변환 */
+export function buildPriceLines(horizontalLines, entryPoint) {
+  const lines = (horizontalLines ?? []).map((line) => ({
+    price: line.value,
+    color: line.color,
+    lineWidth: 2,
+    lineStyle: 2, // Dashed
+    axisLabelVisible: true,
+    title: line.label ?? "",
+  }));
+
+  const entryPrice = Number(entryPoint);
+  if (entryPoint !== "" && entryPoint !== null && !Number.isNaN(entryPrice) && entryPrice > 0) {
+    lines.push({
+      price: entryPrice,
+      color: "#667eea",
+      lineWidth: 2,
+      lineStyle: 0, // Solid
+      axisLabelVisible: true,
+      title: "진입가",
+    });
+  }
+  return lines;
+}
+
+/**
+ * 종목 분석 차트 전체의 시리즈 spec을 만든다.
+ */
+export function buildStockChartSeries({
+  ohlcvData = [],
+  analysisData = [],
+  horizontalLines = [],
+  entryPoint = "",
+  chartType = "default",
+  selectedStock = {},
+  inflectionAnalysisResult = null,
+  showInflectionPoints = false,
+}) {
+  const series = [];
+
+  // ── 가격 pane ──────────────────────────────────────────────
+  const markers = [
+    ...buildHtfMarkers(chartType, selectedStock),
+    ...(showInflectionPoints ? buildInflectionMarkers(inflectionAnalysisResult, ohlcvData) : []),
+  ].sort((a, b) => (a.time < b.time ? -1 : 1));
+
+  series.push({
+    id: "candle",
+    type: "candle",
+    pane: PANE.PRICE,
+    data: buildCandleSeries(ohlcvData),
+    options: {
+      upColor: UP_COLOR,
+      downColor: DOWN_COLOR,
+      borderUpColor: UP_COLOR,
+      borderDownColor: DOWN_COLOR,
+      wickUpColor: UP_COLOR,
+      wickDownColor: DOWN_COLOR,
+    },
+    markers,
+    priceLines: buildPriceLines(horizontalLines, entryPoint),
+  });
+
+  MA_FIELDS.forEach(({ field }) => {
+    const data = toLineData(analysisData, field);
+    if (data.length === 0) return;
+    series.push({
+      id: field,
+      type: "line",
+      pane: PANE.PRICE,
+      data,
+      options: { ...LINE_BASE_OPTIONS, color: MA_COLORS[field] },
+    });
+  });
+
+  // ── 거래량 pane ────────────────────────────────────────────
+  series.push({
+    id: "volume",
+    type: "histogram",
+    pane: PANE.VOLUME,
+    data: buildVolumeSeries(ohlcvData),
+    options: { priceFormat: { type: "volume" }, priceLineVisible: false, lastValueVisible: false },
+  });
+
+  // ── RS Rank pane ───────────────────────────────────────────
+  let isFirstRsSeries = true;
+  RS_FIELDS.forEach(({ field, color }) => {
+    const data = toLineData(analysisData, field);
+    if (data.length === 0) return;
+    series.push({
+      id: field,
+      type: "line",
+      pane: PANE.RS,
+      data,
+      options: { ...LINE_BASE_OPTIONS, color },
+      // RS 80 기준선은 첫 RS 시리즈에만 붙인다.
+      priceLines: isFirstRsSeries
+        ? [
+            {
+              price: 80,
+              color: INDICATOR_COLORS.rsBaseline,
+              lineWidth: 1,
+              lineStyle: 2,
+              axisLabelVisible: true,
+              title: "80",
+            },
+          ]
+        : [],
+    });
+    isFirstRsSeries = false;
+  });
+
+  // ── ATR pane (ATR 막대 + ATR 비율 라인) ────────────────────
+  const atrData = toLineData(analysisData, "atr");
+  if (atrData.length > 0) {
+    series.push({
+      id: "atr",
+      type: "histogram",
+      pane: PANE.ATR,
+      data: atrData.map((point) => ({ ...point, color: INDICATOR_COLORS.atr })),
+      options: { priceLineVisible: false, lastValueVisible: false },
+    });
+  }
+
+  const atrRatioData = toLineData(analysisData, "atrRatio", (value) => Number(value) * 100);
+  if (atrRatioData.length > 0) {
+    series.push({
+      id: "atrRatio",
+      type: "line",
+      pane: PANE.ATR,
+      data: atrRatioData,
+      options: {
+        ...LINE_BASE_OPTIONS,
+        color: INDICATOR_COLORS.atrRatio,
+        priceScaleId: "left",
+      },
+    });
+  }
+
+  // ── MTT pane (조건 충족 여부 0/1 계단선) ───────────────────
+  const mttData = (analysisData ?? [])
+    .filter(
+      (item) =>
+        item?.date && item.is_minervini_trend !== null && item.is_minervini_trend !== undefined
+    )
+    .map((item) => ({ time: item.date, value: item.is_minervini_trend ? 1 : 0 }));
+
+  if (mttData.length > 0) {
+    series.push({
+      id: "mtt",
+      type: "line",
+      pane: PANE.MTT,
+      data: mttData,
+      options: {
+        ...LINE_BASE_OPTIONS,
+        color: INDICATOR_COLORS.mtt,
+        lineType: 2, // WithSteps — 불리언 전환을 계단식으로 표시
+        lineWidth: 2,
+      },
+    });
+  }
+
+  return series;
+}
+
+/** 인덱스(지수) 차트용 캔들 시리즈 */
+export function buildIndexSeries(indexOhlcvData) {
+  return [
+    {
+      id: "index-candle",
+      type: "candle",
+      pane: 0,
+      data: buildCandleSeries(indexOhlcvData),
+      options: {
+        upColor: UP_COLOR,
+        downColor: DOWN_COLOR,
+        borderUpColor: UP_COLOR,
+        borderDownColor: DOWN_COLOR,
+        wickUpColor: UP_COLOR,
+        wickDownColor: DOWN_COLOR,
+      },
+    },
+  ];
+}
+
+/**
+ * 실제 데이터가 있는 pane만 남겨 pane 인덱스를 다시 매긴다.
+ * (RS/ATR/MTT 데이터가 없을 때 빈 pane이 남지 않도록)
+ */
+export function compactPanes(series, paneStretch) {
+  const usedPanes = [...new Set(series.map((s) => s.pane))].sort((a, b) => a - b);
+  const remap = new Map(usedPanes.map((pane, index) => [pane, index]));
+
+  return {
+    series: series.map((s) => ({ ...s, pane: remap.get(s.pane) })),
+    panes: usedPanes.map((pane) => ({ stretch: paneStretch[pane] ?? 1 })),
+  };
+}
+
+export const PANE_STRETCH = {
+  [PANE.PRICE]: 5,
+  [PANE.VOLUME]: 1.1,
+  [PANE.RS]: 1.6,
+  [PANE.ATR]: 1.4,
+  [PANE.MTT]: 0.7,
+};

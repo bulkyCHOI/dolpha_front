@@ -1,2279 +1,478 @@
-import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  TimeScale,
-  Title,
-  Tooltip as ChartTooltip,
-  Legend,
-  BarElement,
-  LineElement,
-  PointElement,
-} from "chart.js";
-import "chartjs-adapter-date-fns";
-import { CandlestickController, CandlestickElement } from "chartjs-chart-financial";
-import { Chart } from "react-chartjs-2";
-
-// 변곡점 관련 import
-import { createInflectionPointDataset } from "utils/inflectionPointAnalysis";
-import { inflectionPointPlugin, applyInflectionAnalysisToChart } from "./inflectionPointPlugin";
-import useInflectionPoints from "hooks/useInflectionPoints";
-import InflectionPointToggle from "components/InflectionPointToggle";
+import React, { useCallback, useMemo, useState } from "react";
+import PropTypes from "prop-types";
 
 // @mui material components
-import CircularProgress from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
+import Chip from "@mui/material/Chip";
+import Divider from "@mui/material/Divider";
+import FormControl from "@mui/material/FormControl";
 import IconButton from "@mui/material/IconButton";
-import Close from "@mui/icons-material/Close";
+import InputLabel from "@mui/material/InputLabel";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import ToggleButton from "@mui/material/ToggleButton";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
 import Delete from "@mui/icons-material/Delete";
 import Timeline from "@mui/icons-material/Timeline";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import Tooltip from "@mui/material/Tooltip";
-import Button from "@mui/material/Button";
-import ToggleButton from "@mui/material/ToggleButton";
-import { keyframes } from "@mui/system";
 
-// Material Kit 2 React components
-import MKBox from "components/MKBox";
-import MKTypography from "components/MKTypography";
+// 차트
+import TradingViewChart from "components/TradingViewChart";
+import InflectionPointToggle from "components/InflectionPointToggle";
+import useInflectionPoints from "hooks/useInflectionPoints";
 
 // Utils
 import { adjustToKRXTickSize } from "utils/formatters";
 
-// Register Chart.js components
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  TimeScale,
-  CandlestickController,
-  CandlestickElement,
-  BarElement,
-  LineElement,
-  PointElement,
-  Title,
-  ChartTooltip,
-  Legend,
-  inflectionPointPlugin
-);
+import {
+  MA_FIELDS,
+  PANE_STRETCH,
+  RS_FIELDS,
+  buildIndexSeries,
+  buildStockChartSeries,
+  compactPanes,
+} from "./buildStockSeries";
+import ChartLegend from "./ChartLegend";
 
-// Animation for popup
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`;
+const DRAW_LINE_COLOR = "#667eea";
+const PYRAMIDING_LINE_COLOR = "#ff9800";
 
+const CHART_HEIGHT = { xs: 560, md: 760 };
+const INDEX_CHART_HEIGHT = { xs: 240, md: 300 };
+
+const chartSurfaceSx = {
+  backgroundColor: "#ffffff",
+  border: "1px solid #e2e8f0",
+  borderRadius: 1,
+  p: 0.5,
+  mb: 1,
+};
+
+/**
+ * 종목 분석 차트 컨테이너.
+ *
+ * 캔들 · 거래량 · RS Rank · ATR · MTT를 하나의 TradingView 차트에
+ * pane으로 쌓아 시간축과 크로스헤어를 공유한다.
+ */
 const ChartContainer = ({
-  ohlcvData = [],
-  analysisData = [],
-  indexOhlcvData = [],
-  indexData = [],
-  selectedIndexCode = "",
-  selectedStock = {},
-  entryPoint = "",
-  pyramidingEntries = [],
-  activeTab = 0,
-  onIndexChange = () => {},
-  onEntryPointChange = () => {},
-  onPyramidingEntryChange = () => {},
-  onShowSnackbar = () => {},
-  chartType = "default", // "default" | "htf"
-  tradingMode = "manual",
+  ohlcvData,
+  analysisData,
+  indexOhlcvData,
+  indexData,
+  selectedIndexCode,
+  selectedStock,
+  entryPoint,
+  pyramidingEntries,
+  onIndexChange,
+  onEntryPointChange,
+  onPyramidingEntryChange,
+  onShowSnackbar,
+  chartType,
+  tradingMode,
 }) => {
-  // Chart state
   const [horizontalLines, setHorizontalLines] = useState([]);
   const [isDrawingMode, setIsDrawingMode] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragLineId, setDragLineId] = useState(null);
-  const [selectedLineId, setSelectedLineId] = useState(null);
-  const [showEntryPopup, setShowEntryPopup] = useState(false);
+  // 이동 모드: 선을 고른 뒤 차트를 클릭하면 그 가격으로 옮긴다.
+  const [movingLineId, setMovingLineId] = useState(null);
+  const [menuState, setMenuState] = useState({ anchorEl: null, lineId: null });
 
-  // 변곡점 기능 훅 사용
   const {
     showInflectionPoints,
     inflectionAnalysisResult,
-    inflectionSettings,
     isInflectionPointsAvailable,
     toggleInflectionPoints,
   } = useInflectionPoints(ohlcvData, chartType);
 
-  // Chart reference
-  const chartRef = useRef(null);
-
-  // Drag state reference for immediate access
-  const dragStateRef = useRef({
-    isDragging: false,
-    dragLineId: null,
-  });
-
-  // Update drag state refs when state changes
-  useEffect(() => {
-    dragStateRef.current = {
-      isDragging,
-      dragLineId,
-    };
-  }, [isDragging, dragLineId]);
-
-  // 변곡점 분석은 useInflectionPoints 훅에서 자동으로 처리됨
-
-  // Prevent body scroll during drag
-  useEffect(() => {
-    if (isDragging) {
-      document.body.style.overflow = "hidden";
-      document.body.style.touchAction = "none";
-    } else {
-      document.body.style.overflow = "";
-      document.body.style.touchAction = "";
-    }
-
-    // Cleanup on unmount
-    return () => {
-      document.body.style.overflow = "";
-      document.body.style.touchAction = "";
-    };
-  }, [isDragging]);
-
-  // Candlestick color dynamic application
-  useEffect(() => {
-    if (chartRef.current && ohlcvData && ohlcvData.length > 0) {
-      const chart = chartRef.current;
-
-      try {
-        // Find candlestick dataset and update colors
-        const candlestickDataset = chart.data.datasets.find(
-          (dataset) => dataset.type === "candlestick"
-        );
-        if (candlestickDataset) {
-          // Set color properties
-          candlestickDataset.backgroundColors = {
-            up: "#f44336",
-            down: "#2196f3",
-            unchanged: "#757575",
-          };
-          candlestickDataset.borderColors = {
-            up: "#f44336",
-            down: "#2196f3",
-            unchanged: "#757575",
-          };
-          chart.update("active");
-        }
-      } catch (error) {
-        console.warn("Chart color update failed:", error);
-      }
-    }
-  }, [ohlcvData]);
-
-  // Chart data creation functions
-  const createCandlestickData = (
+  // ── 시리즈 구성 ────────────────────────────────────────────────
+  const { series, panes } = useMemo(() => {
+    const built = buildStockChartSeries({
+      ohlcvData,
+      analysisData,
+      horizontalLines,
+      entryPoint,
+      chartType,
+      selectedStock,
+      inflectionAnalysisResult,
+      showInflectionPoints,
+    });
+    return compactPanes(built, PANE_STRETCH);
+  }, [
     ohlcvData,
     analysisData,
-    chartType = "default",
-    selectedStock = {}
-  ) => {
-    if (!ohlcvData || ohlcvData.length === 0) return null;
-
-    const datasets = [
-      {
-        label: "캔들스틱",
-        type: "candlestick",
-        data: ohlcvData.map((item, index) => {
-          // Handle halted trading days: if open, high, low are 0 but close > 0, use close for all
-          const isHalted = (item.open === 0 || item.high === 0 || item.low === 0) && item.close > 0;
-          return {
-            x: index,
-            o: isHalted ? item.close : item.open,
-            h: isHalted ? item.close : item.high,
-            l: isHalted ? item.close : item.low,
-            c: item.close,
-          };
-        }),
-        backgroundColors: {
-          up: "#f44336",
-          down: "#2196f3",
-          unchanged: "#757575",
-        },
-        borderColors: {
-          up: "#f44336",
-          down: "#2196f3",
-          unchanged: "#757575",
-        },
-      },
-    ];
-
-    // Add moving average lines if analysis data is available
-    if (analysisData && Array.isArray(analysisData) && analysisData.length > 0) {
-      // 50일선
-      const ma50Data = analysisData
-        .filter((item) => item.ma50 !== null && item.ma50 !== undefined && !isNaN(item.ma50))
-        .map((item, index) => ({
-          x: index,
-          y: item.ma50,
-        }));
-
-      if (ma50Data.length > 0) {
-        datasets.push({
-          label: "50일선",
-          type: "line",
-          data: ma50Data,
-          borderColor: "#ff6b35",
-          backgroundColor: "transparent",
-          borderWidth: 2,
-          pointRadius: 0,
-          pointHoverRadius: 0,
-          tension: 0.1,
-          order: 2,
-        });
-      }
-
-      // 150일선
-      const ma150Data = analysisData
-        .filter((item) => item.ma150 !== null && item.ma150 !== undefined && !isNaN(item.ma150))
-        .map((item, index) => ({
-          x: index,
-          y: item.ma150,
-        }));
-
-      if (ma150Data.length > 0) {
-        datasets.push({
-          label: "150일선",
-          type: "line",
-          data: ma150Data,
-          borderColor: "#f7931e",
-          backgroundColor: "transparent",
-          borderWidth: 2,
-          pointRadius: 0,
-          pointHoverRadius: 0,
-          tension: 0.1,
-          order: 3,
-        });
-      }
-
-      // 200일선
-      const ma200Data = analysisData
-        .filter((item) => item.ma200 !== null && item.ma200 !== undefined && !isNaN(item.ma200))
-        .map((item, index) => ({
-          x: index,
-          y: item.ma200,
-        }));
-
-      if (ma200Data.length > 0) {
-        datasets.push({
-          label: "200일선",
-          type: "line",
-          data: ma200Data,
-          borderColor: "#9c27b0",
-          backgroundColor: "transparent",
-          borderWidth: 2,
-          pointRadius: 0,
-          pointHoverRadius: 0,
-          tension: 0.1,
-          order: 4,
-        });
-      }
-    }
-
-    // Add horizontal lines to datasets
-    horizontalLines.forEach((line, index) => {
-      const indexRange = ohlcvData && ohlcvData.length > 0 ? [0, ohlcvData.length - 1] : [0, 1];
-
-      datasets.push({
-        label: `진입선 ${index + 1}`,
-        type: "line",
-        data: [
-          { x: indexRange[0], y: line.value },
-          { x: indexRange[1], y: line.value },
-        ],
-        borderColor: line.color,
-        backgroundColor: "transparent",
-        borderWidth: 2,
-        pointRadius: 0,
-        pointHoverRadius: 0,
-        tension: 0,
-        lineId: line.id,
-        showLine: true,
-        borderDash: [5, 5],
-      });
-    });
-
-    // Add HTF pattern visualization if chartType is "htf"
-    if (chartType === "htf" && selectedStock && selectedStock.htf_pattern_detected) {
-      // HTF 패턴 시작점 마커
-      if (selectedStock.htf_pattern_start_date && ohlcvData.length > 0) {
-        const startDateStr = selectedStock.htf_pattern_start_date;
-        const startIndex = ohlcvData.findIndex((item) => item.date === startDateStr);
-
-        if (startIndex !== -1) {
-          datasets.push({
-            label: "HTF 시작점",
-            type: "scatter",
-            data: [
-              {
-                x: startIndex,
-                y: ohlcvData[startIndex]?.low * 0.98, // 저점보다 약간 아래에 표시
-              },
-            ],
-            backgroundColor: "#4caf50",
-            borderColor: "#4caf50",
-            pointRadius: 8,
-            pointHoverRadius: 10,
-            pointStyle: "triangle",
-            order: 0,
-          });
-        }
-      }
-
-      // HTF 패턴 고점 마커
-      if (selectedStock.htf_pattern_peak_date && ohlcvData.length > 0) {
-        const peakDateStr = selectedStock.htf_pattern_peak_date;
-        const peakIndex = ohlcvData.findIndex((item) => item.date === peakDateStr);
-
-        if (peakIndex !== -1) {
-          datasets.push({
-            label: "HTF 고점",
-            type: "scatter",
-            data: [
-              {
-                x: peakIndex,
-                y: ohlcvData[peakIndex]?.high * 1.02, // 고점보다 약간 위에 표시
-              },
-            ],
-            backgroundColor: "#f44336",
-            borderColor: "#f44336",
-            pointRadius: 8,
-            pointHoverRadius: 10,
-            pointStyle: "triangle",
-            rotation: 180, // 역삼각형으로 표시
-            order: 0,
-          });
-        }
-      }
-
-      // HTF 패턴 구간 하이라이트 (배경색)
-      if (
-        selectedStock.htf_pattern_start_date &&
-        selectedStock.htf_pattern_peak_date &&
-        ohlcvData.length > 0
-      ) {
-        const startDateStr = selectedStock.htf_pattern_start_date;
-        const peakDateStr = selectedStock.htf_pattern_peak_date;
-        const startIndex = ohlcvData.findIndex((item) => item.date === startDateStr);
-        const peakIndex = ohlcvData.findIndex((item) => item.date === peakDateStr);
-
-        if (startIndex !== -1 && peakIndex !== -1 && startIndex < peakIndex) {
-          // 상승 구간 하이라이트
-          const riseData = [];
-          for (let i = startIndex; i <= peakIndex; i++) {
-            if (ohlcvData[i]) {
-              riseData.push({
-                x: i,
-                y: ohlcvData[i].high * 1.05, // 고점보다 약간 위에 라인
-              });
-            }
-          }
-
-          if (riseData.length > 0) {
-            datasets.push({
-              label: "HTF 상승구간",
-              type: "line",
-              data: riseData,
-              borderColor: "rgba(76, 175, 80, 0.3)",
-              backgroundColor: "rgba(76, 175, 80, 0.1)",
-              borderWidth: 3,
-              pointRadius: 0,
-              pointHoverRadius: 0,
-              tension: 0,
-              fill: "origin",
-              order: 10, // 뒤로 보내기
-            });
-          }
-        }
-      }
-    }
-
-    // 변곡점 기능 추가 (분석 결과가 있을 때)
-    if (inflectionAnalysisResult && showInflectionPoints) {
-      // 변곡점 데이터셋 추가
-      const inflectionDataset = createInflectionPointDataset(
-        inflectionAnalysisResult.inflectionPoints,
-        ohlcvData
-      );
-      if (inflectionDataset) {
-        datasets.push(inflectionDataset);
-      }
-
-
-    }
-
-    return { datasets };
-  };
-
-  const createIndexCandlestickData = (indexOhlcvData) => {
-    if (!indexOhlcvData || indexOhlcvData.length === 0) return null;
-
-    return {
-      datasets: [
-        {
-          label: "인덱스 캔들스틱",
-          type: "candlestick",
-          data: indexOhlcvData.map((item, index) => {
-            const isHalted =
-              (item.open === 0 || item.high === 0 || item.low === 0) && item.close > 0;
-            return {
-              x: index,
-              o: isHalted ? item.close : item.open,
-              h: isHalted ? item.close : item.high,
-              l: isHalted ? item.close : item.low,
-              c: item.close,
-            };
-          }),
-          backgroundColors: {
-            up: "#f44336",
-            down: "#2196f3",
-            unchanged: "#757575",
-          },
-          borderColors: {
-            up: "#f44336",
-            down: "#2196f3",
-            unchanged: "#757575",
-          },
-        },
-      ],
-    };
-  };
-
-  const createVolumeData = (ohlcvData) => {
-    if (!ohlcvData || ohlcvData.length === 0) return null;
-
-    return {
-      datasets: [
-        {
-          label: "거래량",
-          type: "bar",
-          data: (ohlcvData || []).map((item, index) => ({
-            x: index,
-            y: item.volume || 0,
-          })),
-          backgroundColor: (ohlcvData || []).map((item) =>
-            item.close >= item.open ? "rgba(244, 67, 54, 0.6)" : "rgba(33, 150, 243, 0.6)"
-          ),
-          borderColor: (ohlcvData || []).map((item) =>
-            item.close >= item.open ? "#f44336" : "#2196f3"
-          ),
-          borderWidth: 1,
-        },
-      ],
-    };
-  };
-
-  const createRSRankData = (analysisData) => {
-    if (!analysisData || analysisData.length === 0) return null;
-
-    const datasets = [];
-
-    // RS Rank 기본 데이터
-    const rsRankData = analysisData
-      .filter((item) => item.rsRank !== null && item.rsRank !== undefined && !isNaN(item.rsRank))
-      .map((item, index) => ({
-        x: index,
-        y: item.rsRank,
-      }));
-
-    if (rsRankData.length > 0) {
-      datasets.push({
-        label: "RS Rank",
-        type: "line",
-        data: rsRankData,
-        borderColor: "#f44336",
-        backgroundColor: "transparent",
-        borderWidth: 2,
-        pointRadius: 2,
-        pointHoverRadius: 4,
-        pointBackgroundColor: "white",
-        pointBorderColor: "#f44336",
-        tension: 0.1,
-      });
-    }
-
-    // RS Rank 1M 데이터
-    const rsRank1mData = analysisData
-      .filter(
-        (item) => item.rsRank1m !== null && item.rsRank1m !== undefined && !isNaN(item.rsRank1m)
-      )
-      .map((item, index) => ({
-        x: index,
-        y: item.rsRank1m,
-      }));
-
-    if (rsRank1mData.length > 0) {
-      datasets.push({
-        label: "RS Rank 1M",
-        type: "line",
-        data: rsRank1mData,
-        borderColor: "#4caf50",
-        backgroundColor: "transparent",
-        borderWidth: 2,
-        pointRadius: 2,
-        pointHoverRadius: 4,
-        pointBackgroundColor: "white",
-        pointBorderColor: "#4caf50",
-        tension: 0.1,
-      });
-    }
-
-    // RS Rank 3M 데이터
-    const rsRank3mData = analysisData
-      .filter(
-        (item) => item.rsRank3m !== null && item.rsRank3m !== undefined && !isNaN(item.rsRank3m)
-      )
-      .map((item, index) => ({
-        x: index,
-        y: item.rsRank3m,
-      }));
-
-    if (rsRank3mData.length > 0) {
-      datasets.push({
-        label: "RS Rank 3M",
-        type: "line",
-        data: rsRank3mData,
-        borderColor: "#2196f3",
-        backgroundColor: "transparent",
-        borderWidth: 2,
-        pointRadius: 2,
-        pointHoverRadius: 4,
-        pointBackgroundColor: "white",
-        pointBorderColor: "#2196f3",
-        tension: 0.1,
-      });
-    }
-
-    // RS Rank 6M 데이터
-    const rsRank6mData = analysisData
-      .filter(
-        (item) => item.rsRank6m !== null && item.rsRank6m !== undefined && !isNaN(item.rsRank6m)
-      )
-      .map((item, index) => ({
-        x: index,
-        y: item.rsRank6m,
-      }));
-
-    if (rsRank6mData.length > 0) {
-      datasets.push({
-        label: "RS Rank 6M",
-        type: "line",
-        data: rsRank6mData,
-        borderColor: "#9c27b0",
-        backgroundColor: "transparent",
-        borderWidth: 2,
-        pointRadius: 2,
-        pointHoverRadius: 4,
-        pointBackgroundColor: "white",
-        pointBorderColor: "#9c27b0",
-        tension: 0.1,
-      });
-    }
-
-    // RS Rank 12M 데이터
-    const rsRank12mData = analysisData
-      .filter(
-        (item) => item.rsRank12m !== null && item.rsRank12m !== undefined && !isNaN(item.rsRank12m)
-      )
-      .map((item, index) => ({
-        x: index,
-        y: item.rsRank12m,
-      }));
-
-    if (rsRank12mData.length > 0) {
-      datasets.push({
-        label: "RS Rank 12M",
-        type: "line",
-        data: rsRank12mData,
-        borderColor: "#000000",
-        backgroundColor: "transparent",
-        borderWidth: 2,
-        pointRadius: 2,
-        pointHoverRadius: 4,
-        pointBackgroundColor: "white",
-        pointBorderColor: "#000000",
-        tension: 0.1,
-      });
-    }
-
-    // RS Rank 기준선
-    datasets.push({
-      label: "RS Rank 기준선",
-      type: "line",
-      data: [
-        { x: 0, y: 80 },
-        { x: analysisData && analysisData.length > 0 ? analysisData.length - 1 : 1, y: 80 },
-      ],
-      borderColor: "#ff9800",
-      backgroundColor: "transparent",
-      borderWidth: 1,
-      pointRadius: 0,
-      pointHoverRadius: 0,
-      tension: 0,
-      borderDash: [5, 5],
-    });
-
-    return { datasets };
-  };
-
-  const createATRData = (analysisData) => {
-    if (!analysisData || analysisData.length === 0) return null;
-
-    const datasets = [];
-
-    // ATR 데이터 (막대그래프)
-    const atrData = analysisData
-      .filter((item) => item.atr !== null && item.atr !== undefined && !isNaN(item.atr))
-      .map((item, index) => ({
-        x: index,
-        y: item.atr,
-      }));
-
-    if (atrData.length > 0) {
-      datasets.push({
-        label: "ATR",
-        type: "bar",
-        data: atrData,
-        borderColor: "#ff5722",
-        backgroundColor: "rgba(255, 87, 34, 0.6)",
-        borderWidth: 1,
-        yAxisID: "y",
-        order: 1, // 막대를 뒤쪽에 표시
-      });
-    }
-
-    // ATR Ratio 데이터 (라인그래프)
-    const atrRatioData = analysisData
-      .filter(
-        (item) => item.atrRatio !== null && item.atrRatio !== undefined && !isNaN(item.atrRatio)
-      )
-      .map((item, index) => ({
-        x: index,
-        y: item.atrRatio * 100, // 백분율로 표시
-      }));
-
-    if (atrRatioData.length > 0) {
-      datasets.push({
-        label: "ATR Ratio (%)",
-        type: "line",
-        data: atrRatioData,
-        borderColor: "#795548",
-        backgroundColor: "transparent",
-        borderWidth: 2,
-        pointRadius: 2,
-        pointHoverRadius: 4,
-        pointBackgroundColor: "white",
-        pointBorderColor: "#795548",
-        tension: 0.1,
-        yAxisID: "y1",
-        order: 0, // 라인을 가장 앞에 표시
-        fill: false,
-        showLine: true,
-      });
-    }
-
-    return { datasets };
-  };
-
-  const createMTTData = (analysisData) => {
-    if (!analysisData || analysisData.length === 0) return null;
-
-    const datasets = [];
-
-    // MTT (Minervini Trend Template) 데이터 - boolean을 0/1로 변환
-    const mttData = analysisData
-      .filter((item) => item.is_minervini_trend !== null && item.is_minervini_trend !== undefined)
-      .map((item, index) => ({
-        x: index,
-        y: item.is_minervini_trend ? 1 : 0,
-      }));
-
-    if (mttData.length > 0) {
-      datasets.push({
-        label: "MTT 조건",
-        type: "line",
-        data: mttData,
-        borderColor: "#4CAF50",
-        backgroundColor: "transparent",
-        borderWidth: 2,
-        pointRadius: 2,
-        pointHoverRadius: 4,
-        pointBackgroundColor: "white",
-        pointBorderColor: (context) => {
-          const value = context.parsed.y;
-          return value === 1 ? "#4CAF50" : "#FF5722";
-        },
-        tension: 0,
-        stepped: true, // 계단식 라인으로 boolean 변화를 명확하게 표시
-      });
-    }
-
-    return { datasets };
-  };
-
-  // Event handlers for horizontal lines
-  const handleAddHorizontalLine = (yValue) => {
-    const newLine = {
-      id: Date.now(),
-      value: adjustToKRXTickSize(yValue),
-      color: "#667eea",
-      isDragging: false,
-      type: "entry",
-    };
-    setHorizontalLines((prev) => [...prev, newLine]);
-
-    if (chartRef.current) {
-      chartRef.current.update("active");
-    }
-  };
-
-  const handleUpdateHorizontalLine = (id, newValue) => {
-    setHorizontalLines((prev) =>
-      prev.map((line) => (line.id === id ? { ...line, value: newValue } : line))
-    );
-
-    if (chartRef.current) {
-      chartRef.current.update("active");
-    }
-  };
-
-  const handleDeleteHorizontalLine = (id) => {
-    setHorizontalLines((prev) => prev.filter((line) => line.id !== id));
-    if (chartRef.current) {
-      chartRef.current.update("active");
-    }
-  };
-
-  const toggleDrawingMode = () => {
-    setIsDrawingMode(!isDrawingMode);
-  };
-
-  // Mouse event handlers for line dragging
-  const handleLabelClick = (lineId, event) => {
-    event.preventDefault();
-    event.stopPropagation();
-
-    if (selectedLineId === lineId && showEntryPopup) {
-      // 이미 선택된 라인이고 팝업이 열려있으면 팝업 유지
-      return;
-    }
-
-    setSelectedLineId(lineId);
-    setShowEntryPopup(true);
-  };
-
-  const handleLabelMouseDown = (lineId, event) => {
-    event.preventDefault();
-    event.stopPropagation();
-
-    const handleMouseMove = () => {
-      dragPriceRangeRef.current = null; // 드래그 시작 시 가격 범위 캐시 초기화
-      dragStateRef.current = {
-        isDragging: true,
-        dragLineId: lineId,
-      };
-      setIsDragging(true);
-      setDragLineId(lineId);
-
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-
-      document.addEventListener("mousemove", handleGlobalMouseMove, { passive: false });
-      document.addEventListener("mouseup", handleGlobalMouseUp);
-    };
-
-    const handleMouseUp = () => {
-      if (!dragStateRef.current.isDragging) {
-        handleLabelClick(lineId, event);
-      }
-
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-    };
-
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
-  };
-
-  const handleLabelTouchStart = (lineId, event) => {
-    event.preventDefault();
-    event.stopPropagation();
-
-    const touch = event.touches[0];
-    const startY = touch.clientY;
-    let hasMoved = false;
-
-    const handleTouchMove = (e) => {
-      const currentTouch = e.touches[0];
-      const deltaY = Math.abs(currentTouch.clientY - startY);
-
-      if (deltaY > 5 && !hasMoved) {
-        hasMoved = true;
-        dragStateRef.current = {
-          isDragging: true,
-          dragLineId: lineId,
-        };
-        setIsDragging(true);
-        setDragLineId(lineId);
-
-        document.removeEventListener("touchmove", handleTouchMove);
-        document.removeEventListener("touchend", handleTouchEnd);
-
-        document.addEventListener("touchmove", handleGlobalTouchMove, { passive: false });
-        document.addEventListener("touchend", handleGlobalTouchEnd);
-      }
-    };
-
-    const handleTouchEnd = () => {
-      if (!hasMoved) {
-        handleLabelClick(lineId, event);
-      }
-
-      document.removeEventListener("touchmove", handleTouchMove);
-      document.removeEventListener("touchend", handleTouchEnd);
-    };
-
-    document.addEventListener("touchmove", handleTouchMove, { passive: false });
-    document.addEventListener("touchend", handleTouchEnd);
-  };
-
-  // 드래그 중 가격 범위를 캐시해서 매 mousemove마다 재계산 방지
-  const dragPriceRangeRef = useRef(null);
-  const dragRafIdRef = useRef(null);
-
-  const handleGlobalMouseMove = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    const { isDragging: refIsDragging, dragLineId: refDragLineId } = dragStateRef.current;
-
-    if (!refIsDragging || !refDragLineId || !chartData || !ohlcvData || ohlcvData.length === 0) return;
-
-    // 이전 rAF가 아직 pending 중이면 취소 (throttle 효과)
-    if (dragRafIdRef.current) {
-      cancelAnimationFrame(dragRafIdRef.current);
-    }
-
-    const clientY = event.clientY;
-    dragRafIdRef.current = requestAnimationFrame(() => {
-      dragRafIdRef.current = null;
-      try {
-        const chartCanvas = document.querySelector("canvas");
-        if (!chartCanvas) return;
-
-        const yScale = chartData.datasets[0]?.data || [];
-        if (yScale.length === 0) return;
-
-        // 가격 범위는 드래그 시작 시 한 번만 계산
-        if (!dragPriceRangeRef.current) {
-          const maxPrice = Math.max(...ohlcvData.map((d) => Math.max(d.high, d.close, d.open, d.low)));
-          const minPrice = Math.min(...ohlcvData.map((d) => Math.min(d.low, d.close, d.open, d.high)));
-          dragPriceRangeRef.current = { maxPrice, minPrice };
-        }
-        const { maxPrice, minPrice } = dragPriceRangeRef.current;
-        const priceRange = maxPrice - minPrice;
-
-        const rect = chartCanvas.getBoundingClientRect();
-        const y = clientY - rect.top;
-        const chartHeight = 350;
-        const normalizedY = Math.max(0, Math.min(1, (y - 30) / (chartHeight - 60)));
-        const adjustedValue = adjustToKRXTickSize(maxPrice - normalizedY * priceRange);
-
+    horizontalLines,
+    entryPoint,
+    chartType,
+    selectedStock,
+    inflectionAnalysisResult,
+    showInflectionPoints,
+  ]);
+
+  const indexSeries = useMemo(() => buildIndexSeries(indexOhlcvData), [indexOhlcvData]);
+
+  // ── 수평선 조작 ────────────────────────────────────────────────
+  const handleChartClick = useCallback(
+    (param, chart, seriesMap) => {
+      if (!isDrawingMode && !movingLineId) return;
+      const candleSeries = seriesMap?.get("candle");
+      if (!candleSeries || !param.point) return;
+
+      const price = candleSeries.coordinateToPrice(param.point.y);
+      if (price === null || Number.isNaN(price)) return;
+      const adjusted = adjustToKRXTickSize(price);
+
+      if (movingLineId) {
         setHorizontalLines((prev) =>
-          prev.map((line) => {
-            if (line.id !== refDragLineId) return line;
-            return { ...line, value: adjustedValue };
-          })
+          prev.map((line) => (line.id === movingLineId ? { ...line, value: adjusted } : line))
         );
-      } catch (error) {
-        console.warn("Error during line dragging:", error);
+        setMovingLineId(null);
+        return;
       }
-    });
+
+      setHorizontalLines((prev) => [
+        ...prev,
+        { id: Date.now(), value: adjusted, color: DRAW_LINE_COLOR, type: "entry" },
+      ]);
+    },
+    [isDrawingMode, movingLineId]
+  );
+
+  const closeMenu = () => setMenuState({ anchorEl: null, lineId: null });
+
+  const handleDeleteLine = (lineId) => {
+    setHorizontalLines((prev) => prev.filter((line) => line.id !== lineId));
+    if (movingLineId === lineId) setMovingLineId(null);
+    closeMenu();
   };
 
-  const handleGlobalTouchMove = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    const { isDragging: refIsDragging, dragLineId: refDragLineId } = dragStateRef.current;
-
-    if (refIsDragging && refDragLineId && chartData && ohlcvData && ohlcvData.length > 0) {
-      try {
-        const chartCanvas = document.querySelector("canvas");
-        const touch = event.touches[0];
-
-        if (chartCanvas && touch) {
-          const rect = chartCanvas.getBoundingClientRect();
-          const y = touch.clientY - rect.top;
-
-          const yScale = chartData.datasets[0]?.data || [];
-          if (yScale.length === 0) return;
-
-          const chartHeight = 350;
-          const normalizedY = Math.max(0, Math.min(1, (y - 30) / (chartHeight - 60)));
-
-          const priceArray = (ohlcvData || []).map((item) =>
-            Math.max(item.high, item.close, item.open, item.low)
-          );
-          const maxPrice = priceArray.length > 0 ? Math.max(...priceArray) : 100000;
-
-          const minPriceArray = (ohlcvData || []).map((item) =>
-            Math.min(item.low, item.close, item.open, item.high)
-          );
-          const minPrice = minPriceArray.length > 0 ? Math.min(...minPriceArray) : 50000;
-          const priceRange = maxPrice - minPrice;
-
-          const newValue = maxPrice - normalizedY * priceRange;
-          const adjustedValue = adjustToKRXTickSize(newValue);
-
-          setHorizontalLines((prev) =>
-            prev.map((line) => {
-              if (line.id === refDragLineId) {
-                const updatedLine = { ...line, value: adjustedValue };
-
-                return updatedLine;
-              }
-              return line;
-            })
-          );
-        }
-      } catch (error) {
-        console.warn("Error during touch line dragging:", error);
-      }
-    }
-  };
-
-  const handleGlobalTouchEnd = () => {
-    const { isDragging: refIsDragging, dragLineId: refDragLineId } = dragStateRef.current;
-
-    if (refIsDragging && refDragLineId) {
-      // 드래그 완료 시 진입시점 자동 업데이트 없음 - 팝업 버튼으로만 설정
-    }
-
-    setIsDragging(false);
-    setDragLineId(null);
-    dragStateRef.current = {
-      isDragging: false,
-      dragLineId: null,
-    };
-
-    document.removeEventListener("touchmove", handleGlobalTouchMove);
-    document.removeEventListener("touchend", handleGlobalTouchEnd);
-  };
-
-  const handleGlobalMouseUp = () => {
-    const { isDragging: refIsDragging, dragLineId: refDragLineId } = dragStateRef.current;
-
-    if (refIsDragging && refDragLineId) {
-      // 드래그 완료 시 진입시점 자동 업데이트 없음 - 팝업 버튼으로만 설정
-    }
-
-    setIsDragging(false);
-    setDragLineId(null);
-    dragStateRef.current = {
-      isDragging: false,
-      dragLineId: null,
-    };
-    dragPriceRangeRef.current = null; // 드래그 종료 시 캐시 초기화
-    if (dragRafIdRef.current) {
-      cancelAnimationFrame(dragRafIdRef.current);
-      dragRafIdRef.current = null;
-    }
-
-    document.removeEventListener("mousemove", handleGlobalMouseMove);
-    document.removeEventListener("mouseup", handleGlobalMouseUp);
-  };
-
-  // Connect line to entry point
   const connectLineToEntry = (lineId) => {
-    const line = horizontalLines.find((l) => l.id === lineId);
-    if (line) {
-      const adjustedPrice = adjustToKRXTickSize(line.value);
-      onEntryPointChange(adjustedPrice.toString());
-      setHorizontalLines((prev) =>
-        prev.map((l) => (l.id === lineId ? { ...l, type: "entry", color: "#667eea" } : l))
-      );
-    }
+    const line = horizontalLines.find((item) => item.id === lineId);
+    if (!line) return;
+
+    const adjustedPrice = adjustToKRXTickSize(line.value);
+    onEntryPointChange(adjustedPrice.toString());
+    setHorizontalLines((prev) =>
+      prev.map((item) =>
+        item.id === lineId
+          ? { ...item, type: "entry", color: DRAW_LINE_COLOR, label: "1차 진입" }
+          : item
+      )
+    );
+    closeMenu();
   };
 
   const connectLineToPyramiding = (lineId, index) => {
-    const line = horizontalLines.find((l) => l.id === lineId);
+    const line = horizontalLines.find((item) => item.id === lineId);
     if (!line) return;
 
     const baseEntryPrice = parseFloat(entryPoint);
     if (!baseEntryPrice || baseEntryPrice <= 0) {
       onShowSnackbar("1차 진입시점을 먼저 설정해주세요.", "warning");
+      closeMenu();
       return;
     }
 
     const adjustedPrice = adjustToKRXTickSize(line.value);
     const percentage = (((adjustedPrice - baseEntryPrice) / baseEntryPrice) * 100).toFixed(2);
-    const percentageStr = percentage.toString();
-
-    onPyramidingEntryChange(index, percentageStr, true);
+    onPyramidingEntryChange(index, percentage.toString(), true);
 
     setHorizontalLines((prev) =>
-      prev.map((l) =>
-        l.id === lineId ? { ...l, type: "pyramiding", color: "#ff9800", pyramidingIndex: index } : l
+      prev.map((item) =>
+        item.id === lineId
+          ? {
+              ...item,
+              type: "pyramiding",
+              color: PYRAMIDING_LINE_COLOR,
+              pyramidingIndex: index,
+              label: `${index + 2}차 진입`,
+            }
+          : item
       )
     );
+    closeMenu();
   };
 
-  // 변곡점 관련 핸들러는 useInflectionPoints 훅에서 제공됨
+  const hasData = Array.isArray(ohlcvData) && ohlcvData.length > 0;
+  const activeLine = horizontalLines.find((line) => line.id === menuState.lineId);
 
-  // Create chart data (메모이제이션: 의존 데이터가 바뀔 때만 재생성)
-  const chartData = useMemo(
-    () => createCandlestickData(ohlcvData, analysisData, chartType, selectedStock),
-    [ohlcvData, analysisData, chartType, selectedStock, horizontalLines, inflectionAnalysisResult, showInflectionPoints]
-  );
-  const volumeData = useMemo(() => createVolumeData(ohlcvData), [ohlcvData]);
-  const indexChartData = useMemo(() => createIndexCandlestickData(indexOhlcvData), [indexOhlcvData]);
-  const rsRankData = useMemo(() => createRSRankData(analysisData), [analysisData]);
-  const atrData = useMemo(() => createATRData(analysisData), [analysisData]);
-  const mttData = useMemo(() => createMTTData(analysisData), [analysisData]);
+  // ── 차트 위 컨트롤 ─────────────────────────────────────────────
+  const overlay = (
+    <Box sx={{ position: "absolute", top: 8, left: 8, zIndex: 10, display: "flex", gap: 1 }}>
+      <Tooltip title={isDrawingMode ? "수평선 그리기 종료" : "수평선 그리기 시작"}>
+        <ToggleButton
+          value="drawing"
+          selected={isDrawingMode}
+          onChange={() => {
+            setIsDrawingMode((prev) => !prev);
+            setMovingLineId(null);
+          }}
+          size="small"
+          sx={{
+            border: `1px solid ${DRAW_LINE_COLOR}`,
+            color: isDrawingMode ? "#ffffff" : DRAW_LINE_COLOR,
+            backgroundColor: isDrawingMode ? DRAW_LINE_COLOR : "rgba(255, 255, 255, 0.9)",
+            "&.Mui-selected": {
+              backgroundColor: DRAW_LINE_COLOR,
+              color: "#ffffff",
+              "&:hover": { backgroundColor: "#5a6fd8" },
+            },
+          }}
+        >
+          <Timeline sx={{ fontSize: "16px" }} />
+        </ToggleButton>
+      </Tooltip>
 
-  // Chart options (변곡점 플러그인 옵션 적용) - useMemo로 메모이제이션
-  const chartOptions = useMemo(() => {
-  const baseChartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    animation: {
-      duration: 300,
-    },
-    layout: {
-      padding: {
-        top: 5,
-        bottom: 5,
-        left: 10,
-        right: 10,
-      },
-    },
-    onClick: (event, elements, chart) => {
-      if (elements.length > 0 && !isDrawingMode) {
-        const element = elements[0];
-        const dataset = chart.data.datasets[element.datasetIndex];
-        if (dataset.label && dataset.label.includes("진입선")) {
-          const lineId = dataset.lineId;
-          setSelectedLineId(lineId);
-          return;
-        }
-      }
-
-      if (isDrawingMode && ohlcvData && ohlcvData.length > 0) {
-        try {
-          let dataY;
-
-          if (event.native && chart.canvas && chart.scales.y) {
-            const rect = chart.canvas.getBoundingClientRect();
-            const y = event.native.clientY - rect.top;
-            dataY = chart.scales.y.getValueForPixel(y);
-          } else {
-            const yScale = chart.scales.y;
-            const minValue = yScale.min;
-            const maxValue = yScale.max;
-            dataY = (minValue + maxValue) / 2;
-          }
-
-          if (dataY && !isNaN(dataY)) {
-            const adjustedPrice = adjustToKRXTickSize(dataY);
-            handleAddHorizontalLine(adjustedPrice);
-            setIsDrawingMode(false);
-          }
-        } catch (error) {
-          if (ohlcvData && ohlcvData.length > 0) {
-            const lastPrice = ohlcvData[ohlcvData.length - 1].close;
-            handleAddHorizontalLine(lastPrice);
-            setIsDrawingMode(false);
-          }
-        }
-      }
-    },
-    onHover: (event, elements, chart) => {
-      if (event.native && event.native.target) {
-        if (isDrawingMode) {
-          event.native.target.style.cursor = "crosshair";
-        } else if (elements.length > 0) {
-          const element = elements[0];
-          const datasetLabel = chart.data.datasets[element.datasetIndex]?.label;
-          if (datasetLabel && datasetLabel.includes("진입선")) {
-            event.native.target.style.cursor = "pointer";
-          } else {
-            event.native.target.style.cursor = "default";
-          }
-        } else {
-          event.native.target.style.cursor = "default";
-        }
-      }
-    },
-    scales: {
-      x: {
-        type: "category",
-        labels: (ohlcvData || []).map((item) =>
-          new Date(item.date).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })
-        ),
-        grid: {
-          display: true,
-          color: "rgba(0,0,0,0.05)",
-        },
-        ticks: {
-          autoSkip: true,
-          autoSkipPadding: 10,
-          maxTicksLimit: 8,
-          color: "#666",
-          font: {
-            size: 10,
-          },
-          maxRotation: 0,
-          minRotation: 0,
-          padding: 5,
-        },
-      },
-      y: {
-        beginAtZero: false,
-        grace: "3%",
-        grid: {
-          color: "rgba(0,0,0,0.05)",
-        },
-        ticks: {
-          color: "#666",
-          font: {
-            size: 10,
-          },
-          padding: 8,
-          callback: function (value) {
-            return new Intl.NumberFormat("ko-KR").format(Math.round(value));
-          },
-        },
-        afterDataLimits: function (scale) {
-          scale.max = scale.max * 1.02;
-          scale.min = scale.min * 0.98;
-        },
-      },
-    },
-    plugins: {
-      legend: {
-        display: false,
-      },
-      tooltip: {
-        mode: "nearest",
-        intersect: false,
-        callbacks: {
-          title: function (context) {
-            const index = context[0].dataIndex;
-            if (ohlcvData && ohlcvData[index]) {
-              return new Date(ohlcvData[index].date).toLocaleDateString("ko-KR");
-            }
-            return "";
-          },
-          label: function (context) {
-            const datasetLabel = context.dataset.label;
-            if (datasetLabel === "캔들스틱") {
-              const data = context.raw;
-              const index = context.dataIndex;
-              // API의 change 값(전일 대비 등락율) 사용 - 소수점 형태를 백분율로 변환
-              const changePercent = ((ohlcvData && ohlcvData[index])?.change || 0) * 100;
-              const changePercentText = `등락율: ${
-                changePercent > 0 ? "+" : ""
-              }${changePercent.toFixed(2)}%`;
-              return [
-                `시가: ${new Intl.NumberFormat("ko-KR").format(data.o)}`,
-                `고가: ${new Intl.NumberFormat("ko-KR").format(data.h)}`,
-                `저가: ${new Intl.NumberFormat("ko-KR").format(data.l)}`,
-                `종가: ${new Intl.NumberFormat("ko-KR").format(data.c)}`,
-                changePercentText,
-              ];
-            }
-            return `${datasetLabel}: ${new Intl.NumberFormat("ko-KR").format(context.parsed.y)}`;
-          },
-        },
-      },
-    },
-  };
-
-  return inflectionAnalysisResult && showInflectionPoints
-      ? applyInflectionAnalysisToChart(baseChartOptions, inflectionAnalysisResult, inflectionSettings)
-      : baseChartOptions;
-  }, [ohlcvData, isDrawingMode, inflectionAnalysisResult, showInflectionPoints, inflectionSettings]);
-
-  const indexChartOptions = useMemo(() => ({
-    responsive: true,
-    maintainAspectRatio: false,
-    animation: {
-      duration: 300,
-    },
-    layout: {
-      padding: {
-        top: 5,
-        bottom: 0,
-        left: 10,
-        right: 10,
-      },
-    },
-    scales: {
-      x: {
-        type: "category",
-        labels: (indexOhlcvData || []).map((item) =>
-          new Date(item.date).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })
-        ),
-        grid: {
-          display: true,
-          color: "rgba(0,0,0,0.05)",
-        },
-        ticks: {
-          autoSkip: true,
-          autoSkipPadding: 10,
-          maxTicksLimit: 8,
-          color: "#666",
-          font: {
-            size: 10,
-          },
-          maxRotation: 0,
-          minRotation: 0,
-          padding: 0,
-        },
-      },
-      y: {
-        beginAtZero: false,
-        grace: "3%",
-        grid: {
-          color: "rgba(0,0,0,0.05)",
-        },
-        ticks: {
-          color: "#666",
-          font: {
-            size: 10,
-          },
-          padding: 8,
-          callback: function (value) {
-            return new Intl.NumberFormat("ko-KR").format(Math.round(value));
-          },
-        },
-        afterDataLimits: function (scale) {
-          scale.max = scale.max * 1.02;
-          scale.min = scale.min * 0.98;
-        },
-      },
-    },
-    plugins: {
-      legend: {
-        display: false,
-      },
-      tooltip: {
-        mode: "nearest",
-        intersect: false,
-        callbacks: {
-          title: function (context) {
-            const index = context[0].dataIndex;
-            if (indexOhlcvData && indexOhlcvData[index]) {
-              return new Date(indexOhlcvData[index].date).toLocaleDateString("ko-KR");
-            }
-            return "";
-          },
-          label: function (context) {
-            const data = context.raw;
-            const index = context.dataIndex;
-            // API의 change 값(전일 대비 등락율) 사용 - 소수점 형태를 백분율로 변환
-            const changePercent = ((indexOhlcvData && indexOhlcvData[index])?.change || 0) * 100;
-            const changePercentText = `등락율: ${
-              changePercent > 0 ? "+" : ""
-            }${changePercent.toFixed(2)}%`;
-            return [
-              `시가: ${new Intl.NumberFormat("ko-KR").format(data.o)}`,
-              `고가: ${new Intl.NumberFormat("ko-KR").format(data.h)}`,
-              `저가: ${new Intl.NumberFormat("ko-KR").format(data.l)}`,
-              `종가: ${new Intl.NumberFormat("ko-KR").format(data.c)}`,
-              changePercentText,
-            ];
-          },
-        },
-      },
-    },
-  }), [indexOhlcvData]);
-
-  const volumeOptions = useMemo(() => ({
-    responsive: true,
-    maintainAspectRatio: false,
-    animation: {
-      duration: 300,
-    },
-    layout: {
-      padding: {
-        top: 5,
-        bottom: 5,
-        left: 10,
-        right: 10,
-      },
-    },
-    scales: {
-      x: {
-        type: "category",
-        labels: (ohlcvData || []).map((item) =>
-          new Date(item.date).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })
-        ),
-        grid: {
-          display: true,
-          color: "rgba(0,0,0,0.05)",
-        },
-        ticks: {
-          autoSkip: true,
-          autoSkipPadding: 10,
-          maxTicksLimit: 8,
-          color: "#666",
-          font: {
-            size: 10,
-          },
-          maxRotation: 0,
-          minRotation: 0,
-          padding: 5,
-        },
-      },
-      y: {
-        beginAtZero: true,
-        grid: {
-          color: "rgba(0,0,0,0.05)",
-        },
-        ticks: {
-          color: "#666",
-          font: {
-            size: 10,
-          },
-          padding: 8,
-          callback: function (value) {
-            if (value >= 1000000) {
-              return (value / 1000000).toFixed(1) + "M";
-            } else if (value >= 1000) {
-              return (value / 1000).toFixed(0) + "K";
-            }
-            return new Intl.NumberFormat("ko-KR").format(value);
-          },
-        },
-      },
-    },
-    plugins: {
-      legend: {
-        display: false,
-      },
-      tooltip: {
-        mode: "nearest",
-        intersect: false,
-        callbacks: {
-          title: function (context) {
-            const index = context[0].dataIndex;
-            if (ohlcvData && ohlcvData[index]) {
-              return new Date(ohlcvData[index].date).toLocaleDateString("ko-KR");
-            }
-            return "";
-          },
-          label: function (context) {
-            return `거래량: ${new Intl.NumberFormat("ko-KR").format(context.parsed.y)}`;
-          },
-        },
-      },
-    },
-  }), [ohlcvData]);
-
-  const rsRankOptions = useMemo(() => ({
-    responsive: true,
-    maintainAspectRatio: false,
-    animation: {
-      duration: 300,
-    },
-    layout: {
-      padding: {
-        top: 5,
-        bottom: 5,
-        left: 10,
-        right: 10,
-      },
-    },
-    scales: {
-      x: {
-        type: "category",
-        labels: (analysisData || []).map((item) =>
-          new Date(item.date).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })
-        ),
-        grid: {
-          display: true,
-          color: "rgba(0,0,0,0.05)",
-        },
-        ticks: {
-          autoSkip: true,
-          autoSkipPadding: 10,
-          maxTicksLimit: 8,
-          color: "#666",
-          font: {
-            size: 10,
-          },
-          maxRotation: 0,
-          minRotation: 0,
-          padding: 5,
-        },
-      },
-      y: {
-        min: 0,
-        max: 100,
-        grid: {
-          color: "rgba(0,0,0,0.05)",
-        },
-        ticks: {
-          color: "#666",
-          font: {
-            size: 10,
-          },
-          padding: 8,
-          stepSize: 20,
-          callback: function (value) {
-            return value;
-          },
-        },
-      },
-    },
-    plugins: {
-      legend: {
-        display: true,
-      },
-      tooltip: {
-        mode: "nearest",
-        intersect: false,
-        callbacks: {
-          title: function (context) {
-            const index = context[0].dataIndex;
-            if (analysisData && analysisData[index]) {
-              return new Date(analysisData[index].date).toLocaleDateString("ko-KR");
-            }
-            return "";
-          },
-          label: function (context) {
-            return `RS Rank: ${context.parsed.y}`;
-          },
-        },
-      },
-    },
-  }), [analysisData]);
-
-  const atrOptions = useMemo(() => ({
-    responsive: true,
-    maintainAspectRatio: false,
-    interaction: {
-      mode: "index",
-      intersect: false,
-    },
-    animation: {
-      duration: 300,
-    },
-    layout: {
-      padding: {
-        top: 5,
-        bottom: 5,
-        left: 10,
-        right: 10,
-      },
-    },
-    scales: {
-      x: {
-        type: "category",
-        labels: (analysisData || []).map((item) =>
-          new Date(item.date).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })
-        ),
-        grid: {
-          display: true,
-          color: "rgba(0,0,0,0.05)",
-        },
-        ticks: {
-          autoSkip: true,
-          autoSkipPadding: 10,
-          maxTicksLimit: 8,
-          color: "#666",
-          font: {
-            size: 10,
-          },
-          maxRotation: 0,
-          minRotation: 0,
-          padding: 5,
-        },
-      },
-      y: {
-        type: "linear",
-        display: true,
-        position: "left",
-        beginAtZero: true,
-        grid: {
-          color: "rgba(0,0,0,0.05)",
-        },
-        ticks: {
-          color: "#666",
-          font: {
-            size: 10,
-          },
-          padding: 8,
-          callback: function (value) {
-            return new Intl.NumberFormat("ko-KR").format(value);
-          },
-        },
-        title: {
-          display: false,
-        },
-      },
-      y1: {
-        type: "linear",
-        display: true,
-        position: "right",
-        beginAtZero: true,
-        grid: {
-          drawOnChartArea: false,
-        },
-        ticks: {
-          color: "#666",
-          font: {
-            size: 10,
-          },
-          padding: 8,
-          callback: function (value) {
-            return value.toFixed(1) + "%";
-          },
-        },
-        title: {
-          display: false,
-        },
-      },
-    },
-    plugins: {
-      legend: {
-        display: true,
-        position: "top",
-        labels: {
-          usePointStyle: true,
-          padding: 15,
-          font: {
-            size: 11,
-          },
-          generateLabels: function (chart) {
-            const datasets = chart.data.datasets;
-            return datasets.map((dataset, i) => ({
-              text: dataset.label,
-              fillStyle: dataset.backgroundColor,
-              strokeStyle: dataset.borderColor,
-              lineWidth: dataset.borderWidth,
-              pointStyle: dataset.type === "line" ? "line" : "rect",
-              hidden: !chart.isDatasetVisible(i),
-              datasetIndex: i,
-            }));
-          },
-        },
-      },
-      tooltip: {
-        mode: "index",
-        intersect: false,
-        callbacks: {
-          title: function (context) {
-            const index = context[0].dataIndex;
-            if (analysisData && analysisData[index]) {
-              return new Date(analysisData[index].date).toLocaleDateString("ko-KR");
-            }
-            return "";
-          },
-          label: function (context) {
-            const label = context.dataset.label;
-            const value = context.parsed.y;
-            if (label === "ATR") {
-              return `ATR: ${new Intl.NumberFormat("ko-KR").format(value)}`;
-            } else if (label === "ATR Ratio (%)") {
-              return `ATR Ratio: ${value.toFixed(2)}%`;
-            }
-            return `${label}: ${value}`;
-          },
-        },
-      },
-    },
-  }), [analysisData]);
-
-  const mttOptions = useMemo(() => ({
-    responsive: true,
-    maintainAspectRatio: false,
-    animation: {
-      duration: 300,
-    },
-    layout: {
-      padding: {
-        top: 5,
-        bottom: 5,
-        left: 10,
-        right: 10,
-      },
-    },
-    scales: {
-      x: {
-        type: "category",
-        labels: (analysisData || []).map((item) =>
-          new Date(item.date).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })
-        ),
-        grid: {
-          display: true,
-          color: "rgba(0,0,0,0.05)",
-        },
-        ticks: {
-          autoSkip: true,
-          autoSkipPadding: 10,
-          maxTicksLimit: 8,
-          color: "#666",
-          font: {
-            size: 10,
-          },
-          maxRotation: 0,
-          minRotation: 0,
-          padding: 5,
-        },
-      },
-      y: {
-        min: -0.1,
-        max: 1.1,
-        ticks: {
-          stepSize: 1,
-          color: "#666",
-          font: {
-            size: 10,
-          },
-          padding: 8,
-          callback: function (value) {
-            return value === 1 ? "만족" : value === 0 ? "불만족" : "";
-          },
-        },
-        grid: {
-          color: "rgba(0,0,0,0.05)",
-        },
-      },
-    },
-    plugins: {
-      legend: {
-        display: true,
-        position: "top",
-        labels: {
-          usePointStyle: true,
-          padding: 15,
-          font: {
-            size: 11,
-          },
-        },
-      },
-      tooltip: {
-        mode: "index",
-        intersect: false,
-        callbacks: {
-          title: function (context) {
-            const index = context[0].dataIndex;
-            if (analysisData && analysisData[index]) {
-              return new Date(analysisData[index].date).toLocaleDateString("ko-KR");
-            }
-            return "";
-          },
-          label: function (context) {
-            const value = context.parsed.y;
-            return `MTT 조건: ${value === 1 ? "만족" : "불만족"}`;
-          },
-        },
-      },
-    },
-  }), [analysisData]);
-
-  return (
-    <MKBox sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
-      {/* Main chart content */}
-      <MKBox sx={{ position: "relative", flex: 1 }}>
-        {chartData && ohlcvData && ohlcvData.length > 0 ? (
-          <>
-            {/* Chart controls - positioned inside chart */}
-            <MKBox
-              sx={{
-                position: "absolute",
-                top: 8,
-                right: 8,
-                zIndex: 10,
-                display: "flex",
-                gap: 1,
-              }}
-            >
-              <Tooltip title={isDrawingMode ? "수평선 그리기 종료" : "수평선 그리기 시작"}>
-                <ToggleButton
-                  value="drawing"
-                  selected={isDrawingMode}
-                  onChange={toggleDrawingMode}
-                  size="small"
-                  color="primary"
-                  sx={{
-                    border: "1px solid #667eea",
-                    color: isDrawingMode ? "white" : "#667eea",
-                    backgroundColor: isDrawingMode ? "#667eea" : "transparent",
-                    "&:hover": {
-                      backgroundColor: isDrawingMode ? "#5a6fd8" : "rgba(102, 126, 234, 0.1)",
-                    },
-                    "&.Mui-selected": {
-                      backgroundColor: "#667eea",
-                      color: "white",
-                      "&:hover": {
-                        backgroundColor: "#5a6fd8",
-                      },
-                    },
-                  }}
-                >
-                  <Timeline sx={{ fontSize: "16px" }} />
-                </ToggleButton>
-              </Tooltip>
-
-              {horizontalLines && horizontalLines.length > 0 && (
-                <Tooltip title="모든 수평선 삭제">
-                  <IconButton
-                    onClick={() => setHorizontalLines([])}
-                    size="small"
-                    color="error"
-                    sx={{
-                      minWidth: { xs: "44px", md: "32px" },
-                      minHeight: { xs: "44px", md: "32px" },
-                      border: "1px solid #f44336",
-                      color: "#f44336",
-                      backgroundColor: "transparent",
-                      "&:hover": {
-                        backgroundColor: "rgba(244, 67, 54, 0.1)",
-                      },
-                    }}
-                  >
-                    <Delete sx={{ fontSize: "16px" }} />
-                  </IconButton>
-                </Tooltip>
-              )}
-
-              {/* 변곡점 토글 버튼 */}
-              {isInflectionPointsAvailable && (
-                <InflectionPointToggle
-                  showInflectionPoints={showInflectionPoints}
-                  onToggle={toggleInflectionPoints}
-                  size="small"
-                />
-              )}
-            </MKBox>
-
-            {/* Horizontal line labels */}
-            {horizontalLines.map((line) => {
-              let linePosition = 175;
-
-              if (chartRef.current) {
-                const chartInstance = chartRef.current;
-                if (chartInstance.scales && chartInstance.scales.y) {
-                  const yScale = chartInstance.scales.y;
-                  try {
-                    const pixelPosition = yScale.getPixelForValue(line.value);
-                    if (!isNaN(pixelPosition)) {
-                      linePosition = pixelPosition - 12;
-                    }
-                  } catch (error) {
-                    const yScale = chartData ? chartData.datasets[0]?.data : [];
-                    if (yScale.length > 0) {
-                      const maxPrice = Math.max(
-                        ...ohlcvData.map((item) =>
-                          Math.max(item.high, item.close, item.open, item.low)
-                        )
-                      );
-                      const minPrice = Math.min(
-                        ...ohlcvData.map((item) =>
-                          Math.min(item.low, item.close, item.open, item.high)
-                        )
-                      );
-                      const priceRange = maxPrice - minPrice;
-                      const chartHeight = 350;
-                      linePosition =
-                        ((maxPrice - line.value) / priceRange) * (chartHeight - 60) + 30 - 12;
-                    }
-                  }
-                } else {
-                  const yScale = chartData ? chartData.datasets[0]?.data : [];
-                  if (yScale.length > 0) {
-                    const priceArrayMax = (ohlcvData || []).map((item) =>
-                      Math.max(item.high, item.close, item.open, item.low)
-                    );
-                    const maxPrice = priceArrayMax.length > 0 ? Math.max(...priceArrayMax) : 100000;
-
-                    const priceArrayMin = (ohlcvData || []).map((item) =>
-                      Math.min(item.low, item.close, item.open, item.high)
-                    );
-                    const minPrice = priceArrayMin.length > 0 ? Math.min(...priceArrayMin) : 50000;
-                    const priceRange = maxPrice - minPrice;
-                    const chartHeight = 350;
-                    linePosition =
-                      ((maxPrice - line.value) / priceRange) * (chartHeight - 60) + 30 - 12;
-                  }
-                }
-              }
-
-              return (
-                <MKBox
-                  key={line.id}
-                  sx={{
-                    position: "absolute",
-                    top: `${linePosition}px`,
-                    left: { xs: 4, md: 8 },
-                    zIndex: 15,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: { xs: 0.3, md: 0.5 },
-                    backgroundColor:
-                      isDragging && dragLineId === line.id
-                        ? "rgba(255, 152, 0, 0.9)"
-                        : selectedLineId === line.id
-                        ? "rgba(102, 126, 234, 0.9)"
-                        : "rgba(255, 255, 255, 0.9)",
-                    borderRadius: 1,
-                    p: { xs: 0.3, md: 0.5 },
-                    border:
-                      isDragging && dragLineId === line.id
-                        ? "2px solid #ff9800"
-                        : selectedLineId === line.id
-                        ? "2px solid #667eea"
-                        : "1px solid #ddd",
-                    boxShadow:
-                      isDragging && dragLineId === line.id
-                        ? "0 4px 12px rgba(255, 152, 0, 0.3)"
-                        : "0 2px 4px rgba(0,0,0,0.1)",
-                    cursor: isDragging && dragLineId === line.id ? "grabbing" : "grab",
-                    transition: isDragging && dragLineId === line.id ? "none" : "all 0.2s ease",
-                    transform: isDragging && dragLineId === line.id ? "scale(1.1)" : "scale(1)",
-                    "&:hover": {
-                      backgroundColor:
-                        isDragging && dragLineId === line.id
-                          ? "rgba(255, 152, 0, 0.9)"
-                          : "rgba(102, 126, 234, 0.1)",
-                      transform:
-                        isDragging && dragLineId === line.id ? "scale(1.1)" : "scale(1.05)",
-                    },
-                  }}
-                  onMouseDown={(e) => handleLabelMouseDown(line.id, e)}
-                  onTouchStart={(e) => handleLabelTouchStart(line.id, e)}
-                >
-                  <MKBox
-                    sx={{
-                      width: { xs: 6, md: 8 },
-                      height: { xs: 1.5, md: 2 },
-                      backgroundColor: line.color,
-                      borderRadius: 1,
-                    }}
-                  />
-
-                  <MKTypography
-                    variant="caption"
-                    sx={{
-                      fontWeight: "bold",
-                      fontSize: { xs: "10px", md: "12px" },
-                      color:
-                        isDragging && dragLineId === line.id
-                          ? "white"
-                          : selectedLineId === line.id
-                          ? "white"
-                          : "text.primary",
-                      minWidth: { xs: "45px", md: "60px" },
-                      userSelect: "none",
-                    }}
-                  >
-                    {new Intl.NumberFormat("ko-KR").format(line.value)}
-                  </MKTypography>
-
-                  <IconButton
-                    size="small"
-                    color="error"
-                    sx={{
-                      minWidth: { xs: "24px", md: "32px" },
-                      minHeight: { xs: "24px", md: "32px" },
-                      p: { xs: 0.15, md: 0.25 },
-                      color:
-                        isDragging && dragLineId === line.id
-                          ? "white"
-                          : selectedLineId === line.id
-                          ? "white"
-                          : "#f44336",
-                      "&:hover": {
-                        backgroundColor: "rgba(244, 67, 54, 0.2)",
-                      },
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeleteHorizontalLine(line.id);
-                    }}
-                  >
-                    <Delete sx={{ fontSize: { xs: "10px", md: "12px" } }} />
-                  </IconButton>
-                </MKBox>
-              );
-            })}
-
-            {/* Entry popup */}
-            {showEntryPopup && selectedLineId && (
-              <MKBox
-                sx={{
-                  position: "absolute",
-                  top: { xs: 35, md: 40 },
-                  right: { xs: 8, md: 8 },
-                  zIndex: 20,
-                  backgroundColor: "rgba(255, 255, 255, 0.98)",
-                  borderRadius: 1,
-                  p: { xs: 0.8, md: 1 },
-                  border: "2px solid #667eea",
-                  boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
-                  animation: `${fadeIn} 0.2s ease-in-out`,
-                  minWidth: { xs: 180, md: 200 },
-                  maxWidth: { xs: 220, md: 300 },
-                }}
-              >
-                <MKBox
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    mb: { xs: 0.8, md: 1 },
-                  }}
-                >
-                  <MKTypography
-                    variant="caption"
-                    fontWeight="bold"
-                    sx={{
-                      fontSize: { xs: "10px", md: "12px" },
-                      lineHeight: 1.2,
-                      flex: 1,
-                      pr: 1,
-                    }}
-                  >
-                    진입시점 설정 ({horizontalLines.find((l) => l.id === selectedLineId)?.value}원)
-                  </MKTypography>
-                  <IconButton
-                    size="small"
-                    color="default"
-                    sx={{
-                      minWidth: { xs: "24px", md: "32px" },
-                      minHeight: { xs: "24px", md: "32px" },
-                      padding: { xs: "1px", md: "2px" },
-                    }}
-                    onClick={() => setShowEntryPopup(false)}
-                  >
-                    <Close sx={{ fontSize: { xs: "12px", md: "14px" } }} />
-                  </IconButton>
-                </MKBox>
-                <MKBox sx={{ display: "flex", flexDirection: "column", gap: { xs: 0.4, md: 0.5 } }}>
-                  {/* 1차 진입시점 버튼 */}
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    color="primary"
-                    onClick={() => {
-                      connectLineToEntry(selectedLineId);
-                      setShowEntryPopup(false);
-                    }}
-                    sx={{
-                      fontSize: { xs: "9px", md: "10px" },
-                      py: { xs: 0.4, md: 0.5 },
-                      px: { xs: 0.8, md: 1 },
-                      minHeight: { xs: "28px", md: "32px" },
-                      borderColor: "#667eea",
-                      color: "#667eea",
-                      "&:hover": {
-                        borderColor: "#5a6fd8",
-                        backgroundColor: "rgba(102, 126, 234, 0.04)",
-                      },
-                    }}
-                  >
-                    1차 진입시점으로 설정
-                  </Button>
-
-                  {/* 피라미딩 진입시점 버튼들 - turtle/atr 모드에서는 ATR 배수로 자동 계산되므로 숨김 */}
-                  {tradingMode === "manual" && pyramidingEntries.map((_, index) => (
-                    <Button
-                      key={index}
-                      size="small"
-                      variant="outlined"
-                      color="warning"
-                      onClick={() => {
-                        connectLineToPyramiding(selectedLineId, index);
-                        setShowEntryPopup(false);
-                      }}
-                      sx={{
-                        fontSize: { xs: "9px", md: "10px" },
-                        py: { xs: 0.4, md: 0.5 },
-                        px: { xs: 0.8, md: 1 },
-                        minHeight: { xs: "28px", md: "32px" },
-                        borderColor: "#ff9800",
-                        color: "#ff9800",
-                        "&:hover": {
-                          borderColor: "#f57c00",
-                          backgroundColor: "rgba(255, 152, 0, 0.04)",
-                        },
-                      }}
-                    >
-                      {index + 2}차 진입시점으로 설정
-                    </Button>
-                  ))}
-                </MKBox>
-              </MKBox>
-            )}
-
-            {/* Drawing mode indicator */}
-            {isDrawingMode && (
-              <MKBox
-                sx={{
-                  position: "absolute",
-                  bottom: 8,
-                  left: 8,
-                  zIndex: 10,
-                  backgroundColor: "rgba(255, 107, 53, 0.9)",
-                  color: "white",
-                  borderRadius: 1,
-                  p: 1,
-                }}
-              >
-                <MKTypography variant="caption" fontWeight="bold">
-                  차트 클릭으로 수평선 추가
-                </MKTypography>
-              </MKBox>
-            )}
-
-            {/* Main candlestick chart */}
-            <MKBox
-              sx={{
-                height: { xs: "280px", md: "350px" },
-                backgroundColor: "#ffffff",
-                border: "1px solid #e0e0e0",
-                borderRadius: 1,
-                p: 0.5,
-                mb: 1,
-              }}
-            >
-              <Chart
-                ref={chartRef}
-                type="candlestick"
-                data={chartData}
-                options={chartOptions}
-                // plugins prop은 전역 등록으로 대체
-              />
-            </MKBox>
-
-            {/* Volume chart */}
-            <MKBox
-              sx={{
-                height: { xs: "140px", md: "175px" },
-                backgroundColor: "#ffffff",
-                border: "1px solid #e0e0e0",
-                borderRadius: 1,
-                p: 0.5,
-                mb: 1,
-              }}
-            >
-              {volumeData && <Chart type="bar" data={volumeData} options={volumeOptions} />}
-            </MKBox>
-
-            {/* Index chart */}
-            {indexData && indexData.length > 0 && (
-              <MKBox
-                sx={{
-                  height: { xs: "280px", md: "350px" },
-                  backgroundColor: "#ffffff",
-                  border: "1px solid #e0e0e0",
-                  borderRadius: 1,
-                  p: 0.5,
-                }}
-              >
-                <MKBox
-                  sx={{
-                    p: 0.5,
-                    borderBottom: "1px solid #f0f0f0",
-                    mb: 0.5,
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <MKBox>
-                    <MKTypography variant="caption" color="text">
-                      {selectedIndexCode && indexData && indexData.length > 0
-                        ? `${
-                            indexData.find((idx) => idx.code === selectedIndexCode)?.market || ""
-                          } • ${selectedIndexCode}`
-                        : "인덱스를 선택하세요"}
-                    </MKTypography>
-                  </MKBox>
-
-                  <FormControl size="small" sx={{ minWidth: 200 }}>
-                    <InputLabel id="index-select-label">인덱스 선택</InputLabel>
-                    <Select
-                      labelId="index-select-label"
-                      value={selectedIndexCode}
-                      label="인덱스 선택"
-                      onChange={onIndexChange}
-                      sx={{
-                        backgroundColor: "white",
-                        "& .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "#2196f3",
-                        },
-                        "&:hover .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "#1976d2",
-                        },
-                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "#2196f3",
-                        },
-                      }}
-                    >
-                      {indexData.map((index) => (
-                        <MenuItem key={index.code} value={index.code}>
-                          {index.name} ({index.market})
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </MKBox>
-
-                {indexChartData && indexOhlcvData && indexOhlcvData.length > 0 ? (
-                  <MKBox sx={{ height: "calc(100% - 80px)" }}>
-                    <Chart type="candlestick" data={indexChartData} options={indexChartOptions} />
-                  </MKBox>
-                ) : (
-                  <MKBox
-                    sx={{
-                      height: "calc(100% - 80px)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      flexDirection: "column",
-                      color: "#666",
-                    }}
-                  >
-                    <MKTypography variant="body1" mb={1}>
-                      {selectedIndexCode ? "인덱스 데이터를 로드하는 중..." : "인덱스를 선택하세요"}
-                    </MKTypography>
-                    {selectedIndexCode && <CircularProgress size={24} />}
-                  </MKBox>
-                )}
-              </MKBox>
-            )}
-
-            {/* RS Rank chart */}
-            {analysisData && analysisData.length > 0 && (
-              <MKBox
-                sx={{
-                  height: { xs: "250px", md: "300px" },
-                  backgroundColor: "#ffffff",
-                  border: "1px solid #e0e0e0",
-                  borderRadius: 1,
-                  p: 0.5,
-                  mb: 1,
-                }}
-              >
-                {rsRankData ? (
-                  <MKBox sx={{ height: "100%" }}>
-                    <Chart type="line" data={rsRankData} options={rsRankOptions} />
-                  </MKBox>
-                ) : (
-                  <MKBox
-                    sx={{
-                      height: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      flexDirection: "column",
-                      color: "#666",
-                    }}
-                  >
-                    <MKTypography variant="body1">RS Rank 데이터를 로드하는 중...</MKTypography>
-                  </MKBox>
-                )}
-              </MKBox>
-            )}
-
-            {/* ATR chart */}
-            {analysisData && analysisData.length > 0 && (
-              <MKBox
-                sx={{
-                  height: { xs: "200px", md: "250px" },
-                  backgroundColor: "#ffffff",
-                  border: "1px solid #e0e0e0",
-                  borderRadius: 1,
-                  p: 0.5,
-                }}
-              >
-                {atrData ? (
-                  <MKBox sx={{ height: "100%" }}>
-                    <Chart data={atrData} options={atrOptions} />
-                  </MKBox>
-                ) : (
-                  <MKBox
-                    sx={{
-                      height: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      flexDirection: "column",
-                      color: "#666",
-                    }}
-                  >
-                    <MKTypography variant="body1">ATR 데이터를 로드하는 중...</MKTypography>
-                  </MKBox>
-                )}
-              </MKBox>
-            )}
-
-            {/* MTT (Minervini Trend Template) chart */}
-            {analysisData && analysisData.length > 0 && (
-              <MKBox
-                sx={{
-                  height: { xs: "150px", md: "200px" },
-                  backgroundColor: "#ffffff",
-                  border: "1px solid #e0e0e0",
-                  borderRadius: 1,
-                  p: 0.5,
-                  mt: 1,
-                }}
-              >
-                {mttData ? (
-                  <MKBox sx={{ height: "100%" }}>
-                    <Chart data={mttData} options={mttOptions} />
-                  </MKBox>
-                ) : (
-                  <MKBox
-                    sx={{
-                      height: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      flexDirection: "column",
-                      color: "#666",
-                    }}
-                  >
-                    <MKTypography variant="body1">MTT 데이터를 로드하는 중...</MKTypography>
-                  </MKBox>
-                )}
-              </MKBox>
-            )}
-          </>
-        ) : (
-          <MKBox
+      {horizontalLines.length > 0 && (
+        <Tooltip title="모든 수평선 삭제">
+          <IconButton
+            onClick={() => {
+              setHorizontalLines([]);
+              setMovingLineId(null);
+            }}
+            size="small"
             sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              height: "100%",
-              flexDirection: "column",
-              color: "#666",
+              border: "1px solid #f44336",
+              color: "#f44336",
+              backgroundColor: "rgba(255, 255, 255, 0.9)",
+              "&:hover": { backgroundColor: "rgba(244, 67, 54, 0.1)" },
             }}
           >
-            <MKTypography variant="h6" mb={1}>
-              {selectedStock.name}
-            </MKTypography>
-            <MKTypography variant="body2">차트 데이터를 사용할 수 없습니다</MKTypography>
-          </MKBox>
-        )}
-      </MKBox>
-    </MKBox>
+            <Delete sx={{ fontSize: "16px" }} />
+          </IconButton>
+        </Tooltip>
+      )}
+
+      {isInflectionPointsAvailable && (
+        <InflectionPointToggle
+          showInflectionPoints={showInflectionPoints}
+          onToggle={toggleInflectionPoints}
+          size="small"
+        />
+      )}
+    </Box>
   );
+
+  const drawingHint = (isDrawingMode || movingLineId) && (
+    <Box
+      sx={{
+        position: "absolute",
+        bottom: 28,
+        left: 8,
+        zIndex: 10,
+        backgroundColor: movingLineId ? "rgba(255, 152, 0, 0.92)" : "rgba(102, 126, 234, 0.92)",
+        color: "#ffffff",
+        borderRadius: 1,
+        px: 1,
+        py: 0.5,
+      }}
+    >
+      <Typography variant="caption" fontWeight="bold">
+        {movingLineId ? "옮길 위치를 클릭하세요" : "차트 클릭으로 수평선 추가"}
+      </Typography>
+    </Box>
+  );
+
+  return (
+    <Box sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+      {hasData ? (
+        <>
+          {/* 수평선 목록 */}
+          {horizontalLines.length > 0 && (
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mb: 0.5 }}>
+              {horizontalLines.map((line) => (
+                <Chip
+                  key={line.id}
+                  size="small"
+                  label={`${line.label ? `${line.label} · ` : ""}${new Intl.NumberFormat(
+                    "ko-KR"
+                  ).format(line.value)}`}
+                  onClick={(event) =>
+                    setMenuState({ anchorEl: event.currentTarget, lineId: line.id })
+                  }
+                  onDelete={() => handleDeleteLine(line.id)}
+                  sx={{
+                    borderLeft: `4px solid ${line.color}`,
+                    fontWeight: 600,
+                    backgroundColor:
+                      movingLineId === line.id ? "rgba(255, 152, 0, 0.15)" : undefined,
+                  }}
+                />
+              ))}
+            </Box>
+          )}
+
+          {/* 범례 */}
+          <ChartLegend
+            groups={[
+              { title: "이동평균", items: MA_FIELDS },
+              { title: "RS Rank", items: RS_FIELDS },
+            ]}
+          />
+
+          {/* 캔들 · 거래량 · RS · ATR · MTT (pane 통합) */}
+          <Box sx={{ ...chartSurfaceSx, position: "relative", height: CHART_HEIGHT }}>
+            <TradingViewChart
+              series={series}
+              panes={panes}
+              height="100%"
+              initialVisibleBars={120}
+              fitContentKey={selectedStock?.code ?? null}
+              onClick={handleChartClick}
+              chartOptions={{
+                leftPriceScale: { visible: true, borderColor: "#e2e8f0" },
+                crosshair: { mode: isDrawingMode || movingLineId ? 0 : 1 },
+              }}
+              sx={{ cursor: isDrawingMode || movingLineId ? "crosshair" : "default" }}
+              overlay={
+                <>
+                  {overlay}
+                  {drawingHint}
+                </>
+              }
+            />
+          </Box>
+
+          {/* 인덱스(지수) 차트 */}
+          {indexData && indexData.length > 0 && (
+            <Box sx={chartSurfaceSx}>
+              <Box
+                sx={{
+                  p: 0.5,
+                  borderBottom: "1px solid #f1f5f9",
+                  mb: 0.5,
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: 1,
+                }}
+              >
+                <Typography variant="caption" color="text.secondary">
+                  {selectedIndexCode
+                    ? `${
+                        indexData.find((index) => index.code === selectedIndexCode)?.market ?? ""
+                      } • ${selectedIndexCode}`
+                    : "인덱스를 선택하세요"}
+                </Typography>
+
+                <FormControl size="small" sx={{ minWidth: 200 }}>
+                  <InputLabel id="index-select-label">인덱스 선택</InputLabel>
+                  <Select
+                    labelId="index-select-label"
+                    value={selectedIndexCode}
+                    label="인덱스 선택"
+                    onChange={onIndexChange}
+                  >
+                    {indexData.map((index) => (
+                      <MenuItem key={index.code} value={index.code}>
+                        {index.name} ({index.market})
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+
+              <Box sx={{ height: INDEX_CHART_HEIGHT }}>
+                <TradingViewChart
+                  series={indexSeries}
+                  panes={[{ stretch: 1 }]}
+                  height="100%"
+                  initialVisibleBars={120}
+                  fitContentKey={selectedIndexCode || null}
+                  emptyMessage={
+                    selectedIndexCode ? "인덱스 데이터를 로드하는 중..." : "인덱스를 선택하세요"
+                  }
+                />
+              </Box>
+            </Box>
+          )}
+
+          {/* 수평선 컨텍스트 메뉴 */}
+          <Menu
+            anchorEl={menuState.anchorEl}
+            open={Boolean(menuState.anchorEl)}
+            onClose={closeMenu}
+          >
+            <MenuItem onClick={() => connectLineToEntry(menuState.lineId)}>
+              1차 진입시점으로 설정
+            </MenuItem>
+            {tradingMode === "manual" &&
+              pyramidingEntries.map((_, index) => (
+                <MenuItem
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={index}
+                  onClick={() => connectLineToPyramiding(menuState.lineId, index)}
+                >
+                  {index + 2}차 진입시점으로 설정
+                </MenuItem>
+              ))}
+            <Divider />
+            <MenuItem
+              onClick={() => {
+                setMovingLineId(activeLine?.id ?? null);
+                setIsDrawingMode(false);
+                closeMenu();
+              }}
+            >
+              위치 이동
+            </MenuItem>
+            <MenuItem onClick={() => handleDeleteLine(menuState.lineId)} sx={{ color: "#f44336" }}>
+              삭제
+            </MenuItem>
+          </Menu>
+        </>
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100%",
+            flexDirection: "column",
+            color: "text.secondary",
+          }}
+        >
+          <Typography variant="h6" mb={1}>
+            {selectedStock?.name}
+          </Typography>
+          <Typography variant="body2">차트 데이터를 사용할 수 없습니다</Typography>
+        </Box>
+      )}
+    </Box>
+  );
+};
+
+ChartContainer.propTypes = {
+  ohlcvData: PropTypes.array,
+  analysisData: PropTypes.array,
+  indexOhlcvData: PropTypes.array,
+  indexData: PropTypes.array,
+  selectedIndexCode: PropTypes.string,
+  selectedStock: PropTypes.object,
+  entryPoint: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  pyramidingEntries: PropTypes.array,
+  onIndexChange: PropTypes.func,
+  onEntryPointChange: PropTypes.func,
+  onPyramidingEntryChange: PropTypes.func,
+  onShowSnackbar: PropTypes.func,
+  chartType: PropTypes.string,
+  tradingMode: PropTypes.string,
+};
+
+ChartContainer.defaultProps = {
+  ohlcvData: [],
+  analysisData: [],
+  indexOhlcvData: [],
+  indexData: [],
+  selectedIndexCode: "",
+  selectedStock: {},
+  entryPoint: "",
+  pyramidingEntries: [],
+  onIndexChange: () => {},
+  onEntryPointChange: () => {},
+  onPyramidingEntryChange: () => {},
+  onShowSnackbar: () => {},
+  chartType: "default",
+  tradingMode: "manual",
 };
 
 export default React.memo(ChartContainer, (prev, next) => {
@@ -2282,6 +481,7 @@ export default React.memo(ChartContainer, (prev, next) => {
     prev.ohlcvData === next.ohlcvData &&
     prev.analysisData === next.analysisData &&
     prev.indexOhlcvData === next.indexOhlcvData &&
+    prev.selectedIndexCode === next.selectedIndexCode &&
     prev.entryPoint === next.entryPoint &&
     prev.pyramidingEntries === next.pyramidingEntries &&
     prev.tradingMode === next.tradingMode &&
