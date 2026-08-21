@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
 
 // @mui material components
@@ -21,6 +21,8 @@ import Timeline from "@mui/icons-material/Timeline";
 import TradingViewChart, {
   ChartLegend,
   OhlcLegend,
+  VcpPrimitive,
+  ZonePrimitive,
   useSeriesHover,
 } from "components/TradingViewChart";
 import InflectionPointToggle from "components/InflectionPointToggle";
@@ -33,6 +35,7 @@ import {
   MA_FIELDS,
   PANE_STRETCH,
   RS_FIELDS,
+  buildHtfZones,
   buildIndexSeries,
   buildStockChartSeries,
   compactPanes,
@@ -84,9 +87,18 @@ const ChartContainer = ({
 
   const { readout, onCrosshairMove } = useSeriesHover(ohlcvData);
 
+  // HTF 상승 구간 음영. primitive는 차트 수명 동안 같은 인스턴스를 유지해야 한다.
+  const htfZonesRef = useRef(null);
+  if (!htfZonesRef.current) htfZonesRef.current = new ZonePrimitive();
+
+  // VCP 수축 구간 · 스윙 연결선 · 피벗선
+  const vcpRef = useRef(null);
+  if (!vcpRef.current) vcpRef.current = new VcpPrimitive();
+
   const {
     showInflectionPoints,
     inflectionAnalysisResult,
+    inflectionSettings,
     isInflectionPointsAvailable,
     toggleInflectionPoints,
   } = useInflectionPoints(ohlcvData, chartType);
@@ -103,11 +115,25 @@ const ChartContainer = ({
       inflectionAnalysisResult,
       showInflectionPoints,
     });
+    htfZonesRef.current.setShapes(buildHtfZones(chartType, selectedStock), []);
+    vcpRef.current.setAnalysis(
+      showInflectionPoints ? inflectionAnalysisResult : null,
+      ohlcvData,
+      inflectionSettings
+    );
+
     const withVisibility = built.map((spec) =>
       hiddenSeriesIds.includes(spec.id)
         ? { ...spec, options: { ...spec.options, visible: false } }
         : spec
     );
+    const candleIndex = withVisibility.findIndex((spec) => spec.id === "candle");
+    if (candleIndex >= 0) {
+      withVisibility[candleIndex] = {
+        ...withVisibility[candleIndex],
+        primitives: [htfZonesRef.current, vcpRef.current],
+      };
+    }
     return compactPanes(withVisibility, PANE_STRETCH);
   }, [
     hiddenSeriesIds,
@@ -118,6 +144,7 @@ const ChartContainer = ({
     chartType,
     selectedStock,
     inflectionAnalysisResult,
+    inflectionSettings,
     showInflectionPoints,
   ]);
 

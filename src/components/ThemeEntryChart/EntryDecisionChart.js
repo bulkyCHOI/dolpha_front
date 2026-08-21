@@ -4,7 +4,7 @@ import { LineStyle } from "lightweight-charts";
 
 import TradingViewChart from "components/TradingViewChart";
 
-import ZonePrimitive from "./ZonePrimitive";
+import ZonePrimitive from "components/TradingViewChart/ZonePrimitive";
 import { CHART_COLORS, ZONE_STYLE, decisionStatus, timeLabel, won } from "./constants";
 
 const MINUTE = 60;

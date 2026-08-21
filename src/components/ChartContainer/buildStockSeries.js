@@ -87,6 +87,28 @@ export function buildVolumeSeries(ohlcvData) {
     }));
 }
 
+/**
+ * HTF 패턴의 상승 구간 음영.
+ * 시작일 ~ 고점일 사이를 밴드로 칠한다 (원본 Chart.js의 "HTF 상승구간" 대체).
+ */
+export function buildHtfZones(chartType, selectedStock) {
+  if (chartType !== "htf") return [];
+  const from = selectedStock?.htf_pattern_start_date;
+  const to = selectedStock?.htf_pattern_peak_date;
+  if (!from || !to) return [];
+
+  return [
+    {
+      from,
+      to,
+      fill: "rgba(34, 197, 94, 0.10)",
+      stroke: "rgba(34, 197, 94, 0.45)",
+      label: "HTF 상승구간",
+      labelColor: MARKER_COLORS.htfStart,
+    },
+  ];
+}
+
 /** HTF 패턴 시작점/고점 마커 */
 export function buildHtfMarkers(chartType, selectedStock) {
   // API 응답에는 htf_pattern_detected 필드가 없다.
