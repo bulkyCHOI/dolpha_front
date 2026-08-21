@@ -11,9 +11,9 @@
  *   primitive.updateBand(lower, upper); // [{time, price}] 배열
  */
 
-const FILL_COLOR  = "rgba(34, 197, 94, 0.12)";
-const LINE_COLOR  = "rgba(34, 197, 94, 0.55)";
-const LINE_WIDTH  = 1;
+const FILL_COLOR = "rgba(34, 197, 94, 0.12)";
+const LINE_COLOR = "rgba(34, 197, 94, 0.55)";
+const LINE_WIDTH = 1;
 
 class BandFillRenderer {
   constructor(primitive) {
@@ -25,7 +25,7 @@ class BandFillRenderer {
     if (!chart || !series || lower.length < 2 || upper.length < 2) return;
 
     target.useMediaCoordinateSpace((scope) => {
-      const ctx       = scope.context;
+      const ctx = scope.context;
       const timeScale = chart.timeScale();
 
       const toPoint = ({ time, price }) => {
@@ -54,7 +54,7 @@ class BandFillRenderer {
       ctx.moveTo(upperPts[0].x, upperPts[0].y);
       for (let i = 1; i < upperPts.length; i++) ctx.lineTo(upperPts[i].x, upperPts[i].y);
       ctx.strokeStyle = LINE_COLOR;
-      ctx.lineWidth   = LINE_WIDTH;
+      ctx.lineWidth = LINE_WIDTH;
       ctx.stroke();
 
       // ── 3. 하단 경계선 (MA60 × 1.5) ─────────────────────────
@@ -62,7 +62,7 @@ class BandFillRenderer {
       ctx.moveTo(lowerPts[0].x, lowerPts[0].y);
       for (let i = 1; i < lowerPts.length; i++) ctx.lineTo(lowerPts[i].x, lowerPts[i].y);
       ctx.strokeStyle = LINE_COLOR;
-      ctx.lineWidth   = LINE_WIDTH;
+      ctx.lineWidth = LINE_WIDTH;
       ctx.stroke();
 
       ctx.restore();
@@ -72,22 +72,22 @@ class BandFillRenderer {
 
 class BandFillPrimitive {
   constructor() {
-    this._lower    = [];
-    this._upper    = [];
-    this._chart    = null;
-    this._series   = null;
+    this._lower = [];
+    this._upper = [];
+    this._chart = null;
+    this._series = null;
     this._renderer = new BandFillRenderer(this);
-    this._view     = { renderer: () => this._renderer };
+    this._view = { renderer: () => this._renderer };
   }
 
   /** lightweight-charts가 시리즈에 연결될 때 호출 */
   attached({ chart, series }) {
-    this._chart  = chart;
+    this._chart = chart;
     this._series = series;
   }
 
   detached() {
-    this._chart  = null;
+    this._chart = null;
     this._series = null;
   }
 

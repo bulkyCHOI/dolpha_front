@@ -18,7 +18,7 @@ function isMarketHours() {
   const now = new Date();
   // KST = UTC+9
   const kstHour = (now.getUTCHours() + 9) % 24;
-  const kstMin  = now.getUTCMinutes();
+  const kstMin = now.getUTCMinutes();
   const kstTime = kstHour * 100 + kstMin;
   return kstTime >= 900 && kstTime < 1530;
 }
@@ -143,9 +143,7 @@ function StockChartModal({ open, onClose, stockCode, stockName }) {
 
     const loadCurrentPrice = async () => {
       try {
-        const res = await fetchJson(
-          `${apiBase}/api/find_stock_current_price?code=${stockCode}`
-        );
+        const res = await fetchJson(`${apiBase}/api/find_stock_current_price?code=${stockCode}`);
         if (!cancelled && res?.price) setCurrentPrice(res.price);
       } catch {
         // 현재가 실패는 무시 (분봉/일봉 데이터로 대체)
@@ -203,8 +201,16 @@ function StockChartModal({ open, onClose, stockCode, stockName }) {
   })();
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="xl" fullWidth PaperProps={{ sx: { height: "85vh" } }}>
-      <DialogTitle sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", py: 1.5 }}>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="xl"
+      fullWidth
+      PaperProps={{ sx: { height: "85vh" } }}
+    >
+      <DialogTitle
+        sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", py: 1.5 }}
+      >
         <Box display="flex" alignItems="baseline" gap={2}>
           <Typography variant="h6" fontWeight={700}>
             {stockName} ({stockCode})
@@ -246,11 +252,7 @@ function StockChartModal({ open, onClose, stockCode, stockName }) {
               1분봉 (정규장 09:00~15:30, {Math.round(MINUTE_REFRESH_MS / 1000)}초마다 갱신)
             </Typography>
             <Box sx={{ flex: 1, minHeight: 0, border: "1px solid #eee", borderRadius: 1 }}>
-              <LightweightChart
-                data={minuteData}
-                mode="intraday"
-                loading={minuteLoading}
-              />
+              <LightweightChart data={minuteData} mode="intraday" loading={minuteLoading} />
             </Box>
           </Box>
         </Box>

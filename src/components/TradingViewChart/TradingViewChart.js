@@ -26,6 +26,7 @@ function TradingViewChart({
   loading,
   emptyMessage,
   initialVisibleBars,
+  initialVisibleRange,
   fitContentKey,
   onClick,
   onCrosshairMove,
@@ -53,13 +54,18 @@ function TradingViewChart({
     if (appliedFitKeyRef.current === fitContentKey) return;
 
     const timeScale = chart.timeScale();
-    if (initialVisibleBars && barCount > initialVisibleBars) {
+    if (initialVisibleRange) {
+      // setData 렌더링이 끝난 뒤 적용해야 auto-scroll에 덮이지 않는다.
+      requestAnimationFrame(() => {
+        if (chartRef.current) chartRef.current.timeScale().setVisibleRange(initialVisibleRange);
+      });
+    } else if (initialVisibleBars && barCount > initialVisibleBars) {
       timeScale.setVisibleLogicalRange({ from: barCount - initialVisibleBars, to: barCount - 1 });
     } else {
       timeScale.fitContent();
     }
     appliedFitKeyRef.current = fitContentKey;
-  }, [fitContentKey, barCount, initialVisibleBars, chartRef]);
+  }, [fitContentKey, barCount, initialVisibleBars, initialVisibleRange, chartRef]);
 
   const isEmpty = !loading && barCount === 0;
 
@@ -113,6 +119,8 @@ TradingViewChart.propTypes = {
       options: PropTypes.object,
       markers: PropTypes.array,
       priceLines: PropTypes.array,
+      // primitive는 시리즈 생성 시 1회만 부착되므로 안정된 인스턴스를 넘겨야 한다.
+      primitives: PropTypes.array,
     })
   ),
   panes: PropTypes.arrayOf(
@@ -123,6 +131,7 @@ TradingViewChart.propTypes = {
   loading: PropTypes.bool,
   emptyMessage: PropTypes.string,
   initialVisibleBars: PropTypes.number,
+  initialVisibleRange: PropTypes.shape({ from: PropTypes.any, to: PropTypes.any }),
   fitContentKey: PropTypes.string,
   onClick: PropTypes.func,
   onCrosshairMove: PropTypes.func,
@@ -139,6 +148,7 @@ TradingViewChart.defaultProps = {
   loading: false,
   emptyMessage: "차트 데이터를 사용할 수 없습니다",
   initialVisibleBars: null,
+  initialVisibleRange: null,
   fitContentKey: null,
   onClick: undefined,
   onCrosshairMove: undefined,

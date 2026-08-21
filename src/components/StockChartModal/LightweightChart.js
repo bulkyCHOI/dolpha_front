@@ -1,16 +1,22 @@
-import { useEffect, useRef, useState } from "react";
-import { createChart, CandlestickSeries, HistogramSeries } from "lightweight-charts";
-import BandFillPrimitive from "./BandFillPrimitive";
+import { useMemo, useRef } from "react";
+import PropTypes from "prop-types";
 
-const UP_COLOR = "#ef4444";
-const DOWN_COLOR = "#3b82f6";
+import TradingViewChart, {
+  DOWN_COLOR,
+  DOWN_COLOR_FADED,
+  OhlcLegend,
+  UP_COLOR,
+  UP_COLOR_FADED,
+  useOhlcHover,
+} from "components/TradingViewChart";
+
+import BandFillPrimitive from "./BandFillPrimitive";
 
 const MA60_PERIOD = 60;
 
 /**
- * 일봉 데이터에서 MA60 × 1.5 / × 1.75 밴드를 계산합니다.
+ * 일봉 데이터에서 MA60 × 1.5 / × 1.75 밴드를 계산한다. (슬라이딩 윈도우 O(n))
  * @param {Array<{time, close}>} data
- * @returns {{ lower: Array<{time, price}>, upper: Array<{time, price}> }}
  */
 function computeMA60Band(data) {
   if (!data || data.length < MA60_PERIOD) return { lower: [], upper: [] };
@@ -18,17 +24,14 @@ function computeMA60Band(data) {
   const lower = [];
   const upper = [];
 
-  // 초기 윈도우 합산
   let windowSum = 0;
-  for (let i = 0; i < MA60_PERIOD; i++) windowSum += data[i].close;
+  for (let i = 0; i < MA60_PERIOD; i += 1) windowSum += data[i].close;
 
-  // 첫 번째 MA60 (index = 59)
   const firstMa = windowSum / MA60_PERIOD;
   lower.push({ time: data[MA60_PERIOD - 1].time, price: firstMa * 1.5 });
   upper.push({ time: data[MA60_PERIOD - 1].time, price: firstMa * 1.75 });
 
-  // 슬라이딩 윈도우 O(n)
-  for (let i = MA60_PERIOD; i < data.length; i++) {
+  for (let i = MA60_PERIOD; i < data.length; i += 1) {
     windowSum += data[i].close - data[i - MA60_PERIOD].close;
     const ma = windowSum / MA60_PERIOD;
     lower.push({ time: data[i].time, price: ma * 1.5 });
@@ -38,319 +41,109 @@ function computeMA60Band(data) {
   return { lower, upper };
 }
 
-function formatNumber(n) {
-  if (n == null || Number.isNaN(n)) return "-";
-  return Math.round(n).toLocaleString("ko-KR");
-}
-
-function formatPercent(n) {
-  if (n == null || Number.isNaN(n)) return "-";
-  const sign = n > 0 ? "+" : "";
-  return `${sign}${n.toFixed(2)}%`;
-}
-
-function formatVolume(n) {
-  if (n == null || Number.isNaN(n)) return "-";
-  if (n >= 100_000_000) return `${(n / 100_000_000).toFixed(1)}억`;
-  if (n >= 10_000) return `${(n / 10_000).toFixed(1)}만`;
-  return n.toLocaleString("ko-KR");
-}
-
-function formatTime(time, mode) {
-  if (time == null) return "";
-  // 일봉: "YYYY-MM-DD" 문자열
-  if (typeof time === "string") return time;
-  // 분봉: unix-second (UTC로 다룬 KST 값) → UTC getter로 다시 추출
-  if (typeof time === "number") {
-    const d = new Date(time * 1000);
-    const yyyy = d.getUTCFullYear();
-    const mm = String(d.getUTCMonth() + 1).padStart(2, "0");
-    const dd = String(d.getUTCDate()).padStart(2, "0");
-    const hh = String(d.getUTCHours()).padStart(2, "0");
-    const mi = String(d.getUTCMinutes()).padStart(2, "0");
-    return mode === "intraday"
-      ? `${yyyy}-${mm}-${dd} ${hh}:${mi}`
-      : `${yyyy}-${mm}-${dd}`;
-  }
-  // BusinessDay 객체 {year, month, day}
-  if (typeof time === "object" && time.year != null) {
-    const y = time.year;
-    const m = String(time.month).padStart(2, "0");
-    const d = String(time.day).padStart(2, "0");
-    return `${y}-${m}-${d}`;
-  }
-  return "";
-}
-
 /**
- * lightweight-charts 캔들+거래량 차트.
- *
- * @param {Array<{time, open, high, low, close, volume}>} data
- * @param {"intraday"|"daily"} mode
- * @param {boolean} loading
+ * 캔들 + 거래량 차트. 일봉일 때 MA60 매도추천 밴드를 함께 그린다.
  */
-function LightweightChart({ data, mode = "daily", loading = false, initialVisibleBars = null }) {
-  const containerRef = useRef(null);
-  const chartRef = useRef(null);
-  const candleSeriesRef = useRef(null);
-  const volumeSeriesRef = useRef(null);
+function LightweightChart({ data, mode, loading, initialVisibleBars }) {
+  const intraday = mode === "intraday";
+
+  // primitive는 차트 수명 동안 동일 인스턴스를 유지해야 한다.
   const bandPrimitiveRef = useRef(null);
-  const didInitialFitRef = useRef(false);
+  if (!bandPrimitiveRef.current) bandPrimitiveRef.current = new BandFillPrimitive();
 
-  // 호버 캔들 (없으면 마지막 캔들 표시 — TradingView와 동일)
-  const [hoverBar, setHoverBar] = useState(null);
+  const { bar, change, onCrosshairMove } = useOhlcHover(data);
 
-  useEffect(() => {
-    if (!containerRef.current) return;
+  // 분봉은 정규장(09:00~15:30) 전체 구간을 초기 화면으로 잡는다.
+  const initialVisibleRange = useMemo(() => {
+    if (!intraday) return null;
+    const firstTime = data?.[0]?.time;
+    if (typeof firstTime !== "number") return null;
 
-    const chart = createChart(containerRef.current, {
-      autoSize: true,
-      layout: {
-        background: { color: "#ffffff" },
-        textColor: "#333",
-      },
-      grid: {
-        vertLines: { color: "#f0f0f0" },
-        horzLines: { color: "#f0f0f0" },
-      },
-      crosshair: { mode: 1 },
-      rightPriceScale: { borderColor: "#d0d0d0" },
-      timeScale: {
-        borderColor: "#d0d0d0",
-        timeVisible: mode === "intraday",
-        secondsVisible: false,
-        rightOffset: mode === "intraday" ? 0 : 10,
-        // 새 봉 추가 시 자동 스크롤 방지 → setVisibleRange 고정 유지
-        shiftVisibleRangeOnNewBar: false,
-      },
-      localization: { locale: "ko-KR" },
-    });
-
-    const candleSeries = chart.addSeries(CandlestickSeries, {
-      upColor: UP_COLOR,
-      downColor: DOWN_COLOR,
-      borderUpColor: UP_COLOR,
-      borderDownColor: DOWN_COLOR,
-      wickUpColor: UP_COLOR,
-      wickDownColor: DOWN_COLOR,
-    });
-
-    const volumeSeries = chart.addSeries(HistogramSeries, {
-      priceFormat: { type: "volume" },
-      priceScaleId: "volume",
-    });
-    chart.priceScale("volume").applyOptions({
-      scaleMargins: { top: 0.8, bottom: 0 },
-    });
-
-    // 십자선 이동 시 호버 캔들 정보 추출
-    const handleCrosshairMove = (param) => {
-      if (!param.time || !param.seriesData) {
-        setHoverBar(null);
-        return;
-      }
-      const candle = param.seriesData.get(candleSeries);
-      const volBar = param.seriesData.get(volumeSeries);
-      if (!candle) {
-        setHoverBar(null);
-        return;
-      }
-      setHoverBar({
-        time: param.time,
-        open: candle.open,
-        high: candle.high,
-        low: candle.low,
-        close: candle.close,
-        volume: volBar?.value,
-      });
-    };
-    chart.subscribeCrosshairMove(handleCrosshairMove);
-
-    // MA60 매도추천 밴드 프리미티브 (일봉 전용 — candleSeries에 부착)
-    const bandPrimitive = new BandFillPrimitive();
-    candleSeries.attachPrimitive(bandPrimitive);
-
-    chartRef.current = chart;
-    candleSeriesRef.current = candleSeries;
-    volumeSeriesRef.current = volumeSeries;
-    bandPrimitiveRef.current = bandPrimitive;
-    didInitialFitRef.current = false;
-
-    return () => {
-      chart.unsubscribeCrosshairMove(handleCrosshairMove);
-      chart.remove();
-      chartRef.current = null;
-      candleSeriesRef.current = null;
-      volumeSeriesRef.current = null;
-      bandPrimitiveRef.current = null;
-    };
-  }, [mode]);
-
-  useEffect(() => {
-    if (!candleSeriesRef.current || !volumeSeriesRef.current) return;
-    if (!Array.isArray(data) || data.length === 0) {
-      candleSeriesRef.current.setData([]);
-      volumeSeriesRef.current.setData([]);
-      if (bandPrimitiveRef.current) bandPrimitiveRef.current.updateBand([], []);
-      didInitialFitRef.current = false;
-      return;
-    }
-
-    const isIntraday = mode === "intraday";
-
-    const candleData = data.map((d) => ({
-      time: d.time,
-      open: d.open,
-      high: d.high,
-      low: d.low,
-      close: d.close,
-    }));
-
-    const volumeData = data.map((d) => ({
-      time: d.time,
-      value: d.volume,
-      color: d.close >= d.open ? "rgba(239, 68, 68, 0.5)" : "rgba(59, 130, 246, 0.5)",
-    }));
-
-    candleSeriesRef.current.setData(candleData);
-    volumeSeriesRef.current.setData(volumeData);
-
-    // MA60 매도추천 밴드 갱신 (일봉 전용)
-    if (bandPrimitiveRef.current) {
-      if (mode === "daily") {
-        const { lower, upper } = computeMA60Band(data);
-        bandPrimitiveRef.current.updateBand(lower, upper);
-      } else {
-        bandPrimitiveRef.current.updateBand([], []);
-      }
-    }
-
-    // 최초 1회만 초기 뷰 범위 설정. 폴링/현재가 갱신 시 사용자 줌/팬 상태 유지.
-    if (!didInitialFitRef.current && chartRef.current) {
-      const total = candleData.length;
-      if (isIntraday) {
-        const firstTime = candleData[0]?.time;
-        if (typeof firstTime === "number") {
-          const d = new Date(firstTime * 1000);
-          const y = d.getUTCFullYear();
-          const mo = d.getUTCMonth();
-          const day = d.getUTCDate();
-          const from = Math.floor(Date.UTC(y, mo, day, 9, 0, 0) / 1000);
-          const to = Math.floor(Date.UTC(y, mo, day, 15, 30, 0) / 1000);
-          // rAF: setData 렌더링 완료 후 범위 적용 (setData 직후 auto-scroll 덮어쓰기 방지)
-          requestAnimationFrame(() => {
-            if (chartRef.current) {
-              chartRef.current.timeScale().setVisibleRange({ from, to });
-            }
-          });
-          didInitialFitRef.current = true;
-        }
-      } else if (initialVisibleBars && total > initialVisibleBars) {
-        chartRef.current.timeScale().setVisibleLogicalRange({
-          from: total - initialVisibleBars,
-          to: total - 1,
-        });
-        didInitialFitRef.current = true;
-      } else {
-        chartRef.current.timeScale().fitContent();
-        didInitialFitRef.current = true;
-      }
-    }
-  }, [data, initialVisibleBars]);
-
-  // 표시할 캔들: 호버 우선, 없으면 마지막 캔들
-  const displayBar = (() => {
-    if (hoverBar) return hoverBar;
-    if (!Array.isArray(data) || data.length === 0) return null;
-    const last = data[data.length - 1];
+    const date = new Date(firstTime * 1000);
+    const [year, month, day] = [date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()];
     return {
-      time: last.time,
-      open: last.open,
-      high: last.high,
-      low: last.low,
-      close: last.close,
-      volume: last.volume,
+      from: Math.floor(Date.UTC(year, month, day, 9, 0, 0) / 1000),
+      to: Math.floor(Date.UTC(year, month, day, 15, 30, 0) / 1000),
     };
-  })();
+  }, [data, intraday]);
 
-  // 변동: 이전 캔들 종가 대비
-  const changeInfo = (() => {
-    if (!displayBar || !Array.isArray(data) || data.length < 2) return null;
-    const idx = data.findIndex((d) => d.time === displayBar.time);
-    if (idx <= 0) return null;
-    const prevClose = data[idx - 1].close;
-    const diff = displayBar.close - prevClose;
-    const pct = prevClose ? (diff / prevClose) * 100 : 0;
-    return { diff, pct };
-  })();
+  const series = useMemo(() => {
+    const candleData = (data ?? []).map((item) => ({
+      time: item.time,
+      open: item.open,
+      high: item.high,
+      low: item.low,
+      close: item.close,
+    }));
 
-  const isUp = displayBar ? displayBar.close >= displayBar.open : true;
-  const valueColor = isUp ? UP_COLOR : DOWN_COLOR;
-  const changeColor = changeInfo ? (changeInfo.diff >= 0 ? UP_COLOR : DOWN_COLOR) : "#666";
+    const volumeData = (data ?? []).map((item) => ({
+      time: item.time,
+      value: item.volume,
+      color: item.close >= item.open ? UP_COLOR_FADED : DOWN_COLOR_FADED,
+    }));
 
-  const renderLabel = (label, value, color) => (
-    <span style={{ marginRight: 12, whiteSpace: "nowrap" }}>
-      <span style={{ color: "#888", marginRight: 4 }}>{label}</span>
-      <span style={{ color, fontWeight: 600 }}>{value}</span>
-    </span>
-  );
+    // 밴드는 일봉 전용
+    const { lower, upper } = intraday ? { lower: [], upper: [] } : computeMA60Band(data ?? []);
+    bandPrimitiveRef.current.updateBand(lower, upper);
+
+    return [
+      {
+        id: "candle",
+        type: "candle",
+        pane: 0,
+        data: candleData,
+        options: {
+          upColor: UP_COLOR,
+          downColor: DOWN_COLOR,
+          borderUpColor: UP_COLOR,
+          borderDownColor: DOWN_COLOR,
+          wickUpColor: UP_COLOR,
+          wickDownColor: DOWN_COLOR,
+        },
+        primitives: [bandPrimitiveRef.current],
+      },
+      {
+        id: "volume",
+        type: "histogram",
+        pane: 1,
+        data: volumeData,
+        options: {
+          priceFormat: { type: "volume" },
+          priceLineVisible: false,
+          lastValueVisible: false,
+        },
+      },
+    ];
+  }, [data, intraday]);
 
   return (
-    <div style={{ position: "relative", width: "100%", height: "100%" }}>
-      {displayBar && (
-        <div
-          style={{
-            position: "absolute",
-            top: 6,
-            left: 8,
-            zIndex: 2,
-            fontSize: "12px",
-            background: "rgba(255,255,255,0.85)",
-            padding: "2px 6px",
-            borderRadius: 4,
-            pointerEvents: "none",
-            fontVariantNumeric: "tabular-nums",
-          }}
-        >
-          <span style={{ marginRight: 12, color: "#333", fontWeight: 600, whiteSpace: "nowrap" }}>
-            {formatTime(displayBar.time, mode)}
-          </span>
-          {renderLabel("시", formatNumber(displayBar.open), valueColor)}
-          {renderLabel("고", formatNumber(displayBar.high), valueColor)}
-          {renderLabel("저", formatNumber(displayBar.low), valueColor)}
-          {renderLabel("종", formatNumber(displayBar.close), valueColor)}
-          {changeInfo && (
-            <span style={{ color: changeColor, fontWeight: 600, whiteSpace: "nowrap" }}>
-              {(changeInfo.diff >= 0 ? "+" : "-") + formatNumber(Math.abs(changeInfo.diff))}
-              {" "}({formatPercent(changeInfo.pct)})
-            </span>
-          )}
-          {displayBar.volume != null && (
-            <span style={{ marginLeft: 12, color: "#888", whiteSpace: "nowrap" }}>
-              거래량 <span style={{ color: "#333" }}>{formatVolume(displayBar.volume)}</span>
-            </span>
-          )}
-        </div>
-      )}
-      <div ref={containerRef} style={{ width: "100%", height: "100%" }} />
-      {loading && (
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            background: "rgba(255,255,255,0.6)",
-            fontSize: "14px",
-            color: "#666",
-          }}
-        >
-          로딩 중...
-        </div>
-      )}
-    </div>
+    <TradingViewChart
+      series={series}
+      panes={[{ stretch: 4 }, { stretch: 1 }]}
+      height="100%"
+      intraday={intraday}
+      loading={loading}
+      initialVisibleBars={initialVisibleBars}
+      initialVisibleRange={initialVisibleRange}
+      fitContentKey={mode}
+      onCrosshairMove={onCrosshairMove}
+      overlay={<OhlcLegend bar={bar} change={change} intraday={intraday} />}
+    />
   );
 }
+
+LightweightChart.propTypes = {
+  data: PropTypes.array,
+  mode: PropTypes.oneOf(["daily", "intraday"]),
+  loading: PropTypes.bool,
+  initialVisibleBars: PropTypes.number,
+};
+
+LightweightChart.defaultProps = {
+  data: [],
+  mode: "daily",
+  loading: false,
+  initialVisibleBars: null,
+};
 
 export default LightweightChart;

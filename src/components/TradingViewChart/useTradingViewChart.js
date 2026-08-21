@@ -50,6 +50,7 @@ export default function useTradingViewChart({
   const seriesMapRef = useRef(new Map());
   const markersMapRef = useRef(new Map());
   const priceLinesMapRef = useRef(new Map());
+  const primitivesMapRef = useRef(new Map());
 
   // 최신 콜백을 ref로 들고 있어 구독을 매번 해제/재등록하지 않는다.
   const onClickRef = useRef(onClick);
@@ -94,6 +95,7 @@ export default function useTradingViewChart({
       seriesMapRef.current.clear();
       markersMapRef.current.clear();
       priceLinesMapRef.current.clear();
+      primitivesMapRef.current.clear();
     };
     // intraday가 바뀌면 시간축 성격이 달라지므로 차트를 새로 만든다.
   }, [intraday]);
@@ -114,6 +116,10 @@ export default function useTradingViewChart({
       markersMapRef.current.get(id)?.detach();
       markersMapRef.current.delete(id);
       priceLinesMapRef.current.delete(id);
+      (primitivesMapRef.current.get(id) ?? []).forEach((primitive) =>
+        seriesApi.detachPrimitive(primitive)
+      );
+      primitivesMapRef.current.delete(id);
       chart.removeSeries(seriesApi);
       seriesMap.delete(id);
     });
@@ -127,6 +133,8 @@ export default function useTradingViewChart({
       if (seriesMap.has(spec.id)) return;
       const definition = resolveSeriesDefinition(spec.type);
       const seriesApi = chart.addSeries(definition, spec.options ?? {}, spec.pane ?? 0);
+      (spec.primitives ?? []).forEach((primitive) => seriesApi.attachPrimitive(primitive));
+      primitivesMapRef.current.set(spec.id, spec.primitives ?? []);
       seriesMap.set(spec.id, seriesApi);
     });
 
