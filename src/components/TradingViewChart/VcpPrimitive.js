@@ -143,8 +143,16 @@ class VcpRenderer {
       ctx.globalAlpha = 1;
     };
 
-    connect(swings.filter((s) => s.type === "peak"), PEAK_LINE_COLOR, "high");
-    connect(swings.filter((s) => s.type === "trough"), TROUGH_LINE_COLOR, "low");
+    connect(
+      swings.filter((s) => s.type === "peak"),
+      PEAK_LINE_COLOR,
+      "high"
+    );
+    connect(
+      swings.filter((s) => s.type === "trough"),
+      TROUGH_LINE_COLOR,
+      "low"
+    );
   }
 
   _drawPivot(ctx, pivotPoint, toX, toY, width, settings) {

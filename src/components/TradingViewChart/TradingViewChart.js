@@ -30,6 +30,7 @@ function TradingViewChart({
   fitContentKey,
   onClick,
   onCrosshairMove,
+  onMouseDown,
   chartOptions,
   overlay,
   sx,
@@ -70,7 +71,10 @@ function TradingViewChart({
   const isEmpty = !loading && barCount === 0;
 
   return (
-    <div style={{ position: "relative", width: "100%", height, ...sx }}>
+    <div
+      style={{ position: "relative", width: "100%", height, ...sx }}
+      onMouseDownCapture={onMouseDown}
+    >
       <div ref={containerRef} style={{ width: "100%", height: "100%" }} />
       {overlay}
       {isEmpty && (
@@ -137,6 +141,11 @@ TradingViewChart.propTypes = {
   fitContentKey: PropTypes.string,
   onClick: PropTypes.func,
   onCrosshairMove: PropTypes.func,
+  /**
+   * 차트 영역 mousedown. 수평선 드래그 시작 판정에 쓴다.
+   * lightweight-charts가 캔버스에서 전파를 막으므로 캡처 단계에서 받는다.
+   */
+  onMouseDown: PropTypes.func,
   chartOptions: PropTypes.object,
   overlay: PropTypes.node,
   sx: PropTypes.object,
@@ -154,6 +163,7 @@ TradingViewChart.defaultProps = {
   fitContentKey: null,
   onClick: undefined,
   onCrosshairMove: undefined,
+  onMouseDown: undefined,
   chartOptions: undefined,
   overlay: null,
   sx: undefined,

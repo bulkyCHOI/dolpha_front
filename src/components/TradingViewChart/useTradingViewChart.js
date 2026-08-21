@@ -51,6 +51,8 @@ export default function useTradingViewChart({
   const markersMapRef = useRef(new Map());
   const priceLinesMapRef = useRef(new Map());
   const primitivesMapRef = useRef(new Map());
+  // 마지막으로 setData에 넘긴 배열의 참조. 같은 참조면 다시 올리지 않는다.
+  const lastDataMapRef = useRef(new Map());
 
   // 최신 콜백을 ref로 들고 있어 구독을 매번 해제/재등록하지 않는다.
   const onClickRef = useRef(onClick);
@@ -96,6 +98,7 @@ export default function useTradingViewChart({
       markersMapRef.current.clear();
       priceLinesMapRef.current.clear();
       primitivesMapRef.current.clear();
+      lastDataMapRef.current.clear();
     };
     // intraday가 바뀌면 시간축 성격이 달라지므로 차트를 새로 만든다.
   }, [intraday]);
@@ -120,6 +123,7 @@ export default function useTradingViewChart({
         seriesApi.detachPrimitive(primitive)
       );
       primitivesMapRef.current.delete(id);
+      lastDataMapRef.current.delete(id);
       chart.removeSeries(seriesApi);
       seriesMap.delete(id);
     });
@@ -159,7 +163,14 @@ export default function useTradingViewChart({
       if (!seriesApi) return;
 
       if (spec.options) seriesApi.applyOptions(spec.options);
-      seriesApi.setData(spec.data ?? []);
+
+      // 수평선 드래그처럼 데이터는 그대로고 가격선만 바뀌는 경우가 잦다.
+      // 같은 배열을 다시 올리면 매 프레임 전체 시리즈가 재업로드된다.
+      const data = spec.data ?? [];
+      if (lastDataMapRef.current.get(spec.id) !== data) {
+        seriesApi.setData(data);
+        lastDataMapRef.current.set(spec.id, data);
+      }
 
       // 마커
       if (spec.markers && spec.markers.length > 0) {

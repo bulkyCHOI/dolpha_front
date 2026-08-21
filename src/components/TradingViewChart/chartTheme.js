@@ -19,11 +19,12 @@ export const FLAT_COLOR = flat.main;
 export const UP_COLOR_FADED = "rgba(239, 68, 68, 0.5)";
 export const DOWN_COLOR_FADED = "rgba(59, 130, 246, 0.5)";
 
-// 이동평균선
+// 이동평균선 (기간이 짧을수록 밝고 얇게)
 export const MA_COLORS = {
-  ma50: "#ff6b35",
-  ma150: "#f7931e",
-  ma200: "#9c27b0",
+  ma5: "#f59e0b",
+  ma20: "#ef4444",
+  ma60: "#22c55e",
+  ma120: "#a855f7",
 };
 
 // 보조지표
@@ -91,6 +92,14 @@ export function baseChartOptions({ intraday = false } = {}) {
       horzLines: { color: CHART_SURFACE.gridColor },
     },
     crosshair: { mode: 1 },
+    // 마우스 휠로 시간축이 확대/축소되면 페이지 스크롤 중 의도치 않게
+    // 차트 배율이 바뀐다. 축소/확대는 시간축 드래그와 핀치로만 한다.
+    handleScale: {
+      mouseWheel: false,
+      pinch: true,
+      axisPressedMouseMove: true,
+      axisDoubleClickReset: true,
+    },
     rightPriceScale: { borderColor: CHART_SURFACE.borderColor },
     timeScale: {
       borderColor: CHART_SURFACE.borderColor,

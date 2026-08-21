@@ -23,6 +23,7 @@ import TradingViewChart, {
   OhlcLegend,
   VcpPrimitive,
   ZonePrimitive,
+  usePriceLineDrag,
   useSeriesHover,
 } from "components/TradingViewChart";
 import InflectionPointToggle from "components/InflectionPointToggle";
@@ -30,6 +31,7 @@ import useInflectionPoints from "hooks/useInflectionPoints";
 
 // Utils
 import { adjustToKRXTickSize } from "utils/formatters";
+import { CHART_INITIAL_VISIBLE_BARS } from "constants/chart";
 
 import {
   MA_FIELDS,
@@ -37,6 +39,7 @@ import {
   RS_FIELDS,
   buildHtfZones,
   buildIndexSeries,
+  buildPriceLines,
   buildStockChartSeries,
   compactPanes,
 } from "./buildStockSeries";
@@ -85,7 +88,40 @@ const ChartContainer = ({
   // 범례에서 끈 계열 (Chart.js 범례의 표시/숨김을 대체)
   const [hiddenSeriesIds, setHiddenSeriesIds] = useState([]);
 
-  const { readout, onCrosshairMove } = useSeriesHover(ohlcvData);
+  const { readout, onCrosshairMove: onHoverMove } = useSeriesHover(ohlcvData);
+
+  const updateLineValue = useCallback((id, price) => {
+    setHorizontalLines((prev) =>
+      prev.map((line) => (line.id === id ? { ...line, value: price } : line))
+    );
+  }, []);
+
+  // 놓는 순간에만 호가단위로 맞춘다. 드래그 중에 맞추면 선이 계단처럼 튄다.
+  const commitLineValue = useCallback((id, price) => {
+    setHorizontalLines((prev) =>
+      prev.map((line) => (line.id === id ? { ...line, value: adjustToKRXTickSize(price) } : line))
+    );
+  }, []);
+
+  const {
+    onCrosshairMove: onDragMove,
+    handleMouseDown,
+    draggingId,
+    cursor: dragCursor,
+  } = usePriceLineDrag({
+    lines: horizontalLines,
+    onChange: updateLineValue,
+    onCommit: commitLineValue,
+    disabled: isDrawingMode || movingLineId != null,
+  });
+
+  const handleCrosshairMove = useCallback(
+    (param, chart, seriesMap) => {
+      onHoverMove(param, chart, seriesMap);
+      onDragMove(param, chart, seriesMap);
+    },
+    [onHoverMove, onDragMove]
+  );
 
   // HTF 상승 구간 음영. primitive는 차트 수명 동안 같은 인스턴스를 유지해야 한다.
   const htfZonesRef = useRef(null);
@@ -104,12 +140,11 @@ const ChartContainer = ({
   } = useInflectionPoints(ohlcvData, chartType);
 
   // ── 시리즈 구성 ────────────────────────────────────────────────
-  const { series, panes } = useMemo(() => {
+  // 시세·지표 데이터. 가격선과 분리해두어야 드래그 중 재업로드되지 않는다.
+  const { series: baseSeries, panes } = useMemo(() => {
     const built = buildStockChartSeries({
       ohlcvData,
       analysisData,
-      horizontalLines,
-      entryPoint,
       chartType,
       selectedStock,
       inflectionAnalysisResult,
@@ -139,14 +174,18 @@ const ChartContainer = ({
     hiddenSeriesIds,
     ohlcvData,
     analysisData,
-    horizontalLines,
-    entryPoint,
     chartType,
     selectedStock,
     inflectionAnalysisResult,
     inflectionSettings,
     showInflectionPoints,
   ]);
+
+  // 가격선만 갈아끼운다. 데이터 배열의 참조는 그대로라 setData가 다시 불리지 않는다.
+  const series = useMemo(() => {
+    const priceLines = buildPriceLines(horizontalLines, entryPoint);
+    return baseSeries.map((spec) => (spec.id === "candle" ? { ...spec, priceLines } : spec));
+  }, [baseSeries, horizontalLines, entryPoint]);
 
   const indexSeries = useMemo(() => buildIndexSeries(indexOhlcvData), [indexOhlcvData]);
 
@@ -316,45 +355,44 @@ const ChartContainer = ({
     <Box sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
       {hasData ? (
         <>
-          {/* 수평선 목록 */}
-          {horizontalLines.length > 0 && (
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mb: 0.5 }}>
-              {horizontalLines.map((line) => (
-                <Chip
-                  key={line.id}
-                  size="small"
-                  label={`${line.label ? `${line.label} · ` : ""}${new Intl.NumberFormat(
-                    "ko-KR"
-                  ).format(line.value)}`}
-                  onClick={(event) =>
-                    setMenuState({ anchorEl: event.currentTarget, lineId: line.id })
-                  }
-                  onDelete={() => handleDeleteLine(line.id)}
-                  sx={{
-                    borderLeft: `4px solid ${line.color}`,
-                    fontWeight: 600,
-                    backgroundColor:
-                      movingLineId === line.id ? "rgba(255, 152, 0, 0.15)" : undefined,
-                  }}
-                />
-              ))}
-            </Box>
-          )}
+          {/* 범례 + 수평선 목록 — 항상 존재하는 한 줄이라 차트가 밀리지 않는다 */}
+          <Box
+            sx={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 1, minHeight: 28 }}
+          >
+            <ChartLegend
+              groups={[
+                { title: "이동평균", items: MA_FIELDS },
+                { title: "RS Rank", items: RS_FIELDS },
+              ]}
+              values={readout?.values}
+              hiddenIds={hiddenSeriesIds}
+              onToggle={(field) =>
+                setHiddenSeriesIds((prev) =>
+                  prev.includes(field) ? prev.filter((id) => id !== field) : [...prev, field]
+                )
+              }
+            />
 
-          {/* 범례 */}
-          <ChartLegend
-            groups={[
-              { title: "이동평균", items: MA_FIELDS },
-              { title: "RS Rank", items: RS_FIELDS },
-            ]}
-            values={readout?.values}
-            hiddenIds={hiddenSeriesIds}
-            onToggle={(field) =>
-              setHiddenSeriesIds((prev) =>
-                prev.includes(field) ? prev.filter((id) => id !== field) : [...prev, field]
-              )
-            }
-          />
+            {horizontalLines.map((line) => (
+              <Chip
+                key={line.id}
+                size="small"
+                label={`${line.label ? `${line.label} · ` : ""}${new Intl.NumberFormat(
+                  "ko-KR"
+                ).format(line.value)}`}
+                onClick={(event) =>
+                  setMenuState({ anchorEl: event.currentTarget, lineId: line.id })
+                }
+                onDelete={() => handleDeleteLine(line.id)}
+                sx={{
+                  height: 22,
+                  borderLeft: `4px solid ${line.color}`,
+                  fontWeight: 600,
+                  backgroundColor: movingLineId === line.id ? "rgba(255, 152, 0, 0.15)" : undefined,
+                }}
+              />
+            ))}
+          </Box>
 
           {/* 캔들 · 거래량 · RS · ATR · MTT (pane 통합) */}
           <Box sx={{ ...chartSurfaceSx, position: "relative", height: CHART_HEIGHT }}>
@@ -362,14 +400,19 @@ const ChartContainer = ({
               series={series}
               panes={panes}
               height="100%"
+              initialVisibleBars={CHART_INITIAL_VISIBLE_BARS}
               fitContentKey={selectedStock?.code ?? null}
               onClick={handleChartClick}
-              onCrosshairMove={onCrosshairMove}
+              onCrosshairMove={handleCrosshairMove}
+              onMouseDown={handleMouseDown}
               chartOptions={{
                 leftPriceScale: { visible: true, borderColor: "#e2e8f0" },
-                crosshair: { mode: isDrawingMode || movingLineId ? 0 : 1 },
+                // 자석 모드(1)는 커서를 OHLC 값에 붙여서, 선을 끌 때 값이 튄다.
+                crosshair: { mode: isDrawingMode || movingLineId || draggingId != null ? 0 : 1 },
               }}
-              sx={{ cursor: isDrawingMode || movingLineId ? "crosshair" : "default" }}
+              sx={{
+                cursor: dragCursor ?? (isDrawingMode || movingLineId ? "crosshair" : "default"),
+              }}
               overlay={
                 <>
                   <OhlcLegend bar={readout?.bar} change={readout?.change} />
@@ -424,6 +467,7 @@ const ChartContainer = ({
                   series={indexSeries}
                   panes={[{ stretch: 1 }]}
                   height="100%"
+                  initialVisibleBars={CHART_INITIAL_VISIBLE_BARS}
                   fitContentKey={selectedIndexCode || null}
                   emptyMessage={
                     selectedIndexCode ? "인덱스 데이터를 로드하는 중..." : "인덱스를 선택하세요"

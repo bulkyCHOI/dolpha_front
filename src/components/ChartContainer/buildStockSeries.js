@@ -20,15 +20,21 @@ export const PANE = {
   PRICE: 0,
   VOLUME: 1,
   RS: 2,
-  ATR: 3,
-  MTT: 4,
+  MTT: 3,
+  ATR: 4,
 };
 
-/** 이동평균선 정의 — 차트 시리즈와 범례가 함께 사용한다. */
+/**
+ * 이동평균선 정의 — 차트 시리즈와 범례가 함께 사용한다.
+ *
+ * 분석 API는 ma50 · ma150 · ma200만 내려주므로, 여기서 쓰는 기간은
+ * 종가에서 직접 계산한다 (buildMovingAverage).
+ */
 export const MA_FIELDS = [
-  { field: "ma50", label: "50일선", color: MA_COLORS.ma50 },
-  { field: "ma150", label: "150일선", color: MA_COLORS.ma150 },
-  { field: "ma200", label: "200일선", color: MA_COLORS.ma200 },
+  { field: "ma5", period: 5, label: "5일선", color: MA_COLORS.ma5 },
+  { field: "ma20", period: 20, label: "20일선", color: MA_COLORS.ma20 },
+  { field: "ma60", period: 60, label: "60일선", color: MA_COLORS.ma60 },
+  { field: "ma120", period: 120, label: "120일선", color: MA_COLORS.ma120 },
 ];
 
 /** RS Rank 계열 정의 — 차트 시리즈와 범례가 함께 사용한다. */
@@ -61,6 +67,33 @@ function normalizeCandle(item) {
 
 function isValidNumber(value) {
   return value !== null && value !== undefined && !Number.isNaN(Number(value));
+}
+
+/**
+ * 종가 단순이동평균. 슬라이딩 윈도우로 O(n).
+ *
+ * 거래정지일은 종가만 있고 O/H/L이 0이지만 종가 자체는 유효하므로
+ * 그대로 평균에 포함한다.
+ *
+ * @param {Array} ohlcvData
+ * @param {number} period
+ */
+export function buildMovingAverage(ohlcvData, period) {
+  const bars = (ohlcvData ?? []).filter((item) => item?.date);
+  if (bars.length < period) return [];
+
+  const result = [];
+  let windowSum = 0;
+
+  for (let i = 0; i < bars.length; i += 1) {
+    windowSum += bars[i].close;
+    if (i >= period) windowSum -= bars[i - period].close;
+    if (i >= period - 1) {
+      result.push({ time: bars[i].date, value: windowSum / period });
+    }
+  }
+
+  return result;
 }
 
 /** analysisData에서 지정 필드를 라인 데이터로 뽑는다. */
@@ -186,12 +219,14 @@ export function buildPriceLines(horizontalLines, entryPoint) {
 
 /**
  * 종목 분석 차트 전체의 시리즈 spec을 만든다.
+ *
+ * 가격선(수평선·진입가)은 여기서 만들지 않는다. 드래그 중에는 가격선만
+ * 매 프레임 바뀌는데, 같은 useMemo에 묶으면 시세 데이터 배열까지 매번
+ * 새로 생성되어 차트 전체가 재업로드된다.
  */
 export function buildStockChartSeries({
   ohlcvData = [],
   analysisData = [],
-  horizontalLines = [],
-  entryPoint = "",
   chartType = "default",
   selectedStock = {},
   inflectionAnalysisResult = null,
@@ -219,18 +254,17 @@ export function buildStockChartSeries({
       wickDownColor: DOWN_COLOR,
     },
     markers,
-    priceLines: buildPriceLines(horizontalLines, entryPoint),
   });
 
-  MA_FIELDS.forEach(({ field }) => {
-    const data = toLineData(analysisData, field);
+  MA_FIELDS.forEach(({ field, period, color }) => {
+    const data = buildMovingAverage(ohlcvData, period);
     if (data.length === 0) return;
     series.push({
       id: field,
       type: "line",
       pane: PANE.PRICE,
       data,
-      options: { ...LINE_BASE_OPTIONS, color: MA_COLORS[field] },
+      options: { ...LINE_BASE_OPTIONS, color, lineWidth: 1.5 },
     });
   });
 
@@ -358,10 +392,15 @@ export function compactPanes(series, paneStretch) {
   };
 }
 
+/**
+ * pane 높이 비율.
+ * 보조지표(RS · MTT · ATR)는 가격 pane 대비 존재감이 과했어서
+ * 기존 값의 75% 수준으로 낮췄다.
+ */
 export const PANE_STRETCH = {
   [PANE.PRICE]: 5,
   [PANE.VOLUME]: 1.1,
-  [PANE.RS]: 1.6,
-  [PANE.ATR]: 1.4,
-  [PANE.MTT]: 0.7,
+  [PANE.RS]: 1.2,
+  [PANE.MTT]: 0.53,
+  [PANE.ATR]: 1.05,
 };

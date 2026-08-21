@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { CHART_FETCH_LIMIT } from "constants/chart";
 
 const BASE_URL = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
@@ -55,7 +56,7 @@ export const useTopRisingData = (period = "daily") => {
   // OHLCV 데이터 조회
   const fetchOHLCVData = useCallback(async (code) => {
     try {
-      const response = await fetch(`${BASE_URL}/api/find_stock_ohlcv?code=${code}&limit=150`);
+      const response = await fetch(`${BASE_URL}/api/find_stock_ohlcv?code=${code}&limit=${CHART_FETCH_LIMIT}`);
       const result = await response.json();
       if (result.status === "OK") {
         setOhlcvData(result.data || []);
@@ -94,7 +95,7 @@ export const useTopRisingData = (period = "daily") => {
   // 인덱스 OHLCV 데이터 조회
   const fetchIndexOHLCVData = useCallback(async (indexCode) => {
     try {
-      const response = await fetch(`${BASE_URL}/api/find_index_ohlcv?code=${indexCode}&limit=150`);
+      const response = await fetch(`${BASE_URL}/api/find_index_ohlcv?code=${indexCode}&limit=${CHART_FETCH_LIMIT}`);
       const result = await response.json();
       if (result.status === "OK") {
         setIndexOhlcvData(result.data || []);
@@ -110,7 +111,7 @@ export const useTopRisingData = (period = "daily") => {
   // 종목 분석 데이터 조회
   const fetchStockAnalysisData = useCallback(async (code) => {
     try {
-      const response = await fetch(`${BASE_URL}/api/find_stock_analysis?code=${code}&limit=150`);
+      const response = await fetch(`${BASE_URL}/api/find_stock_analysis?code=${code}&limit=${CHART_FETCH_LIMIT}`);
       const result = await response.json();
       if (result.status === "OK") {
         setAnalysisData(result.data || []);

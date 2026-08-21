@@ -5,6 +5,7 @@ export { default as ChartLegend } from "./ChartLegend";
 export { default as OhlcLegend, formatChartTime } from "./OhlcLegend";
 export { default as useOhlcHover } from "./useOhlcHover";
 export { default as useSeriesHover } from "./useSeriesHover";
+export { default as usePriceLineDrag } from "./usePriceLineDrag";
 export { default as ZonePrimitive } from "./ZonePrimitive";
 export { default as VcpPrimitive } from "./VcpPrimitive";
 export * from "./chartTheme";

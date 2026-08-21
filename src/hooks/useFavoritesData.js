@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { CHART_FETCH_LIMIT } from "constants/chart";
 
 /**
  * 즐겨찾기 데이터 관리 훅
@@ -203,7 +204,7 @@ export const useFavoritesData = (authenticatedFetch, showSnackbar) => {
 
             // 선택된 지수의 OHLCV 데이터 로드
             const indexOhlcvResponse = await fetch(
-              `${apiBaseUrl}/api/find_index_ohlcv?code=${indexCode}&limit=150`
+              `${apiBaseUrl}/api/find_index_ohlcv?code=${indexCode}&limit=${CHART_FETCH_LIMIT}`
             );
             if (indexOhlcvResponse.ok) {
               const indexOhlcvResult = await indexOhlcvResponse.json();
@@ -249,7 +250,7 @@ export const useFavoritesData = (authenticatedFetch, showSnackbar) => {
         }
 
         const ohlcvResponse = await fetch(
-          `${apiBaseUrl}/api/find_stock_ohlcv?code=${stockCode}&limit=150`
+          `${apiBaseUrl}/api/find_stock_ohlcv?code=${stockCode}&limit=${CHART_FETCH_LIMIT}`
         );
 
         if (ohlcvResponse.ok) {
@@ -265,7 +266,7 @@ export const useFavoritesData = (authenticatedFetch, showSnackbar) => {
 
         // 분석 데이터 로드
         const analysisResponse = await fetch(
-          `${apiBaseUrl}/api/find_stock_analysis?code=${stockCode}&limit=150`
+          `${apiBaseUrl}/api/find_stock_analysis?code=${stockCode}&limit=${CHART_FETCH_LIMIT}`
         );
 
         if (analysisResponse.ok) {
@@ -304,7 +305,7 @@ export const useFavoritesData = (authenticatedFetch, showSnackbar) => {
 
       try {
         const response = await fetch(
-          `${apiBaseUrl}/api/find_index_ohlcv?code=${indexCode}&limit=150`
+          `${apiBaseUrl}/api/find_index_ohlcv?code=${indexCode}&limit=${CHART_FETCH_LIMIT}`
         );
         if (response.ok) {
           const result = await response.json();
