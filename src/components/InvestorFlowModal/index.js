@@ -10,23 +10,48 @@ import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
-import Table from "@mui/material/Table";
-import TableHead from "@mui/material/TableHead";
-import TableBody from "@mui/material/TableBody";
-import TableRow from "@mui/material/TableRow";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import Paper from "@mui/material/Paper";
 import Chip from "@mui/material/Chip";
+import FlowTable from "./FlowTable";
 
 const API_BASE = () => window.REACT_APP_API_BASE_URL || "http://localhost:8000";
+const RIGHT_ALIGN = { justifyContent: "flex-end" };
 
 async function fetchInvestorData(endpoint, stockCode) {
   const res = await fetch(`${API_BASE()}/api/stock/${stockCode}/${endpoint}`);
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const json = await res.json();
-  if (!json.success) throw new Error(json.error || "데이터 조회 실패");
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok || !json.success) throw new Error(json.error || `조회 실패 (HTTP ${res.status})`);
   return { data: json.data, isMarketClosed: json.is_market_closed };
+}
+
+/** 매매동향 엔드포인트 조회 상태를 관리하는 공통 훅. */
+function useInvestorData(endpoint, stockCode) {
+  const [state, setState] = useState({
+    data: null,
+    isMarketClosed: false,
+    loading: true,
+    error: null,
+  });
+
+  const load = useCallback(async () => {
+    setState({ data: null, isMarketClosed: false, loading: true, error: null });
+    try {
+      const result = await fetchInvestorData(endpoint, stockCode);
+      setState({
+        data: result.data,
+        isMarketClosed: result.isMarketClosed,
+        loading: false,
+        error: null,
+      });
+    } catch (e) {
+      setState({ data: null, isMarketClosed: false, loading: false, error: e.message });
+    }
+  }, [endpoint, stockCode]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  return state;
 }
 
 function formatNumber(val) {
@@ -34,6 +59,24 @@ function formatNumber(val) {
   const n = Number(val);
   if (isNaN(n)) return val;
   return n.toLocaleString("ko-KR");
+}
+
+function formatPercent(val) {
+  const n = Number(val);
+  if (isNaN(n)) return "-";
+  return `${n.toFixed(2)}%`;
+}
+
+/** YYYYMMDD → MM/DD */
+function formatDate(val) {
+  if (!val || val.length !== 8) return val || "-";
+  return `${val.slice(4, 6)}/${val.slice(6, 8)}`;
+}
+
+/** HHMMSS → HH:MM:SS */
+function formatTime(val) {
+  if (!val || val.length !== 6) return val || "-";
+  return `${val.slice(0, 2)}:${val.slice(2, 4)}:${val.slice(4, 6)}`;
 }
 
 function NetChip({ value }) {
@@ -53,253 +96,177 @@ function NetChip({ value }) {
   );
 }
 
-function MarketClosedAlert() {
-  return (
-    <Alert severity="warning" sx={{ mt: 2 }}>
-      장 운영 시간이 아닙니다. 매매동향 데이터는 <strong>평일 09:00 ~ 15:30</strong> 사이에만 제공됩니다.
-    </Alert>
-  );
+/** 숫자 컬럼 정의를 만든다. net=true 면 순매수 색상 칩으로 렌더한다. */
+function numberColumn(name, field, { net = false, width } = {}) {
+  return {
+    name,
+    selector: (row) => row[field],
+    style: RIGHT_ALIGN,
+    width,
+    cell: net
+      ? (row) => <NetChip value={row[field]} />
+      : (row) => <span>{formatNumber(row[field])}</span>,
+  };
 }
 
-// ─── 탭 1: 당일 투자자별 순매수 (외국인/기관/개인) ───────────────────────
-const INVESTOR_LABELS = ["개인", "외국인", "기관계", "금융투자", "보험", "투신", "기타금융", "은행", "연기금", "사모펀드", "국가", "기타법인", "내외국인"];
+/** 로딩/에러/빈 데이터 상태를 공통 처리하고, 정상일 때만 children 을 렌더한다. */
+function DataState({ loading, error, isEmpty, emptyMessage, children }) {
+  if (loading)
+    return (
+      <Box display="flex" justifyContent="center" py={4}>
+        <CircularProgress />
+      </Box>
+    );
+  if (error)
+    return (
+      <Alert severity="error" sx={{ mt: 2 }}>
+        {error}
+      </Alert>
+    );
+  if (isEmpty)
+    return (
+      <Alert severity="info" sx={{ mt: 2 }}>
+        {emptyMessage}
+      </Alert>
+    );
+  return children;
+}
+
+// ─── 탭 1: 일자별 투자자 순매수 (개인/외국인/기관) ──────────────────────────
+const INVESTOR_COLUMNS = [
+  {
+    name: "일자",
+    selector: (row) => row.date,
+    cell: (row) => <strong>{formatDate(row.date)}</strong>,
+    width: "80px",
+  },
+  numberColumn("종가", "close"),
+  numberColumn("전일대비", "change", { net: true }),
+  numberColumn("개인(주)", "prsn_qty", { net: true }),
+  numberColumn("외국인(주)", "frgn_qty", { net: true }),
+  numberColumn("기관(주)", "orgn_qty", { net: true }),
+  numberColumn("개인(백만)", "prsn_amt"),
+  numberColumn("외국인(백만)", "frgn_amt"),
+  numberColumn("기관(백만)", "orgn_amt"),
+];
 
 function InvestorTodayTab({ stockCode }) {
-  const [data, setData] = useState(null);
-  const [isMarketClosed, setIsMarketClosed] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await fetchInvestorData("investor-today", stockCode);
-      setData(result.data);
-      setIsMarketClosed(result.isMarketClosed);
-    } catch (e) {
-      setError(e.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [stockCode]);
-
-  useEffect(() => { load(); }, [load]);
-
-  if (loading) return <Box display="flex" justifyContent="center" py={4}><CircularProgress /></Box>;
-  if (error) return <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>;
-  if (isMarketClosed) return <MarketClosedAlert />;
-  if (!data?.output2?.length) return <Alert severity="info" sx={{ mt: 2 }}>데이터가 없습니다.</Alert>;
-
-  const rows = data.output2;
+  const { data, loading, error } = useInvestorData("investor-today", stockCode);
+  const rows = data?.rows ?? [];
 
   return (
-    <TableContainer component={Paper} sx={{ mt: 2, maxHeight: 400 }}>
-      <Table size="small" stickyHeader>
-        <TableHead>
-          <TableRow>
-            <TableCell>투자자</TableCell>
-            <TableCell align="right">매도수량</TableCell>
-            <TableCell align="right">매수수량</TableCell>
-            <TableCell align="right">순매수수량</TableCell>
-            <TableCell align="right">매도금액</TableCell>
-            <TableCell align="right">매수금액</TableCell>
-            <TableCell align="right">순매수금액</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row, idx) => (
-            <TableRow key={idx} hover>
-              <TableCell sx={{ fontWeight: 600, whiteSpace: "nowrap" }}>
-                {INVESTOR_LABELS[idx] ?? `투자자${idx + 1}`}
-              </TableCell>
-              <TableCell align="right">{formatNumber(row.seln_rsqn)}</TableCell>
-              <TableCell align="right">{formatNumber(row.shnu_rsqn)}</TableCell>
-              <TableCell align="right"><NetChip value={row.ntby_rsqn} /></TableCell>
-              <TableCell align="right">{formatNumber(row.seln_amt)}</TableCell>
-              <TableCell align="right">{formatNumber(row.shnu_amt)}</TableCell>
-              <TableCell align="right"><NetChip value={row.ntby_amt} /></TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <DataState
+      loading={loading}
+      error={error}
+      isEmpty={rows.length === 0}
+      emptyMessage="투자자별 순매수 데이터가 없습니다."
+    >
+      <>
+        <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 1 }}>
+          당일 순매수는 장 마감 후 확정되며, 장중에는 0으로 표시될 수 있습니다.
+        </Typography>
+        <FlowTable columns={INVESTOR_COLUMNS} data={rows} minWidth="900px" />
+      </>
+    </DataState>
   );
 }
 
-// ─── 탭 2: 외국인/기관 당일 가집계 시간대별 ─────────────────────────────────
-function ForeignTotalTab({ stockCode }) {
-  const [data, setData] = useState(null);
-  const [isMarketClosed, setIsMarketClosed] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+// ─── 탭 2: 프로그램 매매 추이 ────────────────────────────────────────────────
+const PROGRAM_COLUMNS = [
+  {
+    name: "시간",
+    selector: (row) => row.time,
+    cell: (row) => <strong>{formatTime(row.time)}</strong>,
+    width: "100px",
+  },
+  numberColumn("현재가", "price"),
+  {
+    name: "등락률",
+    selector: (row) => row.change_rate,
+    style: RIGHT_ALIGN,
+    cell: (row) => <span>{formatPercent(row.change_rate)}</span>,
+  },
+  numberColumn("매도(주)", "seln_vol"),
+  numberColumn("매수(주)", "shnu_vol"),
+  numberColumn("순매수(주)", "ntby_qty", { net: true }),
+  numberColumn("순매수금액", "ntby_amt", { net: true }),
+];
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await fetchInvestorData("foreign-total", stockCode);
-      setData(result.data);
-      setIsMarketClosed(result.isMarketClosed);
-    } catch (e) {
-      setError(e.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [stockCode]);
-
-  useEffect(() => { load(); }, [load]);
-
-  if (loading) return <Box display="flex" justifyContent="center" py={4}><CircularProgress /></Box>;
-  if (error) return <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>;
-  if (isMarketClosed) return <MarketClosedAlert />;
-  if (!data?.output2?.length) return <Alert severity="info" sx={{ mt: 2 }}>데이터가 없습니다.</Alert>;
-
-  const rows = data.output2;
-
-  return (
-    <TableContainer component={Paper} sx={{ mt: 2, maxHeight: 400 }}>
-      <Table size="small" stickyHeader>
-        <TableHead>
-          <TableRow>
-            <TableCell>시간</TableCell>
-            <TableCell align="right">외국인 순매수(주)</TableCell>
-            <TableCell align="right">기관 순매수(주)</TableCell>
-            <TableCell align="right">외국인 누적</TableCell>
-            <TableCell align="right">기관 누적</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row, idx) => (
-            <TableRow key={idx} hover>
-              <TableCell sx={{ fontWeight: 500 }}>{row.stck_cntg_hour || row.hts_hour || "-"}</TableCell>
-              <TableCell align="right"><NetChip value={row.frgn_ntby_qty ?? row.frgn_seln_vol} /></TableCell>
-              <TableCell align="right"><NetChip value={row.orgn_ntby_qty ?? row.orgn_seln_vol} /></TableCell>
-              <TableCell align="right">{formatNumber(row.frgn_ntby_qty_icdc)}</TableCell>
-              <TableCell align="right">{formatNumber(row.orgn_ntby_qty_icdc)}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  );
-}
-
-// ─── 탭 3: 프로그램 매매 추이 ────────────────────────────────────────────────
 function ProgramTradeTab({ stockCode }) {
-  const [data, setData] = useState(null);
-  const [isMarketClosed, setIsMarketClosed] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await fetchInvestorData("program-trade", stockCode);
-      setData(result.data);
-      setIsMarketClosed(result.isMarketClosed);
-    } catch (e) {
-      setError(e.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [stockCode]);
-
-  useEffect(() => { load(); }, [load]);
-
-  if (loading) return <Box display="flex" justifyContent="center" py={4}><CircularProgress /></Box>;
-  if (error) return <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>;
-  if (isMarketClosed) return <MarketClosedAlert />;
-  if (!data?.output2?.length) return <Alert severity="info" sx={{ mt: 2 }}>데이터가 없습니다.</Alert>;
-
-  const rows = data.output2;
+  const { data, isMarketClosed, loading, error } = useInvestorData("program-trade", stockCode);
+  const rows = data?.rows ?? [];
 
   return (
-    <TableContainer component={Paper} sx={{ mt: 2, maxHeight: 400 }}>
-      <Table size="small" stickyHeader>
-        <TableHead>
-          <TableRow>
-            <TableCell>시간</TableCell>
-            <TableCell align="right">매도(주)</TableCell>
-            <TableCell align="right">매수(주)</TableCell>
-            <TableCell align="right">순매수(주)</TableCell>
-            <TableCell align="right">매도금액</TableCell>
-            <TableCell align="right">매수금액</TableCell>
-            <TableCell align="right">순매수금액</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row, idx) => (
-            <TableRow key={idx} hover>
-              <TableCell sx={{ fontWeight: 500 }}>{row.stck_cntg_hour || row.hts_hour || "-"}</TableCell>
-              <TableCell align="right">{formatNumber(row.whol_smtn_seln_qty ?? row.pgm_seln_qty)}</TableCell>
-              <TableCell align="right">{formatNumber(row.whol_smtn_shnu_qty ?? row.pgm_shnu_qty)}</TableCell>
-              <TableCell align="right"><NetChip value={row.whol_smtn_ntby_qty ?? row.pgm_ntby_qty} /></TableCell>
-              <TableCell align="right">{formatNumber(row.whol_smtn_seln_amt ?? row.pgm_seln_amt)}</TableCell>
-              <TableCell align="right">{formatNumber(row.whol_smtn_shnu_amt ?? row.pgm_shnu_amt)}</TableCell>
-              <TableCell align="right"><NetChip value={row.whol_smtn_ntby_amt ?? row.pgm_ntby_amt} /></TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <DataState
+      loading={loading}
+      error={error}
+      isEmpty={rows.length === 0}
+      emptyMessage={
+        isMarketClosed
+          ? "프로그램 매매 시간대별 데이터는 장중(평일 09:00~15:30)에만 제공됩니다."
+          : "프로그램 매매 데이터가 없습니다."
+      }
+    >
+      <FlowTable columns={PROGRAM_COLUMNS} data={rows} minWidth="800px" />
+    </DataState>
   );
 }
 
-// ─── 탭 4: 전 증권사 회원사별 매매동향 ──────────────────────────────────────
+// ─── 탭 3: 증권사별 매매 (매도/매수 상위 + 외국계 합계) ─────────────────────
+const MEMBER_COLUMNS = [
+  {
+    name: "증권사",
+    selector: (row) => row.name,
+    grow: 1,
+    cell: (row) => (
+      <span>
+        {row.name}
+        {row.is_foreign && <Chip label="외국계" size="small" sx={{ ml: 1, fontSize: "0.65rem" }} />}
+      </span>
+    ),
+  },
+  numberColumn("수량(주)", "qty"),
+  {
+    name: "비중",
+    selector: (row) => row.ratio,
+    style: RIGHT_ALIGN,
+    cell: (row) => <span>{formatPercent(row.ratio)}</span>,
+  },
+  numberColumn("직전대비", "change"),
+];
+
 function MemberFirmTab({ stockCode }) {
-  const [data, setData] = useState(null);
-  const [isMarketClosed, setIsMarketClosed] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await fetchInvestorData("member-firm", stockCode);
-      setData(result.data);
-      setIsMarketClosed(result.isMarketClosed);
-    } catch (e) {
-      setError(e.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [stockCode]);
-
-  useEffect(() => { load(); }, [load]);
-
-  if (loading) return <Box display="flex" justifyContent="center" py={4}><CircularProgress /></Box>;
-  if (error) return <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>;
-  if (isMarketClosed) return <MarketClosedAlert />;
-  if (!data?.output2?.length) return <Alert severity="info" sx={{ mt: 2 }}>데이터가 없습니다.</Alert>;
-
-  const rows = data.output2;
+  const { data, loading, error } = useInvestorData("member-firm", stockCode);
+  const sellRows = data?.sell ?? [];
+  const buyRows = data?.buy ?? [];
+  const foreign = data?.foreign;
 
   return (
-    <TableContainer component={Paper} sx={{ mt: 2, maxHeight: 440 }}>
-      <Table size="small" stickyHeader>
-        <TableHead>
-          <TableRow>
-            <TableCell>증권사</TableCell>
-            <TableCell align="right">매도(주)</TableCell>
-            <TableCell align="right">매수(주)</TableCell>
-            <TableCell align="right">순매수(주)</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row, idx) => (
-            <TableRow key={idx} hover>
-              <TableCell sx={{ fontWeight: 500 }}>{row.mbcr_name || "-"}</TableCell>
-              <TableCell align="right">{formatNumber(row.seln_qty ?? row.seln_mbcr_rlim)}</TableCell>
-              <TableCell align="right">{formatNumber(row.shnu_qty ?? row.shnu_mbcr_rlim)}</TableCell>
-              <TableCell align="right"><NetChip value={row.ntby_qty ?? row.ntby_mbcr_rlim} /></TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <DataState
+      loading={loading}
+      error={error}
+      isEmpty={sellRows.length === 0 && buyRows.length === 0}
+      emptyMessage="증권사별 매매 데이터가 없습니다."
+    >
+      <>
+        {foreign && (
+          <Alert severity="info" sx={{ mt: 2 }}>
+            외국계 합계 — 매수 {formatNumber(foreign.shnu_qty)}주 (
+            {formatPercent(foreign.shnu_ratio)}) / 매도 {formatNumber(foreign.seln_qty)}주 (
+            {formatPercent(foreign.seln_ratio)}) / 순매수{" "}
+            <strong>{formatNumber(foreign.ntby_qty)}주</strong>
+          </Alert>
+        )}
+        <Typography variant="subtitle2" sx={{ mt: 2, fontWeight: 700 }}>
+          매수 상위
+        </Typography>
+        <FlowTable columns={MEMBER_COLUMNS} data={buyRows} minWidth="520px" />
+        <Typography variant="subtitle2" sx={{ mt: 2, fontWeight: 700 }}>
+          매도 상위
+        </Typography>
+        <FlowTable columns={MEMBER_COLUMNS} data={sellRows} minWidth="520px" />
+      </>
+    </DataState>
   );
 }
 
@@ -314,15 +281,16 @@ export default function InvestorFlowModal({ open, onClose, stockCode, stockName 
   if (!stockCode) return null;
 
   const tabs = [
-    { label: "투자자별 순매수", component: <InvestorTodayTab stockCode={stockCode} /> },
-    { label: "외국인/기관 시간대별", component: <ForeignTotalTab stockCode={stockCode} /> },
+    { label: "일자별 투자자 순매수", component: <InvestorTodayTab stockCode={stockCode} /> },
     { label: "프로그램 매매", component: <ProgramTradeTab stockCode={stockCode} /> },
     { label: "증권사별 매매", component: <MemberFirmTab stockCode={stockCode} /> },
   ];
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
-      <DialogTitle sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", pb: 0 }}>
+      <DialogTitle
+        sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", pb: 0 }}
+      >
         <Box>
           <Typography variant="h6" component="span" fontWeight={700}>
             매매동향
@@ -346,8 +314,8 @@ export default function InvestorFlowModal({ open, onClose, stockCode, stockName 
           scrollButtons="auto"
           sx={{ borderBottom: 1, borderColor: "divider" }}
         >
-          {tabs.map((t, i) => (
-            <Tab key={i} label={t.label} />
+          {tabs.map((t) => (
+            <Tab key={t.label} label={t.label} />
           ))}
         </Tabs>
         {tabs[tab].component}
