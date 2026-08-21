@@ -37,7 +37,7 @@ import ResponsiveTableWrapper from "components/ResponsiveTableWrapper";
 
 // Material Kit 2 React components
 import Typography from "@mui/material/Typography";
-import MKButton from "components/MKButton";
+import Button from "@mui/material/Button";
 
 // Material Kit 2 React examples
 import DefaultNavbar from "examples/Navbars/DefaultNavbar";
@@ -1382,7 +1382,7 @@ export default function TradingConfigs() {
 
                   <Tooltip title="이 날짜의 후보 설정·1분봉·진입 판정을 모두 삭제합니다">
                     <span>
-                      <MKButton
+                      <Button
                         variant="outlined"
                         color="error"
                         size="small"
@@ -1392,7 +1392,7 @@ export default function TradingConfigs() {
                         sx={{ ml: 1 }}
                       >
                         이 날짜 삭제
-                      </MKButton>
+                      </Button>
                     </span>
                   </Tooltip>
                 </Box>
@@ -1418,9 +1418,9 @@ export default function TradingConfigs() {
                           ? "아직 설정된 급등테마주 전략이 없습니다."
                           : "아직 설정된 자동매매 전략이 없습니다."}
                       </Typography>
-                      <MKButton variant="gradient" color="info">
+                      <Button variant="gradient" color="info">
                         자동매매 설정하기
-                      </MKButton>
+                      </Button>
                     </Box>
                   </CardContent>
                 </Card>
@@ -1446,26 +1446,26 @@ export default function TradingConfigs() {
               gap={2}
               flexWrap="wrap"
             >
-              <MKButton variant="outlined" color="info" onClick={loadAllTradingConfigs}>
+              <Button variant="outlined" color="info" onClick={loadAllTradingConfigs}>
                 전체 새로고침
-              </MKButton>
+              </Button>
               {allTradingConfigs.length > 0 && (
                 <>
-                  <MKButton
+                  <Button
                     variant="outlined"
                     color="info"
                     onClick={() => loadCurrentPrices(allTradingConfigs)}
                   >
                     현재가 업데이트
-                  </MKButton>
-                  <MKButton variant="outlined" color="warning" onClick={loadTradingStatus}>
+                  </Button>
+                  <Button variant="outlined" color="warning" onClick={loadTradingStatus}>
                     거래상태 업데이트
-                  </MKButton>
+                  </Button>
                 </>
               )}
-              <MKButton variant="outlined" color="error" onClick={handleRecoverPositions}>
+              <Button variant="outlined" color="error" onClick={handleRecoverPositions}>
                 포지션 복구 (KIS 대조)
-              </MKButton>
+              </Button>
             </Box>
           )}
         </FullWidthContainer>

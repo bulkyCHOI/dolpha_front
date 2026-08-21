@@ -49,7 +49,7 @@ import ResponsiveTableWrapper from "components/ResponsiveTableWrapper";
 
 // Material Kit 2 React components
 import Typography from "@mui/material/Typography";
-import MKButton from "components/MKButton";
+import Button from "@mui/material/Button";
 
 // Material Kit 2 React examples
 import DefaultNavbar from "examples/Navbars/DefaultNavbar";
@@ -1065,9 +1065,9 @@ export default function TradingReviews() {
           {/* 새로고침 버튼 */}
           {!loading && (
             <Box textAlign="center" mt={4}>
-              <MKButton variant="outlined" color="info" onClick={fetchTradingReviews}>
+              <Button variant="outlined" color="info" onClick={fetchTradingReviews}>
                 데이터 새로고침
-              </MKButton>
+              </Button>
             </Box>
           )}
         </FullWidthContainer>
@@ -1570,9 +1570,9 @@ export default function TradingReviews() {
             </DialogContent>
 
             <DialogActions sx={{ px: 3, py: 2 }}>
-              <MKButton variant="outlined" color="secondary" onClick={handleCloseDetail}>
+              <Button variant="outlined" color="secondary" onClick={handleCloseDetail}>
                 닫기
-              </MKButton>
+              </Button>
             </DialogActions>
           </>
         )}

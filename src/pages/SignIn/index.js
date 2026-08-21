@@ -9,7 +9,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 
 // Material Kit 2 React components
-import MKButton from "components/MKButton";
+import Button from "@mui/material/Button";
 
 // Custom components
 import GoogleLoginButton from "components/GoogleLoginButton";
@@ -130,9 +130,9 @@ function SignIn() {
 
                   {/* Disabled Login Button */}
                   <Box mt={4} mb={1}>
-                    <MKButton variant="gradient" color="secondary" fullWidth disabled>
+                    <Button variant="gradient" color="secondary" fullWidth disabled>
                       간편 로그인을 이용해주세요
-                    </MKButton>
+                    </Button>
                   </Box>
 
                   {/* Sign Up Link */}

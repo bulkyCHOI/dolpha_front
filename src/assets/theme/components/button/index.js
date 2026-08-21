@@ -1,28 +1,56 @@
-/**
-=========================================================
-* Material Kit 2 React - v2.1.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-kit-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-// Material Kit 2 React Button Styles
+// 버튼 스타일
+//
+// MKButton이 제공하던 variant="gradient"를 MUI 테마의 커스텀 variant로
+// 옮겨, 별도 래퍼 컴포넌트 없이 <Button variant="gradient"> 로 쓴다.
 import root from "assets/theme/components/button/root";
 import contained from "assets/theme/components/button/contained";
 import outlined from "assets/theme/components/button/outlined";
 import text from "assets/theme/components/button/text";
 
+const GRADIENT_COLORS = [
+  "primary",
+  "secondary",
+  "info",
+  "success",
+  "warning",
+  "error",
+  "light",
+  "dark",
+];
+
+/** color별 gradient variant 정의 */
+const gradientVariants = GRADIENT_COLORS.map((color) => ({
+  props: { variant: "gradient", color },
+  style: ({ theme }) => {
+    const { gradients, white, dark } = theme.palette;
+    const { linearGradient } = theme.functions;
+    const textColor = color === "light" ? dark.main : white.main;
+
+    return {
+      color: textColor,
+      background: linearGradient(gradients[color].main, gradients[color].state),
+      boxShadow: theme.boxShadows.md,
+      "&:hover": {
+        background: linearGradient(gradients[color].state, gradients[color].main),
+        boxShadow: theme.boxShadows.lg,
+      },
+      "&:focus:not(:hover)": {
+        boxShadow: theme.boxShadows.md,
+      },
+      "&:disabled": {
+        color: textColor,
+        background: linearGradient(gradients[color].main, gradients[color].state),
+        opacity: 0.65,
+      },
+    };
+  },
+}));
+
 export default {
   defaultProps: {
     disableRipple: false,
   },
+  variants: gradientVariants,
   styleOverrides: {
     root: { ...root },
     contained: { ...contained.base },

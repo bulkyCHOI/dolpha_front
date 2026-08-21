@@ -35,7 +35,7 @@ import MuiLink from "@mui/material/Link";
 // Material Kit 2 React components
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
-import MKButton from "components/MKButton";
+import Button from "@mui/material/Button";
 
 // Material Kit 2 React example components
 import DefaultNavbarDropdown from "examples/Navbars/DefaultNavbar/DefaultNavbarDropdown";
@@ -507,7 +507,7 @@ function DefaultNavbar({ brand, routes, transparent, light, action, sticky, rela
           <MKBox ml={{ xs: "auto", lg: 0 }}>
             {action &&
               (action.type === "internal" ? (
-                <MKButton
+                <Button
                   component={Link}
                   to={action.route}
                   variant={
@@ -524,9 +524,9 @@ function DefaultNavbar({ brand, routes, transparent, light, action, sticky, rela
                   }}
                 >
                   {action.label}
-                </MKButton>
+                </Button>
               ) : (
-                <MKButton
+                <Button
                   component="a"
                   href={action.route}
                   target="_blank"
@@ -545,7 +545,7 @@ function DefaultNavbar({ brand, routes, transparent, light, action, sticky, rela
                   }}
                 >
                   {action.label}
-                </MKButton>
+                </Button>
               ))}
           </MKBox>
           <MKBox

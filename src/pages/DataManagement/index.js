@@ -32,8 +32,8 @@ import Divider from "@mui/material/Divider";
 
 // Material Kit 2 React components
 import Typography from "@mui/material/Typography";
-import MKButton from "components/MKButton";
-import MKDatePicker from "components/MKDatePicker";
+import Button from "@mui/material/Button";
+import DatePicker from "components/DatePicker";
 
 // Material Kit 2 React examples
 import DefaultNavbar from "examples/Navbars/DefaultNavbar";
@@ -586,7 +586,7 @@ function DailyPipelinePanel({ processes, onTriggerDone }) {
         <Box display="flex" alignItems="flex-end" gap={2} mb={2} flexWrap="wrap">
           <Box minWidth={150}>
             <Typography variant="caption" color="text.secondary">시작일</Typography>
-            <MKDatePicker
+            <DatePicker
               value={startDate}
               options={{ dateFormat: "Y-m-d", maxDate: endDate, allowInput: true }}
               onChange={([d]) => d && setStartDate(toLocalDateStr(d))}
@@ -595,7 +595,7 @@ function DailyPipelinePanel({ processes, onTriggerDone }) {
           </Box>
           <Box minWidth={150}>
             <Typography variant="caption" color="text.secondary">종료일</Typography>
-            <MKDatePicker
+            <DatePicker
               value={endDate}
               options={{ dateFormat: "Y-m-d", minDate: startDate, maxDate: TODAY, allowInput: true }}
               onChange={([d]) => d && setEndDate(toLocalDateStr(d))}
@@ -624,7 +624,7 @@ function DailyPipelinePanel({ processes, onTriggerDone }) {
               </Typography>
             }
           />
-          <MKButton
+          <Button
             variant="gradient"
             color="info"
             onClick={handleTrigger}
@@ -632,7 +632,7 @@ function DailyPipelinePanel({ processes, onTriggerDone }) {
             sx={{ minWidth: 140 }}
           >
             {loading ? <CircularProgress size={16} color="inherit" /> : "전체 파이프라인 실행"}
-          </MKButton>
+          </Button>
         </Box>
 
         {result && (
@@ -749,7 +749,7 @@ function CollectionPanel({ config, processes, onTriggerDone }) {
             <>
               <Box minWidth={140}>
                 <Typography variant="caption" color="text.secondary">시작일</Typography>
-                <MKDatePicker
+                <DatePicker
                   value={startDate}
                   options={{ dateFormat: "Y-m-d", maxDate: endDate, allowInput: true }}
                   onChange={([d]) => d && setStartDate(toLocalDateStr(d))}
@@ -758,7 +758,7 @@ function CollectionPanel({ config, processes, onTriggerDone }) {
               </Box>
               <Box minWidth={140}>
                 <Typography variant="caption" color="text.secondary">종료일</Typography>
-                <MKDatePicker
+                <DatePicker
                   value={endDate}
                   options={{ dateFormat: "Y-m-d", minDate: startDate, maxDate: TODAY, allowInput: true }}
                   onChange={([d]) => d && setEndDate(toLocalDateStr(d))}
@@ -768,7 +768,7 @@ function CollectionPanel({ config, processes, onTriggerDone }) {
             </>
           )}
           <Box mt={config.needsDate ? 2.5 : 0}>
-            <MKButton
+            <Button
               variant="gradient"
               color={config.color}
               size="small"
@@ -776,7 +776,7 @@ function CollectionPanel({ config, processes, onTriggerDone }) {
               disabled={loading || isRunning}
             >
               {loading ? <CircularProgress size={16} color="inherit" /> : "수집 시작"}
-            </MKButton>
+            </Button>
           </Box>
         </Box>
       </Box>
