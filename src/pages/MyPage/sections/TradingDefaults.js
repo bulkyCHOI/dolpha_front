@@ -89,12 +89,22 @@ function TradingDefaults() {
     nl_stage2_sell_pct: 50.0,
     nl_stage3_days: 20,
     nl_stage3_sell_pct: 100.0,
-    // 급등테마주 전략 설정 (진입 기준만 — 청산은 위 Manual 값을 따름)
+    // 급등테마주 전략 설정 — 진입 기준
     theme_surge_enabled: false,
     theme_surge_max_candidates: 3,
     theme_surge_min_fluctuation: 3.0,
     theme_surge_min_trading_value: 50000000000,
     theme_surge_use_foreign_filter: true,
+    // 급등테마주 청산 설정 (데이 트레이딩 전용)
+    theme_surge_use_own_exit: true,
+    theme_surge_max_loss: 1.0,
+    theme_surge_exit_stages: [{ t: 2.0, sell_pct: 50.0 }],
+    theme_surge_use_trailing: true,
+    theme_surge_trailing_start_t: 2.0,
+    theme_surge_trailing_bar_unit: "5m",
+    theme_surge_trailing_bar_count: 3,
+    theme_surge_force_exit_enabled: true,
+    theme_surge_force_exit_time: "15:20",
   });
 
   const [loading, setLoading] = useState(false);

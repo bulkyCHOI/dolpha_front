@@ -1,8 +1,9 @@
 /**
  * 급등테마주 자동매매 설정.
  *
- * 이 전략은 '무엇을 언제 살 것인가'만 새로 정의하고, 익절·손절·트레일링스탑·분할익절은
- * 위 Manual 기본 설정을 그대로 따른다. 그래서 여기서는 후보 발굴 기준과 진입 필터만 다룬다.
+ * 후보 발굴 기준과 진입 필터를 다루고, 청산은 ThemeSurgeExitSettings 가 담당한다.
+ * 청산은 테마가 다음 날 소멸할 수 있다는 전제 아래 당일 매매용 전용 규칙을 기본으로 쓰며,
+ * 끄면 기존처럼 Manual 기본 설정을 따른다.
  */
 
 import PropTypes from "prop-types";
@@ -22,6 +23,7 @@ import { Link as RouterLink } from "react-router-dom";
 
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
+import ThemeSurgeExitSettings from "./ThemeSurgeExitSettings";
 
 const ACCENT = "#ef6c00";
 const MUTED = "#7b8794";
@@ -118,10 +120,9 @@ function ThemeSurgeSettings({ defaults, onChange }) {
         <Collapse in={enabled}>
           <Box sx={{ mt: 2 }}>
             <Alert severity="info" sx={{ mb: 2, borderRadius: 2, fontSize: 13 }}>
-              진입 시점만 이 전략이 판단합니다 — 1분봉에서{" "}
-              <strong>눌림목 → 전고점 돌파 → 외국인 매수세</strong>가 모두 갖춰질 때 매수합니다.{" "}
-              <strong>익절·손절·트레일링스탑·분할익절은 위 Manual 설정</strong>을 그대로 따르므로,
-              Manual 값을 먼저 확인해 주세요.
+              1분봉에서 <strong>눌림목 → 전고점 돌파 → 외국인 매수세</strong>가 모두 갖춰질 때
+              매수하고, 청산은 아래{" "}
+              <strong>전용 규칙(눌림 저점 손절 · nT 분할익절 · 당일 강제청산)</strong>을 따릅니다.
             </Alert>
 
             <Grid container spacing={2}>
@@ -208,8 +209,7 @@ function ThemeSurgeSettings({ defaults, onChange }) {
               sx={{ display: "block", mt: 2, color: MUTED, lineHeight: 1.6 }}
             >
               · 후보는 <strong>14:30까지만</strong> 신규 등록되며, 장 마감 후(15:32) 끝내 진입하지
-              못한 후보는 자동으로 비활성화됩니다. 이미 진입한 포지션은 Manual 청산 조건이 판단할
-              때까지 유지됩니다.
+              못한 후보는 자동으로 비활성화됩니다.
               <br />· 발굴 현황과 진입 판정 이력은{" "}
               <Box
                 component={RouterLink}
@@ -220,6 +220,8 @@ function ThemeSurgeSettings({ defaults, onChange }) {
               </Box>
               에서 확인할 수 있습니다.
             </MKTypography>
+
+            <ThemeSurgeExitSettings defaults={defaults} onChange={onChange} />
           </Box>
         </Collapse>
       </MKBox>
