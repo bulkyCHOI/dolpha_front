@@ -25,12 +25,11 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
 // Material Kit 2 React examples
-import DefaultNavbar from "examples/Navbars/DefaultNavbar";
-import DefaultFooter from "examples/Footers/DefaultFooter";
+import AppHeader from "components/AppHeader";
+import AppFooter from "components/AppFooter";
 
 // Routes
 import routes from "routes";
-import footerRoutes from "footer.routes";
 
 // MyPage sections
 import Profile from "./sections/Profile";
@@ -67,7 +66,7 @@ function MyPage() {
 
   return (
     <>
-      <DefaultNavbar routes={routes} sticky />
+      <AppHeader routes={routes} sticky />
       <Box
         minHeight={{ xs: "25vh", md: "30vh" }}
         width="100%"
@@ -172,7 +171,7 @@ function MyPage() {
         </Container>
       </Card>
       <Box pt={2} px={1} mt={2}>
-        <DefaultFooter content={footerRoutes} />
+        <AppFooter />
       </Box>
     </>
   );

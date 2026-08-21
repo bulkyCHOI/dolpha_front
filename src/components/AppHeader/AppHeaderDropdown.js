@@ -1,19 +1,3 @@
-/**
-=========================================================
-* Material Kit 2 React - v2.1.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-kit-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-// prop-types is a library for typechecking of props
 import PropTypes from "prop-types";
 
 // react-router-dom components
@@ -24,10 +8,10 @@ import Collapse from "@mui/material/Collapse";
 import Icon from "@mui/material/Icon";
 
 // Material Kit 2 React components
-import MKBox from "components/MKBox";
-import MKTypography from "components/MKTypography";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 
-function DefaultNavbarDropdown({
+function AppHeaderDropdown({
   name,
   icon,
   children,
@@ -52,7 +36,7 @@ function DefaultNavbarDropdown({
 
   return (
     <>
-      <MKBox
+      <Box
         {...rest}
         mx={1}
         p={1}
@@ -64,15 +48,15 @@ function DefaultNavbarDropdown({
         {...(route && routeComponent)}
         {...(href && linkComponent)}
       >
-        <MKTypography
+        <Typography
           variant="body2"
           lineHeight={1}
           color="inherit"
           sx={{ alignSelf: "center", "& *": { verticalAlign: "middle" } }}
         >
           {icon}
-        </MKTypography>
-        <MKTypography
+        </Typography>
+        <Typography
           variant="button"
           fontWeight="regular"
           textTransform="capitalize"
@@ -80,13 +64,13 @@ function DefaultNavbarDropdown({
           sx={{ fontWeight: "100%", ml: 1, mr: 0.25 }}
         >
           {name}
-        </MKTypography>
-        <MKTypography variant="body2" color="white" ml="auto">
+        </Typography>
+        <Typography variant="body2" color="white" ml="auto">
           <Icon sx={{ fontWeight: "normal", verticalAlign: "middle" }}>
             {collapse && "keyboard_arrow_down"}
           </Icon>
-        </MKTypography>
-      </MKBox>
+        </Typography>
+      </Box>
       {children && (
         <Collapse in={Boolean(collapseStatus)} timeout={400} unmountOnExit>
           {children}
@@ -96,8 +80,8 @@ function DefaultNavbarDropdown({
   );
 }
 
-// Setting default values for the props of DefaultNavbarDropdown
-DefaultNavbarDropdown.defaultProps = {
+// Setting default values for the props of AppHeaderDropdown
+AppHeaderDropdown.defaultProps = {
   children: false,
   collapseStatus: false,
   light: false,
@@ -105,8 +89,8 @@ DefaultNavbarDropdown.defaultProps = {
   route: "",
 };
 
-// Typechecking props for the DefaultNavbarDropdown
-DefaultNavbarDropdown.propTypes = {
+// Typechecking props for the AppHeaderDropdown
+AppHeaderDropdown.propTypes = {
   name: PropTypes.string.isRequired,
   icon: PropTypes.node.isRequired,
   children: PropTypes.node,
@@ -117,4 +101,4 @@ DefaultNavbarDropdown.propTypes = {
   collapse: PropTypes.bool.isRequired,
 };
 
-export default DefaultNavbarDropdown;
+export default AppHeaderDropdown;

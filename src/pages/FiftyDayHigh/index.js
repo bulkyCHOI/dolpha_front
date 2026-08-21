@@ -18,7 +18,7 @@ import { useAuth } from "contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 import Typography from "@mui/material/Typography";
-import DefaultNavbar from "examples/Navbars/DefaultNavbar";
+import AppHeader from "components/AppHeader";
 import routes from "routes";
 
 import { useNotification } from "components/NotificationSystem/NotificationSystem";
@@ -1039,7 +1039,7 @@ function FiftyDayHigh() {
 
   return (
     <>
-      <DefaultNavbar routes={routes} sticky />
+      <AppHeader routes={routes} sticky />
 
       {/* 모바일 레이아웃 */}
       {isMobile ? (

@@ -27,7 +27,7 @@ import StarIcon from "@mui/icons-material/Star";
 import StarOutlineIcon from "@mui/icons-material/StarOutline";
 
 import Typography from "@mui/material/Typography";
-import DefaultNavbar from "examples/Navbars/DefaultNavbar";
+import AppHeader from "components/AppHeader";
 import routes from "routes";
 
 import { useNotification } from "components/NotificationSystem/NotificationSystem";
@@ -1552,7 +1552,7 @@ function Favorites() {
 
   return (
     <>
-      <DefaultNavbar routes={routes} sticky />
+      <AppHeader routes={routes} sticky />
 
       {/* 모바일 레이아웃 */}
       {isMobile ? (

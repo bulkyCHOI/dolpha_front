@@ -29,12 +29,11 @@ import Box from "@mui/material/Box";
 import FullWidthContainer from "components/FullWidthContainer";
 
 // Material Kit 2 React examples
-import DefaultNavbar from "examples/Navbars/DefaultNavbar";
-import DefaultFooter from "examples/Footers/DefaultFooter";
+import AppHeader from "components/AppHeader";
+import AppFooter from "components/AppFooter";
 
 // Routes
 import routes from "routes";
-import footerRoutes from "footer.routes";
 
 function MarketInfo() {
   useEffect(() => {
@@ -188,16 +187,7 @@ function MarketInfo() {
 
   return (
     <>
-      <DefaultNavbar
-        routes={routes}
-        action={{
-          type: "external",
-          route: "https://www.creative-tim.com/product/material-kit-react",
-          label: "free download",
-          color: "info",
-        }}
-        sticky
-      />
+      <AppHeader routes={routes} sticky />
 
       <Box component="section" py={12}>
         <FullWidthContainer>
@@ -369,7 +359,7 @@ function MarketInfo() {
       </Box>
 
       <Box pt={6} px={1} mt={6}>
-        <DefaultFooter content={footerRoutes} />
+        <AppFooter />
       </Box>
     </>
   );

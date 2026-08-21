@@ -22,7 +22,7 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import Typography from "@mui/material/Typography";
-import DefaultNavbar from "examples/Navbars/DefaultNavbar";
+import AppHeader from "components/AppHeader";
 import routes from "routes";
 import { fetchMarketIndices } from "utils/twelveDataApi";
 
@@ -307,7 +307,7 @@ function IssueInfo() {
   if (loading) {
     return (
       <>
-        <DefaultNavbar routes={routes} sticky />
+        <AppHeader routes={routes} sticky />
         <Box
           minHeight="100vh"
           width="100%"
@@ -326,7 +326,7 @@ function IssueInfo() {
 
   return (
     <>
-      <DefaultNavbar routes={routes} sticky />
+      <AppHeader routes={routes} sticky />
       <Box
         minHeight="100vh"
         width="100%"

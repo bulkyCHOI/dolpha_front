@@ -20,7 +20,7 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import Typography from "@mui/material/Typography";
-import DefaultNavbar from "examples/Navbars/DefaultNavbar";
+import AppHeader from "components/AppHeader";
 import routes from "routes";
 
 function DailyNewsClipping() {
@@ -215,7 +215,7 @@ function DailyNewsClipping() {
 
   return (
     <>
-      <DefaultNavbar routes={routes} sticky />
+      <AppHeader routes={routes} sticky />
 
       <Box
         minHeight="100vh"

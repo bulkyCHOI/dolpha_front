@@ -52,12 +52,11 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 
 // Material Kit 2 React examples
-import DefaultNavbar from "examples/Navbars/DefaultNavbar";
-import DefaultFooter from "examples/Footers/DefaultFooter";
+import AppHeader from "components/AppHeader";
+import AppFooter from "components/AppFooter";
 
 // Routes
 import routes from "routes";
-import footerRoutes from "footer.routes";
 
 // Auth
 import { useAuth } from "contexts/AuthContext";
@@ -917,7 +916,7 @@ export default function TradingReviews() {
 
   return (
     <>
-      <DefaultNavbar routes={routes} sticky />
+      <AppHeader routes={routes} sticky />
 
       <Box component="section" sx={{ minHeight: "80vh", pt: 12, pb: 4 }}>
         <FullWidthContainer>
@@ -1073,7 +1072,7 @@ export default function TradingReviews() {
         </FullWidthContainer>
       </Box>
 
-      <DefaultFooter content={footerRoutes} />
+      <AppFooter />
       <NotificationComponent />
 
       {/* 상세 보기 모달 */}

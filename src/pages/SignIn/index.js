@@ -170,7 +170,7 @@ function SignIn() {
       <Box position="absolute" bottom={0} left={0} right={0} py={2} textAlign="center" zIndex={3}>
         <Container maxWidth="lg">
           <Typography variant="body2" color="white.main" sx={{ opacity: 0.8 }}>
-            © 2024 Dolpha. All rights reserved.
+            © {new Date().getFullYear()} Dolpha. All rights reserved.
           </Typography>
         </Container>
       </Box>

@@ -36,12 +36,11 @@ import Button from "@mui/material/Button";
 import DatePicker from "components/DatePicker";
 
 // Material Kit 2 React examples
-import DefaultNavbar from "examples/Navbars/DefaultNavbar";
-import DefaultFooter from "examples/Footers/DefaultFooter";
+import AppHeader from "components/AppHeader";
+import AppFooter from "components/AppFooter";
 
 // Routes
 import routes from "routes";
-import footerRoutes from "footer.routes";
 
 const apiBase = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
@@ -929,7 +928,7 @@ function DataManagement() {
 
   return (
     <>
-      <DefaultNavbar routes={routes} sticky />
+      <AppHeader routes={routes} sticky />
       <Box minHeight="100vh" pt={10} pb={4} sx={{ bgcolor: "#f5f5f5" }}>
         <Container maxWidth="xl">
           <Typography variant="h4" fontWeight="bold" mb={1}>
@@ -1120,7 +1119,7 @@ function DataManagement() {
         </Container>
       </Box>
       <Box pt={6} px={1} mt="auto">
-        <DefaultFooter content={footerRoutes} />
+        <AppFooter />
       </Box>
     </>
   );

@@ -19,7 +19,7 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import TableRowsIcon from "@mui/icons-material/TableRows";
 
 import Typography from "@mui/material/Typography";
-import DefaultNavbar from "examples/Navbars/DefaultNavbar";
+import AppHeader from "components/AppHeader";
 import routes from "routes";
 import { useAuth } from "contexts/AuthContext";
 import { useNotification } from "components/NotificationSystem/NotificationSystem";
@@ -435,7 +435,7 @@ function ThemeSurge() {
 
   return (
     <>
-      <DefaultNavbar routes={routes} sticky />
+      <AppHeader routes={routes} sticky />
       <Box minHeight="100vh" pt={10} pb={5} sx={{ bgcolor: "#f4f6f8" }}>
         <FullWidthContainer>
           {/* ── 헤더 ───────────────────────────────── */}

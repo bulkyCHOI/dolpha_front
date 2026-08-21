@@ -40,12 +40,11 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 
 // Material Kit 2 React examples
-import DefaultNavbar from "examples/Navbars/DefaultNavbar";
-import DefaultFooter from "examples/Footers/DefaultFooter";
+import AppHeader from "components/AppHeader";
+import AppFooter from "components/AppFooter";
 
 // Routes and context
 import routes from "routes";
-import footerRoutes from "footer.routes";
 import { useAuth } from "contexts/AuthContext";
 
 // Notification system
@@ -1100,7 +1099,7 @@ export default function TradingConfigs() {
 
   return (
     <>
-      <DefaultNavbar routes={routes} sticky />
+      <AppHeader routes={routes} sticky />
 
       <Box component="section" sx={{ minHeight: "80vh", pt: 12, pb: 4 }}>
         <FullWidthContainer>
@@ -1471,7 +1470,7 @@ export default function TradingConfigs() {
         </FullWidthContainer>
       </Box>
 
-      <DefaultFooter content={footerRoutes} />
+      <AppFooter />
       <NotificationComponent />
 
       {/* 주식 차트 모달 (일봉 + 분봉) */}
