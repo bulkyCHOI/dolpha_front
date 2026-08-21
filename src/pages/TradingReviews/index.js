@@ -33,34 +33,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import TextField from "@mui/material/TextField";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import TrendingFlatIcon from "@mui/icons-material/TrendingFlat";
-import SsidChartIcon from "@mui/icons-material/SsidChart";
-
-// Chart.js (계좌 잔고 추이 라인/바 차트)
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  Title,
-  Tooltip as ChartTooltip,
-  Legend,
-  Filler,
-} from "chart.js";
-import { Line, Bar } from "react-chartjs-2";
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  Title,
-  ChartTooltip,
-  Legend,
-  Filler
-);
+import AccountCharts from "./components/AccountCharts";
 
 // @mui icons
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -942,184 +915,6 @@ export default function TradingReviews() {
     );
   };
 
-  const renderAccountChart = () => {
-    if (snapshotsLoading) {
-      return (
-        <Grid container spacing={2} sx={{ mb: 3 }}>
-          {[0, 1].map((i) => (
-            <Grid item xs={12} md={6} key={i}>
-              <Card>
-                <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
-                  <Skeleton variant="rectangular" height={220} />
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      );
-    }
-    if (accountSnapshots.length === 0) return null;
-
-    const labels = accountSnapshots.map((s) => s.date);
-    const toMillions = (v) => Math.round(v / 10000);
-
-    const xScale = {
-      ticks: {
-        maxTicksLimit: 10,
-        font: { size: 10 },
-        callback: (_, i) => labels[i]?.slice(5),
-      },
-      grid: { display: false },
-    };
-
-    const makeDualOptions = (y0Label, y1Label, y0Color, y1Color) => ({
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: { mode: "index", intersect: false },
-      plugins: {
-        legend: { position: "top", labels: { font: { size: 11 }, usePointStyle: true, padding: 12 } },
-        tooltip: {
-          callbacks: {
-            label: (ctx) => ` ${ctx.dataset.label}: ${ctx.parsed.y.toLocaleString()}만원`,
-          },
-        },
-      },
-      scales: {
-        x: xScale,
-        y: {
-          position: "left",
-          ticks: { font: { size: 10 }, color: y0Color, callback: (v) => `${v.toLocaleString()}만` },
-          grid: { color: "rgba(0,0,0,0.05)" },
-        },
-        y1: {
-          position: "right",
-          ticks: { font: { size: 10 }, color: y1Color, callback: (v) => `${v.toLocaleString()}만` },
-          grid: { drawOnChartArea: false },
-        },
-      },
-    });
-
-    // 차트 1: 총 평가금액(좌) + 주식 평가금액(우)
-    const chart1Data = {
-      labels,
-      datasets: [
-        {
-          label: "총 평가금액",
-          data: accountSnapshots.map((s) => toMillions(s.total_money)),
-          borderColor: "#1976d2",
-          backgroundColor: "rgba(25,118,210,0.08)",
-          fill: true,
-          tension: 0.3,
-          pointRadius: 3,
-          yAxisID: "y",
-        },
-        {
-          label: "주식 평가금액",
-          data: accountSnapshots.map((s) => toMillions(s.stock_money)),
-          borderColor: "#f57c00",
-          backgroundColor: "rgba(245,124,0,0.06)",
-          fill: false,
-          tension: 0.3,
-          pointRadius: 3,
-          yAxisID: "y1",
-        },
-      ],
-    };
-
-    // 차트 2: 일자별 확정 손익(막대) + 누적 손익(라인)
-    // dailyPnl: [{ date, daily_pnl }] — 매도가 있는 날짜만 포함
-    const pnlByDate = Object.fromEntries(dailyPnl.map((d) => [d.date, d.daily_pnl]));
-    const dailyProfitData = labels.map((date) => toMillions(pnlByDate[date] ?? 0));
-    const cumulativeProfitData = dailyProfitData.reduce((acc, v, i) => {
-      acc.push((acc[i - 1] ?? 0) + v);
-      return acc;
-    }, []);
-    const barColors = dailyProfitData.map((v) =>
-      v >= 0 ? "rgba(56,142,60,0.75)" : "rgba(211,47,47,0.75)"
-    );
-    const lastCumulative = cumulativeProfitData[cumulativeProfitData.length - 1] ?? 0;
-    const lineColor = lastCumulative >= 0 ? "rgba(56,142,60,1)" : "rgba(211,47,47,1)";
-
-    const chart2Data = {
-      labels,
-      datasets: [
-        {
-          type: "bar",
-          label: "일자별 확정 손익",
-          data: dailyProfitData,
-          backgroundColor: barColors,
-          borderColor: barColors,
-          borderWidth: 1,
-          yAxisID: "y",
-        },
-        {
-          type: "line",
-          label: "누적 손익",
-          data: cumulativeProfitData,
-          borderColor: lineColor,
-          backgroundColor: "transparent",
-          tension: 0.3,
-          pointRadius: 2,
-          borderWidth: 2,
-          yAxisID: "y",
-        },
-      ],
-    };
-
-    const chart2Options = {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: { mode: "index", intersect: false },
-      plugins: {
-        legend: { position: "top", labels: { font: { size: 11 }, usePointStyle: true, padding: 12 } },
-        tooltip: {
-          callbacks: {
-            label: (ctx) =>
-              ` ${ctx.dataset.label}: ${ctx.parsed.y >= 0 ? "+" : ""}${ctx.parsed.y.toLocaleString()}만원`,
-          },
-        },
-      },
-      scales: {
-        x: xScale,
-        y: {
-          position: "left",
-          ticks: {
-            font: { size: 10 },
-            callback: (v) => `${v >= 0 ? "+" : ""}${v.toLocaleString()}만`,
-          },
-          grid: { color: "rgba(0,0,0,0.05)" },
-        },
-      },
-    };
-
-    const chart1Options = makeDualOptions("총 평가금액", "주식 평가금액", "#1976d2", "#f57c00");
-
-    return (
-      <Card sx={{ mb: 3 }}>
-        <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
-          <Box display="flex" alignItems="center" gap={1} mb={1.5}>
-            <SsidChartIcon sx={{ fontSize: 18, color: "text.secondary" }} />
-            <MKTypography variant="subtitle2" fontWeight="bold" color="text">
-              계좌 일별 현황
-            </MKTypography>
-            <Chip label={`최근 ${accountSnapshots.length}일`} size="small" sx={{ height: 20, fontSize: "0.65rem" }} />
-          </Box>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
-              <Box sx={{ height: 220 }}>
-                <Line data={chart1Data} options={chart1Options} />
-              </Box>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Box sx={{ height: 220 }}>
-                <Bar data={chart2Data} options={chart2Options} />
-              </Box>
-            </Grid>
-          </Grid>
-        </CardContent>
-      </Card>
-    );
-  };
 
   return (
     <>
@@ -1134,7 +929,11 @@ export default function TradingReviews() {
           {renderHoldingPositions()}
 
           {/* 계좌 일별 현황 차트 */}
-          {renderAccountChart()}
+          <AccountCharts
+            accountSnapshots={accountSnapshots}
+            dailyPnl={dailyPnl}
+            loading={snapshotsLoading}
+          />
 
           {/* 페이지 헤더와 통계 요약 */}
           {!loading && !error && stats && (

@@ -18,7 +18,7 @@ import Delete from "@mui/icons-material/Delete";
 import Timeline from "@mui/icons-material/Timeline";
 
 // 차트
-import TradingViewChart from "components/TradingViewChart";
+import TradingViewChart, { ChartLegend } from "components/TradingViewChart";
 import InflectionPointToggle from "components/InflectionPointToggle";
 import useInflectionPoints from "hooks/useInflectionPoints";
 
@@ -33,7 +33,7 @@ import {
   buildStockChartSeries,
   compactPanes,
 } from "./buildStockSeries";
-import ChartLegend from "./ChartLegend";
+
 
 const DRAW_LINE_COLOR = "#667eea";
 const PYRAMIDING_LINE_COLOR = "#ff9800";
