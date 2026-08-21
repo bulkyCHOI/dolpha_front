@@ -14,8 +14,8 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 
 // Material Kit 2 React components
-import MKBox from "components/MKBox";
-import MKTypography from "components/MKTypography";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 
 import { useState, useEffect } from "react";
 import { useAuth } from "contexts/AuthContext";
@@ -81,7 +81,7 @@ function Profile() {
   };
 
   return (
-    <MKBox component="section">
+    <Box component="section">
       <Grid container spacing={3}>
         {/* 프로필 헤더 카드 */}
         <Grid item xs={12}>
@@ -109,24 +109,24 @@ function Profile() {
                 </Avatar>
               </Grid>
               <Grid item xs={12} sm={8} md={9}>
-                <MKBox textAlign={{ xs: "center", sm: "left" }}>
-                  <MKTypography variant="h3" mb={1} fontWeight="bold">
+                <Box textAlign={{ xs: "center", sm: "left" }}>
+                  <Typography variant="h3" mb={1} fontWeight="bold">
                     {userInfo.name}
-                  </MKTypography>
-                  <MKTypography variant="h6" color="text" mb={1} opacity={0.8}>
+                  </Typography>
+                  <Typography variant="h6" color="text.secondary" mb={1} opacity={0.8}>
                     {userInfo.email}
-                  </MKTypography>
-                  <MKBox
+                  </Typography>
+                  <Box
                     display="flex"
                     alignItems="center"
                     justifyContent={{ xs: "center", sm: "flex-start" }}
                     gap={1}
                   >
-                    <MKTypography variant="body2" color="text">
+                    <Typography variant="body2" color="text.secondary">
                       가입일: {userInfo.joinDate}
-                    </MKTypography>
-                  </MKBox>
-                </MKBox>
+                    </Typography>
+                  </Box>
+                </Box>
               </Grid>
             </Grid>
           </Card>
@@ -135,14 +135,14 @@ function Profile() {
         {/* 정보 편집 카드 */}
         <Grid item xs={12}>
           <Card sx={{ p: { xs: 2, md: 3 }, borderRadius: 3 }}>
-            <MKBox mb={3}>
-              <MKTypography variant="h5" mb={1} fontWeight="bold">
+            <Box mb={3}>
+              <Typography variant="h5" mb={1} fontWeight="bold">
                 기본 정보
-              </MKTypography>
-              <MKTypography variant="body2" color="text" opacity={0.7}>
+              </Typography>
+              <Typography variant="body2" color="text.secondary" opacity={0.7}>
                 Google 계정 정보는 Google에서 관리됩니다
-              </MKTypography>
-            </MKBox>
+              </Typography>
+            </Box>
 
             <Grid container spacing={3}>
               <Grid item xs={12} md={6}>
@@ -182,7 +182,7 @@ function Profile() {
               </Grid>
             </Grid>
 
-            <MKBox mt={4} display="flex" justifyContent="flex-end" gap={2}>
+            <Box mt={4} display="flex" justifyContent="flex-end" gap={2}>
               <Button
                 variant="contained"
                 onClick={handleSave}
@@ -205,11 +205,11 @@ function Profile() {
               >
                 저장하기
               </Button>
-            </MKBox>
+            </Box>
           </Card>
         </Grid>
       </Grid>
-    </MKBox>
+    </Box>
   );
 }
 

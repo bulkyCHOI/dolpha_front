@@ -228,7 +228,7 @@ function StockChartModal({ open, onClose, stockCode, stockName }) {
       <DialogContent sx={{ p: 2, height: "100%" }}>
         {error && (
           <Box mb={1}>
-            <Typography variant="body2" color="error">
+            <Typography variant="body2" color="error.main">
               {error}
             </Typography>
           </Box>

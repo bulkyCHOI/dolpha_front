@@ -18,8 +18,7 @@ import FactCheckIcon from "@mui/icons-material/FactCheck";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import TableRowsIcon from "@mui/icons-material/TableRows";
 
-import MKBox from "components/MKBox";
-import MKTypography from "components/MKTypography";
+import Typography from "@mui/material/Typography";
 import DefaultNavbar from "examples/Navbars/DefaultNavbar";
 import routes from "routes";
 import { useAuth } from "contexts/AuthContext";
@@ -69,16 +68,16 @@ function StatCard({ icon: Icon, label, value, unit, accent }) {
         <Icon fontSize="small" />
       </Box>
       <Box sx={{ minWidth: 0 }}>
-        <MKTypography variant="caption" sx={{ color: MUTED, display: "block", lineHeight: 1.2 }}>
+        <Typography variant="caption" sx={{ color: MUTED, display: "block", lineHeight: 1.2 }}>
           {label}
-        </MKTypography>
+        </Typography>
         <Box sx={{ display: "flex", alignItems: "baseline", gap: 0.5 }}>
-          <MKTypography variant="h5" fontWeight="bold" sx={{ lineHeight: 1.2 }}>
+          <Typography variant="h5" fontWeight="bold" sx={{ lineHeight: 1.2 }}>
             {value}
-          </MKTypography>
-          <MKTypography variant="caption" sx={{ color: MUTED }}>
+          </Typography>
+          <Typography variant="caption" sx={{ color: MUTED }}>
             {unit}
-          </MKTypography>
+          </Typography>
         </Box>
       </Box>
     </Card>
@@ -107,13 +106,13 @@ function SectionCard({ title, subtitle, action, children, sx }) {
         }}
       >
         <Box>
-          <MKTypography variant="h6" fontWeight="bold" sx={{ fontSize: 15 }}>
+          <Typography variant="h6" fontWeight="bold" sx={{ fontSize: 15 }}>
             {title}
-          </MKTypography>
+          </Typography>
           {subtitle && (
-            <MKTypography variant="caption" sx={{ color: MUTED, display: "block", mt: 0.25 }}>
+            <Typography variant="caption" sx={{ color: MUTED, display: "block", mt: 0.25 }}>
               {subtitle}
-            </MKTypography>
+            </Typography>
           )}
         </Box>
         {action}
@@ -136,18 +135,18 @@ SectionCard.defaultProps = { subtitle: null, action: null, sx: {} };
 function StockCell({ name, code }) {
   return (
     <Box sx={{ minWidth: 0 }}>
-      <MKTypography
+      <Typography
         variant="body2"
         fontWeight="bold"
-        color="dark"
+        color="text.primary"
         sx={{ lineHeight: 1.2, fontSize: 13 }}
       >
         {name}
-      </MKTypography>
+      </Typography>
       {code && (
-        <MKTypography variant="caption" sx={{ color: "#9aa5b1", lineHeight: 1, fontSize: 11 }}>
+        <Typography variant="caption" sx={{ color: "#9aa5b1", lineHeight: 1, fontSize: 11 }}>
           {code}
-        </MKTypography>
+        </Typography>
       )}
     </Box>
   );
@@ -160,16 +159,16 @@ StockCell.defaultProps = { code: "" };
 function ThemeInlineCell({ name, leader }) {
   return (
     <Box sx={{ display: "flex", alignItems: "baseline", gap: 0.6, minWidth: 0 }}>
-      <MKTypography
+      <Typography
         variant="body2"
         fontWeight="bold"
-        color="dark"
+        color="text.primary"
         sx={{ fontSize: 12, lineHeight: 1.05, whiteSpace: "nowrap" }}
       >
         {name}
-      </MKTypography>
+      </Typography>
       {leader && (
-        <MKTypography
+        <Typography
           variant="caption"
           sx={{
             fontSize: 10.5,
@@ -181,7 +180,7 @@ function ThemeInlineCell({ name, leader }) {
           }}
         >
           {leader}
-        </MKTypography>
+        </Typography>
       )}
     </Box>
   );
@@ -192,9 +191,9 @@ ThemeInlineCell.defaultProps = { leader: "" };
 
 function RateCell({ value }) {
   return (
-    <MKTypography variant="button" sx={{ fontSize: 13, fontWeight: 700, color: rateColor(value) }}>
+    <Typography variant="button" sx={{ fontSize: 13, fontWeight: 700, color: rateColor(value) }}>
       {signed(value)}
-    </MKTypography>
+    </Typography>
   );
 }
 
@@ -271,9 +270,9 @@ const tableStyles = (minWidth, compact = false) => ({
 
 const NO_DATA = (message) => (
   <Box sx={{ py: 5, textAlign: "center", width: "100%" }}>
-    <MKTypography variant="body2" sx={{ color: MUTED, fontSize: 13 }}>
+    <Typography variant="body2" sx={{ color: MUTED, fontSize: 13 }}>
       {message}
-    </MKTypography>
+    </Typography>
   </Box>
 );
 
@@ -427,9 +426,9 @@ function ThemeSurge() {
       grow: 2,
       wrap: true,
       cell: (r) => (
-        <MKTypography variant="caption" sx={{ color: MUTED, fontSize: 11.5, lineHeight: 1.5 }}>
+        <Typography variant="caption" sx={{ color: MUTED, fontSize: 11.5, lineHeight: 1.5 }}>
           {r.reason}
-        </MKTypography>
+        </Typography>
       ),
     },
   ];
@@ -437,7 +436,7 @@ function ThemeSurge() {
   return (
     <>
       <DefaultNavbar routes={routes} sticky />
-      <MKBox minHeight="100vh" pt={10} pb={5} sx={{ bgcolor: "#f4f6f8" }}>
+      <Box minHeight="100vh" pt={10} pb={5} sx={{ bgcolor: "#f4f6f8" }}>
         <FullWidthContainer>
           {/* ── 헤더 ───────────────────────────────── */}
           <Box
@@ -451,15 +450,15 @@ function ThemeSurge() {
             }}
           >
             <Box sx={{ maxWidth: 640 }}>
-              <MKTypography variant="h4" fontWeight="bold" sx={{ lineHeight: 1.3 }}>
+              <Typography variant="h4" fontWeight="bold" sx={{ lineHeight: 1.3 }}>
                 급등테마주 자동매매
-              </MKTypography>
-              <MKTypography variant="body2" sx={{ color: MUTED, mt: 0.5, fontSize: 13.5 }}>
+              </Typography>
+              <Typography variant="body2" sx={{ color: MUTED, mt: 0.5, fontSize: 13.5 }}>
                 개장일 09:00~15:30 동안 토스증권 &apos;지금 뜨는 산업&apos;을 5분마다 수집해 급등
                 테마의 주도주를 고르고, 1분봉에서{" "}
                 <strong>눌림목 → 전고점 돌파 → 외국인 매수세</strong>가 갖춰지면 매수합니다.
                 익절·손절은 Manual 기본 설정을 따릅니다.
-              </MKTypography>
+              </Typography>
               <Box
                 sx={{ display: "flex", alignItems: "center", gap: 1, mt: 0.75, flexWrap: "wrap" }}
               >
@@ -471,9 +470,9 @@ function ThemeSurge() {
                   />
                 )}
                 {lastUpdated && (
-                  <MKTypography variant="caption" sx={{ color: "#9aa5b1" }}>
+                  <Typography variant="caption" sx={{ color: "#9aa5b1" }}>
                     최종 갱신 {lastUpdated.toLocaleTimeString("ko-KR")} · 1분마다 자동 갱신
-                  </MKTypography>
+                  </Typography>
                 )}
               </Box>
             </Box>
@@ -712,12 +711,12 @@ function ThemeSurge() {
           </Box>
 
           <Divider sx={{ my: 3 }} />
-          <MKTypography variant="caption" sx={{ color: "#9aa5b1" }}>
+          <Typography variant="caption" sx={{ color: "#9aa5b1" }}>
             데이터 출처: 토스증권 산업분류(TICS) 랭킹 · 수급 데이터: 한국투자증권 API. 수집은 개장일
             09:00~15:30에만 이루어집니다. 표시된 정보는 투자 판단의 참고용이며 투자 권유가 아닙니다.
-          </MKTypography>
+          </Typography>
         </FullWidthContainer>
-      </MKBox>
+      </Box>
       <NotificationComponent />
     </>
   );

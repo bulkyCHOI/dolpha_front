@@ -26,8 +26,7 @@ import { useNavigate } from "react-router-dom";
 import StarIcon from "@mui/icons-material/Star";
 import StarOutlineIcon from "@mui/icons-material/StarOutline";
 
-import MKBox from "components/MKBox";
-import MKTypography from "components/MKTypography";
+import Typography from "@mui/material/Typography";
 import DefaultNavbar from "examples/Navbars/DefaultNavbar";
 import routes from "routes";
 
@@ -248,7 +247,7 @@ function Favorites() {
           order: { xs: 1, md: 1 },
         }}
       >
-        <MKBox
+        <Box
           sx={{
             backgroundColor: "white",
             borderRadius: 2,
@@ -259,7 +258,7 @@ function Favorites() {
             overflow: "hidden",
           }}
         >
-          <MKBox
+          <Box
             sx={{
               flex: 1,
               overflow: "auto",
@@ -282,7 +281,7 @@ function Favorites() {
             }}
           >
             {!selectedStock && (
-              <MKBox
+              <Box
                 sx={{
                   display: "flex",
                   alignItems: "center",
@@ -293,7 +292,7 @@ function Favorites() {
                   p: 2,
                 }}
               >
-                <MKBox
+                <Box
                   sx={{
                     width: 64,
                     height: 64,
@@ -305,23 +304,23 @@ function Favorites() {
                     mb: 2,
                   }}
                 >
-                  <MKTypography variant="h4" color="white">
+                  <Typography variant="h4" color="white.main">
                     ⭐
-                  </MKTypography>
-                </MKBox>
-                <MKTypography variant="h6" color="text" textAlign="center">
+                  </Typography>
+                </Box>
+                <Typography variant="h6" color="text.secondary" textAlign="center">
                   즐겨찾기 종목을 선택하세요
-                </MKTypography>
-                <MKTypography variant="body2" color="text" textAlign="center">
+                </Typography>
+                <Typography variant="body2" color="text.secondary" textAlign="center">
                   오른쪽 목록에서 종목을 클릭하면
                   <br />
                   캔들스틱 차트가 표시됩니다
-                </MKTypography>
-              </MKBox>
+                </Typography>
+              </Box>
             )}
 
             {selectedStock && (
-              <MKBox sx={{ p: { xs: 1, md: 2 } }}>
+              <Box sx={{ p: { xs: 1, md: 2 } }}>
                 <StockInfoHeader
                   selectedStock={selectedStock}
                   ohlcvData={ohlcvData}
@@ -346,10 +345,10 @@ function Favorites() {
                   onShowSnackbar={showSnackbar}
                   chartType="favorites"
                 />
-              </MKBox>
+              </Box>
             )}
-          </MKBox>
-        </MKBox>
+          </Box>
+        </Box>
       </Grid>
 
       {/* 오른쪽 즐겨찾기 목록 */}
@@ -365,7 +364,7 @@ function Favorites() {
           order: { xs: 2, md: 2 },
         }}
       >
-        <MKBox
+        <Box
           sx={{
             backgroundColor: "white",
             borderRadius: 2,
@@ -377,7 +376,7 @@ function Favorites() {
           }}
         >
           {/* 검색창 - 탭 위쪽으로 이동 */}
-          <MKBox sx={{ p: 2, borderBottom: "1px solid #f0f0f0", flexShrink: 0 }}>
+          <Box sx={{ p: 2, borderBottom: "1px solid #f0f0f0", flexShrink: 0 }}>
             <TextField
               fullWidth
               size="small"
@@ -408,11 +407,11 @@ function Favorites() {
                 },
               }}
             />
-          </MKBox>
+          </Box>
 
           {/* 검색 결과가 없을 때만 탭 표시 */}
           {!searchQuery.trim() && (
-            <MKBox sx={{ flexShrink: 0, borderBottom: "1px solid #e0e0e0" }}>
+            <Box sx={{ flexShrink: 0, borderBottom: "1px solid #e0e0e0" }}>
               <Tabs
                 value={activeTab}
                 onChange={handleTabChange}
@@ -438,11 +437,11 @@ function Favorites() {
                 <Tab label="즐겨찾기" />
                 <Tab label="자동매매" />
               </Tabs>
-            </MKBox>
+            </Box>
           )}
 
           {loading && (
-            <MKBox
+            <Box
               sx={{
                 flex: 1,
                 display: "flex",
@@ -451,11 +450,11 @@ function Favorites() {
               }}
             >
               <CircularProgress />
-            </MKBox>
+            </Box>
           )}
 
           {error && (
-            <MKBox
+            <Box
               sx={{
                 flex: 1,
                 display: "flex",
@@ -463,15 +462,15 @@ function Favorites() {
                 justifyContent: "center",
               }}
             >
-              <MKTypography color="error">데이터 로드 중 오류가 발생했습니다: {error}</MKTypography>
-            </MKBox>
+              <Typography color="error.main">데이터 로드 중 오류가 발생했습니다: {error}</Typography>
+            </Box>
           )}
 
           {/* 검색 결과 영역 */}
           {searchQuery.trim() && searchResults.length > 0 && (
             <>
               {/* 검색 결과 헤더 */}
-              <MKBox
+              <Box
                 sx={{
                   background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
                   p: 1,
@@ -483,71 +482,71 @@ function Favorites() {
               >
                 <Grid container spacing={0}>
                   <Grid item xs={1}>
-                    <MKTypography
+                    <Typography
                       variant="subtitle2"
-                      color="white"
+                      color="white.main"
                       fontWeight="bold"
                       textAlign="center"
                       sx={{ fontSize: { xs: "0.7rem", md: "0.875rem" } }}
                     >
                       ⭐
-                    </MKTypography>
+                    </Typography>
                   </Grid>
                   <Grid item xs={4}>
-                    <MKTypography
+                    <Typography
                       variant="subtitle2"
-                      color="white"
+                      color="white.main"
                       fontWeight="bold"
                       sx={{ fontSize: { xs: "0.7rem", md: "0.875rem" } }}
                     >
                       종목명
-                    </MKTypography>
+                    </Typography>
                   </Grid>
                   <Grid item xs={3}>
-                    <MKTypography
+                    <Typography
                       variant="subtitle2"
-                      color="white"
+                      color="white.main"
                       fontWeight="bold"
                       textAlign="center"
                       sx={{ fontSize: { xs: "0.7rem", md: "0.875rem" } }}
                     >
                       현재가
-                    </MKTypography>
+                    </Typography>
                   </Grid>
                   <Grid item xs={2}>
-                    <MKTypography
+                    <Typography
                       variant="subtitle2"
-                      color="white"
+                      color="white.main"
                       fontWeight="bold"
                       textAlign="center"
                       sx={{ fontSize: { xs: "0.7rem", md: "0.875rem" } }}
                     >
                       RS
-                    </MKTypography>
+                    </Typography>
                   </Grid>
                   <Grid item xs={2}>
-                    <MKTypography
+                    <Typography
                       variant="subtitle2"
-                      color="white"
+                      color="white.main"
                       fontWeight="bold"
                       textAlign="center"
                       sx={{ fontSize: { xs: "0.7rem", md: "0.875rem" } }}
                     >
                       변화율
-                    </MKTypography>
+                    </Typography>
                   </Grid>
                 </Grid>
-              </MKBox>
+              </Box>
 
               {/* 검색 결과 목록 */}
-              <MKBox
+              <Box
                 sx={{
                   flex: 1,
                   overflow: "auto",
                 }}
               >
                 {searchResults.map((stock, index) => (
-                  <MKBox
+                  <Box
                     key={stock.code}
                     onClick={() => handleStockClick(stock)}
                     sx={{
@@ -587,8 +586,8 @@ function Favorites() {
                         </IconButton>
                       </Grid>
                       <Grid item xs={4}>
-                        <MKBox>
-                          <MKTypography
+                        <Box>
+                          <Typography
                             variant="subtitle2"
                             sx={{
                               fontSize: { xs: "0.7rem", md: "0.8rem" },
@@ -598,8 +597,8 @@ function Favorites() {
                             }}
                           >
                             {stock.name}
-                          </MKTypography>
-                          <MKTypography
+                          </Typography>
+                          <Typography
                             variant="caption"
                             sx={{
                               fontSize: { xs: "0.65rem", md: "0.7rem" },
@@ -608,11 +607,11 @@ function Favorites() {
                             }}
                           >
                             {stock.code}
-                          </MKTypography>
-                        </MKBox>
+                          </Typography>
+                        </Box>
                       </Grid>
                       <Grid item xs={3}>
-                        <MKTypography
+                        <Typography
                           variant="body2"
                           textAlign="center"
                           sx={{
@@ -622,10 +621,10 @@ function Favorites() {
                           }}
                         >
                           {stock.current_price ? stock.current_price.toLocaleString() : "-"}
-                        </MKTypography>
+                        </Typography>
                       </Grid>
                       <Grid item xs={2}>
-                        <MKTypography
+                        <Typography
                           variant="body2"
                           textAlign="center"
                           sx={{
@@ -634,10 +633,10 @@ function Favorites() {
                           }}
                         >
                           {stock.rsRank ? stock.rsRank.toFixed(1) : "-"}
-                        </MKTypography>
+                        </Typography>
                       </Grid>
                       <Grid item xs={2}>
-                        <MKTypography
+                        <Typography
                           variant="body2"
                           textAlign="center"
                           sx={{
@@ -656,18 +655,18 @@ function Favorites() {
                                 2
                               )}%`
                             : "-"}
-                        </MKTypography>
+                        </Typography>
                       </Grid>
                     </Grid>
-                  </MKBox>
+                  </Box>
                 ))}
-              </MKBox>
+              </Box>
             </>
           )}
 
           {/* 검색 결과가 없는 경우 메시지 */}
           {searchQuery.trim() && searchResults.length === 0 && !loading && (
-            <MKBox
+            <Box
               sx={{
                 flex: 1,
                 display: "flex",
@@ -678,13 +677,13 @@ function Favorites() {
                 p: 2,
               }}
             >
-              <MKTypography variant="h6" color="text" textAlign="center">
+              <Typography variant="h6" color="text.secondary" textAlign="center">
                 검색 결과가 없습니다
-              </MKTypography>
-              <MKTypography variant="body2" color="text" textAlign="center">
+              </Typography>
+              <Typography variant="body2" color="text.secondary" textAlign="center">
                 다른 검색어로 시도해보세요
-              </MKTypography>
-            </MKBox>
+              </Typography>
+            </Box>
           )}
 
           {!loading && !error && !searchQuery.trim() && (
@@ -693,7 +692,7 @@ function Favorites() {
               {activeTab === 0 && (
                 <>
                   {/* 테이블 헤더 */}
-                  <MKBox
+                  <Box
                     sx={{
                       background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
                       p: 1,
@@ -705,64 +704,64 @@ function Favorites() {
                   >
                     <Grid container spacing={0}>
                       <Grid item xs={1}>
-                        <MKTypography
+                        <Typography
                           variant="subtitle2"
-                          color="white"
+                          color="white.main"
                           fontWeight="bold"
                           textAlign="center"
                           sx={{ fontSize: { xs: "0.7rem", md: "0.875rem" } }}
                         >
                           ⭐
-                        </MKTypography>
+                        </Typography>
                       </Grid>
                       <Grid item xs={4}>
-                        <MKTypography
+                        <Typography
                           variant="subtitle2"
-                          color="white"
+                          color="white.main"
                           fontWeight="bold"
                           sx={{ fontSize: { xs: "0.7rem", md: "0.875rem" } }}
                         >
                           종목명
-                        </MKTypography>
+                        </Typography>
                       </Grid>
                       <Grid item xs={3}>
-                        <MKTypography
+                        <Typography
                           variant="subtitle2"
-                          color="white"
+                          color="white.main"
                           fontWeight="bold"
                           textAlign="center"
                           sx={{ fontSize: { xs: "0.7rem", md: "0.875rem" } }}
                         >
                           현재가
-                        </MKTypography>
+                        </Typography>
                       </Grid>
                       <Grid item xs={2}>
-                        <MKTypography
+                        <Typography
                           variant="subtitle2"
-                          color="white"
+                          color="white.main"
                           fontWeight="bold"
                           textAlign="center"
                           sx={{ fontSize: { xs: "0.7rem", md: "0.875rem" } }}
                         >
                           RS
-                        </MKTypography>
+                        </Typography>
                       </Grid>
                       <Grid item xs={2}>
-                        <MKTypography
+                        <Typography
                           variant="subtitle2"
-                          color="white"
+                          color="white.main"
                           fontWeight="bold"
                           textAlign="center"
                           sx={{ fontSize: { xs: "0.65rem", md: "0.8rem" } }}
                         >
                           변동률
-                        </MKTypography>
+                        </Typography>
                       </Grid>
                     </Grid>
-                  </MKBox>
+                  </Box>
 
                   {/* 스크롤 가능한 테이블 바디 */}
-                  <MKBox
+                  <Box
                     sx={{
                       flex: 1,
                       overflow: "auto",
@@ -784,7 +783,7 @@ function Favorites() {
                     }}
                   >
                     {displayStocks.length === 0 && (
-                      <MKBox
+                      <Box
                         sx={{
                           display: "flex",
                           alignItems: "center",
@@ -794,19 +793,19 @@ function Favorites() {
                           gap: 2,
                         }}
                       >
-                        <MKTypography variant="h6" color="text">
+                        <Typography variant="h6" color="text.secondary">
                           즐겨찾기가 비어있습니다
-                        </MKTypography>
-                        <MKTypography variant="body2" color="text" textAlign="center">
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" textAlign="center">
                           검색을 통해 종목을 찾고
                           <br />
                           별표를 클릭하여 즐겨찾기에 추가하세요
-                        </MKTypography>
-                      </MKBox>
+                        </Typography>
+                      </Box>
                     )}
 
                     {displayStocks.map((stock, rowIndex) => (
-                      <MKBox
+                      <Box
                         key={stock.code || stock.stock_code || rowIndex}
                         onClick={() => handleStockClick(stock)}
                         sx={{
@@ -837,7 +836,7 @@ function Favorites() {
                       >
                         <Grid container spacing={0} alignItems="center">
                           <Grid item xs={1}>
-                            <MKBox display="flex" justifyContent="center">
+                            <Box display="flex" justifyContent="center">
                               <IconButton
                                 size="small"
                                 onClick={(e) => {
@@ -859,11 +858,11 @@ function Favorites() {
                                   <StarOutlineIcon sx={{ fontSize: 16 }} />
                                 )}
                               </IconButton>
-                            </MKBox>
+                            </Box>
                           </Grid>
                           <Grid item xs={4}>
-                            <MKBox>
-                              <MKTypography
+                            <Box>
+                              <Typography
                                 variant="body2"
                                 fontWeight={
                                   selectedStock?.code === (stock.code || stock.stock_code) ||
@@ -886,22 +885,22 @@ function Favorites() {
                                 }}
                               >
                                 {stock.name || "-"}
-                              </MKTypography>
-                              <MKTypography
+                              </Typography>
+                              <Typography
                                 variant="caption"
-                                color="text"
+                                color="text.secondary"
                                 sx={{
                                   fontSize: { xs: "0.6rem", md: "0.7rem" },
                                   display: { xs: "none", sm: "block" },
                                 }}
                               >
                                 {stock.code || ""}
-                              </MKTypography>
-                            </MKBox>
+                              </Typography>
+                            </Box>
                           </Grid>
                           <Grid item xs={3}>
-                            <MKBox display="flex" justifyContent="center" alignItems="center">
-                              <MKTypography
+                            <Box display="flex" justifyContent="center" alignItems="center">
+                              <Typography
                                 variant="body2"
                                 textAlign="center"
                                 fontWeight="bold"
@@ -912,11 +911,11 @@ function Favorites() {
                                 {stock.current_price
                                   ? `${formatNumber(stock.current_price)}원`
                                   : "-"}
-                              </MKTypography>
-                            </MKBox>
+                              </Typography>
+                            </Box>
                           </Grid>
                           <Grid item xs={2}>
-                            <MKBox display="flex" justifyContent="center">
+                            <Box display="flex" justifyContent="center">
                               <Chip
                                 label={Math.floor(stock.rsRank) || "-"}
                                 size="small"
@@ -941,11 +940,11 @@ function Favorites() {
                                   height: { xs: "18px", md: "20px" },
                                 }}
                               />
-                            </MKBox>
+                            </Box>
                           </Grid>
                           <Grid item xs={2}>
-                            <MKBox display="flex" justifyContent="center" alignItems="center">
-                              <MKTypography
+                            <Box display="flex" justifyContent="center" alignItems="center">
+                              <Typography
                                 variant="body2"
                                 textAlign="center"
                                 fontWeight="bold"
@@ -964,19 +963,19 @@ function Favorites() {
                                       stock.change_percent > 0 ? "+" : ""
                                     }${stock.change_percent.toFixed(2)}%`
                                   : "-"}
-                              </MKTypography>
-                            </MKBox>
+                              </Typography>
+                            </Box>
                           </Grid>
                         </Grid>
-                      </MKBox>
+                      </Box>
                     ))}
-                  </MKBox>
+                  </Box>
                 </>
               )}
 
               {/* 자동매매 탭 내용 */}
               {activeTab === 1 && (
-                <MKBox
+                <Box
                   sx={{
                     flex: 1,
                     overflow: "auto",
@@ -998,7 +997,7 @@ function Favorites() {
                   }}
                 >
                   {!isAuthenticated ? (
-                    <MKBox
+                    <Box
                       sx={{
                         display: "flex",
                         flexDirection: "column",
@@ -1008,12 +1007,12 @@ function Favorites() {
                         textAlign: "center",
                       }}
                     >
-                      <MKTypography variant="h5" sx={{ mb: 2, color: "#666" }}>
+                      <Typography variant="h5" sx={{ mb: 2, color: "#666" }}>
                         로그인이 필요합니다
-                      </MKTypography>
-                      <MKTypography variant="body1" sx={{ mb: 3, color: "#888" }}>
+                      </Typography>
+                      <Typography variant="body1" sx={{ mb: 3, color: "#888" }}>
                         자동매매 기능을 사용하려면 Google 로그인이 필요합니다.
-                      </MKTypography>
+                      </Typography>
                       <Button
                         variant="contained"
                         color="primary"
@@ -1030,9 +1029,9 @@ function Favorites() {
                       >
                         로그인 하러 가기
                       </Button>
-                    </MKBox>
+                    </Box>
                   ) : (
-                    <MKBox>
+                    <Box>
                       <AutotradingAccordion
                         autotradingList={autotradingList}
                         expandedAccordion={expandedAccordion}
@@ -1047,21 +1046,21 @@ function Favorites() {
                         tradingForm={tradingForm}
                         strategyType="favorites"
                       />
-                    </MKBox>
+                    </Box>
                   )}
-                </MKBox>
+                </Box>
               )}
             </>
           )}
-        </MKBox>
+        </Box>
       </Grid>
     </Grid>
   );
 
   // 모바일 즐겨찾기 탭 렌더링
   const renderMobileFavoritesTab = () => (
-    <MKBox sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
-      <MKBox
+    <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
+      <Box
         sx={{
           backgroundColor: "white",
           borderRadius: 2,
@@ -1072,14 +1071,14 @@ function Favorites() {
           overflow: "hidden",
         }}
       >
-        <MKBox sx={{ px: 2, py: 1.5, borderBottom: "1px solid #e0e0e0" }}>
-          <MKTypography variant="h6" fontWeight="bold">
+        <Box sx={{ px: 2, py: 1.5, borderBottom: "1px solid #e0e0e0" }}>
+          <Typography variant="h6" fontWeight="bold">
             즐겨찾기
-          </MKTypography>
-        </MKBox>
-        <MKBox sx={{ flex: 1, overflow: "auto", display: "flex", flexDirection: "column" }}>
+          </Typography>
+        </Box>
+        <Box sx={{ flex: 1, overflow: "auto", display: "flex", flexDirection: "column" }}>
           {/* 검색창 */}
-          <MKBox sx={{ p: 2, borderBottom: "1px solid #f0f0f0", flexShrink: 0 }}>
+          <Box sx={{ p: 2, borderBottom: "1px solid #f0f0f0", flexShrink: 0 }}>
             <TextField
               fullWidth
               size="small"
@@ -1110,13 +1109,13 @@ function Favorites() {
                 },
               }}
             />
-          </MKBox>
+          </Box>
 
           {/* 검색 결과 영역 */}
           {searchQuery.trim() && searchResults.length > 0 && (
-            <MKBox sx={{ flex: 1, overflow: "auto" }}>
+            <Box sx={{ flex: 1, overflow: "auto" }}>
               {searchResults.map((stock, index) => (
-                <MKBox
+                <Box
                   key={stock.code}
                   onClick={() => handleStockClick(stock)}
                   sx={{
@@ -1159,8 +1158,8 @@ function Favorites() {
                       </IconButton>
                     </Grid>
                     <Grid item xs={6}>
-                      <MKBox>
-                        <MKTypography
+                      <Box>
+                        <Typography
                           variant="subtitle2"
                           sx={{
                             fontSize: "0.8rem",
@@ -1170,8 +1169,8 @@ function Favorites() {
                           }}
                         >
                           {stock.name}
-                        </MKTypography>
-                        <MKTypography
+                        </Typography>
+                        <Typography
                           variant="caption"
                           sx={{
                             fontSize: "0.7rem",
@@ -1180,12 +1179,12 @@ function Favorites() {
                           }}
                         >
                           {stock.code}
-                        </MKTypography>
-                      </MKBox>
+                        </Typography>
+                      </Box>
                     </Grid>
                     <Grid item xs={4}>
-                      <MKBox textAlign="right">
-                        <MKTypography
+                      <Box textAlign="right">
+                        <Typography
                           variant="body2"
                           sx={{
                             fontSize: "0.8rem",
@@ -1194,8 +1193,8 @@ function Favorites() {
                           }}
                         >
                           {stock.current_price ? stock.current_price.toLocaleString() : "-"}
-                        </MKTypography>
-                        <MKTypography
+                        </Typography>
+                        <Typography
                           variant="caption"
                           sx={{
                             fontSize: "0.7rem",
@@ -1213,18 +1212,18 @@ function Favorites() {
                                 2
                               )}%`
                             : "-"}
-                        </MKTypography>
-                      </MKBox>
+                        </Typography>
+                      </Box>
                     </Grid>
                   </Grid>
-                </MKBox>
+                </Box>
               ))}
-            </MKBox>
+            </Box>
           )}
 
           {/* 검색 결과가 없는 경우 */}
           {searchQuery.trim() && searchResults.length === 0 && !loading && (
-            <MKBox
+            <Box
               sx={{
                 flex: 1,
                 display: "flex",
@@ -1235,20 +1234,20 @@ function Favorites() {
                 p: 2,
               }}
             >
-              <MKTypography variant="h6" color="text" textAlign="center">
+              <Typography variant="h6" color="text.secondary" textAlign="center">
                 검색 결과가 없습니다
-              </MKTypography>
-              <MKTypography variant="body2" color="text" textAlign="center">
+              </Typography>
+              <Typography variant="body2" color="text.secondary" textAlign="center">
                 다른 검색어로 시도해보세요
-              </MKTypography>
-            </MKBox>
+              </Typography>
+            </Box>
           )}
 
           {/* 검색하지 않은 경우 즐겨찾기 목록 표시 */}
           {!searchQuery.trim() && (
-            <MKBox sx={{ flex: 1, overflow: "auto" }}>
+            <Box sx={{ flex: 1, overflow: "auto" }}>
               {favoriteStocks.length === 0 ? (
-                <MKBox
+                <Box
                   sx={{
                     display: "flex",
                     alignItems: "center",
@@ -1258,18 +1257,18 @@ function Favorites() {
                     gap: 2,
                   }}
                 >
-                  <MKTypography variant="h6" color="text">
+                  <Typography variant="h6" color="text.secondary">
                     즐겨찾기가 비어있습니다
-                  </MKTypography>
-                  <MKTypography variant="body2" color="text" textAlign="center">
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" textAlign="center">
                     검색을 통해 종목을 찾고
                     <br />
                     별표를 클릭하여 즐겨찾기에 추가하세요
-                  </MKTypography>
-                </MKBox>
+                  </Typography>
+                </Box>
               ) : (
                 favoriteStocks.map((stock, index) => (
-                  <MKBox
+                  <Box
                     key={stock.stock_code}
                     onClick={() => handleStockClick(stock)}
                     sx={{
@@ -1313,8 +1312,8 @@ function Favorites() {
                         </IconButton>
                       </Grid>
                       <Grid item xs={6}>
-                        <MKBox>
-                          <MKTypography
+                        <Box>
+                          <Typography
                             variant="subtitle2"
                             sx={{
                               fontSize: "0.8rem",
@@ -1324,8 +1323,8 @@ function Favorites() {
                             }}
                           >
                             {stock.stock_name}
-                          </MKTypography>
-                          <MKTypography
+                          </Typography>
+                          <Typography
                             variant="caption"
                             sx={{
                               fontSize: "0.7rem",
@@ -1334,12 +1333,12 @@ function Favorites() {
                             }}
                           >
                             {stock.stock_code}
-                          </MKTypography>
-                        </MKBox>
+                          </Typography>
+                        </Box>
                       </Grid>
                       <Grid item xs={4}>
-                        <MKBox textAlign="right">
-                          <MKTypography
+                        <Box textAlign="right">
+                          <Typography
                             variant="body2"
                             sx={{
                               fontSize: "0.8rem",
@@ -1348,8 +1347,8 @@ function Favorites() {
                             }}
                           >
                             {stock.current_price ? stock.current_price.toLocaleString() : "-"}
-                          </MKTypography>
-                          <MKTypography
+                          </Typography>
+                          <Typography
                             variant="caption"
                             sx={{
                               fontSize: "0.7rem",
@@ -1367,24 +1366,24 @@ function Favorites() {
                                   stock.change_percent > 0 ? "+" : ""
                                 }${stock.change_percent.toFixed(2)}%`
                               : "-"}
-                          </MKTypography>
-                        </MKBox>
+                          </Typography>
+                        </Box>
                       </Grid>
                     </Grid>
-                  </MKBox>
+                  </Box>
                 ))
               )}
-            </MKBox>
+            </Box>
           )}
-        </MKBox>
-      </MKBox>
-    </MKBox>
+        </Box>
+      </Box>
+    </Box>
   );
 
   // 모바일 차트 탭 렌더링 (기존과 동일)
   const renderMobileChartTab = () => (
-    <MKBox sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
-      <MKBox
+    <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
+      <Box
         sx={{
           backgroundColor: "white",
           borderRadius: 2,
@@ -1395,7 +1394,7 @@ function Favorites() {
           overflow: "hidden",
         }}
       >
-        <MKBox
+        <Box
           sx={{
             flex: 1,
             overflow: "auto",
@@ -1414,7 +1413,7 @@ function Favorites() {
           }}
         >
           {!selectedStock && (
-            <MKBox
+            <Box
               sx={{
                 display: "flex",
                 alignItems: "center",
@@ -1425,7 +1424,7 @@ function Favorites() {
                 p: 2,
               }}
             >
-              <MKBox
+              <Box
                 sx={{
                   width: 64,
                   height: 64,
@@ -1437,13 +1436,13 @@ function Favorites() {
                   mb: 2,
                 }}
               >
-                <MKTypography variant="h4" color="white">
+                <Typography variant="h4" color="white.main">
                   ⭐
-                </MKTypography>
-              </MKBox>
-              <MKTypography variant="h6" color="text" textAlign="center">
+                </Typography>
+              </Box>
+              <Typography variant="h6" color="text.secondary" textAlign="center">
                 종목을 선택하세요
-              </MKTypography>
+              </Typography>
               <Button
                 variant="contained"
                 color="primary"
@@ -1452,11 +1451,11 @@ function Favorites() {
               >
                 즐겨찾기 보기
               </Button>
-            </MKBox>
+            </Box>
           )}
 
           {selectedStock && (
-            <MKBox sx={{ p: 2 }}>
+            <Box sx={{ p: 2 }}>
               <StockInfoHeader
                 selectedStock={selectedStock}
                 ohlcvData={ohlcvData}
@@ -1480,17 +1479,17 @@ function Favorites() {
                 onShowSnackbar={showSnackbar}
                 chartType="favorites"
               />
-            </MKBox>
+            </Box>
           )}
-        </MKBox>
-      </MKBox>
-    </MKBox>
+        </Box>
+      </Box>
+    </Box>
   );
 
   // 모바일 자동매매 탭 렌더링 (기존과 동일)
   const renderMobileAutotradingTab = () => (
-    <MKBox sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
-      <MKBox
+    <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
+      <Box
         sx={{
           backgroundColor: "white",
           borderRadius: 2,
@@ -1501,19 +1500,19 @@ function Favorites() {
           overflow: "hidden",
         }}
       >
-        <MKBox sx={{ px: 2, py: 1.5, borderBottom: "1px solid #e0e0e0" }}>
-          <MKTypography variant="h6" fontWeight="bold">
+        <Box sx={{ px: 2, py: 1.5, borderBottom: "1px solid #e0e0e0" }}>
+          <Typography variant="h6" fontWeight="bold">
             자동매매 설정
-          </MKTypography>
+          </Typography>
           {selectedStock && (
-            <MKTypography variant="body2" sx={{ color: "text.secondary" }}>
+            <Typography variant="body2" sx={{ color: "text.secondary" }}>
               {selectedStock.name} ({selectedStock.code})
-            </MKTypography>
+            </Typography>
           )}
-        </MKBox>
-        <MKBox sx={{ flex: 1, overflow: "auto", p: 2 }}>
+        </Box>
+        <Box sx={{ flex: 1, overflow: "auto", p: 2 }}>
           {!selectedStock ? (
-            <MKBox
+            <Box
               sx={{
                 display: "flex",
                 alignItems: "center",
@@ -1523,13 +1522,13 @@ function Favorites() {
                 gap: 2,
               }}
             >
-              <MKTypography variant="h6" color="text" textAlign="center">
+              <Typography variant="h6" color="text.secondary" textAlign="center">
                 종목을 선택하세요
-              </MKTypography>
+              </Typography>
               <Button variant="contained" color="primary" onClick={() => setMobileTab(0)}>
                 즐겨찾기 보기
               </Button>
-            </MKBox>
+            </Box>
           ) : (
             <AutotradingAccordion
               selectedStock={selectedStock}
@@ -1546,9 +1545,9 @@ function Favorites() {
               strategyType="favorites"
             />
           )}
-        </MKBox>
-      </MKBox>
-    </MKBox>
+        </Box>
+      </Box>
+    </Box>
   );
 
   return (

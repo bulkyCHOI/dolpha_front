@@ -18,8 +18,8 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { Close } from "@mui/icons-material";
-import MKBox from "components/MKBox";
-import MKTypography from "components/MKTypography";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import { formatFinancialAmount } from "utils/formatters";
 
 /**
@@ -61,9 +61,9 @@ const FinancialModal = ({
           pb: 1,
         }}
       >
-        <MKTypography variant={isMobile ? "subtitle1" : "h6"} fontWeight="bold">
+        <Typography variant={isMobile ? "subtitle1" : "h6"} fontWeight="bold">
           재무제표 {selectedStock && `- ${selectedStock.name} (${selectedStock.code})`}
-        </MKTypography>
+        </Typography>
         <IconButton
           onClick={onClose}
           color="default"
@@ -75,7 +75,7 @@ const FinancialModal = ({
 
       <DialogContent sx={{ pt: 1 }}>
         {loading ? (
-          <MKBox
+          <Box
             sx={{
               display: "flex",
               alignItems: "center",
@@ -85,12 +85,12 @@ const FinancialModal = ({
             }}
           >
             <CircularProgress size={40} />
-            <MKTypography variant="body2" mt={2} color="text">
+            <Typography variant="body2" mt={2} color="text.secondary">
               재무제표 데이터를 로드하는 중...
-            </MKTypography>
-          </MKBox>
+            </Typography>
+          </Box>
         ) : error ? (
-          <MKBox
+          <Box
             sx={{
               display: "flex",
               alignItems: "center",
@@ -99,24 +99,24 @@ const FinancialModal = ({
               flexDirection: "column",
             }}
           >
-            <MKTypography variant="h6" color="error" mb={2}>
+            <Typography variant="h6" color="error.main" mb={2}>
               오류가 발생했습니다
-            </MKTypography>
-            <MKTypography variant="body2" color="text" textAlign="center">
+            </Typography>
+            <Typography variant="body2" color="text.secondary" textAlign="center">
               {error}
-            </MKTypography>
-          </MKBox>
+            </Typography>
+          </Box>
         ) : financialData && financialData.length > 0 ? (
           <>
             {/* 손익계산서 */}
-            <MKBox sx={{ mb: 3 }}>
-              <MKTypography
+            <Box sx={{ mb: 3 }}>
+              <Typography
                 variant={isMobile ? "subtitle1" : "h6"}
                 fontWeight="bold"
                 sx={{ mb: 2, color: "info" }}
               >
                 손익계산서
-              </MKTypography>
+              </Typography>
               <TableContainer component={Paper} sx={{ boxShadow: 1, mb: 2, overflowX: "auto" }}>
                 <Table size="small" sx={{ minWidth: isMobile ? 500 : 700 }}>
                   <TableHead>
@@ -235,17 +235,17 @@ const FinancialModal = ({
                   </TableBody>
                 </Table>
               </TableContainer>
-            </MKBox>
+            </Box>
 
             {/* 재무상태표 */}
-            <MKBox sx={{ mb: 2 }}>
-              <MKTypography
+            <Box sx={{ mb: 2 }}>
+              <Typography
                 variant={isMobile ? "subtitle1" : "h6"}
                 fontWeight="bold"
                 sx={{ mb: 2, color: "info" }}
               >
                 재무상태표
-              </MKTypography>
+              </Typography>
               <TableContainer component={Paper} sx={{ boxShadow: 1, overflowX: "auto" }}>
                 <Table size="small" sx={{ minWidth: isMobile ? 500 : 700 }}>
                   <TableHead>
@@ -363,10 +363,10 @@ const FinancialModal = ({
                   </TableBody>
                 </Table>
               </TableContainer>
-            </MKBox>
+            </Box>
           </>
         ) : (
-          <MKBox
+          <Box
             sx={{
               display: "flex",
               alignItems: "center",
@@ -375,24 +375,24 @@ const FinancialModal = ({
               flexDirection: "column",
             }}
           >
-            <MKTypography variant="h6" color="text">
+            <Typography variant="h6" color="text.secondary">
               재무제표 데이터가 없습니다
-            </MKTypography>
-            <MKTypography variant="body2" color="text" mt={1}>
+            </Typography>
+            <Typography variant="body2" color="text.secondary" mt={1}>
               선택된 종목의 재무제표 정보를 찾을 수 없습니다
-            </MKTypography>
-          </MKBox>
+            </Typography>
+          </Box>
         )}
 
-        <MKBox sx={{ mt: 2, p: 1, bgcolor: "info.main", borderRadius: 1 }}>
-          <MKTypography
+        <Box sx={{ mt: 2, p: 1, bgcolor: "info.main", borderRadius: 1 }}>
+          <Typography
             variant="caption"
-            color="white"
+            color="white.main"
             sx={{ fontSize: isMobile ? "0.65rem" : "inherit" }}
           >
             * 금액 단위: 원 (조/억/만 단위로 표시)
-          </MKTypography>
-        </MKBox>
+          </Typography>
+        </Box>
       </DialogContent>
 
       <DialogActions sx={{ px: 3, pb: 2 }}>

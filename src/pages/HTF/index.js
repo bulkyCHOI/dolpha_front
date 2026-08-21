@@ -17,8 +17,7 @@ import { useTheme } from "@mui/material/styles";
 import { useAuth } from "contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-import MKBox from "components/MKBox";
-import MKTypography from "components/MKTypography";
+import Typography from "@mui/material/Typography";
 import DefaultNavbar from "examples/Navbars/DefaultNavbar";
 import routes from "routes";
 
@@ -213,8 +212,8 @@ function HTF() {
 
   // 모바일 종목 탭 렌더링
   const renderMobileStockTab = () => (
-    <MKBox sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
-      <MKBox
+    <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
+      <Box
         sx={{
           backgroundColor: "white",
           borderRadius: 2,
@@ -225,15 +224,15 @@ function HTF() {
           overflow: "hidden",
         }}
       >
-        <MKBox sx={{ px: 2, py: 1.5, borderBottom: "1px solid #e0e0e0" }}>
-          <MKTypography variant="h6" fontWeight="bold">
+        <Box sx={{ px: 2, py: 1.5, borderBottom: "1px solid #e0e0e0" }}>
+          <Typography variant="h6" fontWeight="bold">
             HTF 패턴 종목
-          </MKTypography>
-          <MKTypography variant="caption" color="text.secondary">
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
             High Tight Flag 패턴 (8주 100%↑ + 25%↓ 조정)
-          </MKTypography>
-        </MKBox>
-        <MKBox sx={{ flex: 1, overflow: "auto" }}>
+          </Typography>
+        </Box>
+        <Box sx={{ flex: 1, overflow: "auto" }}>
           <HTFStockList
             stocks={stockData}
             loading={loading}
@@ -247,15 +246,15 @@ function HTF() {
             getPullbackColor={getPullbackColor}
             getStatusChip={getStatusChip}
           />
-        </MKBox>
-      </MKBox>
-    </MKBox>
+        </Box>
+      </Box>
+    </Box>
   );
 
   // 모바일 차트 탭 렌더링
   const renderMobileChartTab = () => (
-    <MKBox sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
-      <MKBox
+    <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
+      <Box
         sx={{
           backgroundColor: "white",
           borderRadius: 2,
@@ -266,7 +265,7 @@ function HTF() {
           overflow: "hidden",
         }}
       >
-        <MKBox
+        <Box
           sx={{
             flex: 1,
             overflow: "auto",
@@ -285,7 +284,7 @@ function HTF() {
           }}
         >
           {!selectedStock && (
-            <MKBox
+            <Box
               sx={{
                 display: "flex",
                 alignItems: "center",
@@ -296,7 +295,7 @@ function HTF() {
                 p: 2,
               }}
             >
-              <MKBox
+              <Box
                 sx={{
                   width: 64,
                   height: 64,
@@ -308,13 +307,13 @@ function HTF() {
                   mb: 2,
                 }}
               >
-                <MKTypography variant="h4" color="white">
+                <Typography variant="h4" color="white.main">
                   🚀
-                </MKTypography>
-              </MKBox>
-              <MKTypography variant="h6" color="text" textAlign="center">
+                </Typography>
+              </Box>
+              <Typography variant="h6" color="text.secondary" textAlign="center">
                 HTF 종목을 선택하세요
-              </MKTypography>
+              </Typography>
               <Button
                 variant="contained"
                 color="primary"
@@ -323,11 +322,11 @@ function HTF() {
               >
                 종목 선택하기
               </Button>
-            </MKBox>
+            </Box>
           )}
 
           {selectedStock && (
-            <MKBox sx={{ p: 2 }}>
+            <Box sx={{ p: 2 }}>
               <StockInfoHeader
                 selectedStock={selectedStock}
                 ohlcvData={ohlcvData}
@@ -351,17 +350,17 @@ function HTF() {
                 onShowSnackbar={showSnackbar}
                 chartType="htf"
               />
-            </MKBox>
+            </Box>
           )}
-        </MKBox>
-      </MKBox>
-    </MKBox>
+        </Box>
+      </Box>
+    </Box>
   );
 
   // 모바일 자동매매 탭 렌더링
   const renderMobileAutotradingTab = () => (
-    <MKBox sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
-      <MKBox
+    <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
+      <Box
         sx={{
           backgroundColor: "white",
           borderRadius: 2,
@@ -372,19 +371,19 @@ function HTF() {
           overflow: "hidden",
         }}
       >
-        <MKBox sx={{ px: 2, py: 1.5, borderBottom: "1px solid #e0e0e0" }}>
-          <MKTypography variant="h6" fontWeight="bold">
+        <Box sx={{ px: 2, py: 1.5, borderBottom: "1px solid #e0e0e0" }}>
+          <Typography variant="h6" fontWeight="bold">
             HTF 자동매매 설정
-          </MKTypography>
+          </Typography>
           {selectedStock && (
-            <MKTypography variant="body2" sx={{ color: "text.secondary" }}>
+            <Typography variant="body2" sx={{ color: "text.secondary" }}>
               {selectedStock.name} ({selectedStock.code})
-            </MKTypography>
+            </Typography>
           )}
-        </MKBox>
-        <MKBox sx={{ flex: 1, overflow: "auto", p: 2 }}>
+        </Box>
+        <Box sx={{ flex: 1, overflow: "auto", p: 2 }}>
           {!selectedStock ? (
-            <MKBox
+            <Box
               sx={{
                 display: "flex",
                 alignItems: "center",
@@ -394,13 +393,13 @@ function HTF() {
                 gap: 2,
               }}
             >
-              <MKTypography variant="h6" color="text" textAlign="center">
+              <Typography variant="h6" color="text.secondary" textAlign="center">
                 HTF 종목을 선택하세요
-              </MKTypography>
+              </Typography>
               <Button variant="contained" color="primary" onClick={() => setMobileTab(0)}>
                 종목 선택하기
               </Button>
-            </MKBox>
+            </Box>
           ) : (
             <AutotradingAccordion
               selectedStock={selectedStock}
@@ -417,9 +416,9 @@ function HTF() {
               strategyType="htf"
             />
           )}
-        </MKBox>
-      </MKBox>
-    </MKBox>
+        </Box>
+      </Box>
+    </Box>
   );
 
   return (
@@ -540,7 +539,7 @@ function HTF() {
                 order: { xs: 1, md: 1 },
               }}
             >
-              <MKBox
+              <Box
                 sx={{
                   backgroundColor: "white",
                   borderRadius: 2,
@@ -551,7 +550,7 @@ function HTF() {
                   overflow: "hidden",
                 }}
               >
-                <MKBox
+                <Box
                   sx={{
                     flex: 1,
                     overflow: "auto",
@@ -574,7 +573,7 @@ function HTF() {
                   }}
                 >
                   {!selectedStock && (
-                    <MKBox
+                    <Box
                       sx={{
                         display: "flex",
                         alignItems: "center",
@@ -585,7 +584,7 @@ function HTF() {
                         p: 2,
                       }}
                     >
-                      <MKBox
+                      <Box
                         sx={{
                           width: 64,
                           height: 64,
@@ -597,23 +596,23 @@ function HTF() {
                           mb: 2,
                         }}
                       >
-                        <MKTypography variant="h4" color="white">
+                        <Typography variant="h4" color="white.main">
                           🚀
-                        </MKTypography>
-                      </MKBox>
-                      <MKTypography variant="h6" color="text" textAlign="center">
+                        </Typography>
+                      </Box>
+                      <Typography variant="h6" color="text.secondary" textAlign="center">
                         HTF 패턴 종목을 선택하세요
-                      </MKTypography>
-                      <MKTypography variant="body2" color="text" textAlign="center">
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary" textAlign="center">
                         오른쪽 목록에서 HTF 패턴 종목을 클릭하면
                         <br />
                         패턴 분석 차트가 표시됩니다
-                      </MKTypography>
-                    </MKBox>
+                      </Typography>
+                    </Box>
                   )}
 
                   {selectedStock && (
-                    <MKBox sx={{ p: { xs: 1, md: 2 } }}>
+                    <Box sx={{ p: { xs: 1, md: 2 } }}>
                       <StockInfoHeader
                         selectedStock={selectedStock}
                         ohlcvData={ohlcvData}
@@ -638,10 +637,10 @@ function HTF() {
                         onShowSnackbar={showSnackbar}
                         chartType="htf"
                       />
-                    </MKBox>
+                    </Box>
                   )}
-                </MKBox>
-              </MKBox>
+                </Box>
+              </Box>
             </Grid>
 
             {/* 오른쪽 종목 목록 */}
@@ -657,7 +656,7 @@ function HTF() {
                 order: { xs: 2, md: 2 },
               }}
             >
-              <MKBox
+              <Box
                 sx={{
                   backgroundColor: "white",
                   borderRadius: 2,
@@ -669,7 +668,7 @@ function HTF() {
                 }}
               >
                 {/* 탭 헤더 */}
-                <MKBox sx={{ flexShrink: 0, borderBottom: "1px solid #e0e0e0" }}>
+                <Box sx={{ flexShrink: 0, borderBottom: "1px solid #e0e0e0" }}>
                   <Tabs
                     value={activeTab}
                     onChange={handleTabChange}
@@ -695,10 +694,10 @@ function HTF() {
                     <Tab label="HTF목록" />
                     <Tab label="자동매매" />
                   </Tabs>
-                </MKBox>
+                </Box>
 
                 {loading && (
-                  <MKBox
+                  <Box
                     sx={{
                       flex: 1,
                       display: "flex",
@@ -707,11 +706,11 @@ function HTF() {
                     }}
                   >
                     <CircularProgress />
-                  </MKBox>
+                  </Box>
                 )}
 
                 {error && (
-                  <MKBox
+                  <Box
                     sx={{
                       flex: 1,
                       display: "flex",
@@ -719,10 +718,10 @@ function HTF() {
                       justifyContent: "center",
                     }}
                   >
-                    <MKTypography color="error">
+                    <Typography color="error.main">
                       데이터 로드 중 오류가 발생했습니다: {error}
-                    </MKTypography>
-                  </MKBox>
+                    </Typography>
+                  </Box>
                 )}
 
                 {!loading && !error && (
@@ -730,7 +729,7 @@ function HTF() {
                     {/* HTF 목록 탭 내용 */}
                     {activeTab === 0 && (
                       <>
-                        <MKBox
+                        <Box
                           sx={{
                             flex: 1,
                             overflow: "auto",
@@ -761,13 +760,13 @@ function HTF() {
                             getPullbackColor={getPullbackColor}
                             getStatusChip={getStatusChip}
                           />
-                        </MKBox>
+                        </Box>
                       </>
                     )}
 
                     {/* 자동매매 탭 내용 */}
                     {activeTab === 1 && (
-                      <MKBox
+                      <Box
                         sx={{
                           flex: 1,
                           overflow: "auto",
@@ -789,7 +788,7 @@ function HTF() {
                         }}
                       >
                         {!isAuthenticated ? (
-                          <MKBox
+                          <Box
                             sx={{
                               display: "flex",
                               flexDirection: "column",
@@ -799,12 +798,12 @@ function HTF() {
                               textAlign: "center",
                             }}
                           >
-                            <MKTypography variant="h5" sx={{ mb: 2, color: "#666" }}>
+                            <Typography variant="h5" sx={{ mb: 2, color: "#666" }}>
                               로그인이 필요합니다
-                            </MKTypography>
-                            <MKTypography variant="body1" sx={{ mb: 3, color: "#888" }}>
+                            </Typography>
+                            <Typography variant="body1" sx={{ mb: 3, color: "#888" }}>
                               HTF 자동매매 기능을 사용하려면 Google 로그인이 필요합니다.
-                            </MKTypography>
+                            </Typography>
                             <Button
                               variant="contained"
                               color="primary"
@@ -821,9 +820,9 @@ function HTF() {
                             >
                               로그인 하러 가기
                             </Button>
-                          </MKBox>
+                          </Box>
                         ) : (
-                          <MKBox>
+                          <Box>
                             <AutotradingAccordion
                               autotradingList={autotradingList}
                               expandedAccordion={expandedAccordion}
@@ -838,13 +837,13 @@ function HTF() {
                               tradingForm={tradingForm}
                               strategyType="htf"
                             />
-                          </MKBox>
+                          </Box>
                         )}
-                      </MKBox>
+                      </Box>
                     )}
                   </>
                 )}
-              </MKBox>
+              </Box>
             </Grid>
           </Grid>
         </Box>

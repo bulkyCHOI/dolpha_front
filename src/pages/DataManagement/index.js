@@ -31,8 +31,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import Divider from "@mui/material/Divider";
 
 // Material Kit 2 React components
-import MKBox from "components/MKBox";
-import MKTypography from "components/MKTypography";
+import Typography from "@mui/material/Typography";
 import MKButton from "components/MKButton";
 import MKDatePicker from "components/MKDatePicker";
 
@@ -67,13 +66,13 @@ function SummaryCard({ title, done, total, records, latestDate, extra }) {
   return (
     <Card elevation={2} sx={{ height: "100%" }}>
       <CardContent>
-        <MKTypography variant="h6" fontWeight="bold" mb={1}>
+        <Typography variant="h6" fontWeight="bold" mb={1}>
           {title}
-        </MKTypography>
+        </Typography>
 
-        <MKTypography variant="h4" fontWeight="bold" color={color} mb={0.5}>
+        <Typography variant="h4" fontWeight="bold" color={color} mb={0.5}>
           {pct(done, total)}%
-        </MKTypography>
+        </Typography>
 
         <LinearProgress
           variant="determinate"
@@ -82,21 +81,21 @@ function SummaryCard({ title, done, total, records, latestDate, extra }) {
           sx={{ mb: 1, height: 6, borderRadius: 3 }}
         />
 
-        <MKTypography variant="body2" color="text.secondary">
+        <Typography variant="body2" color="text.secondary">
           수집 완료: <strong>{fmt(done)}</strong> / {fmt(total)} 종목
-        </MKTypography>
-        <MKTypography variant="body2" color="text.secondary">
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
           총 레코드: <strong>{fmt(records)}</strong>
-        </MKTypography>
+        </Typography>
         {latestDate && (
-          <MKTypography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.secondary">
             최신 날짜: <strong>{latestDate}</strong>
-          </MKTypography>
+          </Typography>
         )}
         {extra && (
-          <MKTypography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.secondary">
             {extra}
-          </MKTypography>
+          </Typography>
         )}
       </CardContent>
     </Card>
@@ -108,21 +107,21 @@ function AnalysisGapCard({ gap }) {
   return (
     <Card elevation={2}>
       <CardContent>
-        <MKTypography variant="h6" fontWeight="bold" mb={1}>
+        <Typography variant="h6" fontWeight="bold" mb={1}>
           분석 누락 현황
-        </MKTypography>
-        <MKTypography variant="body2" color="text.secondary">
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
           OHLCV만 있고 분석 없음:{" "}
           <strong style={{ color: gap.ohlcv_only > 0 ? "#f44336" : "#4caf50" }}>
             {fmt(gap.ohlcv_only)}종목
           </strong>
-        </MKTypography>
-        <MKTypography variant="body2" color="text.secondary">
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
           OHLCV 최신일: <strong>{gap.ohlcv_latest || "-"}</strong>
-        </MKTypography>
-        <MKTypography variant="body2" color="text.secondary">
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
           분석 최신일: <strong>{gap.analysis_latest || "-"}</strong>
-        </MKTypography>
+        </Typography>
       </CardContent>
     </Card>
   );
@@ -180,11 +179,11 @@ function GridCell({ dateKey, step }) {
         }}
       >
         {data ? (
-          <MKTypography variant="caption" fontWeight="bold" sx={{ color: text, lineHeight: 1.2 }}>
+          <Typography variant="caption" fontWeight="bold" sx={{ color: text, lineHeight: 1.2 }}>
             {data.ratio}%
-          </MKTypography>
+          </Typography>
         ) : (
-          <MKTypography variant="caption" sx={{ color: "#bbb" }}>—</MKTypography>
+          <Typography variant="caption" sx={{ color: "#bbb" }}>—</Typography>
         )}
       </Box>
     </Tooltip>
@@ -204,7 +203,7 @@ function PipelineGrid({ grid }) {
     <Box>
       {/* 범례 */}
       <Box display="flex" gap={2} mb={2} alignItems="center">
-        <MKTypography variant="caption" color="text.secondary">완료율 범례:</MKTypography>
+        <Typography variant="caption" color="text.secondary">완료율 범례:</Typography>
         {[
           { label: "≥ 95%", bg: "#e8f5e9", border: "#a5d6a7", text: "#2e7d32" },
           { label: "≥ 70%", bg: "#fff8e1", border: "#ffe082", text: "#e65100" },
@@ -213,7 +212,7 @@ function PipelineGrid({ grid }) {
         ].map(({ label, bg, border, text }) => (
           <Box key={label} display="flex" alignItems="center" gap={0.5}>
             <Box sx={{ width: 14, height: 14, bgcolor: bg, border: `1px solid ${border}`, borderRadius: 0.5 }} />
-            <MKTypography variant="caption" sx={{ color: text }}>{label}</MKTypography>
+            <Typography variant="caption" sx={{ color: text }}>{label}</Typography>
           </Box>
         ))}
       </Box>
@@ -245,9 +244,9 @@ function PipelineGrid({ grid }) {
                 borderRight: "2px solid #c5cad4",
               }}
             >
-              <MKTypography variant="caption" fontWeight="bold" color="text.secondary">
+              <Typography variant="caption" fontWeight="bold" color="text.secondary">
                 단계 \ 날짜
-              </MKTypography>
+              </Typography>
             </Box>
 
             {/* 날짜 열 헤더 */}
@@ -263,7 +262,7 @@ function PipelineGrid({ grid }) {
                   justifyContent: "center",
                 }}
               >
-                <MKTypography
+                <Typography
                   variant="caption"
                   fontWeight="medium"
                   color="text.secondary"
@@ -276,7 +275,7 @@ function PipelineGrid({ grid }) {
                   }}
                 >
                   {d.slice(5)}
-                </MKTypography>
+                </Typography>
               </Box>
             ))}
           </Box>
@@ -305,12 +304,12 @@ function PipelineGrid({ grid }) {
                   borderRight: "2px solid #c5cad4",
                 }}
               >
-                <MKTypography variant="caption" fontWeight="bold" display="block">
+                <Typography variant="caption" fontWeight="bold" display="block">
                   {step.label}
-                </MKTypography>
-                <MKTypography variant="caption" color="text.secondary">
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
                   전체 {fmt(step.total)}
-                </MKTypography>
+                </Typography>
               </Box>
 
               {/* 데이터 셀들 */}
@@ -524,15 +523,15 @@ function DailyPipelinePanel({ processes, onTriggerDone }) {
         sx={{ bgcolor: "primary.main", borderRadius: expanded ? "10px 10px 0 0" : "10px", px: 3, py: 1 }}
       >
         <Box display="flex" alignItems="center" gap={2} width="100%">
-          <MKTypography variant="h6" fontWeight="bold" color="white">
+          <Typography variant="h6" fontWeight="bold" color="white.main">
             ⚡ 일간 전체 파이프라인
-          </MKTypography>
+          </Typography>
           {isRunning && (
             <Chip label="실행 중" size="small" sx={{ bgcolor: "#4caf50", color: "white" }} />
           )}
-          <MKTypography variant="body2" color="white" sx={{ opacity: 0.85, ml: "auto", mr: 2 }}>
+          <Typography variant="body2" color="white.main" sx={{ opacity: 0.85, ml: "auto", mr: 2 }}>
             수집 → 가공 전 과정을 순서대로 한번에 실행
-          </MKTypography>
+          </Typography>
         </Box>
       </AccordionSummary>
 
@@ -553,12 +552,12 @@ function DailyPipelinePanel({ processes, onTriggerDone }) {
                       flexShrink: 0,
                     }}
                   >
-                    <MKTypography variant="caption" color="white" fontWeight="bold">
+                    <Typography variant="caption" color="white.main" fontWeight="bold">
                       {step.icon}
-                    </MKTypography>
+                    </Typography>
                   </Box>
                   <Box flex={1}>
-                    <MKTypography
+                    <Typography
                       variant="body2"
                       fontWeight="medium"
                       color={isSkipped ? "text.disabled" : "text.primary"}
@@ -567,10 +566,10 @@ function DailyPipelinePanel({ processes, onTriggerDone }) {
                       {isSkipped && (
                         <Chip label="건너뜀" size="small" sx={{ ml: 1, height: 18, fontSize: "0.65rem" }} />
                       )}
-                    </MKTypography>
-                    <MKTypography variant="caption" color="text.secondary">
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
                       {step.desc}
-                    </MKTypography>
+                    </Typography>
                   </Box>
                 </Box>
                 {idx < PIPELINE_STEPS.length - 1 && (
@@ -586,7 +585,7 @@ function DailyPipelinePanel({ processes, onTriggerDone }) {
         {/* 날짜 선택 */}
         <Box display="flex" alignItems="flex-end" gap={2} mb={2} flexWrap="wrap">
           <Box minWidth={150}>
-            <MKTypography variant="caption" color="text.secondary">시작일</MKTypography>
+            <Typography variant="caption" color="text.secondary">시작일</Typography>
             <MKDatePicker
               value={startDate}
               options={{ dateFormat: "Y-m-d", maxDate: endDate, allowInput: true }}
@@ -595,7 +594,7 @@ function DailyPipelinePanel({ processes, onTriggerDone }) {
             />
           </Box>
           <Box minWidth={150}>
-            <MKTypography variant="caption" color="text.secondary">종료일</MKTypography>
+            <Typography variant="caption" color="text.secondary">종료일</Typography>
             <MKDatePicker
               value={endDate}
               options={{ dateFormat: "Y-m-d", minDate: startDate, maxDate: TODAY, allowInput: true }}
@@ -617,12 +616,12 @@ function DailyPipelinePanel({ processes, onTriggerDone }) {
               />
             }
             label={
-              <MKTypography variant="body2">
+              <Typography variant="body2">
                 DART 재무제표 건너뜀
-                <MKTypography component="span" variant="caption" color="text.secondary" ml={0.5}>
+                <Typography component="span" variant="caption" color="text.secondary" ml={0.5}>
                   (약 1시간 절약)
-                </MKTypography>
-              </MKTypography>
+                </Typography>
+              </Typography>
             }
           />
           <MKButton
@@ -644,9 +643,9 @@ function DailyPipelinePanel({ processes, onTriggerDone }) {
           >
             {result.message}
             {result.success && (
-              <MKTypography variant="caption" display="block" mt={0.5}>
+              <Typography variant="caption" display="block" mt={0.5}>
                 실시간 로그 탭에서 진행 상황을 확인할 수 있습니다.
-              </MKTypography>
+              </Typography>
             )}
           </Alert>
         )}
@@ -733,15 +732,15 @@ function CollectionPanel({ config, processes, onTriggerDone }) {
       <Box display="flex" alignItems="flex-start" justifyContent="space-between" flexWrap="wrap" gap={2}>
         {/* 좌측: 아이콘 + 설명 */}
         <Box flex={1} minWidth={180}>
-          <MKTypography variant="body1" fontWeight="bold">
+          <Typography variant="body1" fontWeight="bold">
             {config.icon} {config.label}
             {isRunning && (
               <Chip label="실행 중" color="success" size="small" sx={{ ml: 1 }} />
             )}
-          </MKTypography>
-          <MKTypography variant="caption" color="text.secondary">
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
             {config.description}
-          </MKTypography>
+          </Typography>
         </Box>
 
         {/* 우측: 날짜 선택 + 실행 버튼 */}
@@ -749,7 +748,7 @@ function CollectionPanel({ config, processes, onTriggerDone }) {
           {config.needsDate && (
             <>
               <Box minWidth={140}>
-                <MKTypography variant="caption" color="text.secondary">시작일</MKTypography>
+                <Typography variant="caption" color="text.secondary">시작일</Typography>
                 <MKDatePicker
                   value={startDate}
                   options={{ dateFormat: "Y-m-d", maxDate: endDate, allowInput: true }}
@@ -758,7 +757,7 @@ function CollectionPanel({ config, processes, onTriggerDone }) {
                 />
               </Box>
               <Box minWidth={140}>
-                <MKTypography variant="caption" color="text.secondary">종료일</MKTypography>
+                <Typography variant="caption" color="text.secondary">종료일</Typography>
                 <MKDatePicker
                   value={endDate}
                   options={{ dateFormat: "Y-m-d", minDate: startDate, maxDate: TODAY, allowInput: true }}
@@ -822,18 +821,18 @@ function CollectionTab({ processes, onLogSourceChange }) {
           sx={{ px: 3, py: 1 }}
         >
           <Box display="flex" alignItems="center" gap={2} width="100%">
-            <MKTypography variant="h6" fontWeight="bold">
+            <Typography variant="h6" fontWeight="bold">
               🔧 개별 단계 실행
-            </MKTypography>
-            <MKTypography variant="body2" color="text.secondary" sx={{ ml: "auto", mr: 1 }}>
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ ml: "auto", mr: 1 }}>
               특정 단계만 선택해서 실행
-            </MKTypography>
+            </Typography>
           </Box>
         </AccordionSummary>
         <AccordionDetails sx={{ px: 3, pb: 2.5, pt: 0 }}>
-          <MKTypography variant="caption" color="text.secondary" display="block" mb={1.5}>
+          <Typography variant="caption" color="text.secondary" display="block" mb={1.5}>
             수집 후 <strong>실시간 로그</strong> 탭에서 진행 상황을 확인할 수 있습니다.
-          </MKTypography>
+          </Typography>
           {TASK_CONFIG.map((config) => (
             <CollectionPanel
               key={config.task}
@@ -931,14 +930,14 @@ function DataManagement() {
   return (
     <>
       <DefaultNavbar routes={routes} sticky />
-      <MKBox minHeight="100vh" pt={10} pb={4} sx={{ bgcolor: "#f5f5f5" }}>
+      <Box minHeight="100vh" pt={10} pb={4} sx={{ bgcolor: "#f5f5f5" }}>
         <Container maxWidth="xl">
-          <MKTypography variant="h4" fontWeight="bold" mb={1}>
+          <Typography variant="h4" fontWeight="bold" mb={1}>
             데이터 관리
-          </MKTypography>
-          <MKTypography variant="body2" color="text.secondary" mb={3}>
+          </Typography>
+          <Typography variant="body2" color="text.secondary" mb={3}>
             원천데이터 수집 현황 · 빈 구간 조회 · 실시간 로그
-          </MKTypography>
+          </Typography>
 
           <Card elevation={1}>
             <Tabs
@@ -1007,30 +1006,30 @@ function DataManagement() {
                       <Grid item xs={12} md={8}>
                         <Card elevation={2}>
                           <CardContent>
-                            <MKTypography variant="h6" fontWeight="bold" mb={1}>
+                            <Typography variant="h6" fontWeight="bold" mb={1}>
                               전체 현황 요약
-                            </MKTypography>
-                            <MKTypography variant="body2" color="text.secondary">
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
                               전체 KR 종목 수: <strong>{fmt(summary.total_companies)}</strong>개
-                            </MKTypography>
-                            <MKTypography variant="body2" color="text.secondary" mt={0.5}>
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary" mt={0.5}>
                               OHLCV 미수집:{" "}
                               <strong>
                                 {fmt(summary.total_companies - summary.ohlcv_done)}
                               </strong>종목
-                            </MKTypography>
-                            <MKTypography variant="body2" color="text.secondary" mt={0.5}>
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary" mt={0.5}>
                               분석 미계산:{" "}
                               <strong>
                                 {fmt(summary.total_companies - summary.analysis_done)}
                               </strong>종목
-                            </MKTypography>
-                            <MKTypography variant="body2" color="text.secondary" mt={0.5}>
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary" mt={0.5}>
                               재무제표 미수집:{" "}
                               <strong>
                                 {fmt(summary.total_companies - summary.financial_done)}
                               </strong>종목
-                            </MKTypography>
+                            </Typography>
                           </CardContent>
                         </Card>
                       </Grid>
@@ -1044,7 +1043,7 @@ function DataManagement() {
               {/* ── Tab 2: 날짜별 빈 구간 ── */}
               <TabPanel value={tab} index={1}>
                 <Box display="flex" alignItems="center" gap={2} mb={2}>
-                  <MKTypography variant="body2">조회 기간:</MKTypography>
+                  <Typography variant="body2">조회 기간:</Typography>
                   <Select
                     value={gapDays}
                     onChange={(e) => setGapDays(e.target.value)}
@@ -1083,7 +1082,7 @@ function DataManagement() {
                 <ProcessStatus processes={processes} />
 
                 <Box display="flex" alignItems="center" gap={2} mb={2}>
-                  <MKTypography variant="body2">로그 선택:</MKTypography>
+                  <Typography variant="body2">로그 선택:</Typography>
                   <Select
                     value={logSource}
                     onChange={(e) => setLogSource(e.target.value)}
@@ -1107,9 +1106,9 @@ function DataManagement() {
                       />
                     }
                     label={
-                      <MKTypography variant="body2">
+                      <Typography variant="body2">
                         자동 갱신 (5초){autoRefresh ? " ON" : " OFF"}
-                      </MKTypography>
+                      </Typography>
                     }
                   />
                 </Box>
@@ -1119,10 +1118,10 @@ function DataManagement() {
             </Box>
           </Card>
         </Container>
-      </MKBox>
-      <MKBox pt={6} px={1} mt="auto">
+      </Box>
+      <Box pt={6} px={1} mt="auto">
         <DefaultFooter content={footerRoutes} />
-      </MKBox>
+      </Box>
     </>
   );
 }

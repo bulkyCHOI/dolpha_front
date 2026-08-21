@@ -16,8 +16,8 @@ import {
   Button,
 } from "@mui/material";
 import { ExpandMore, Refresh, Delete, Save } from "@mui/icons-material";
-import MKBox from "components/MKBox";
-import MKTypography from "components/MKTypography";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import { adjustToKRXTickSize, getKRXTickSize } from "utils/formatters";
 
 /**
@@ -96,7 +96,7 @@ const AutotradingAccordion = ({
   };
 
   return (
-    <MKBox>
+    <Box>
       {/* 자동매매 설정이 없는 경우 */}
       {autotradingList.length === 0 ? (
         selectedStock ? (
@@ -118,24 +118,24 @@ const AutotradingAccordion = ({
                 borderRadius: expandedAccordion === selectedStock.code ? "4px 4px 0 0" : "4px",
               }}
             >
-              <MKBox sx={{ display: "flex", alignItems: "center", gap: 1, width: "100%" }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1, width: "100%" }}>
                 <Chip
                   label="신규"
                   size="small"
                   color="info"
                   sx={{ fontSize: "0.7rem", height: "20px" }}
                 />
-                <MKBox sx={{ flex: 1 }}>
-                  <MKTypography variant="h6" fontWeight="bold">
+                <Box sx={{ flex: 1 }}>
+                  <Typography variant="h6" fontWeight="bold">
                     {selectedStock.name || "알 수 없음"} ({selectedStock.code || "000000"})
-                  </MKTypography>
-                </MKBox>
-              </MKBox>
+                  </Typography>
+                </Box>
+              </Box>
             </AccordionSummary>
 
             <AccordionDetails sx={{ backgroundColor: "#ffffff", position: "relative" }}>
               {/* 우측 상단 컨트롤 영역 - 신규이므로 초기화 버튼만 */}
-              <MKBox
+              <Box
                 sx={{
                   position: { xs: "relative", md: "absolute" },
                   top: { xs: 0, md: 16 },
@@ -167,10 +167,10 @@ const AutotradingAccordion = ({
                     <Refresh fontSize="small" />
                   </IconButton>
                 </Tooltip>
-              </MKBox>
+              </Box>
 
               {/* 매매 방식 선택 */}
-              <MKBox sx={{ mb: 3 }}>
+              <Box sx={{ mb: 3 }}>
                 <FormControl component="fieldset">
                   <RadioGroup
                     value={tradingMode}
@@ -192,28 +192,28 @@ const AutotradingAccordion = ({
                       value="manual"
                       control={<Radio size="small" />}
                       label={
-                        <MKTypography sx={{ fontSize: { xs: "1rem", md: "0.875rem" } }}>
+                        <Typography sx={{ fontSize: { xs: "1rem", md: "0.875rem" } }}>
                           Manual
-                        </MKTypography>
+                        </Typography>
                       }
                     />
                     <FormControlLabel
                       value="turtle"
                       control={<Radio size="small" />}
                       label={
-                        <MKTypography sx={{ fontSize: { xs: "1rem", md: "0.875rem" } }}>
+                        <Typography sx={{ fontSize: { xs: "1rem", md: "0.875rem" } }}>
                           Turtle(ATR)
-                        </MKTypography>
+                        </Typography>
                       }
                     />
                   </RadioGroup>
                 </FormControl>
-              </MKBox>
+              </Box>
 
               {/* 설정 폼 */}
-              <MKBox sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 {/* 진입시점 */}
-                <MKBox sx={{ position: "relative" }}>
+                <Box sx={{ position: "relative" }}>
                   <TextField
                     label="진입시점 (원)"
                     value={entryPoint}
@@ -236,7 +236,7 @@ const AutotradingAccordion = ({
                       },
                     }}
                   />
-                </MKBox>
+                </Box>
 
                 {/* 최대손실 */}
                 <TextField
@@ -316,8 +316,8 @@ const AutotradingAccordion = ({
                 />
 
                 {/* 피라미딩 설정 */}
-                <MKBox>
-                  <MKBox
+                <Box>
+                  <Box
                     sx={{
                       display: "flex",
                       justifyContent: "space-between",
@@ -325,11 +325,11 @@ const AutotradingAccordion = ({
                       mb: 1,
                     }}
                   >
-                    <MKTypography variant="subtitle2" fontWeight="bold">
+                    <Typography variant="subtitle2" fontWeight="bold">
                       피라미딩 설정
-                    </MKTypography>
-                    <MKBox sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <MKTypography
+                    </Typography>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <Typography
                         variant="caption"
                         sx={{
                           color: Math.abs(positionSum - 100) >= 0.01 ? "#f44336" : "#4caf50",
@@ -337,7 +337,7 @@ const AutotradingAccordion = ({
                         }}
                       >
                         포지션 합계: {positionSum.toFixed(1)}%
-                      </MKTypography>
+                      </Typography>
                       <Button
                         variant="outlined"
                         size="small"
@@ -357,12 +357,12 @@ const AutotradingAccordion = ({
                       >
                         균등분할
                       </Button>
-                    </MKBox>
-                  </MKBox>
+                    </Box>
+                  </Box>
 
                   {/* 포지션 합계 경고 */}
                   {Math.abs(positionSum - 100) >= 0.01 && (
-                    <MKBox
+                    <Box
                       sx={{
                         p: 1,
                         bgcolor: "#fff3cd",
@@ -371,10 +371,10 @@ const AutotradingAccordion = ({
                         mb: 1,
                       }}
                     >
-                      <MKTypography variant="caption" sx={{ color: "#856404", fontWeight: "bold" }}>
+                      <Typography variant="caption" sx={{ color: "#856404", fontWeight: "bold" }}>
                         ⚠️ 포지션의 합이 100%가 되어야 합니다. (현재: {positionSum.toFixed(1)}%)
-                      </MKTypography>
-                    </MKBox>
+                      </Typography>
+                    </Box>
                   )}
 
                   {/* 1차 진입시점과 포지션 */}
@@ -471,10 +471,10 @@ const AutotradingAccordion = ({
                         </Grid>
                       </Grid>
                     ))}
-                </MKBox>
+                </Box>
 
                 {/* 실행 버튼 */}
-                <MKBox sx={{ mt: 2, display: "flex", gap: 1 }}>
+                <Box sx={{ mt: 2, display: "flex", gap: 1 }}>
                   <Button
                     variant="contained"
                     color="primary"
@@ -504,13 +504,13 @@ const AutotradingAccordion = ({
                   >
                     설정 저장
                   </Button>
-                </MKBox>
-              </MKBox>
+                </Box>
+              </Box>
             </AccordionDetails>
           </Accordion>
         ) : (
           /* 선택된 종목이 없으면 기존 메시지 표시 */
-          <MKBox
+          <Box
             sx={{
               textAlign: "center",
               py: 4,
@@ -518,17 +518,17 @@ const AutotradingAccordion = ({
               borderRadius: 2,
             }}
           >
-            <MKTypography variant="body1" color="text.secondary">
+            <Typography variant="body1" color="text.secondary">
               설정된 자동매매가 없습니다.
-            </MKTypography>
-            <MKTypography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
               종목을 선택하고 설정을 저장해보세요.
-            </MKTypography>
-          </MKBox>
+            </Typography>
+          </Box>
         )
       ) : (
         /* 자동매매 설정 아코디언 목록 */
-        <MKBox>
+        <Box>
           {/* 현재 선택된 종목이 목록에 없는 경우 신규 아코디언 추가 */}
           {selectedStock &&
             !autotradingList.find((config) => config.stock_code === selectedStock.code) && (
@@ -552,24 +552,24 @@ const AutotradingAccordion = ({
                     onStockSelect(selectedStock);
                   }}
                 >
-                  <MKBox sx={{ display: "flex", alignItems: "center", gap: 1, width: "100%" }}>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1, width: "100%" }}>
                     <Chip
                       label="신규"
                       size="small"
                       color="info"
                       sx={{ fontSize: "0.7rem", height: "20px" }}
                     />
-                    <MKBox sx={{ flex: 1 }}>
-                      <MKTypography variant="h6" fontWeight="bold">
+                    <Box sx={{ flex: 1 }}>
+                      <Typography variant="h6" fontWeight="bold">
                         {selectedStock.name || "알 수 없음"} ({selectedStock.code || "000000"})
-                      </MKTypography>
-                    </MKBox>
-                  </MKBox>
+                      </Typography>
+                    </Box>
+                  </Box>
                 </AccordionSummary>
 
                 <AccordionDetails sx={{ backgroundColor: "#ffffff", position: "relative" }}>
                   {/* 우측 상단 컨트롤 영역 - 신규이므로 초기화 버튼만 */}
-                  <MKBox
+                  <Box
                     sx={{
                       position: "absolute",
                       top: 16,
@@ -598,10 +598,10 @@ const AutotradingAccordion = ({
                         <Refresh fontSize="small" />
                       </IconButton>
                     </Tooltip>
-                  </MKBox>
+                  </Box>
 
                   {/* 매매 방식 선택 */}
-                  <MKBox sx={{ mb: 3 }}>
+                  <Box sx={{ mb: 3 }}>
                     <FormControl component="fieldset">
                       <RadioGroup
                         value={tradingMode}
@@ -631,12 +631,12 @@ const AutotradingAccordion = ({
                         />
                       </RadioGroup>
                     </FormControl>
-                  </MKBox>
+                  </Box>
 
                   {/* 설정 폼 */}
-                  <MKBox sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                  <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                     {/* 진입시점 */}
-                    <MKBox sx={{ position: "relative" }}>
+                    <Box sx={{ position: "relative" }}>
                       <TextField
                         label="진입시점 (원)"
                         value={entryPoint}
@@ -659,7 +659,7 @@ const AutotradingAccordion = ({
                           },
                         }}
                       />
-                    </MKBox>
+                    </Box>
 
                     {/* 최대손실 */}
                     <TextField
@@ -739,8 +739,8 @@ const AutotradingAccordion = ({
                     />
 
                     {/* 피라미딩 설정 */}
-                    <MKBox>
-                      <MKBox
+                    <Box>
+                      <Box
                         sx={{
                           display: "flex",
                           justifyContent: "space-between",
@@ -748,11 +748,11 @@ const AutotradingAccordion = ({
                           mb: 1,
                         }}
                       >
-                        <MKTypography variant="subtitle2" fontWeight="bold">
+                        <Typography variant="subtitle2" fontWeight="bold">
                           피라미딩 설정
-                        </MKTypography>
-                        <MKBox sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                          <MKTypography
+                        </Typography>
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                          <Typography
                             variant="caption"
                             sx={{
                               color: Math.abs(positionSum - 100) >= 0.01 ? "#f44336" : "#4caf50",
@@ -760,7 +760,7 @@ const AutotradingAccordion = ({
                             }}
                           >
                             포지션 합계: {positionSum.toFixed(1)}%
-                          </MKTypography>
+                          </Typography>
                           <Button
                             variant="outlined"
                             size="small"
@@ -780,12 +780,12 @@ const AutotradingAccordion = ({
                           >
                             균등분할
                           </Button>
-                        </MKBox>
-                      </MKBox>
+                        </Box>
+                      </Box>
 
                       {/* 포지션 합계 경고 */}
                       {Math.abs(positionSum - 100) >= 0.01 && (
-                        <MKBox
+                        <Box
                           sx={{
                             p: 1,
                             bgcolor: "#fff3cd",
@@ -794,13 +794,13 @@ const AutotradingAccordion = ({
                             mb: 1,
                           }}
                         >
-                          <MKTypography
+                          <Typography
                             variant="caption"
                             sx={{ color: "#856404", fontWeight: "bold" }}
                           >
                             ⚠️ 포지션의 합이 100%가 되어야 합니다. (현재: {positionSum.toFixed(1)}%)
-                          </MKTypography>
-                        </MKBox>
+                          </Typography>
+                        </Box>
                       )}
 
                       {/* 1차 진입시점과 포지션 */}
@@ -898,10 +898,10 @@ const AutotradingAccordion = ({
                             </Grid>
                           </Grid>
                         ))}
-                    </MKBox>
+                    </Box>
 
                     {/* 실행 버튼 */}
-                    <MKBox sx={{ mt: 2, display: "flex", gap: 1 }}>
+                    <Box sx={{ mt: 2, display: "flex", gap: 1 }}>
                       <Button
                         variant="contained"
                         color="primary"
@@ -931,8 +931,8 @@ const AutotradingAccordion = ({
                       >
                         설정 저장
                       </Button>
-                    </MKBox>
-                  </MKBox>
+                    </Box>
+                  </Box>
                 </AccordionDetails>
               </Accordion>
             )}
@@ -973,7 +973,7 @@ const AutotradingAccordion = ({
                   }
                 }}
               >
-                <MKBox sx={{ display: "flex", alignItems: "center", gap: 1, width: "100%" }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1, width: "100%" }}>
                   {stockConfig.trading_mode || stockConfig.stop_loss || stockConfig.take_profit ? (
                     <Chip
                       label={stockConfig.is_active ? "활성" : "비활성"}
@@ -994,50 +994,50 @@ const AutotradingAccordion = ({
                       sx={{ fontSize: "0.7rem", height: "20px" }}
                     />
                   )}
-                  <MKBox sx={{ flex: 1 }}>
-                    <MKTypography variant="h6" fontWeight="bold">
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="h6" fontWeight="bold">
                       {stockConfig.stock_name || "알 수 없음"} ({stockConfig.stock_code || "000000"}
                       )
-                    </MKTypography>
+                    </Typography>
                     {(stockConfig.trading_mode ||
                       stockConfig.stop_loss ||
                       stockConfig.take_profit) && (
-                      <MKBox sx={{ display: "flex", gap: 2, mt: 0.5 }}>
-                        <MKTypography variant="caption" color="text">
+                      <Box sx={{ display: "flex", gap: 2, mt: 0.5 }}>
+                        <Typography variant="caption" color="text.secondary">
                           진입:{" "}
                           {stockConfig.entry_point
                             ? `${Number(stockConfig.entry_point).toLocaleString()}원`
                             : "-"}
-                        </MKTypography>
-                        <MKTypography variant="caption" color="text">
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
                           손절:{" "}
                           {stockConfig.stop_loss
                             ? `${stockConfig.stop_loss}${
                                 stockConfig.trading_mode === "manual" ? "%" : "ATR"
                               }`
                             : "-"}
-                        </MKTypography>
-                        <MKTypography variant="caption" color="text">
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
                           익절:{" "}
                           {stockConfig.take_profit
                             ? `${stockConfig.take_profit}${
                                 stockConfig.trading_mode === "manual" ? "%" : "ATR"
                               }`
                             : "-"}
-                        </MKTypography>
-                        <MKTypography variant="caption" color="text">
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
                           피라미딩: {stockConfig.pyramiding_count || 0}회
-                        </MKTypography>
-                      </MKBox>
+                        </Typography>
+                      </Box>
                     )}
-                  </MKBox>
-                </MKBox>
+                  </Box>
+                </Box>
               </AccordionSummary>
 
               <AccordionDetails sx={{ backgroundColor: "#ffffff", position: "relative" }}>
                 {/* 우측 상단 컨트롤 영역 */}
                 {(stockConfig.trading_mode || stockConfig.stop_loss || stockConfig.take_profit) && (
-                  <MKBox
+                  <Box
                     sx={{
                       position: "absolute",
                       top: 16,
@@ -1049,10 +1049,10 @@ const AutotradingAccordion = ({
                     }}
                   >
                     {/* 활성화/비활성화 토글 */}
-                    <MKBox sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                      <MKTypography variant="caption" sx={{ fontSize: "0.75rem" }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                      <Typography variant="caption" sx={{ fontSize: "0.75rem" }}>
                         {stockConfig.is_active ? "ON" : "OFF"}
-                      </MKTypography>
+                      </Typography>
                       <Switch
                         checked={stockConfig.is_active}
                         onChange={() =>
@@ -1072,7 +1072,7 @@ const AutotradingAccordion = ({
                           },
                         }}
                       />
-                    </MKBox>
+                    </Box>
 
                     {/* 초기화 버튼 */}
                     <Tooltip title="설정 초기화">
@@ -1094,11 +1094,11 @@ const AutotradingAccordion = ({
                         <Refresh fontSize="small" />
                       </IconButton>
                     </Tooltip>
-                  </MKBox>
+                  </Box>
                 )}
 
                 {/* 매매 방식 선택 */}
-                <MKBox sx={{ mb: 3 }}>
+                <Box sx={{ mb: 3 }}>
                   <FormControl component="fieldset">
                     <RadioGroup
                       value={tradingMode}
@@ -1128,12 +1128,12 @@ const AutotradingAccordion = ({
                       />
                     </RadioGroup>
                   </FormControl>
-                </MKBox>
+                </Box>
 
                 {/* 설정 폼 */}
-                <MKBox sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                   {/* 진입시점 */}
-                  <MKBox sx={{ position: "relative" }}>
+                  <Box sx={{ position: "relative" }}>
                     <TextField
                       label="진입시점 (원)"
                       value={entryPoint}
@@ -1156,7 +1156,7 @@ const AutotradingAccordion = ({
                         },
                       }}
                     />
-                  </MKBox>
+                  </Box>
 
                   {/* 최대손실 */}
                   <TextField
@@ -1236,8 +1236,8 @@ const AutotradingAccordion = ({
                   />
 
                   {/* 피라미딩 설정 */}
-                  <MKBox>
-                    <MKBox
+                  <Box>
+                    <Box
                       sx={{
                         display: "flex",
                         justifyContent: "space-between",
@@ -1245,11 +1245,11 @@ const AutotradingAccordion = ({
                         mb: 1,
                       }}
                     >
-                      <MKTypography variant="subtitle2" fontWeight="bold">
+                      <Typography variant="subtitle2" fontWeight="bold">
                         피라미딩 설정
-                      </MKTypography>
-                      <MKBox sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                        <MKTypography
+                      </Typography>
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                        <Typography
                           variant="caption"
                           sx={{
                             color: Math.abs(positionSum - 100) >= 0.01 ? "#f44336" : "#4caf50",
@@ -1257,7 +1257,7 @@ const AutotradingAccordion = ({
                           }}
                         >
                           포지션 합계: {positionSum.toFixed(1)}%
-                        </MKTypography>
+                        </Typography>
                         <Button
                           variant="outlined"
                           size="small"
@@ -1277,12 +1277,12 @@ const AutotradingAccordion = ({
                         >
                           균등분할
                         </Button>
-                      </MKBox>
-                    </MKBox>
+                      </Box>
+                    </Box>
 
                     {/* 포지션 합계 경고 */}
                     {Math.abs(positionSum - 100) >= 0.01 && (
-                      <MKBox
+                      <Box
                         sx={{
                           p: 1,
                           bgcolor: "#fff3cd",
@@ -1291,13 +1291,13 @@ const AutotradingAccordion = ({
                           mb: 1,
                         }}
                       >
-                        <MKTypography
+                        <Typography
                           variant="caption"
                           sx={{ color: "#856404", fontWeight: "bold" }}
                         >
                           ⚠️ 포지션의 합이 100%가 되어야 합니다. (현재: {positionSum.toFixed(1)}%)
-                        </MKTypography>
-                      </MKBox>
+                        </Typography>
+                      </Box>
                     )}
 
                     {/* 1차 진입시점과 포지션 */}
@@ -1395,10 +1395,10 @@ const AutotradingAccordion = ({
                           </Grid>
                         </Grid>
                       ))}
-                  </MKBox>
+                  </Box>
 
                   {/* 실행 버튼 */}
-                  <MKBox sx={{ mt: 2, display: "flex", gap: 1 }}>
+                  <Box sx={{ mt: 2, display: "flex", gap: 1 }}>
                     <Button
                       variant="contained"
                       color="primary"
@@ -1448,14 +1448,14 @@ const AutotradingAccordion = ({
                         설정 삭제
                       </Button>
                     )}
-                  </MKBox>
-                </MKBox>
+                  </Box>
+                </Box>
               </AccordionDetails>
             </Accordion>
           ))}
-        </MKBox>
+        </Box>
       )}
-    </MKBox>
+    </Box>
   );
 };
 

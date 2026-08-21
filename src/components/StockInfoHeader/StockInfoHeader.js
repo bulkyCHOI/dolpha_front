@@ -4,8 +4,8 @@ import IconButton from "@mui/material/IconButton";
 import ArrowUpward from "@mui/icons-material/ArrowUpward";
 import ArrowDownward from "@mui/icons-material/ArrowDownward";
 import Assessment from "@mui/icons-material/Assessment";
-import MKBox from "components/MKBox";
-import MKTypography from "components/MKTypography";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 
 function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinancialModal }) {
   const getChangeRate = () => {
@@ -29,7 +29,7 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
   // HTF 정보 렌더링 함수 (삭제됨)
 
   return (
-    <MKBox
+    <Box
       sx={{
         background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
         borderRadius: { xs: 2, md: 1 },
@@ -40,18 +40,18 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
       }}
     >
       {/* 모바일: 간단한 카드 형태 */}
-      <MKBox sx={{ display: { xs: "block", md: "none" } }}>
-        <MKBox
+      <Box sx={{ display: { xs: "block", md: "none" } }}>
+        <Box
           sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}
         >
-          <MKBox>
-            <MKTypography variant="h6" color="white" fontWeight="bold">
+          <Box>
+            <Typography variant="h6" color="white.main" fontWeight="bold">
               {selectedStock.name || "-"}
-            </MKTypography>
-            <MKTypography variant="caption" color="white" sx={{ opacity: 0.9 }}>
+            </Typography>
+            <Typography variant="caption" color="white.main" sx={{ opacity: 0.9 }}>
               {selectedStock.code || "-"} • KOSPI
-            </MKTypography>
-          </MKBox>
+            </Typography>
+          </Box>
           <IconButton
             onClick={() => onOpenFinancialModal(selectedStock)}
             sx={{
@@ -65,22 +65,22 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
           >
             <Assessment sx={{ fontSize: "20px" }} />
           </IconButton>
-        </MKBox>
+        </Box>
 
-        <MKBox sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <MKBox>
-            <MKTypography variant="h5" color="white" fontWeight="bold">
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <Box>
+            <Typography variant="h5" color="white.main" fontWeight="bold">
               {ohlcvData && ohlcvData.length > 0
                 ? new Intl.NumberFormat("ko-KR").format(ohlcvData[ohlcvData.length - 1]?.close)
                 : "-"}
-            </MKTypography>
-            <MKTypography variant="caption" color="white" sx={{ opacity: 0.9 }}>
+            </Typography>
+            <Typography variant="caption" color="white.main" sx={{ opacity: 0.9 }}>
               종가
-            </MKTypography>
-          </MKBox>
+            </Typography>
+          </Box>
 
-          <MKBox sx={{ textAlign: "right" }}>
-            <MKBox
+          <Box sx={{ textAlign: "right" }}>
+            <Box
               sx={{ display: "flex", alignItems: "center", gap: 0.5, justifyContent: "flex-end" }}
             >
               {changeRate !== null &&
@@ -89,13 +89,13 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
                 ) : (
                   <ArrowDownward sx={{ fontSize: "16px", color: "white" }} />
                 ))}
-              <MKTypography variant="body1" color="white" fontWeight="bold">
+              <Typography variant="body1" color="white.main" fontWeight="bold">
                 {changeRate !== null
                   ? `${changeRate >= 0 ? "+" : ""}${changeRate.toFixed(2)}%`
                   : "-"}
-              </MKTypography>
-            </MKBox>
-            <MKTypography variant="caption" color="white" sx={{ opacity: 0.9 }}>
+              </Typography>
+            </Box>
+            <Typography variant="caption" color="white.main" sx={{ opacity: 0.9 }}>
               ATR:{" "}
               {analysisData &&
               analysisData.length > 0 &&
@@ -111,109 +111,109 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
                     return `${atr.toFixed(1)}${atrPercent ? ` (${atrPercent}%)` : ""}`;
                   })()
                 : "-"}
-            </MKTypography>
-          </MKBox>
-        </MKBox>
-      </MKBox>
+            </Typography>
+          </Box>
+        </Box>
+      </Box>
 
       {/* 데스크탑: 기존 Grid 레이아웃 */}
-      <MKBox sx={{ display: { xs: "none", md: "block" } }}>
+      <Box sx={{ display: { xs: "none", md: "block" } }}>
         <Grid container spacing={1} alignItems="center">
           {/* 종목명 & 코드 */}
           <Grid item xs={12} sm={1.6}>
-            <MKBox>
-              <MKTypography variant="caption" color="white" sx={{ fontSize: "0.7rem" }}>
+            <Box>
+              <Typography variant="caption" color="white.main" sx={{ fontSize: "0.7rem" }}>
                 종목명
-              </MKTypography>
-              <MKBox sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                <MKTypography
+              </Typography>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                <Typography
                   variant="body2"
                   fontWeight="bold"
-                  color="white"
+                  color="white.main"
                   sx={{ fontSize: "0.85rem", lineHeight: 1.2 }}
                 >
                   {selectedStock.name || "-"}
-                </MKTypography>
-                <MKTypography variant="caption" color="white" sx={{ fontSize: "0.65rem" }}>
+                </Typography>
+                <Typography variant="caption" color="white.main" sx={{ fontSize: "0.65rem" }}>
                   ({selectedStock.code || "-"})
-                </MKTypography>
-              </MKBox>
-            </MKBox>
+                </Typography>
+              </Box>
+            </Box>
           </Grid>
 
           {/* 마켓 정보 */}
           <Grid item xs={12} sm={1.6}>
-            <MKBox>
-              <MKTypography variant="caption" color="white" sx={{ fontSize: "0.7rem" }}>
+            <Box>
+              <Typography variant="caption" color="white.main" sx={{ fontSize: "0.7rem" }}>
                 마켓
-              </MKTypography>
-              <MKTypography
+              </Typography>
+              <Typography
                 variant="body2"
                 fontWeight="bold"
-                color="white"
+                color="white.main"
                 sx={{ fontSize: "0.85rem" }}
               >
                 KOSPI
-              </MKTypography>
-            </MKBox>
+              </Typography>
+            </Box>
           </Grid>
 
           {/* 종가 */}
           <Grid item xs={12} sm={1.6}>
-            <MKBox>
-              <MKTypography variant="caption" color="white" sx={{ fontSize: "0.7rem" }}>
+            <Box>
+              <Typography variant="caption" color="white.main" sx={{ fontSize: "0.7rem" }}>
                 종가
-              </MKTypography>
-              <MKTypography
+              </Typography>
+              <Typography
                 variant="body2"
                 fontWeight="bold"
-                color="white"
+                color="white.main"
                 sx={{ fontSize: "0.85rem" }}
               >
                 {ohlcvData && ohlcvData.length > 0
                   ? new Intl.NumberFormat("ko-KR").format(ohlcvData[ohlcvData.length - 1]?.close)
                   : "-"}
-              </MKTypography>
-            </MKBox>
+              </Typography>
+            </Box>
           </Grid>
 
           {/* 등락율 */}
           <Grid item xs={12} sm={1.6}>
-            <MKBox>
-              <MKTypography variant="caption" color="white" sx={{ fontSize: "0.7rem" }}>
+            <Box>
+              <Typography variant="caption" color="white.main" sx={{ fontSize: "0.7rem" }}>
                 등락율
-              </MKTypography>
-              <MKBox sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+              </Typography>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                 {changeRate !== null &&
                   (changeRate >= 0 ? (
                     <ArrowUpward sx={{ fontSize: "14px", color: "white" }} />
                   ) : (
                     <ArrowDownward sx={{ fontSize: "14px", color: "white" }} />
                   ))}
-                <MKTypography
+                <Typography
                   variant="body2"
                   fontWeight="bold"
-                  color="white"
+                  color="white.main"
                   sx={{ fontSize: "0.85rem" }}
                 >
                   {changeRate !== null
                     ? `${changeRate >= 0 ? "+" : ""}${changeRate.toFixed(2)}%`
                     : "-"}
-                </MKTypography>
-              </MKBox>
-            </MKBox>
+                </Typography>
+              </Box>
+            </Box>
           </Grid>
 
           {/* ATR */}
           <Grid item xs={12} sm={1.6}>
-            <MKBox>
-              <MKTypography variant="caption" color="white" sx={{ fontSize: "0.7rem" }}>
+            <Box>
+              <Typography variant="caption" color="white.main" sx={{ fontSize: "0.7rem" }}>
                 ATR
-              </MKTypography>
-              <MKTypography
+              </Typography>
+              <Typography
                 variant="body2"
                 fontWeight="bold"
-                color="white"
+                color="white.main"
                 sx={{ fontSize: "0.85rem" }}
               >
                 {analysisData &&
@@ -230,49 +230,49 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
                       return `${atr.toFixed(1)}${atrPercent ? ` (${atrPercent}%)` : ""}`;
                     })()
                   : "-"}
-              </MKTypography>
-            </MKBox>
+              </Typography>
+            </Box>
           </Grid>
 
           {/* 시가총액 */}
           <Grid item xs={12} sm={1.6}>
-            <MKBox>
-              <MKTypography variant="caption" color="white" sx={{ fontSize: "0.7rem" }}>
+            <Box>
+              <Typography variant="caption" color="white.main" sx={{ fontSize: "0.7rem" }}>
                 시가총액
-              </MKTypography>
-              <MKTypography
+              </Typography>
+              <Typography
                 variant="body2"
                 fontWeight="bold"
-                color="white"
+                color="white.main"
                 sx={{ fontSize: "0.85rem" }}
               >
                 {formatMarketCap(selectedStock.market_cap)}
-              </MKTypography>
-            </MKBox>
+              </Typography>
+            </Box>
           </Grid>
 
           {/* 영업이익율 */}
           <Grid item xs={12} sm={1.6}>
-            <MKBox>
-              <MKTypography variant="caption" color="white" sx={{ fontSize: "0.7rem" }}>
+            <Box>
+              <Typography variant="caption" color="white.main" sx={{ fontSize: "0.7rem" }}>
                 영업이익율
-              </MKTypography>
-              <MKTypography
+              </Typography>
+              <Typography
                 variant="body2"
                 fontWeight="bold"
-                color="white"
+                color="white.main"
                 sx={{ fontSize: "0.85rem" }}
               >
                 {selectedStock.영업이익율 != null && selectedStock.영업이익율 !== 0
                   ? `${selectedStock.영업이익율.toFixed(1)}%`
                   : "-"}
-              </MKTypography>
-            </MKBox>
+              </Typography>
+            </Box>
           </Grid>
 
           {/* 재무제표 버튼 */}
           <Grid item xs={12} sm={0.8}>
-            <MKBox
+            <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
@@ -294,11 +294,11 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
               >
                 <Assessment sx={{ fontSize: "18px" }} />
               </IconButton>
-            </MKBox>
+            </Box>
           </Grid>
         </Grid>
-      </MKBox>
-    </MKBox>
+      </Box>
+    </Box>
   );
 }
 

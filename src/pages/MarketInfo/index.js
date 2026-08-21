@@ -24,8 +24,6 @@ import CardContent from "@mui/material/CardContent";
 import Box from "@mui/material/Box";
 
 // Material Kit 2 React components
-import MKBox from "components/MKBox";
-import MKTypography from "components/MKTypography";
 
 // Enhanced components
 import FullWidthContainer from "components/FullWidthContainer";
@@ -201,14 +199,14 @@ function MarketInfo() {
         sticky
       />
 
-      <MKBox component="section" py={12}>
+      <Box component="section" py={12}>
         <FullWidthContainer>
           {/* 히트맵 섹션 */}
           <Grid container spacing={1} sx={{ mb: 2 }}>
             <Grid item xs={12} lg={12}>
-              <MKTypography variant="h2" color="dark" mb={1} textAlign="center">
+              <Typography variant="h2" color="text.primary" mb={1} textAlign="center">
                 시장 히트맵
-              </MKTypography>
+              </Typography>
             </Grid>
           </Grid>
 
@@ -221,7 +219,7 @@ function MarketInfo() {
                     variant="h5"
                     component="h2"
                     gutterBottom
-                    color="primary"
+                    color="primary.main"
                     textAlign="center"
                   >
                     S&P 500 히트맵
@@ -239,7 +237,7 @@ function MarketInfo() {
                     variant="h5"
                     component="h2"
                     gutterBottom
-                    color="primary"
+                    color="primary.main"
                     textAlign="center"
                   >
                     암호화폐 히트맵
@@ -252,9 +250,9 @@ function MarketInfo() {
 
           <Grid container spacing={1} sx={{ mb: 2 }}>
             <Grid item xs={12} lg={12}>
-              <MKTypography variant="h2" color="dark" mb={1} textAlign="center">
+              <Typography variant="h2" color="text.primary" mb={1} textAlign="center">
                 세계 주요 지수
-              </MKTypography>
+              </Typography>
             </Grid>
           </Grid>
 
@@ -267,7 +265,7 @@ function MarketInfo() {
                     variant="h5"
                     component="h2"
                     gutterBottom
-                    color="primary"
+                    color="primary.main"
                     textAlign="center"
                   >
                     S&P 500
@@ -285,7 +283,7 @@ function MarketInfo() {
                     variant="h5"
                     component="h2"
                     gutterBottom
-                    color="primary"
+                    color="primary.main"
                     textAlign="center"
                   >
                     NASDAQ
@@ -303,7 +301,7 @@ function MarketInfo() {
                     variant="h5"
                     component="h2"
                     gutterBottom
-                    color="primary"
+                    color="primary.main"
                     textAlign="center"
                   >
                     다우 산업
@@ -321,7 +319,7 @@ function MarketInfo() {
                     variant="h5"
                     component="h2"
                     gutterBottom
-                    color="primary"
+                    color="primary.main"
                     textAlign="center"
                   >
                     Nikkei 225
@@ -339,7 +337,7 @@ function MarketInfo() {
                     variant="h5"
                     component="h2"
                     gutterBottom
-                    color="primary"
+                    color="primary.main"
                     textAlign="center"
                   >
                     DAX
@@ -357,7 +355,7 @@ function MarketInfo() {
                     variant="h5"
                     component="h2"
                     gutterBottom
-                    color="primary"
+                    color="primary.main"
                     textAlign="center"
                   >
                     FTSE 100
@@ -368,11 +366,11 @@ function MarketInfo() {
             </Grid> */}
           </Grid>
         </FullWidthContainer>
-      </MKBox>
+      </Box>
 
-      <MKBox pt={6} px={1} mt={6}>
+      <Box pt={6} px={1} mt={6}>
         <DefaultFooter content={footerRoutes} />
-      </MKBox>
+      </Box>
     </>
   );
 }

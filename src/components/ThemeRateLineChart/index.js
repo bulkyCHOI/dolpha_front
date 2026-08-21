@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
-import MKTypography from "components/MKTypography";
+import Typography from "@mui/material/Typography";
 
 const MIN_PLOT_HEIGHT = 260;
 const PADDING = { top: 16, right: 16, bottom: 28, left: 46 };
@@ -173,9 +173,9 @@ function ThemeRateLineChart({ slots, themes, loading }) {
       >
         {(loading || isEmpty) && (
           <Box sx={{ position: "absolute", inset: 0, display: "grid", placeItems: "center" }}>
-            <MKTypography variant="body2" sx={{ color: MUTED, fontSize: 13 }}>
+            <Typography variant="body2" sx={{ color: MUTED, fontSize: 13 }}>
               {loading ? "불러오는 중…" : "표시할 등락률 데이터가 없습니다."}
-            </MKTypography>
+            </Typography>
           </Box>
         )}
 
@@ -359,9 +359,9 @@ function ThemeRateLineChart({ slots, themes, loading }) {
               }}
             >
               <Box sx={{ width: 10, height: 2.5, borderRadius: 1, bgcolor: s.color }} />
-              <MKTypography variant="caption" sx={{ fontSize: 11.5, color: "#37474f" }}>
+              <Typography variant="caption" sx={{ fontSize: 11.5, color: "#37474f" }}>
                 {s.name}
-              </MKTypography>
+              </Typography>
             </Box>
           );
         })}

@@ -21,8 +21,8 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 
 // Material Kit 2 React components
-import MKBox from "components/MKBox";
-import MKTypography from "components/MKTypography";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 
 // Material Kit 2 React examples
 import DefaultNavbar from "examples/Navbars/DefaultNavbar";
@@ -68,7 +68,7 @@ function MyPage() {
   return (
     <>
       <DefaultNavbar routes={routes} sticky />
-      <MKBox
+      <Box
         minHeight={{ xs: "25vh", md: "30vh" }}
         width="100%"
         sx={{
@@ -83,9 +83,9 @@ function MyPage() {
       >
         <Container>
           <Grid container item xs={12} lg={6} justifyContent="center" mx="auto">
-            <MKTypography
+            <Typography
               variant="h2"
-              color="white"
+              color="white.main"
               mb={0.5}
               sx={({ breakpoints, typography: { size } }) => ({
                 fontWeight: 700,
@@ -99,10 +99,10 @@ function MyPage() {
               })}
             >
               마이페이지
-            </MKTypography>
-            <MKTypography
+            </Typography>
+            <Typography
               variant="body2"
-              color="white"
+              color="white.main"
               textAlign="center"
               sx={{
                 fontSize: { xs: "0.85rem", md: "0.95rem" },
@@ -111,10 +111,10 @@ function MyPage() {
               }}
             >
               프로필 및 자동매매 설정 관리
-            </MKTypography>
+            </Typography>
           </Grid>
         </Container>
-      </MKBox>
+      </Box>
       <Card
         sx={{
           p: { xs: 2, sm: 3, md: 4 },
@@ -130,7 +130,7 @@ function MyPage() {
         <Container maxWidth="lg">
           <Grid container spacing={{ xs: 2, md: 4 }} justifyContent="center">
             <Grid item xs={12}>
-              <MKBox mb={{ xs: 3, md: 4 }}>
+              <Box mb={{ xs: 3, md: 4 }}>
                 <Tabs
                   value={activeTab}
                   onChange={handleTabChange}
@@ -165,15 +165,15 @@ function MyPage() {
                   <Tab label="프로필" />
                   <Tab label="자동매매 기본설정" />
                 </Tabs>
-              </MKBox>
-              <MKBox>{renderTabContent()}</MKBox>
+              </Box>
+              <Box>{renderTabContent()}</Box>
             </Grid>
           </Grid>
         </Container>
       </Card>
-      <MKBox pt={2} px={1} mt={2}>
+      <Box pt={2} px={1} mt={2}>
         <DefaultFooter content={footerRoutes} />
-      </MKBox>
+      </Box>
     </>
   );
 }

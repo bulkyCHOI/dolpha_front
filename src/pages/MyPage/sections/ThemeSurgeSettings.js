@@ -21,8 +21,7 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import WhatshotIcon from "@mui/icons-material/Whatshot";
 import { Link as RouterLink } from "react-router-dom";
 
-import MKBox from "components/MKBox";
-import MKTypography from "components/MKTypography";
+import Typography from "@mui/material/Typography";
 import ThemeSurgeExitSettings from "./ThemeSurgeExitSettings";
 
 const ACCENT = "#ef6c00";
@@ -35,9 +34,9 @@ const toWon = (eok) => Math.max(0, Math.round((eok || 0) * 100000000));
 function FieldLabel({ text, help }) {
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 0.5 }}>
-      <MKTypography variant="caption" fontWeight="bold" sx={{ color: "#344767" }}>
+      <Typography variant="caption" fontWeight="bold" sx={{ color: "#344767" }}>
         {text}
-      </MKTypography>
+      </Typography>
       <Tooltip title={help} arrow placement="top">
         <HelpOutlineIcon sx={{ fontSize: 14, color: "#b0bac5", cursor: "help" }} />
       </Tooltip>
@@ -55,7 +54,7 @@ function ThemeSurgeSettings({ defaults, onChange }) {
 
   return (
     <Card sx={{ borderRadius: 2, border: enabled ? `1px solid ${ACCENT}55` : "none" }}>
-      <MKBox p={2}>
+      <Box p={2}>
         <Box
           sx={{
             display: "flex",
@@ -80,13 +79,13 @@ function ThemeSurgeSettings({ defaults, onChange }) {
               <WhatshotIcon fontSize="small" />
             </Box>
             <Box>
-              <MKTypography variant="h6" fontWeight="bold">
+              <Typography variant="h6" fontWeight="bold">
                 급등테마주 자동매매
-              </MKTypography>
-              <MKTypography variant="caption" sx={{ color: MUTED }}>
+              </Typography>
+              <Typography variant="caption" sx={{ color: MUTED }}>
                 개장일 09:00~15:30, 토스증권 &apos;지금 뜨는 산업&apos;에서 급등 테마의 주도주를
                 자동 발굴
-              </MKTypography>
+              </Typography>
             </Box>
           </Box>
 
@@ -104,13 +103,13 @@ function ThemeSurgeSettings({ defaults, onChange }) {
               />
             }
             label={
-              <MKTypography
+              <Typography
                 variant="button"
                 fontWeight="bold"
                 sx={{ color: enabled ? ACCENT : MUTED }}
               >
                 {enabled ? "사용 중" : "사용 안 함"}
-              </MKTypography>
+              </Typography>
             }
             labelPlacement="start"
             sx={{ mr: 0 }}
@@ -195,16 +194,16 @@ function ThemeSurgeSettings({ defaults, onChange }) {
                     />
                   }
                   label={
-                    <MKTypography variant="button" sx={{ color: MUTED }}>
+                    <Typography variant="button" sx={{ color: MUTED }}>
                       {defaults.theme_surge_use_foreign_filter ? "사용" : "미사용"}
-                    </MKTypography>
+                    </Typography>
                   }
                   sx={{ mt: 0.5 }}
                 />
               </Grid>
             </Grid>
 
-            <MKTypography
+            <Typography
               variant="caption"
               sx={{ display: "block", mt: 2, color: MUTED, lineHeight: 1.6 }}
             >
@@ -219,12 +218,12 @@ function ThemeSurgeSettings({ defaults, onChange }) {
                 급등테마주 페이지
               </Box>
               에서 확인할 수 있습니다.
-            </MKTypography>
+            </Typography>
 
             <ThemeSurgeExitSettings defaults={defaults} onChange={onChange} />
           </Box>
         </Collapse>
-      </MKBox>
+      </Box>
     </Card>
   );
 }

@@ -19,7 +19,7 @@ import { forwardRef, createContext, useContext, useMemo } from "react";
 import PropTypes from "prop-types";
 
 // Material Kit 2 React components
-import MKBox from "components/MKBox";
+import Box from "@mui/material/Box";
 
 // Custom styles for MKPagination
 import MKPaginationItemRoot from "components/MKPagination/MKPaginationItemRoot";
@@ -55,14 +55,14 @@ const MKPagination = forwardRef(
             {children}
           </MKPaginationItemRoot>
         ) : (
-          <MKBox
+          <Box
             display="flex"
             justifyContent={placementValue}
             alignItems="center"
             sx={{ listStyle: "none" }}
           >
             {children}
-          </MKBox>
+          </Box>
         )}
       </Context.Provider>
     );

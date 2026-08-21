@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "contexts/AuthContext";
-import MKBox from "components/MKBox";
-import MKTypography from "components/MKTypography";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 
 function Logout() {
@@ -29,7 +29,7 @@ function Logout() {
   }, [logout, navigate, isAuthenticated]);
 
   return (
-    <MKBox
+    <Box
       component="section"
       position="relative"
       py={6}
@@ -43,7 +43,7 @@ function Logout() {
         backgroundColor: "#f8f9fa",
       }}
     >
-      <MKBox
+      <Box
         sx={{
           display: "flex",
           flexDirection: "column",
@@ -54,14 +54,14 @@ function Logout() {
         }}
       >
         <CircularProgress size={60} sx={{ color: "#667eea" }} />
-        <MKTypography variant="h4" color="text">
+        <Typography variant="h4" color="text.secondary">
           로그아웃 중...
-        </MKTypography>
-        <MKTypography variant="body1" color="text" sx={{ opacity: 0.7 }}>
+        </Typography>
+        <Typography variant="body1" color="text.secondary" sx={{ opacity: 0.7 }}>
           잠시 후 홈페이지로 이동합니다.
-        </MKTypography>
-      </MKBox>
-    </MKBox>
+        </Typography>
+      </Box>
+    </Box>
   );
 }
 

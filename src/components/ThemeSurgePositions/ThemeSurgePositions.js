@@ -10,7 +10,7 @@ import Skeleton from "@mui/material/Skeleton";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { Link as RouterLink } from "react-router-dom";
 
-import MKTypography from "components/MKTypography";
+import Typography from "@mui/material/Typography";
 
 const RISE = "#d32f2f";
 const FALL = "#1565c0";
@@ -48,12 +48,12 @@ function ConditionDots({ pullback, breakout, foreign }) {
               flexShrink: 0,
             }}
           />
-          <MKTypography
+          <Typography
             variant="caption"
             sx={{ fontSize: 11, color: ok ? OK : MUTED, fontWeight: ok ? 700 : 400 }}
           >
             {label}
-          </MKTypography>
+          </Typography>
         </Box>
       ))}
     </Box>
@@ -90,28 +90,28 @@ function PositionCard({ position: p }) {
       >
         <Box sx={{ minWidth: 0 }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, flexWrap: "wrap" }}>
-            <MKTypography variant="body2" fontWeight="bold" sx={{ fontSize: 15 }}>
+            <Typography variant="body2" fontWeight="bold" sx={{ fontSize: 15 }}>
               {p.stock_name}
-            </MKTypography>
+            </Typography>
             <ThemeBadge name={p.theme_name} />
           </Box>
-          <MKTypography variant="caption" sx={{ color: "#9aa5b1", fontSize: 11 }}>
+          <Typography variant="caption" sx={{ color: "#9aa5b1", fontSize: 11 }}>
             {p.stock_code} · {p.entry_count}/{p.max_entries}차 진입
             {p.entered_at ? ` · ${p.entered_at}` : ""}
-          </MKTypography>
+          </Typography>
         </Box>
         <Box sx={{ textAlign: "right", flexShrink: 0 }}>
-          <MKTypography
+          <Typography
             variant="h5"
             fontWeight="bold"
             sx={{ color: plColor(p.profit_loss_rate), lineHeight: 1.1 }}
           >
             {signedPct(p.profit_loss_rate)}
-          </MKTypography>
-          <MKTypography variant="caption" sx={{ color: plColor(p.profit_loss_rate), fontSize: 11 }}>
+          </Typography>
+          <Typography variant="caption" sx={{ color: plColor(p.profit_loss_rate), fontSize: 11 }}>
             {p.profit_loss_amount >= 0 ? "+" : ""}
             {won(p.profit_loss_amount)}원
-          </MKTypography>
+          </Typography>
         </Box>
       </Box>
 
@@ -119,46 +119,46 @@ function PositionCard({ position: p }) {
 
       <Grid container spacing={1}>
         <Grid item xs={6}>
-          <MKTypography variant="caption" sx={{ color: MUTED, fontSize: 11, display: "block" }}>
+          <Typography variant="caption" sx={{ color: MUTED, fontSize: 11, display: "block" }}>
             평단 → 현재가
-          </MKTypography>
-          <MKTypography variant="button" sx={{ fontSize: 13 }}>
+          </Typography>
+          <Typography variant="button" sx={{ fontSize: 13 }}>
             {won(p.avg_price)} → <strong>{won(p.current_price)}</strong>
-          </MKTypography>
+          </Typography>
         </Grid>
         <Grid item xs={6}>
-          <MKTypography variant="caption" sx={{ color: MUTED, fontSize: 11, display: "block" }}>
+          <Typography variant="caption" sx={{ color: MUTED, fontSize: 11, display: "block" }}>
             수량
-          </MKTypography>
-          <MKTypography variant="button" sx={{ fontSize: 13 }}>
+          </Typography>
+          <Typography variant="button" sx={{ fontSize: 13 }}>
             {won(p.quantity)}주
-          </MKTypography>
+          </Typography>
         </Grid>
         <Grid item xs={6}>
-          <MKTypography variant="caption" sx={{ color: MUTED, fontSize: 11, display: "block" }}>
+          <Typography variant="caption" sx={{ color: MUTED, fontSize: 11, display: "block" }}>
             손절가
-          </MKTypography>
-          <MKTypography variant="button" sx={{ fontSize: 13, color: FALL }}>
+          </Typography>
+          <Typography variant="button" sx={{ fontSize: 13, color: FALL }}>
             {p.stop_price ? won(p.stop_price) : "—"}
-          </MKTypography>
+          </Typography>
         </Grid>
         <Grid item xs={6}>
-          <MKTypography variant="caption" sx={{ color: MUTED, fontSize: 11, display: "block" }}>
+          <Typography variant="caption" sx={{ color: MUTED, fontSize: 11, display: "block" }}>
             목표가
-          </MKTypography>
-          <MKTypography variant="button" sx={{ fontSize: 13, color: RISE }}>
+          </Typography>
+          <Typography variant="button" sx={{ fontSize: 13, color: RISE }}>
             {p.target_price ? won(p.target_price) : "—"}
-          </MKTypography>
+          </Typography>
         </Grid>
       </Grid>
 
       {p.entry_reason && (
-        <MKTypography
+        <Typography
           variant="caption"
           sx={{ display: "block", mt: 1.25, color: MUTED, fontSize: 11, lineHeight: 1.5 }}
         >
           진입 근거 · {p.entry_reason}
-        </MKTypography>
+        </Typography>
       )}
 
       <Box
@@ -194,15 +194,15 @@ function WatchingCard({ item: w }) {
       >
         <Box sx={{ minWidth: 0 }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, flexWrap: "wrap" }}>
-            <MKTypography variant="body2" fontWeight="bold" sx={{ fontSize: 14 }}>
+            <Typography variant="body2" fontWeight="bold" sx={{ fontSize: 14 }}>
               {w.stock_name}
-            </MKTypography>
+            </Typography>
             <ThemeBadge name={w.theme_name} />
           </Box>
-          <MKTypography variant="caption" sx={{ color: "#9aa5b1", fontSize: 11 }}>
+          <Typography variant="caption" sx={{ color: "#9aa5b1", fontSize: 11 }}>
             {w.stock_code}
             {w.checked_at ? ` · ${w.checked_at} 판정` : ""}
-          </MKTypography>
+          </Typography>
         </Box>
         <Chip
           size="small"
@@ -225,12 +225,12 @@ function WatchingCard({ item: w }) {
         />
       </Box>
 
-      <MKTypography
+      <Typography
         variant="caption"
         sx={{ display: "block", mt: 1, color: MUTED, fontSize: 11, lineHeight: 1.5 }}
       >
         {w.last_reason}
-      </MKTypography>
+      </Typography>
     </Card>
   );
 }
@@ -275,12 +275,12 @@ function ThemeSurgePositions({ positions, watching, summary, loading, error, isA
   if (isEmpty) {
     return (
       <Card sx={{ ...cardSx, mb: 2, py: 3, textAlign: "center" }}>
-        <MKTypography variant="body2" sx={{ color: MUTED }}>
+        <Typography variant="body2" sx={{ color: MUTED }}>
           현재 급등테마주 전략으로 추적 중인 종목이 없습니다.
-        </MKTypography>
-        <MKTypography variant="caption" sx={{ color: "#9aa5b1" }}>
+        </Typography>
+        <Typography variant="caption" sx={{ color: "#9aa5b1" }}>
           마이페이지에서 급등테마주 자동매매를 켜면 장중 급등 테마의 주도주가 자동으로 등록됩니다.
-        </MKTypography>
+        </Typography>
       </Card>
     );
   }
@@ -290,19 +290,19 @@ function ThemeSurgePositions({ positions, watching, summary, loading, error, isA
       {positions.length > 0 && (
         <>
           <Box sx={{ display: "flex", alignItems: "baseline", gap: 1, mb: 1 }}>
-            <MKTypography variant="h6" fontWeight="bold" sx={{ fontSize: 15 }}>
+            <Typography variant="h6" fontWeight="bold" sx={{ fontSize: 15 }}>
               보유 포지션
-            </MKTypography>
-            <MKTypography variant="caption" sx={{ color: MUTED }}>
+            </Typography>
+            <Typography variant="caption" sx={{ color: MUTED }}>
               {summary.position_count}종목
-            </MKTypography>
-            <MKTypography
+            </Typography>
+            <Typography
               variant="button"
               sx={{ fontSize: 13, fontWeight: 700, color: plColor(summary.total_profit_rate) }}
             >
               {signedPct(summary.total_profit_rate)} ({summary.total_profit_loss >= 0 ? "+" : ""}
               {won(summary.total_profit_loss)}원)
-            </MKTypography>
+            </Typography>
           </Box>
           <Grid container spacing={2} sx={{ mb: watching.length > 0 ? 2.5 : 0 }}>
             {positions.map((p) => (
@@ -317,13 +317,13 @@ function ThemeSurgePositions({ positions, watching, summary, loading, error, isA
       {watching.length > 0 && (
         <>
           <Box sx={{ display: "flex", alignItems: "baseline", gap: 1, mb: 1 }}>
-            <MKTypography variant="h6" fontWeight="bold" sx={{ fontSize: 15 }}>
+            <Typography variant="h6" fontWeight="bold" sx={{ fontSize: 15 }}>
               진입 대기
-            </MKTypography>
-            <MKTypography variant="caption" sx={{ color: MUTED }}>
+            </Typography>
+            <Typography variant="caption" sx={{ color: MUTED }}>
               {summary.watching_count}종목 · 눌림목 → 전고점 돌파 → 외국인 매수세 3조건이 모두
               갖춰지면 매수합니다
-            </MKTypography>
+            </Typography>
           </Box>
           <Grid container spacing={2}>
             {watching.map((w) => (

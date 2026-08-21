@@ -17,8 +17,7 @@ import { useTheme } from "@mui/material/styles";
 import { useAuth } from "contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-import MKBox from "components/MKBox";
-import MKTypography from "components/MKTypography";
+import Typography from "@mui/material/Typography";
 import DefaultNavbar from "examples/Navbars/DefaultNavbar";
 import routes from "routes";
 
@@ -183,8 +182,8 @@ function MTT() {
 
   // 모바일 종목 탭 렌더링
   const renderMobileStockTab = () => (
-    <MKBox sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
-      <MKBox
+    <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
+      <Box
         sx={{
           backgroundColor: "white",
           borderRadius: 2,
@@ -195,12 +194,12 @@ function MTT() {
           overflow: "hidden",
         }}
       >
-        <MKBox sx={{ px: 2, py: 1.5, borderBottom: "1px solid #e0e0e0" }}>
-          <MKTypography variant="h6" fontWeight="bold">
+        <Box sx={{ px: 2, py: 1.5, borderBottom: "1px solid #e0e0e0" }}>
+          <Typography variant="h6" fontWeight="bold">
             종목 선택
-          </MKTypography>
-        </MKBox>
-        <MKBox sx={{ flex: 1, overflow: "auto" }}>
+          </Typography>
+        </Box>
+        <Box sx={{ flex: 1, overflow: "auto" }}>
           <StockList
             stocks={stockData}
             loading={loading}
@@ -212,15 +211,15 @@ function MTT() {
               setMobileTab(1);
             }}
           />
-        </MKBox>
-      </MKBox>
-    </MKBox>
+        </Box>
+      </Box>
+    </Box>
   );
 
   // 모바일 차트 탭 렌더링
   const renderMobileChartTab = () => (
-    <MKBox sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
-      <MKBox
+    <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
+      <Box
         sx={{
           backgroundColor: "white",
           borderRadius: 2,
@@ -231,7 +230,7 @@ function MTT() {
           overflow: "hidden",
         }}
       >
-        <MKBox
+        <Box
           sx={{
             flex: 1,
             overflow: "auto",
@@ -250,7 +249,7 @@ function MTT() {
           }}
         >
           {!selectedStock && (
-            <MKBox
+            <Box
               sx={{
                 display: "flex",
                 alignItems: "center",
@@ -261,7 +260,7 @@ function MTT() {
                 p: 2,
               }}
             >
-              <MKBox
+              <Box
                 sx={{
                   width: 64,
                   height: 64,
@@ -273,13 +272,13 @@ function MTT() {
                   mb: 2,
                 }}
               >
-                <MKTypography variant="h4" color="white">
+                <Typography variant="h4" color="white.main">
                   📈
-                </MKTypography>
-              </MKBox>
-              <MKTypography variant="h6" color="text" textAlign="center">
+                </Typography>
+              </Box>
+              <Typography variant="h6" color="text.secondary" textAlign="center">
                 종목을 선택하세요
-              </MKTypography>
+              </Typography>
               <Button
                 variant="contained"
                 color="primary"
@@ -288,11 +287,11 @@ function MTT() {
               >
                 종목 선택하기
               </Button>
-            </MKBox>
+            </Box>
           )}
 
           {selectedStock && (
-            <MKBox sx={{ p: 2 }}>
+            <Box sx={{ p: 2 }}>
               <StockInfoHeader
                 selectedStock={selectedStock}
                 ohlcvData={ohlcvData}
@@ -316,17 +315,17 @@ function MTT() {
                 onShowSnackbar={showSnackbar}
                 chartType="mtt"
               />
-            </MKBox>
+            </Box>
           )}
-        </MKBox>
-      </MKBox>
-    </MKBox>
+        </Box>
+      </Box>
+    </Box>
   );
 
   // 모바일 자동매매 탭 렌더링
   const renderMobileAutotradingTab = () => (
-    <MKBox sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
-      <MKBox
+    <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
+      <Box
         sx={{
           backgroundColor: "white",
           borderRadius: 2,
@@ -337,19 +336,19 @@ function MTT() {
           overflow: "hidden",
         }}
       >
-        <MKBox sx={{ px: 2, py: 1.5, borderBottom: "1px solid #e0e0e0" }}>
-          <MKTypography variant="h6" fontWeight="bold">
+        <Box sx={{ px: 2, py: 1.5, borderBottom: "1px solid #e0e0e0" }}>
+          <Typography variant="h6" fontWeight="bold">
             자동매매 설정
-          </MKTypography>
+          </Typography>
           {selectedStock && (
-            <MKTypography variant="body2" sx={{ color: "text.secondary" }}>
+            <Typography variant="body2" sx={{ color: "text.secondary" }}>
               {selectedStock.name} ({selectedStock.code})
-            </MKTypography>
+            </Typography>
           )}
-        </MKBox>
-        <MKBox sx={{ flex: 1, overflow: "auto", p: 2 }}>
+        </Box>
+        <Box sx={{ flex: 1, overflow: "auto", p: 2 }}>
           {!selectedStock ? (
-            <MKBox
+            <Box
               sx={{
                 display: "flex",
                 alignItems: "center",
@@ -359,13 +358,13 @@ function MTT() {
                 gap: 2,
               }}
             >
-              <MKTypography variant="h6" color="text" textAlign="center">
+              <Typography variant="h6" color="text.secondary" textAlign="center">
                 종목을 선택하세요
-              </MKTypography>
+              </Typography>
               <Button variant="contained" color="primary" onClick={() => setMobileTab(0)}>
                 종목 선택하기
               </Button>
-            </MKBox>
+            </Box>
           ) : (
             <AutotradingAccordion
               selectedStock={selectedStock}
@@ -382,9 +381,9 @@ function MTT() {
               strategyType="mtt"
             />
           )}
-        </MKBox>
-      </MKBox>
-    </MKBox>
+        </Box>
+      </Box>
+    </Box>
   );
 
   return (
@@ -509,7 +508,7 @@ function MTT() {
                 order: { xs: 1, md: 1 },
               }}
             >
-              <MKBox
+              <Box
                 sx={{
                   backgroundColor: "white",
                   borderRadius: 2,
@@ -521,7 +520,7 @@ function MTT() {
                 }}
               >
                 {/* 스크롤 가능한 차트 영역 */}
-                <MKBox
+                <Box
                   sx={{
                     flex: 1,
                     overflow: "auto",
@@ -544,7 +543,7 @@ function MTT() {
                   }}
                 >
                   {!selectedStock && (
-                    <MKBox
+                    <Box
                       sx={{
                         display: "flex",
                         alignItems: "center",
@@ -555,7 +554,7 @@ function MTT() {
                         p: 2,
                       }}
                     >
-                      <MKBox
+                      <Box
                         sx={{
                           width: 64,
                           height: 64,
@@ -567,23 +566,23 @@ function MTT() {
                           mb: 2,
                         }}
                       >
-                        <MKTypography variant="h4" color="white">
+                        <Typography variant="h4" color="white.main">
                           📈
-                        </MKTypography>
-                      </MKBox>
-                      <MKTypography variant="h6" color="text" textAlign="center">
+                        </Typography>
+                      </Box>
+                      <Typography variant="h6" color="text.secondary" textAlign="center">
                         종목을 선택하세요
-                      </MKTypography>
-                      <MKTypography variant="body2" color="text" textAlign="center">
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary" textAlign="center">
                         오른쪽 목록에서 종목을 클릭하면
                         <br />
                         캔들스틱 차트가 표시됩니다
-                      </MKTypography>
-                    </MKBox>
+                      </Typography>
+                    </Box>
                   )}
 
                   {selectedStock && (
-                    <MKBox sx={{ p: { xs: 1, md: 2 } }}>
+                    <Box sx={{ p: { xs: 1, md: 2 } }}>
                       {/* 스크롤 영역 안의 종목 정보 헤더 */}
                       <StockInfoHeader
                         selectedStock={selectedStock}
@@ -610,10 +609,10 @@ function MTT() {
                         onShowSnackbar={showSnackbar}
                         chartType="mtt"
                       />
-                    </MKBox>
+                    </Box>
                   )}
-                </MKBox>
-              </MKBox>
+                </Box>
+              </Box>
             </Grid>
 
             {/* 오른쪽 종목 목록 */}
@@ -629,7 +628,7 @@ function MTT() {
                 order: { xs: 2, md: 2 },
               }}
             >
-              <MKBox
+              <Box
                 sx={{
                   backgroundColor: "white",
                   borderRadius: 2,
@@ -641,7 +640,7 @@ function MTT() {
                 }}
               >
                 {/* 탭 헤더 */}
-                <MKBox sx={{ flexShrink: 0, borderBottom: "1px solid #e0e0e0" }}>
+                <Box sx={{ flexShrink: 0, borderBottom: "1px solid #e0e0e0" }}>
                   <Tabs
                     value={activeTab}
                     onChange={handleTabChange}
@@ -667,10 +666,10 @@ function MTT() {
                     <Tab label="투자목록" />
                     <Tab label="자동매매" />
                   </Tabs>
-                </MKBox>
+                </Box>
 
                 {loading && (
-                  <MKBox
+                  <Box
                     sx={{
                       flex: 1,
                       display: "flex",
@@ -679,11 +678,11 @@ function MTT() {
                     }}
                   >
                     <CircularProgress />
-                  </MKBox>
+                  </Box>
                 )}
 
                 {error && (
-                  <MKBox
+                  <Box
                     sx={{
                       flex: 1,
                       display: "flex",
@@ -691,10 +690,10 @@ function MTT() {
                       justifyContent: "center",
                     }}
                   >
-                    <MKTypography color="error">
+                    <Typography color="error.main">
                       데이터 로드 중 오류가 발생했습니다: {error}
-                    </MKTypography>
-                  </MKBox>
+                    </Typography>
+                  </Box>
                 )}
 
                 {!loading && !error && stockData.length > 0 && (
@@ -703,7 +702,7 @@ function MTT() {
                     {activeTab === 0 && (
                       <>
                         {/* 테이블 헤더 */}
-                        <MKBox
+                        <Box
                           sx={{
                             background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
                             p: 1,
@@ -715,64 +714,64 @@ function MTT() {
                         >
                           <Grid container spacing={0}>
                             <Grid item xs={3.5} sm={3}>
-                              <MKTypography
+                              <Typography
                                 variant="subtitle2"
-                                color="white"
+                                color="white.main"
                                 fontWeight="bold"
                                 sx={{ fontSize: { xs: "0.7rem", md: "0.875rem" } }}
                               >
                                 종목명
-                              </MKTypography>
+                              </Typography>
                             </Grid>
                             <Grid item xs={1.5} sm={2}>
-                              <MKTypography
+                              <Typography
                                 variant="subtitle2"
-                                color="white"
+                                color="white.main"
                                 fontWeight="bold"
                                 textAlign="center"
                                 sx={{ fontSize: { xs: "0.7rem", md: "0.875rem" } }}
                               >
                                 RS
-                              </MKTypography>
+                              </Typography>
                             </Grid>
                             <Grid item xs={2} sm={2}>
-                              <MKTypography
+                              <Typography
                                 variant="subtitle2"
-                                color="white"
+                                color="white.main"
                                 fontWeight="bold"
                                 textAlign="center"
                                 sx={{ fontSize: { xs: "0.65rem", md: "0.8rem" } }}
                               >
                                 MTT일수
-                              </MKTypography>
+                              </Typography>
                             </Grid>
                             <Grid item xs={2.5} sm={2.5}>
-                              <MKTypography
+                              <Typography
                                 variant="subtitle2"
-                                color="white"
+                                color="white.main"
                                 fontWeight="bold"
                                 textAlign="center"
                                 sx={{ fontSize: { xs: "0.7rem", md: "0.875rem" } }}
                               >
                                 매출
-                              </MKTypography>
+                              </Typography>
                             </Grid>
                             <Grid item xs={2.5} sm={2.5}>
-                              <MKTypography
+                              <Typography
                                 variant="subtitle2"
-                                color="white"
+                                color="white.main"
                                 fontWeight="bold"
                                 textAlign="center"
                                 sx={{ fontSize: { xs: "0.7rem", md: "0.875rem" } }}
                               >
                                 영업익
-                              </MKTypography>
+                              </Typography>
                             </Grid>
                           </Grid>
-                        </MKBox>
+                        </Box>
 
                         {/* 스크롤 가능한 테이블 바디 */}
-                        <MKBox
+                        <Box
                           sx={{
                             flex: 1,
                             overflow: "auto",
@@ -794,7 +793,7 @@ function MTT() {
                           }}
                         >
                           {stockData.map((row, rowIndex) => (
-                            <MKBox
+                            <Box
                               key={row.code || rowIndex}
                               onClick={() => handleStockClick(row)}
                               sx={{
@@ -823,8 +822,8 @@ function MTT() {
                             >
                               <Grid container spacing={0} alignItems="center">
                                 <Grid item xs={3.5} sm={3}>
-                                  <MKBox>
-                                    <MKTypography
+                                  <Box>
+                                    <Typography
                                       variant="body2"
                                       fontWeight={
                                         selectedStock?.code === row.code ? "bold" : "medium"
@@ -839,21 +838,21 @@ function MTT() {
                                       }}
                                     >
                                       {row.name || "-"}
-                                    </MKTypography>
-                                    <MKTypography
+                                    </Typography>
+                                    <Typography
                                       variant="caption"
-                                      color="text"
+                                      color="text.secondary"
                                       sx={{
                                         fontSize: { xs: "0.6rem", md: "0.7rem" },
                                         display: { xs: "none", sm: "block" },
                                       }}
                                     >
                                       {row.code || ""}
-                                    </MKTypography>
-                                  </MKBox>
+                                    </Typography>
+                                  </Box>
                                 </Grid>
                                 <Grid item xs={1.5} sm={2}>
-                                  <MKBox display="flex" justifyContent="center">
+                                  <Box display="flex" justifyContent="center">
                                     <Chip
                                       label={Math.floor(row.rsRank) || "-"}
                                       size="small"
@@ -884,10 +883,10 @@ function MTT() {
                                         },
                                       }}
                                     />
-                                  </MKBox>
+                                  </Box>
                                 </Grid>
                                 <Grid item xs={2} sm={2}>
-                                  <MKBox display="flex" justifyContent="center" alignItems="center">
+                                  <Box display="flex" justifyContent="center" alignItems="center">
                                     <Chip
                                       label={`${row.mtt_duration_days || 0}일`}
                                       size="small"
@@ -907,11 +906,11 @@ function MTT() {
                                         height: { xs: "28px", md: "20px" },
                                       }}
                                     />
-                                  </MKBox>
+                                  </Box>
                                 </Grid>
                                 <Grid item xs={2.5} sm={2.5}>
-                                  <MKBox display="flex" justifyContent="center" alignItems="center">
-                                    <MKTypography
+                                  <Box display="flex" justifyContent="center" alignItems="center">
+                                    <Typography
                                       variant="body2"
                                       textAlign="center"
                                       color={row["당기매출"] < 0 ? "info" : "text"}
@@ -923,12 +922,12 @@ function MTT() {
                                       }}
                                     >
                                       {formatNumber(row["당기매출"]) || "0"}
-                                    </MKTypography>
-                                  </MKBox>
+                                    </Typography>
+                                  </Box>
                                 </Grid>
                                 <Grid item xs={2.5} sm={2.5}>
-                                  <MKBox display="flex" justifyContent="center" alignItems="center">
-                                    <MKTypography
+                                  <Box display="flex" justifyContent="center" alignItems="center">
+                                    <Typography
                                       variant="body2"
                                       textAlign="center"
                                       color={row["당기영업이익"] < 0 ? "info" : "text"}
@@ -940,19 +939,19 @@ function MTT() {
                                       }}
                                     >
                                       {formatNumber(row["당기영업이익"]) || "0"}
-                                    </MKTypography>
-                                  </MKBox>
+                                    </Typography>
+                                  </Box>
                                 </Grid>
                               </Grid>
-                            </MKBox>
+                            </Box>
                           ))}
-                        </MKBox>
+                        </Box>
                       </>
                     )}
 
                     {/* 자동매매 탭 내용 */}
                     {activeTab === 1 && (
-                      <MKBox
+                      <Box
                         sx={{
                           flex: 1,
                           overflow: "auto",
@@ -974,7 +973,7 @@ function MTT() {
                         }}
                       >
                         {!isAuthenticated ? (
-                          <MKBox
+                          <Box
                             sx={{
                               display: "flex",
                               flexDirection: "column",
@@ -984,12 +983,12 @@ function MTT() {
                               textAlign: "center",
                             }}
                           >
-                            <MKTypography variant="h5" sx={{ mb: 2, color: "#666" }}>
+                            <Typography variant="h5" sx={{ mb: 2, color: "#666" }}>
                               로그인이 필요합니다
-                            </MKTypography>
-                            <MKTypography variant="body1" sx={{ mb: 3, color: "#888" }}>
+                            </Typography>
+                            <Typography variant="body1" sx={{ mb: 3, color: "#888" }}>
                               자동매매 기능을 사용하려면 Google 로그인이 필요합니다.
-                            </MKTypography>
+                            </Typography>
                             <Button
                               variant="contained"
                               color="primary"
@@ -1006,11 +1005,11 @@ function MTT() {
                             >
                               로그인 하러 가기
                             </Button>
-                          </MKBox>
+                          </Box>
                         ) : (
                           <>
                             {/* 종목별 자동매매 설정 아코디언 */}
-                            <MKBox>
+                            <Box>
                               <AutotradingAccordion
                                 autotradingList={autotradingList}
                                 expandedAccordion={expandedAccordion}
@@ -1025,14 +1024,14 @@ function MTT() {
                                 tradingForm={tradingForm}
                                 strategyType="mtt"
                               />
-                            </MKBox>
+                            </Box>
                           </>
                         )}
-                      </MKBox>
+                      </Box>
                     )}
 
                     {!loading && !error && stockData.length === 0 && (
-                      <MKBox
+                      <Box
                         sx={{
                           flex: 1,
                           display: "flex",
@@ -1040,12 +1039,12 @@ function MTT() {
                           justifyContent: "center",
                         }}
                       >
-                        <MKTypography color="text">데이터가 없습니다.</MKTypography>
-                      </MKBox>
+                        <Typography color="text.secondary">데이터가 없습니다.</Typography>
+                      </Box>
                     )}
                   </>
                 )}
-              </MKBox>
+              </Box>
             </Grid>
           </Grid>
         </Box>

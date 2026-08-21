@@ -48,8 +48,7 @@ import EnhancedDataTable from "components/EnhancedDataTable";
 import ResponsiveTableWrapper from "components/ResponsiveTableWrapper";
 
 // Material Kit 2 React components
-import MKBox from "components/MKBox";
-import MKTypography from "components/MKTypography";
+import Typography from "@mui/material/Typography";
 import MKButton from "components/MKButton";
 
 // Material Kit 2 React examples
@@ -179,12 +178,12 @@ export default function TradingReviews() {
       minWidth: "150px",
       cell: (row) => (
         <Box>
-          <MKTypography variant="body2" fontWeight="bold" color="dark" sx={{ lineHeight: 1.2 }}>
+          <Typography variant="body2" fontWeight="bold" color="text.primary" sx={{ lineHeight: 1.2 }}>
             {row.stock_name}
-          </MKTypography>
-          <MKTypography variant="caption" color="text" opacity={0.7} sx={{ lineHeight: 1 }}>
+          </Typography>
+          <Typography variant="caption" color="text.secondary" opacity={0.7} sx={{ lineHeight: 1 }}>
             {row.stock_code}
-          </MKTypography>
+          </Typography>
         </Box>
       ),
     },
@@ -238,9 +237,9 @@ export default function TradingReviews() {
       sortable: true,
       minWidth: "110px",
       cell: (row) => (
-        <MKTypography variant="body2" sx={{ fontSize: "0.8rem" }}>
+        <Typography variant="body2" sx={{ fontSize: "0.8rem" }}>
           {formatDate(row.first_entry_date)}
-        </MKTypography>
+        </Typography>
       ),
     },
     {
@@ -249,9 +248,9 @@ export default function TradingReviews() {
       sortable: true,
       minWidth: "110px",
       cell: (row) => (
-        <MKTypography variant="body2" sx={{ fontSize: "0.8rem" }}>
+        <Typography variant="body2" sx={{ fontSize: "0.8rem" }}>
           {formatDate(row.last_exit_date)}
-        </MKTypography>
+        </Typography>
       ),
     },
     {
@@ -260,9 +259,9 @@ export default function TradingReviews() {
       sortable: true,
       minWidth: "80px",
       cell: (row) => (
-        <MKTypography variant="body2" sx={{ fontSize: "0.8rem" }}>
+        <Typography variant="body2" sx={{ fontSize: "0.8rem" }}>
           {row.holding_days ? `${row.holding_days.toFixed(1)}일` : "-"}
-        </MKTypography>
+        </Typography>
       ),
     },
     {
@@ -271,9 +270,9 @@ export default function TradingReviews() {
       sortable: true,
       minWidth: "130px",
       cell: (row) => (
-        <MKTypography variant="body2" color="info" sx={{ fontSize: "0.8rem", fontWeight: "bold" }}>
+        <Typography variant="body2" color="info.main" sx={{ fontSize: "0.8rem", fontWeight: "bold" }}>
           {formatCurrency(row.total_buy_amount)}원
-        </MKTypography>
+        </Typography>
       ),
     },
     {
@@ -282,9 +281,9 @@ export default function TradingReviews() {
       sortable: true,
       minWidth: "130px",
       cell: (row) => (
-        <MKTypography variant="body2" color="warning" sx={{ fontSize: "0.8rem", fontWeight: "bold" }}>
+        <Typography variant="body2" color="warning.main" sx={{ fontSize: "0.8rem", fontWeight: "bold" }}>
           {formatCurrency(row.total_sell_amount)}원
-        </MKTypography>
+        </Typography>
       ),
     },
     {
@@ -301,14 +300,14 @@ export default function TradingReviews() {
             ) : (
               <TrendingDownIcon sx={{ fontSize: "16px", color: "error.main" }} />
             )}
-            <MKTypography
+            <Typography
               variant="body2"
               color={isProfit ? "success" : "error"}
               sx={{ fontSize: "0.8rem", fontWeight: "bold" }}
             >
               {isProfit ? "+" : ""}
               {formatCurrency(row.total_profit_loss)}원
-            </MKTypography>
+            </Typography>
           </Box>
         );
       },
@@ -321,14 +320,14 @@ export default function TradingReviews() {
       cell: (row) => {
         const isProfit = row.profit_loss_percent >= 0;
         return (
-          <MKTypography
+          <Typography
             variant="body2"
             color={isProfit ? "success" : "error"}
             sx={{ fontSize: "0.8rem", fontWeight: "bold" }}
           >
             {isProfit ? "+" : ""}
             {formatPercent(row.profit_loss_percent)}
-          </MKTypography>
+          </Typography>
         );
       },
     },
@@ -338,13 +337,13 @@ export default function TradingReviews() {
       sortable: true,
       minWidth: "90px",
       cell: (row) => (
-        <MKTypography
+        <Typography
           variant="body2"
           color={row.max_drawdown ? "error" : "text"}
           sx={{ fontSize: "0.8rem" }}
         >
           {row.max_drawdown ? formatPercent(row.max_drawdown) : "-"}
-        </MKTypography>
+        </Typography>
       ),
     },
     {
@@ -353,13 +352,13 @@ export default function TradingReviews() {
       sortable: true,
       minWidth: "90px",
       cell: (row) => (
-        <MKTypography
+        <Typography
           variant="body2"
           color={row.max_profit_percent ? "success" : "text"}
           sx={{ fontSize: "0.8rem" }}
         >
           {row.max_profit_percent ? formatPercent(row.max_profit_percent) : "-"}
-        </MKTypography>
+        </Typography>
       ),
     },
     {
@@ -369,16 +368,16 @@ export default function TradingReviews() {
       minWidth: "90px",
       cell: (row) => (
         <Box>
-          <MKTypography variant="body2" sx={{ fontSize: "0.8rem", lineHeight: 1.2 }}>
+          <Typography variant="body2" sx={{ fontSize: "0.8rem", lineHeight: 1.2 }}>
             <span style={{ color: "#2196f3", fontWeight: "bold" }}>
               진입 {row.entry_count}회
             </span>
-          </MKTypography>
-          <MKTypography variant="caption" sx={{ fontSize: "0.7rem", lineHeight: 1.2 }}>
+          </Typography>
+          <Typography variant="caption" sx={{ fontSize: "0.7rem", lineHeight: 1.2 }}>
             <span style={{ color: "#ff9800", fontWeight: "bold" }}>
               청산 {row.exit_count}회
             </span>
-          </MKTypography>
+          </Typography>
         </Box>
       ),
     },
@@ -388,9 +387,9 @@ export default function TradingReviews() {
       sortable: true,
       minWidth: "90px",
       cell: (row) => (
-        <MKTypography variant="body2" sx={{ fontSize: "0.8rem" }}>
+        <Typography variant="body2" sx={{ fontSize: "0.8rem" }}>
           {row.avg_holding_days ? `${row.avg_holding_days.toFixed(1)}일` : "-"}
-        </MKTypography>
+        </Typography>
       ),
     },
     {
@@ -690,9 +689,9 @@ export default function TradingReviews() {
         <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
           <Box display="flex" alignItems="center" gap={1} mb={1.5}>
             <AccountBalanceIcon sx={{ fontSize: 18, color: "text.secondary" }} />
-            <MKTypography variant="subtitle2" fontWeight="bold" color="text">
+            <Typography variant="subtitle2" fontWeight="bold" color="text.secondary">
               계좌 요약
-            </MKTypography>
+            </Typography>
           </Box>
           {balanceLoading ? (
             <Box display="flex" gap={1.5}>
@@ -701,25 +700,25 @@ export default function TradingReviews() {
               ))}
             </Box>
           ) : !accountBalance ? (
-            <MKTypography variant="caption" color="text.secondary">
+            <Typography variant="caption" color="text.secondary">
               계좌 정보를 불러올 수 없습니다.
-            </MKTypography>
+            </Typography>
           ) : (
             <Box display="flex" gap={1.5} flexWrap="wrap">
               {balanceItems.map(({ label, value, color }) => (
                 <Card key={label} variant="outlined" sx={{ minWidth: 120, flex: 1 }}>
                   <CardContent sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}>
-                    <MKTypography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
+                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
                       {label}
-                    </MKTypography>
-                    <MKTypography
+                    </Typography>
+                    <Typography
                       variant="body2"
                       fontWeight="bold"
                       color={color}
                       sx={{ mt: 0.3, fontSize: "0.85rem" }}
                     >
                       {value}
-                    </MKTypography>
+                    </Typography>
                   </CardContent>
                 </Card>
               ))}
@@ -740,9 +739,9 @@ export default function TradingReviews() {
         <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
           <Box display="flex" alignItems="center" gap={1} mb={1.5}>
             <TrendingFlatIcon sx={{ fontSize: 18, color: "text.secondary" }} />
-            <MKTypography variant="subtitle2" fontWeight="bold" color="text">
+            <Typography variant="subtitle2" fontWeight="bold" color="text.secondary">
               현재 보유종목
-            </MKTypography>
+            </Typography>
             {!holdingLoading && (
               <Chip label={`${codes.length}종목`} size="small" color="info" sx={{ height: 20, fontSize: "0.65rem" }} />
             )}
@@ -779,29 +778,29 @@ export default function TradingReviews() {
                     <CardContent sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}>
                       {/* 종목명 + 종목코드 */}
                       <Box display="flex" alignItems="baseline" gap={0.8} mb={0.3}>
-                        <MKTypography variant="body2" fontWeight="bold" color="dark" sx={{ lineHeight: 1.3 }}>
+                        <Typography variant="body2" fontWeight="bold" color="text.primary" sx={{ lineHeight: 1.3 }}>
                           {stockName}
-                        </MKTypography>
-                        <MKTypography variant="caption" color="text.secondary" sx={{ flexShrink: 0 }}>
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ flexShrink: 0 }}>
                           {code}
-                        </MKTypography>
+                        </Typography>
                       </Box>
 
                       {/* 현재가 + 손익 */}
                       {pos.current_price != null && (
                         <Box display="flex" alignItems="center" justifyContent="space-between" mb={0.6}>
-                          <MKTypography variant="body2" fontWeight="bold" color="dark">
+                          <Typography variant="body2" fontWeight="bold" color="text.primary">
                             {formatCurrency(pos.current_price)}원
-                          </MKTypography>
+                          </Typography>
                           {plAmount != null && (
                             <Box textAlign="right">
-                              <MKTypography variant="caption" fontWeight="bold" sx={{ color: plColor, display: "block", lineHeight: 1.2 }}>
+                              <Typography variant="caption" fontWeight="bold" sx={{ color: plColor, display: "block", lineHeight: 1.2 }}>
                                 {plAmount >= 0 ? "+" : ""}{formatCurrency(plAmount)}원
-                              </MKTypography>
+                              </Typography>
                               {plRate != null && (
-                                <MKTypography variant="caption" sx={{ color: plColor, display: "block", lineHeight: 1.2 }}>
+                                <Typography variant="caption" sx={{ color: plColor, display: "block", lineHeight: 1.2 }}>
                                   ({plRate >= 0 ? "+" : ""}{plRate.toFixed(2)}%)
-                                </MKTypography>
+                                </Typography>
                               )}
                             </Box>
                           )}
@@ -812,24 +811,24 @@ export default function TradingReviews() {
 
                       {/* 기본 정보 */}
                       <Box display="flex" justifyContent="space-between">
-                        <MKTypography variant="caption" color="text.secondary">평단가</MKTypography>
-                        <MKTypography variant="caption" fontWeight="bold">{formatCurrency(pos.avg_price)}원</MKTypography>
+                        <Typography variant="caption" color="text.secondary">평단가</Typography>
+                        <Typography variant="caption" fontWeight="bold">{formatCurrency(pos.avg_price)}원</Typography>
                       </Box>
                       <Box display="flex" justifyContent="space-between">
-                        <MKTypography variant="caption" color="text.secondary">수량</MKTypography>
-                        <MKTypography variant="caption" fontWeight="bold">{pos.total_quantity}주</MKTypography>
+                        <Typography variant="caption" color="text.secondary">수량</Typography>
+                        <Typography variant="caption" fontWeight="bold">{pos.total_quantity}주</Typography>
                       </Box>
                       <Box display="flex" justifyContent="space-between">
-                        <MKTypography variant="caption" color="text.secondary">보유금액</MKTypography>
-                        <MKTypography variant="caption" fontWeight="bold">
+                        <Typography variant="caption" color="text.secondary">보유금액</Typography>
+                        <Typography variant="caption" fontWeight="bold">
                           {formatCurrency(Math.round(pos.holding_amount))}원
-                        </MKTypography>
+                        </Typography>
                       </Box>
                       <Box display="flex" justifyContent="space-between">
-                        <MKTypography variant="caption" color="text.secondary">진입</MKTypography>
-                        <MKTypography variant="caption" fontWeight="bold">
+                        <Typography variant="caption" color="text.secondary">진입</Typography>
+                        <Typography variant="caption" fontWeight="bold">
                           {pos.actual_entries}/{pos.total_possible_entries}차
-                        </MKTypography>
+                        </Typography>
                       </Box>
 
                       <Divider sx={{ my: 0.6 }} />
@@ -837,20 +836,20 @@ export default function TradingReviews() {
                       {/* 손절가 / 트레일링 스탑 */}
                       {pos.stop_price != null && (
                         <Box display="flex" justifyContent="space-between">
-                          <MKTypography variant="caption" color="text.secondary">
+                          <Typography variant="caption" color="text.secondary">
                             손절가{isAtr && pos.atr ? ` (${pos.atr.toFixed(0)} ATR기준)` : ""}
-                          </MKTypography>
-                          <MKTypography variant="caption" fontWeight="bold" sx={{ color: "#d32f2f" }}>
+                          </Typography>
+                          <Typography variant="caption" fontWeight="bold" sx={{ color: "#d32f2f" }}>
                             {formatCurrency(pos.stop_price)}원
-                          </MKTypography>
+                          </Typography>
                         </Box>
                       )}
                       {pos.trailing_stop_price != null && (
                         <Box display="flex" justifyContent="space-between">
-                          <MKTypography variant="caption" color="text.secondary">Trailing Stop</MKTypography>
-                          <MKTypography variant="caption" fontWeight="bold" sx={{ color: "#e65100" }}>
+                          <Typography variant="caption" color="text.secondary">Trailing Stop</Typography>
+                          <Typography variant="caption" fontWeight="bold" sx={{ color: "#e65100" }}>
                             {formatCurrency(pos.trailing_stop_price)}원
-                          </MKTypography>
+                          </Typography>
                         </Box>
                       )}
 
@@ -858,23 +857,23 @@ export default function TradingReviews() {
                       {(pos.entry_slots || []).some((s) => s.price != null) && (
                         <>
                           <Divider sx={{ my: 0.6 }} />
-                          <MKTypography variant="caption" color="text.secondary" sx={{ display: "block", mb: 0.3 }}>
+                          <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 0.3 }}>
                             분할 매수가
-                          </MKTypography>
+                          </Typography>
                           {(pos.entry_slots || []).map((slot, idx) => {
                             if (slot.price == null) return null;
                             return (
                               <Box key={idx} display="flex" justifyContent="space-between">
-                                <MKTypography variant="caption" color="text.secondary">
+                                <Typography variant="caption" color="text.secondary">
                                   {slot.label}{slot.weight != null ? ` (${slot.weight}%)` : ""}
-                                </MKTypography>
-                                <MKTypography
+                                </Typography>
+                                <Typography
                                   variant="caption"
                                   fontWeight={slot.is_done ? "bold" : "regular"}
                                   sx={{ color: slot.is_done ? "success.main" : "text.secondary", textDecoration: slot.is_done ? "line-through" : "none" }}
                                 >
                                   {formatCurrency(slot.price)}원{slot.is_done ? " ✓" : ""}
-                                </MKTypography>
+                                </Typography>
                               </Box>
                             );
                           })}
@@ -885,21 +884,21 @@ export default function TradingReviews() {
                       {pos.staged_exit_info && (
                         <>
                           <Divider sx={{ my: 0.6 }} />
-                          <MKTypography variant="caption" color="text.secondary" sx={{ display: "block", mb: 0.3 }}>
+                          <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 0.3 }}>
                             분할 매도 ({pos.staged_exit_info.type_label})
-                          </MKTypography>
+                          </Typography>
                           {pos.staged_exit_info.stages.map((stage) => (
                             <Box key={stage.stage} display="flex" justifyContent="space-between">
-                              <MKTypography variant="caption" color="text.secondary">
+                              <Typography variant="caption" color="text.secondary">
                                 {stage.stage}단계: {stage.trigger}
-                              </MKTypography>
-                              <MKTypography
+                              </Typography>
+                              <Typography
                                 variant="caption"
                                 fontWeight={stage.is_done ? "bold" : "regular"}
                                 sx={{ color: stage.is_done ? "text.secondary" : "warning.main", textDecoration: stage.is_done ? "line-through" : "none" }}
                               >
                                 {stage.sell_pct}%{stage.is_done ? " ✓" : ""}
-                              </MKTypography>
+                              </Typography>
                             </Box>
                           ))}
                         </>
@@ -920,7 +919,7 @@ export default function TradingReviews() {
     <>
       <DefaultNavbar routes={routes} sticky />
 
-      <MKBox component="section" sx={{ minHeight: "80vh", pt: 12, pb: 4 }}>
+      <Box component="section" sx={{ minHeight: "80vh", pt: 12, pb: 4 }}>
         <FullWidthContainer>
           {/* 계좌 요약 */}
           {renderAccountSummary()}
@@ -945,14 +944,14 @@ export default function TradingReviews() {
               mb={4}
             >
               {/* 페이지 헤더 */}
-              <MKBox sx={{ minWidth: "300px" }}>
-                <MKTypography variant="h3" color="dark" fontWeight="bold">
+              <Box sx={{ minWidth: "300px" }}>
+                <Typography variant="h3" color="text.primary" fontWeight="bold">
                   매매복기 목록
-                </MKTypography>
-                <MKTypography variant="body2" color="text" opacity={0.7}>
+                </Typography>
+                <Typography variant="body2" color="text.secondary" opacity={0.7}>
                   Autobot 자동매매 거래 기록
-                </MKTypography>
-              </MKBox>
+                </Typography>
+              </Box>
 
               {/* 통계 요약 */}
               <Box sx={{ flex: 1 }}>
@@ -960,46 +959,46 @@ export default function TradingReviews() {
                   {/* 전체 거래 */}
                   <Card sx={{ flex: 1, minWidth: "120px", minHeight: "80px" }}>
                     <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
-                      <MKTypography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
+                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
                         전체 거래
-                      </MKTypography>
-                      <MKTypography variant="h6" fontWeight="bold" color="primary" sx={{ mt: 0.5 }}>
+                      </Typography>
+                      <Typography variant="h6" fontWeight="bold" color="primary.main" sx={{ mt: 0.5 }}>
                         {stats.total_count}건
-                      </MKTypography>
+                      </Typography>
                     </CardContent>
                   </Card>
 
                   {/* 청산완료 */}
                   <Card sx={{ flex: 1, minWidth: "120px", minHeight: "80px" }}>
                     <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
-                      <MKTypography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
+                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
                         청산완료
-                      </MKTypography>
-                      <MKTypography variant="h6" fontWeight="bold" color="success" sx={{ mt: 0.5 }}>
+                      </Typography>
+                      <Typography variant="h6" fontWeight="bold" color="success.main" sx={{ mt: 0.5 }}>
                         {stats.closed_count}건
-                      </MKTypography>
+                      </Typography>
                     </CardContent>
                   </Card>
 
                   {/* 보유중 */}
                   <Card sx={{ flex: 1, minWidth: "120px", minHeight: "80px" }}>
                     <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
-                      <MKTypography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
+                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
                         보유중
-                      </MKTypography>
-                      <MKTypography variant="h6" fontWeight="bold" color="info" sx={{ mt: 0.5 }}>
+                      </Typography>
+                      <Typography variant="h6" fontWeight="bold" color="info.main" sx={{ mt: 0.5 }}>
                         {stats.holding_count}건
-                      </MKTypography>
+                      </Typography>
                     </CardContent>
                   </Card>
 
                   {/* 총 손익 */}
                   <Card sx={{ flex: 1, minWidth: "150px", minHeight: "80px" }}>
                     <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
-                      <MKTypography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
+                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
                         총 손익
-                      </MKTypography>
-                      <MKTypography
+                      </Typography>
+                      <Typography
                         variant="h6"
                         fontWeight="bold"
                         sx={{
@@ -1009,7 +1008,7 @@ export default function TradingReviews() {
                       >
                         {stats.total_profit_loss >= 0 ? "+" : ""}
                         {formatCurrency(stats.total_profit_loss)}원
-                      </MKTypography>
+                      </Typography>
                     </CardContent>
                   </Card>
 
@@ -1020,9 +1019,9 @@ export default function TradingReviews() {
 
           {/* 로딩 상태 */}
           {loading && (
-            <MKBox display="flex" justifyContent="center" py={6}>
+            <Box display="flex" justifyContent="center" py={6}>
               <CircularProgress />
-            </MKBox>
+            </Box>
           )}
 
           {/* 에러 상태 */}
@@ -1034,19 +1033,19 @@ export default function TradingReviews() {
 
           {/* 매매복기 DataTable */}
           {!loading && !error && (
-            <MKBox>
+            <Box>
               {tradingReviews.length === 0 ? (
                 <Card>
                   <CardContent>
-                    <MKBox textAlign="center" py={6}>
+                    <Box textAlign="center" py={6}>
                       <ShowChartIcon sx={{ fontSize: 60, color: "text.secondary", mb: 2 }} />
-                      <MKTypography variant="h5" color="text" mb={2}>
+                      <Typography variant="h5" color="text.secondary" mb={2}>
                         매매복기 데이터가 없습니다
-                      </MKTypography>
-                      <MKTypography variant="body1" color="text" opacity={0.7} mb={3}>
+                      </Typography>
+                      <Typography variant="body1" color="text.secondary" opacity={0.7} mb={3}>
                         아직 기록된 매매 내역이 없습니다.
-                      </MKTypography>
-                    </MKBox>
+                      </Typography>
+                    </Box>
                   </CardContent>
                 </Card>
               ) : (
@@ -1060,19 +1059,19 @@ export default function TradingReviews() {
                   />
                 </ResponsiveTableWrapper>
               )}
-            </MKBox>
+            </Box>
           )}
 
           {/* 새로고침 버튼 */}
           {!loading && (
-            <MKBox textAlign="center" mt={4}>
+            <Box textAlign="center" mt={4}>
               <MKButton variant="outlined" color="info" onClick={fetchTradingReviews}>
                 데이터 새로고침
               </MKButton>
-            </MKBox>
+            </Box>
           )}
         </FullWidthContainer>
-      </MKBox>
+      </Box>
 
       <DefaultFooter content={footerRoutes} />
       <NotificationComponent />
@@ -1090,10 +1089,10 @@ export default function TradingReviews() {
             <DialogTitle sx={{ pb: 1 }}>
               <Box display="flex" alignItems="center" justifyContent="space-between">
                 <Box>
-                  <MKTypography variant="h5" fontWeight="bold" color="dark">
+                  <Typography variant="h5" fontWeight="bold" color="text.primary">
                     {selectedReview.stock_name}
-                  </MKTypography>
-                  <MKTypography variant="caption" color="text" opacity={0.7}>
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary" opacity={0.7}>
                     {selectedReview.stock_code} · {getTradingModeLabel(selectedReview.trading_mode)} ·{" "}
                     <Chip
                       label={getFinalStatusLabel(selectedReview.final_status)}
@@ -1101,7 +1100,7 @@ export default function TradingReviews() {
                       size="small"
                       sx={{ fontSize: "0.65rem", height: "20px", ml: 0.5 }}
                     />
-                  </MKTypography>
+                  </Typography>
                 </Box>
                 <IconButton onClick={handleCloseDetail} size="small">
                   <CloseIcon />
@@ -1124,9 +1123,9 @@ export default function TradingReviews() {
               {detailTab === 0 && (
                 <Box sx={{ p: 3 }}>
                   {/* 거래 기간 */}
-                  <MKTypography variant="subtitle2" fontWeight="bold" color="text" mb={1}>
+                  <Typography variant="subtitle2" fontWeight="bold" color="text.secondary" mb={1}>
                     거래 기간
-                  </MKTypography>
+                  </Typography>
                   <Box
                     display="grid"
                     gridTemplateColumns="repeat(auto-fill, minmax(160px, 1fr))"
@@ -1151,12 +1150,12 @@ export default function TradingReviews() {
                     ].map(({ label, value }) => (
                       <Card key={label} variant="outlined" sx={{ borderRadius: 1.5 }}>
                         <CardContent sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}>
-                          <MKTypography variant="caption" color="text.secondary">
+                          <Typography variant="caption" color="text.secondary">
                             {label}
-                          </MKTypography>
-                          <MKTypography variant="body2" fontWeight="bold">
+                          </Typography>
+                          <Typography variant="body2" fontWeight="bold">
                             {value}
-                          </MKTypography>
+                          </Typography>
                         </CardContent>
                       </Card>
                     ))}
@@ -1165,9 +1164,9 @@ export default function TradingReviews() {
                   <Divider sx={{ mb: 2 }} />
 
                   {/* 거래 금액 */}
-                  <MKTypography variant="subtitle2" fontWeight="bold" color="text" mb={1}>
+                  <Typography variant="subtitle2" fontWeight="bold" color="text.secondary" mb={1}>
                     거래 금액
-                  </MKTypography>
+                  </Typography>
                   <Box
                     display="grid"
                     gridTemplateColumns="repeat(auto-fill, minmax(160px, 1fr))"
@@ -1186,22 +1185,22 @@ export default function TradingReviews() {
                     ].map(({ label, value }) => (
                       <Card key={label} variant="outlined" sx={{ borderRadius: 1.5 }}>
                         <CardContent sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}>
-                          <MKTypography variant="caption" color="text.secondary">
+                          <Typography variant="caption" color="text.secondary">
                             {label}
-                          </MKTypography>
-                          <MKTypography variant="body2" fontWeight="bold">
+                          </Typography>
+                          <Typography variant="body2" fontWeight="bold">
                             {value}
-                          </MKTypography>
+                          </Typography>
                         </CardContent>
                       </Card>
                     ))}
                     {/* 순 손익 - 컬러 강조 */}
                     <Card variant="outlined" sx={{ borderRadius: 1.5 }}>
                       <CardContent sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}>
-                        <MKTypography variant="caption" color="text.secondary">
+                        <Typography variant="caption" color="text.secondary">
                           순 손익
-                        </MKTypography>
-                        <MKTypography
+                        </Typography>
+                        <Typography
                           variant="body2"
                           fontWeight="bold"
                           sx={{
@@ -1213,15 +1212,15 @@ export default function TradingReviews() {
                         >
                           {selectedReview.total_profit_loss >= 0 ? "+" : ""}
                           {formatCurrency(selectedReview.total_profit_loss)}원
-                        </MKTypography>
+                        </Typography>
                       </CardContent>
                     </Card>
                     <Card variant="outlined" sx={{ borderRadius: 1.5 }}>
                       <CardContent sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}>
-                        <MKTypography variant="caption" color="text.secondary">
+                        <Typography variant="caption" color="text.secondary">
                           수익률
-                        </MKTypography>
-                        <MKTypography
+                        </Typography>
+                        <Typography
                           variant="body2"
                           fontWeight="bold"
                           sx={{
@@ -1233,7 +1232,7 @@ export default function TradingReviews() {
                         >
                           {selectedReview.profit_loss_percent >= 0 ? "+" : ""}
                           {formatPercent(selectedReview.profit_loss_percent)}
-                        </MKTypography>
+                        </Typography>
                       </CardContent>
                     </Card>
                   </Box>
@@ -1241,9 +1240,9 @@ export default function TradingReviews() {
                   <Divider sx={{ mb: 2 }} />
 
                   {/* 성과 분석 */}
-                  <MKTypography variant="subtitle2" fontWeight="bold" color="text" mb={1}>
+                  <Typography variant="subtitle2" fontWeight="bold" color="text.secondary" mb={1}>
                     성과 분석
-                  </MKTypography>
+                  </Typography>
                   <Box
                     display="grid"
                     gridTemplateColumns="repeat(auto-fill, minmax(140px, 1fr))"
@@ -1268,12 +1267,12 @@ export default function TradingReviews() {
                     ].map(({ label, value }) => (
                       <Card key={label} variant="outlined" sx={{ borderRadius: 1.5 }}>
                         <CardContent sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}>
-                          <MKTypography variant="caption" color="text.secondary">
+                          <Typography variant="caption" color="text.secondary">
                             {label}
-                          </MKTypography>
-                          <MKTypography variant="body2" fontWeight="bold">
+                          </Typography>
+                          <Typography variant="body2" fontWeight="bold">
                             {value}
-                          </MKTypography>
+                          </Typography>
                         </CardContent>
                       </Card>
                     ))}
@@ -1283,9 +1282,9 @@ export default function TradingReviews() {
                   {selectedReview.memo && (
                     <>
                       <Divider sx={{ mb: 2 }} />
-                      <MKTypography variant="subtitle2" fontWeight="bold" color="text" mb={1}>
+                      <Typography variant="subtitle2" fontWeight="bold" color="text.secondary" mb={1}>
                         메모
-                      </MKTypography>
+                      </Typography>
                       <Box
                         sx={{
                           p: 2,
@@ -1295,9 +1294,9 @@ export default function TradingReviews() {
                           borderColor: "grey.200",
                         }}
                       >
-                        <MKTypography variant="body2" color="text">
+                        <Typography variant="body2" color="text.secondary">
                           {selectedReview.memo}
-                        </MKTypography>
+                        </Typography>
                       </Box>
                     </>
                   )}
@@ -1313,9 +1312,9 @@ export default function TradingReviews() {
                     </Box>
                   ) : tradeEntries.length === 0 ? (
                     <Box textAlign="center" py={4}>
-                      <MKTypography variant="body2" color="text" opacity={0.6}>
+                      <Typography variant="body2" color="text.secondary" opacity={0.6}>
                         거래 내역이 없습니다.
-                      </MKTypography>
+                      </Typography>
                     </Box>
                   ) : (
                     <Box sx={{ position: "relative" }}>
@@ -1397,13 +1396,13 @@ export default function TradingReviews() {
                                   mb={0.5}
                                 >
                                   <Box display="flex" alignItems="center" gap={0.8}>
-                                    <MKTypography
+                                    <Typography
                                       variant="body2"
                                       fontWeight="bold"
                                       sx={{ color: isBuy ? "success.main" : "error.main" }}
                                     >
                                       {isBuy ? "매수" : "매도"}
-                                    </MKTypography>
+                                    </Typography>
                                     <Chip
                                       label={entryTypeLabels[entry.entry_type] || entry.entry_type}
                                       size="small"
@@ -1417,7 +1416,7 @@ export default function TradingReviews() {
                                       sx={{ fontSize: "0.65rem", height: "18px" }}
                                     />
                                   </Box>
-                                  <MKTypography variant="caption" color="text.secondary">
+                                  <Typography variant="caption" color="text.secondary">
                                     {timeStr
                                       ? new Date(timeStr).toLocaleString("ko-KR", {
                                           month: "short",
@@ -1426,41 +1425,41 @@ export default function TradingReviews() {
                                           minute: "2-digit",
                                         })
                                       : "-"}
-                                  </MKTypography>
+                                  </Typography>
                                 </Box>
 
                                 {/* 거래 수치 */}
                                 <Box display="flex" gap={3} flexWrap="wrap">
                                   <Box>
-                                    <MKTypography variant="caption" color="text.secondary">
+                                    <Typography variant="caption" color="text.secondary">
                                       체결가
-                                    </MKTypography>
-                                    <MKTypography variant="body2" fontWeight="bold">
+                                    </Typography>
+                                    <Typography variant="body2" fontWeight="bold">
                                       {formatCurrency(entry.filled_price)}원
-                                    </MKTypography>
+                                    </Typography>
                                   </Box>
                                   <Box>
-                                    <MKTypography variant="caption" color="text.secondary">
+                                    <Typography variant="caption" color="text.secondary">
                                       수량
-                                    </MKTypography>
-                                    <MKTypography variant="body2" fontWeight="bold">
+                                    </Typography>
+                                    <Typography variant="body2" fontWeight="bold">
                                       {entry.filled_quantity}주
-                                    </MKTypography>
+                                    </Typography>
                                   </Box>
                                   <Box>
-                                    <MKTypography variant="caption" color="text.secondary">
+                                    <Typography variant="caption" color="text.secondary">
                                       체결금액
-                                    </MKTypography>
-                                    <MKTypography variant="body2" fontWeight="bold">
+                                    </Typography>
+                                    <Typography variant="body2" fontWeight="bold">
                                       {formatCurrency(entry.filled_amount)}원
-                                    </MKTypography>
+                                    </Typography>
                                   </Box>
                                   {entry.profit_loss !== null && entry.profit_loss !== undefined && (
                                     <Box>
-                                      <MKTypography variant="caption" color="text.secondary">
+                                      <Typography variant="caption" color="text.secondary">
                                         손익
-                                      </MKTypography>
-                                      <MKTypography
+                                      </Typography>
+                                      <Typography
                                         variant="body2"
                                         fontWeight="bold"
                                         sx={{
@@ -1476,17 +1475,17 @@ export default function TradingReviews() {
                                             {formatPercent(entry.profit_loss_percent)})
                                           </span>
                                         )}
-                                      </MKTypography>
+                                      </Typography>
                                     </Box>
                                   )}
                                   {entry.stop_price && (
                                     <Box>
-                                      <MKTypography variant="caption" color="text.secondary">
+                                      <Typography variant="caption" color="text.secondary">
                                         손절가
-                                      </MKTypography>
-                                      <MKTypography variant="body2" fontWeight="bold">
+                                      </Typography>
+                                      <Typography variant="body2" fontWeight="bold">
                                         {formatCurrency(entry.stop_price)}원
-                                      </MKTypography>
+                                      </Typography>
                                     </Box>
                                   )}
                                 </Box>
@@ -1500,9 +1499,9 @@ export default function TradingReviews() {
                                   return (
                                     <Box sx={{ mt: 1, pt: 1, borderTop: "1px solid", borderColor: "grey.100" }}>
                                       <Box display="flex" alignItems="center" justifyContent="space-between" mb={0.5}>
-                                        <MKTypography variant="caption" color="text.secondary" fontWeight="bold">
+                                        <Typography variant="caption" color="text.secondary" fontWeight="bold">
                                           매매사유
-                                        </MKTypography>
+                                        </Typography>
                                         {!isEditing ? (
                                           <IconButton
                                             size="small"
@@ -1547,14 +1546,14 @@ export default function TradingReviews() {
                                           autoFocus
                                         />
                                       ) : (
-                                        <MKTypography
+                                        <Typography
                                           variant="caption"
                                           color={currentNote ? "text" : "text.secondary"}
                                           sx={{ display: "block", cursor: "pointer", minHeight: 20 }}
                                           onClick={() => startEditNote(entry)}
                                         >
                                           {currentNote || "클릭하여 사유를 입력하세요"}
-                                        </MKTypography>
+                                        </Typography>
                                       )}
                                     </Box>
                                   );

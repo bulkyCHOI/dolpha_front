@@ -19,8 +19,7 @@ import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-import MKBox from "components/MKBox";
-import MKTypography from "components/MKTypography";
+import Typography from "@mui/material/Typography";
 import DefaultNavbar from "examples/Navbars/DefaultNavbar";
 import routes from "routes";
 
@@ -135,9 +134,9 @@ function DailyNewsClipping() {
     >
       <CardContent sx={{ pb: 2, p: 4 }}>
         <Box display="flex" alignItems="center" justifyContent="space-between" mb={4}>
-          <MKTypography variant="h3" color="dark" fontWeight="bold">
+          <Typography variant="h3" color="text.primary" fontWeight="bold">
             {title}
-          </MKTypography>
+          </Typography>
           <Chip
             icon={<AccessTimeIcon />}
             label={lastUpdated.toLocaleTimeString("ko-KR", {
@@ -167,9 +166,9 @@ function DailyNewsClipping() {
                 <Box flex={1}>
                   <Box display="flex" alignItems="center" gap={2} mb={1.5}>
                     {getImpactIcon(issue.impact)}
-                    <MKTypography variant="h5" fontWeight="medium" color="dark">
+                    <Typography variant="h5" fontWeight="medium" color="text.primary">
                       {issue.title}
-                    </MKTypography>
+                    </Typography>
                     <Chip
                       label={issue.category}
                       size="large"
@@ -177,13 +176,13 @@ function DailyNewsClipping() {
                       variant="outlined"
                     />
                   </Box>
-                  <MKTypography
+                  <Typography
                     variant="h6"
-                    color="text"
+                    color="text.secondary"
                     sx={{ lineHeight: 1.8, fontSize: "1.1rem", fontWeight: 400 }}
                   >
                     {issue.content}
-                  </MKTypography>
+                  </Typography>
                 </Box>
               </Box>
               {index < issues.length - 1 && <Divider sx={{ my: 2 }} />}
@@ -218,7 +217,7 @@ function DailyNewsClipping() {
     <>
       <DefaultNavbar routes={routes} sticky />
 
-      <MKBox
+      <Box
         minHeight="100vh"
         width="100%"
         sx={{
@@ -227,17 +226,17 @@ function DailyNewsClipping() {
           flexDirection: "column",
         }}
       >
-        <MKBox pt={12} pb={3} px={2}>
+        <Box pt={12} pb={3} px={2}>
           <Grid container spacing={4} justifyContent="center" sx={{ maxWidth: "100%", mx: "auto" }}>
             <Grid item xs={12}>
               {/* 헤더 섹션 */}
               <Box textAlign="center" mb={6}>
-                <MKTypography variant="h3" color="dark" mb={2} fontWeight="bold">
+                <Typography variant="h3" color="text.primary" mb={2} fontWeight="bold">
                   일간뉴스클리핑
-                </MKTypography>
-                <MKTypography variant="body1" color="text" mb={2}>
+                </Typography>
+                <Typography variant="body1" color="text.secondary" mb={2}>
                   주요 증시 이슈와 뉴스를 한눈에 확인하세요
-                </MKTypography>
+                </Typography>
 
                 <Box display="flex" alignItems="center" justifyContent="center" gap={2}>
                   <Chip
@@ -310,8 +309,8 @@ function DailyNewsClipping() {
               </Box>
             </Grid>
           </Grid>
-        </MKBox>
-      </MKBox>
+        </Box>
+      </Box>
     </>
   );
 }

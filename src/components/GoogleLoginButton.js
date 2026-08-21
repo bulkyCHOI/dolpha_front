@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "@mui/material";
 import { Google } from "@mui/icons-material";
 import PropTypes from "prop-types";
-import MKBox from "components/MKBox";
+import Box from "@mui/material/Box";
 
 const GoogleLoginButton = ({ onSuccess, onError, disabled = false }) => {
   const handleGoogleLogin = async () => {
@@ -44,7 +44,7 @@ const GoogleLoginButton = ({ onSuccess, onError, disabled = false }) => {
   };
 
   return (
-    <MKBox sx={{ width: "100%", mt: 2 }}>
+    <Box sx={{ width: "100%", mt: 2 }}>
       <Button
         fullWidth
         variant="outlined"
@@ -68,7 +68,7 @@ const GoogleLoginButton = ({ onSuccess, onError, disabled = false }) => {
       >
         Google로 로그인
       </Button>
-    </MKBox>
+    </Box>
   );
 };
 

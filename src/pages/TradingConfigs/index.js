@@ -36,8 +36,7 @@ import EnhancedDataTable from "components/EnhancedDataTable";
 import ResponsiveTableWrapper from "components/ResponsiveTableWrapper";
 
 // Material Kit 2 React components
-import MKBox from "components/MKBox";
-import MKTypography from "components/MKTypography";
+import Typography from "@mui/material/Typography";
 import MKButton from "components/MKButton";
 
 // Material Kit 2 React examples
@@ -307,12 +306,12 @@ export default function TradingConfigs() {
       sortable: true,
       cell: (row) => (
         <Box>
-          <MKTypography variant="body2" fontWeight="bold" color="dark" sx={{ lineHeight: 1.2 }}>
+          <Typography variant="body2" fontWeight="bold" color="text.primary" sx={{ lineHeight: 1.2 }}>
             {row.stock_name}
-          </MKTypography>
-          <MKTypography variant="caption" color="text" opacity={0.7} sx={{ lineHeight: 1 }}>
+          </Typography>
+          <Typography variant="caption" color="text.secondary" opacity={0.7} sx={{ lineHeight: 1 }}>
             {row.stock_code}
-          </MKTypography>
+          </Typography>
         </Box>
       ),
     },
@@ -388,7 +387,7 @@ export default function TradingConfigs() {
       selector: (row) => row.stop_loss,
       sortable: true,
       cell: (row) => (
-        <MKTypography
+        <Typography
           variant="body2"
           sx={{
             fontSize: "0.85rem",
@@ -397,7 +396,7 @@ export default function TradingConfigs() {
           }}
         >
           {formatTradingValue(row.stop_loss, row.trading_mode, "stop_loss")}
-        </MKTypography>
+        </Typography>
       ),
     },
     {
@@ -405,7 +404,7 @@ export default function TradingConfigs() {
       selector: (row) => row.take_profit,
       sortable: true,
       cell: (row) => (
-        <MKTypography
+        <Typography
           variant="body2"
           sx={{
             fontSize: "0.85rem",
@@ -414,7 +413,7 @@ export default function TradingConfigs() {
           }}
         >
           {formatTradingValue(row.take_profit, row.trading_mode, "take_profit")}
-        </MKTypography>
+        </Typography>
       ),
     },
     {
@@ -422,9 +421,9 @@ export default function TradingConfigs() {
       selector: (row) => row.max_loss,
       sortable: true,
       cell: (row) => (
-        <MKTypography variant="body2" sx={{ fontSize: "0.85rem" }}>
+        <Typography variant="body2" sx={{ fontSize: "0.85rem" }}>
           {formatTradingValue(row.max_loss, row.trading_mode, "max_loss")}
-        </MKTypography>
+        </Typography>
       ),
     },
     {
@@ -446,12 +445,12 @@ export default function TradingConfigs() {
 
         return (
           <Box>
-            <MKTypography
+            <Typography
               variant="body2"
               sx={{ fontSize: "0.8rem", fontWeight: "bold", lineHeight: 1.3 }}
             >
               {actualEntries}/{totalPossible}회
-            </MKTypography>
+            </Typography>
             {actualEntries > 0 && (
               <Chip
                 label={`${positionSum.toFixed(0)}%`}
@@ -475,9 +474,9 @@ export default function TradingConfigs() {
       selector: (row) => row.entry_point,
       sortable: true,
       cell: (row) => (
-        <MKTypography variant="body2" sx={{ fontSize: "0.8rem" }}>
+        <Typography variant="body2" sx={{ fontSize: "0.8rem" }}>
           {row.entry_point ? `${formatCurrency(row.entry_point)}원` : "-"}
-        </MKTypography>
+        </Typography>
       ),
     },
     {
@@ -493,7 +492,7 @@ export default function TradingConfigs() {
         return (
           <Box>
             {/* 첫 번째 줄: 보유금액 */}
-            <MKTypography
+            <Typography
               variant="body2"
               fontWeight="bold"
               sx={{
@@ -503,10 +502,10 @@ export default function TradingConfigs() {
               }}
             >
               {holdingAmount > 0 ? `${formatCurrency(Math.round(holdingAmount))}원` : "-"}
-            </MKTypography>
+            </Typography>
 
             {/* 두 번째 줄: 수량 정보 */}
-            <MKTypography
+            <Typography
               variant="caption"
               sx={{
                 fontSize: "0.7rem",
@@ -516,7 +515,7 @@ export default function TradingConfigs() {
             >
               {quantity > 0 ? `${formatCurrency(quantity)}주` : "-"}
               {avgPrice > 0 && ` @ ${formatCurrency(Math.round(avgPrice))}원`}
-            </MKTypography>
+            </Typography>
           </Box>
         );
       },
@@ -544,7 +543,7 @@ export default function TradingConfigs() {
             arrow
           >
             <Box>
-              <MKTypography
+              <Typography
                 variant="body2"
                 sx={{
                   fontSize: "0.8rem",
@@ -558,9 +557,9 @@ export default function TradingConfigs() {
                   : currentPrice === null
                   ? "-"
                   : "조회중..."}
-              </MKTypography>
+              </Typography>
               {currentPrice && (isUp || isDown) && (
-                <MKTypography
+                <Typography
                   variant="caption"
                   sx={{
                     fontSize: "0.68rem",
@@ -571,7 +570,7 @@ export default function TradingConfigs() {
                   {isUp ? "▲" : "▼"} {isUp ? "+" : ""}
                   {formatCurrency(Math.round(change))} ({isUp ? "+" : ""}
                   {changePercent.toFixed(2)}%)
-                </MKTypography>
+                </Typography>
               )}
             </Box>
           </Tooltip>
@@ -588,9 +587,9 @@ export default function TradingConfigs() {
 
         if (!peak) {
           return (
-            <MKTypography variant="body2" sx={{ fontSize: "0.8rem", color: "text.secondary" }}>
+            <Typography variant="body2" sx={{ fontSize: "0.8rem", color: "text.secondary" }}>
               -
-            </MKTypography>
+            </Typography>
           );
         }
 
@@ -602,14 +601,14 @@ export default function TradingConfigs() {
 
         return (
           <Box>
-            <MKTypography
+            <Typography
               variant="body2"
               sx={{ fontSize: "0.8rem", fontWeight: "bold", lineHeight: 1.3 }}
             >
               {formatCurrency(Math.round(peak))}원
-            </MKTypography>
+            </Typography>
             {dropPct !== null && (
-              <MKTypography
+              <Typography
                 variant="caption"
                 sx={{
                   fontSize: "0.68rem",
@@ -619,10 +618,10 @@ export default function TradingConfigs() {
               >
                 {dropPct >= 0 ? "▲" : "▼"} {dropPct >= 0 ? "+" : ""}
                 {dropPct.toFixed(1)}%
-              </MKTypography>
+              </Typography>
             )}
             {dropAtr !== null && (
-              <MKTypography
+              <Typography
                 variant="caption"
                 sx={{
                   fontSize: "0.65rem",
@@ -633,7 +632,7 @@ export default function TradingConfigs() {
               >
                 {dropAtr >= 0 ? "▲" : "▼"} {dropAtr >= 0 ? "+" : ""}
                 {dropAtr.toFixed(2)} ATR
-              </MKTypography>
+              </Typography>
             )}
           </Box>
         );
@@ -660,9 +659,9 @@ export default function TradingConfigs() {
         if (!avgPrice || !currentPrice || !quantity) {
           return (
             <Box>
-              <MKTypography variant="body2" sx={{ fontSize: "0.8rem", color: "text.secondary" }}>
+              <Typography variant="body2" sx={{ fontSize: "0.8rem", color: "text.secondary" }}>
                 -
-              </MKTypography>
+              </Typography>
             </Box>
           );
         }
@@ -674,7 +673,7 @@ export default function TradingConfigs() {
         return (
           <Box>
             {/* 첫 번째 줄: 손익금액 */}
-            <MKTypography
+            <Typography
               variant="body2"
               fontWeight="bold"
               sx={{
@@ -685,10 +684,10 @@ export default function TradingConfigs() {
             >
               {isProfit ? "+" : ""}
               {formatCurrency(Math.round(profitLoss))}원
-            </MKTypography>
+            </Typography>
 
             {/* 두 번째 줄: 손익률 */}
-            <MKTypography
+            <Typography
               variant="caption"
               sx={{
                 fontSize: "0.7rem",
@@ -699,7 +698,7 @@ export default function TradingConfigs() {
             >
               {isProfit ? "+" : ""}
               {profitRate.toFixed(2)}%
-            </MKTypography>
+            </Typography>
           </Box>
         );
       },
@@ -709,13 +708,13 @@ export default function TradingConfigs() {
       selector: (row) => row.created_at,
       sortable: true,
       cell: (row) => (
-        <MKTypography variant="caption" color="text" sx={{ fontSize: "0.75rem" }}>
+        <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.75rem" }}>
           {new Date(row.created_at).toLocaleDateString("ko-KR", {
             year: "2-digit",
             month: "short",
             day: "numeric",
           })}
-        </MKTypography>
+        </Typography>
       ),
     },
     {
@@ -1068,13 +1067,13 @@ export default function TradingConfigs() {
   // 로그인하지 않은 경우
   if (!user) {
     return (
-      <MKBox component="section" py={6}>
+      <Box component="section" py={6}>
         <FullWidthContainer>
           <Alert severity="warning" sx={{ mb: 3 }}>
             로그인이 필요한 페이지입니다. 로그인 후 이용해주세요.
           </Alert>
         </FullWidthContainer>
-      </MKBox>
+      </Box>
     );
   }
 
@@ -1103,7 +1102,7 @@ export default function TradingConfigs() {
     <>
       <DefaultNavbar routes={routes} sticky />
 
-      <MKBox component="section" sx={{ minHeight: "80vh", pt: 12, pb: 4 }}>
+      <Box component="section" sx={{ minHeight: "80vh", pt: 12, pb: 4 }}>
         <FullWidthContainer>
           {/* 페이지 헤더와 투자 현황 요약을 같은 줄에 배치 */}
           {!loading && !error && displayedConfigs.length > 0 ? (
@@ -1115,11 +1114,11 @@ export default function TradingConfigs() {
               mb={4}
             >
               {/* 페이지 헤더 */}
-              <MKBox sx={{ minWidth: "300px" }}>
-                <MKTypography variant="h3" color="dark" fontWeight="bold">
+              <Box sx={{ minWidth: "300px" }}>
+                <Typography variant="h3" color="text.primary" fontWeight="bold">
                   자동매매 설정 목록
-                </MKTypography>
-              </MKBox>
+                </Typography>
+              </Box>
 
               {/* 투자 현황 요약 */}
               <Box sx={{ flex: 1 }}>
@@ -1127,30 +1126,30 @@ export default function TradingConfigs() {
                   {/* 투자 대상 */}
                   <Card sx={{ flex: 1, minHeight: "80px" }}>
                     <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
-                      <MKTypography
+                      <Typography
                         variant="caption"
                         color="text.secondary"
                         sx={{ fontSize: "0.7rem" }}
                       >
                         투자 대상
-                      </MKTypography>
-                      <MKTypography variant="h6" fontWeight="bold" color="primary" sx={{ mt: 0.5 }}>
+                      </Typography>
+                      <Typography variant="h6" fontWeight="bold" color="primary.main" sx={{ mt: 0.5 }}>
                         {displayedConfigs.length}개
-                      </MKTypography>
+                      </Typography>
                     </CardContent>
                   </Card>
 
                   {/* 투자 종목 수 */}
                   <Card sx={{ flex: 1, minHeight: "80px" }}>
                     <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
-                      <MKTypography
+                      <Typography
                         variant="caption"
                         color="text.secondary"
                         sx={{ fontSize: "0.7rem" }}
                       >
                         투자 종목
-                      </MKTypography>
-                      <MKTypography variant="h6" fontWeight="bold" color="primary" sx={{ mt: 0.5 }}>
+                      </Typography>
+                      <Typography variant="h6" fontWeight="bold" color="primary.main" sx={{ mt: 0.5 }}>
                         {(() => {
                           const investedCount = displayedConfigs.filter((config) => {
                             const status = tradingStatus[config.stock_code];
@@ -1160,21 +1159,21 @@ export default function TradingConfigs() {
                           }).length;
                           return `${investedCount}개`;
                         })()}
-                      </MKTypography>
+                      </Typography>
                     </CardContent>
                   </Card>
 
                   {/* 투자금 합계 */}
                   <Card sx={{ flex: 1, minHeight: "80px" }}>
                     <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
-                      <MKTypography
+                      <Typography
                         variant="caption"
                         color="text.secondary"
                         sx={{ fontSize: "0.7rem" }}
                       >
                         투자금 합계
-                      </MKTypography>
-                      <MKTypography variant="h6" fontWeight="bold" color="success" sx={{ mt: 0.5 }}>
+                      </Typography>
+                      <Typography variant="h6" fontWeight="bold" color="success.main" sx={{ mt: 0.5 }}>
                         {(() => {
                           const totalInvestment = displayedConfigs.reduce((sum, config) => {
                             const status = tradingStatus[config.stock_code];
@@ -1184,21 +1183,21 @@ export default function TradingConfigs() {
                           }, 0);
                           return `${formatCurrency(Math.round(totalInvestment))}원`;
                         })()}
-                      </MKTypography>
+                      </Typography>
                     </CardContent>
                   </Card>
 
                   {/* 평가손익 합계 */}
                   <Card sx={{ flex: 1, minHeight: "80px" }}>
                     <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
-                      <MKTypography
+                      <Typography
                         variant="caption"
                         color="text.secondary"
                         sx={{ fontSize: "0.7rem" }}
                       >
                         평가손익 합계
-                      </MKTypography>
-                      <MKTypography
+                      </Typography>
+                      <Typography
                         variant="h6"
                         fontWeight="bold"
                         sx={{
@@ -1229,21 +1228,21 @@ export default function TradingConfigs() {
                             Math.round(totalProfitLoss)
                           )}원`;
                         })()}
-                      </MKTypography>
+                      </Typography>
                     </CardContent>
                   </Card>
 
                   {/* 평균 손익률 */}
                   <Card sx={{ flex: 1, minHeight: "80px" }}>
                     <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
-                      <MKTypography
+                      <Typography
                         variant="caption"
                         color="text.secondary"
                         sx={{ fontSize: "0.7rem" }}
                       >
                         평균 손익률
-                      </MKTypography>
-                      <MKTypography
+                      </Typography>
+                      <Typography
                         variant="h6"
                         fontWeight="bold"
                         sx={{
@@ -1294,25 +1293,25 @@ export default function TradingConfigs() {
                           const avgReturn = totalWeight > 0 ? totalWeightedReturn / totalWeight : 0;
                           return `${avgReturn >= 0 ? "+" : ""}${avgReturn.toFixed(2)}%`;
                         })()}
-                      </MKTypography>
+                      </Typography>
                     </CardContent>
                   </Card>
                 </Box>
               </Box>
             </Box>
           ) : (
-            <MKBox mb={4}>
-              <MKTypography variant="h3" color="dark" fontWeight="bold">
+            <Box mb={4}>
+              <Typography variant="h3" color="text.primary" fontWeight="bold">
                 자동매매 설정 목록
-              </MKTypography>
-            </MKBox>
+              </Typography>
+            </Box>
           )}
 
           {/* 로딩 상태 */}
           {loading && (
-            <MKBox display="flex" justifyContent="center" py={6}>
+            <Box display="flex" justifyContent="center" py={6}>
               <CircularProgress />
-            </MKBox>
+            </Box>
           )}
 
           {/* 에러 상태 */}
@@ -1324,7 +1323,7 @@ export default function TradingConfigs() {
 
           {/* 전략 구분 탭 */}
           {!loading && !error && (
-            <MKBox mb={2}>
+            <Box mb={2}>
               <Tabs
                 value={activeTab}
                 onChange={(event, newValue) => setActiveTab(newValue)}
@@ -1363,13 +1362,13 @@ export default function TradingConfigs() {
                   </IconButton>
 
                   <Box textAlign="center" sx={{ minWidth: 200 }}>
-                    <MKTypography variant="h6" fontWeight="bold" sx={{ color: "#7b1fa2" }}>
+                    <Typography variant="h6" fontWeight="bold" sx={{ color: "#7b1fa2" }}>
                       {formatKstDateLabel(selectedThemeDate)}
-                    </MKTypography>
-                    <MKTypography variant="caption" color="text" opacity={0.7}>
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary" opacity={0.7}>
                       후보 {themeSurgeConfigsOfDate.length}건 · 전체 {themeSurgeDates.length}일 중{" "}
                       {themeDateIndex + 1}번째
-                    </MKTypography>
+                    </Typography>
                   </Box>
 
                   <IconButton
@@ -1398,31 +1397,31 @@ export default function TradingConfigs() {
                   </Tooltip>
                 </Box>
               )}
-            </MKBox>
+            </Box>
           )}
 
           {/* 자동매매 설정 DataTable */}
           {!loading && !error && (
-            <MKBox>
+            <Box>
               {displayedConfigs.length === 0 ? (
                 <Card>
                   <CardContent>
-                    <MKBox textAlign="center" py={6}>
+                    <Box textAlign="center" py={6}>
                       <SettingsIcon sx={{ fontSize: 60, color: "text.secondary", mb: 2 }} />
-                      <MKTypography variant="h5" color="text" mb={2}>
+                      <Typography variant="h5" color="text.secondary" mb={2}>
                         {activeTab === 1
                           ? "설정된 급등테마주 자동매매가 없습니다"
                           : "설정된 자동매매가 없습니다"}
-                      </MKTypography>
-                      <MKTypography variant="body1" color="text" opacity={0.7} mb={3}>
+                      </Typography>
+                      <Typography variant="body1" color="text.secondary" opacity={0.7} mb={3}>
                         {activeTab === 1
                           ? "아직 설정된 급등테마주 전략이 없습니다."
                           : "아직 설정된 자동매매 전략이 없습니다."}
-                      </MKTypography>
+                      </Typography>
                       <MKButton variant="gradient" color="info">
                         자동매매 설정하기
                       </MKButton>
-                    </MKBox>
+                    </Box>
                   </CardContent>
                 </Card>
               ) : (
@@ -1434,12 +1433,12 @@ export default function TradingConfigs() {
                   />
                 </ResponsiveTableWrapper>
               )}
-            </MKBox>
+            </Box>
           )}
 
           {/* 새로고침 버튼 */}
           {!loading && (
-            <MKBox
+            <Box
               textAlign="center"
               mt={4}
               display="flex"
@@ -1467,10 +1466,10 @@ export default function TradingConfigs() {
               <MKButton variant="outlined" color="error" onClick={handleRecoverPositions}>
                 포지션 복구 (KIS 대조)
               </MKButton>
-            </MKBox>
+            </Box>
           )}
         </FullWidthContainer>
-      </MKBox>
+      </Box>
 
       <DefaultFooter content={footerRoutes} />
       <NotificationComponent />

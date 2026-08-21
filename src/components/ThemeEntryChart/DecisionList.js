@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
 import ButtonBase from "@mui/material/ButtonBase";
 
-import MKTypography from "components/MKTypography";
+import Typography from "@mui/material/Typography";
 import { CHART_COLORS, CONDITIONS, decisionStatus } from "./constants";
 
 /** 3조건 충족 여부를 점 3개로 압축 표시한다. */
@@ -60,18 +60,18 @@ function DecisionRow({ decision, selected, onSelect }) {
       }}
     >
       <Box sx={{ display: "flex", alignItems: "center", gap: 1, minWidth: 0 }}>
-        <MKTypography
+        <Typography
           variant="button"
           sx={{ fontSize: 12, fontWeight: 700, fontVariantNumeric: "tabular-nums" }}
         >
           {decision.time}
-        </MKTypography>
+        </Typography>
         <ConditionDots decision={decision} />
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, flexShrink: 0 }}>
-        <MKTypography variant="caption" sx={{ fontSize: 11, color: CHART_COLORS.MUTED }}>
+        <Typography variant="caption" sx={{ fontSize: 11, color: CHART_COLORS.MUTED }}>
           {decision.conditions_met}/3
-        </MKTypography>
+        </Typography>
         <Chip
           size="small"
           label={status.label}
@@ -102,9 +102,9 @@ function DecisionList({ decisions, selectedId, onSelect, maxHeight }) {
   if (decisions.length === 0) {
     return (
       <Box sx={{ py: 4, textAlign: "center" }}>
-        <MKTypography variant="caption" sx={{ color: CHART_COLORS.MUTED }}>
+        <Typography variant="caption" sx={{ color: CHART_COLORS.MUTED }}>
           판정 이력이 없습니다.
-        </MKTypography>
+        </Typography>
       </Box>
     );
   }

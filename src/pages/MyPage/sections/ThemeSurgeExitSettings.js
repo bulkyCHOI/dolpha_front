@@ -25,7 +25,7 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 
-import MKTypography from "components/MKTypography";
+import Typography from "@mui/material/Typography";
 
 const ACCENT = "#ef6c00";
 const MUTED = "#7b8794";
@@ -42,9 +42,9 @@ const MAX_STAGES = 5;
 function Label({ text, help }) {
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 0.5 }}>
-      <MKTypography variant="caption" fontWeight="bold" sx={{ color: "#344767" }}>
+      <Typography variant="caption" fontWeight="bold" sx={{ color: "#344767" }}>
         {text}
-      </MKTypography>
+      </Typography>
       <Tooltip title={help} arrow placement="top">
         <HelpOutlineIcon sx={{ fontSize: 14, color: "#b0bac5", cursor: "help" }} />
       </Tooltip>
@@ -95,12 +95,12 @@ function ThemeSurgeExitSettings({ defaults, onChange }) {
 
       <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 2 }}>
         <Box>
-          <MKTypography variant="button" fontWeight="bold" sx={{ color: "#344767" }}>
+          <Typography variant="button" fontWeight="bold" sx={{ color: "#344767" }}>
             청산 설정 (데이 트레이딩)
-          </MKTypography>
-          <MKTypography variant="caption" sx={{ display: "block", color: MUTED }}>
+          </Typography>
+          <Typography variant="caption" sx={{ display: "block", color: MUTED }}>
             진입 신호의 눌림 저점을 손절가로, 눌림 저점 → 돌파가 상승폭을 1T로 씁니다
-          </MKTypography>
+          </Typography>
         </Box>
         <FormControlLabel
           control={
@@ -116,9 +116,9 @@ function ThemeSurgeExitSettings({ defaults, onChange }) {
             />
           }
           label={
-            <MKTypography variant="button" sx={{ color: useOwnExit ? ACCENT : MUTED }}>
+            <Typography variant="button" sx={{ color: useOwnExit ? ACCENT : MUTED }}>
               {useOwnExit ? "전용 청산" : "Manual 설정 사용"}
-            </MKTypography>
+            </Typography>
           }
           labelPlacement="start"
           sx={{ mr: 0 }}
@@ -167,9 +167,9 @@ function ThemeSurgeExitSettings({ defaults, onChange }) {
                   />
                 }
                 label={
-                  <MKTypography variant="button" sx={{ color: MUTED }}>
+                  <Typography variant="button" sx={{ color: MUTED }}>
                     {forceExit ? "사용" : "미사용"}
-                  </MKTypography>
+                  </Typography>
                 }
                 sx={{ mt: 0.5 }}
               />
@@ -194,9 +194,9 @@ function ThemeSurgeExitSettings({ defaults, onChange }) {
 
           {/* ── 분할 익절 차수 ───────────────────────────── */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
-            <MKTypography variant="button" fontWeight="bold" sx={{ color: "#344767" }}>
+            <Typography variant="button" fontWeight="bold" sx={{ color: "#344767" }}>
               분할 익절 차수
-            </MKTypography>
+            </Typography>
             <Tooltip
               title="목표가 = 평단 + n × T. T는 진입 신호의 눌림 저점에서 돌파가까지의 상승폭입니다. 손절폭이 곧 1T 근처이므로 2T는 손익비 2:1을 뜻합니다."
               arrow
@@ -204,18 +204,18 @@ function ThemeSurgeExitSettings({ defaults, onChange }) {
             >
               <HelpOutlineIcon sx={{ fontSize: 14, color: "#b0bac5", cursor: "help" }} />
             </Tooltip>
-            <MKTypography variant="caption" sx={{ color: MUTED, ml: "auto" }}>
+            <Typography variant="caption" sx={{ color: MUTED, ml: "auto" }}>
               누적 {totalSellPct.toFixed(0)}% · 트레일링 몫 {remainPct.toFixed(0)}%
-            </MKTypography>
+            </Typography>
           </Box>
 
           {stages.map((stage, index) => (
             // eslint-disable-next-line react/no-array-index-key
             <Grid container spacing={1} alignItems="center" key={index} sx={{ mb: 1 }}>
               <Grid item xs={2} sm={1}>
-                <MKTypography variant="caption" fontWeight="bold" sx={{ color: ACCENT }}>
+                <Typography variant="caption" fontWeight="bold" sx={{ color: ACCENT }}>
                   {index + 1}차
-                </MKTypography>
+                </Typography>
               </Grid>
               <Grid item xs={4} sm={3}>
                 <TextField
@@ -258,9 +258,9 @@ function ThemeSurgeExitSettings({ defaults, onChange }) {
             >
               <AddIcon fontSize="small" />
             </IconButton>
-            <MKTypography variant="caption" sx={{ color: MUTED }}>
+            <Typography variant="caption" sx={{ color: MUTED }}>
               차수 추가 (최대 {MAX_STAGES}차)
-            </MKTypography>
+            </Typography>
           </Box>
 
           {totalSellPct > 100 && (
@@ -273,12 +273,12 @@ function ThemeSurgeExitSettings({ defaults, onChange }) {
           <Divider sx={{ my: 2 }} />
           <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <Box>
-              <MKTypography variant="button" fontWeight="bold" sx={{ color: "#344767" }}>
+              <Typography variant="button" fontWeight="bold" sx={{ color: "#344767" }}>
                 잔여 물량 트레일링 스탑
-              </MKTypography>
-              <MKTypography variant="caption" sx={{ display: "block", color: MUTED }}>
+              </Typography>
+              <Typography variant="caption" sx={{ display: "block", color: MUTED }}>
                 설정한 배수(T)를 초과하면 추적을 시작하고, 직전 N봉 최저점을 깨면 잔량을 전량 청산
-              </MKTypography>
+              </Typography>
             </Box>
             <FormControlLabel
               control={
@@ -288,9 +288,9 @@ function ThemeSurgeExitSettings({ defaults, onChange }) {
                 />
               }
               label={
-                <MKTypography variant="button" sx={{ color: MUTED }}>
+                <Typography variant="button" sx={{ color: MUTED }}>
                   {useTrailing ? "사용" : "미사용"}
-                </MKTypography>
+                </Typography>
               }
               labelPlacement="start"
               sx={{ mr: 0 }}
@@ -357,7 +357,7 @@ function ThemeSurgeExitSettings({ defaults, onChange }) {
             </Grid>
           </Collapse>
 
-          <MKTypography
+          <Typography
             variant="caption"
             sx={{ display: "block", mt: 2, color: MUTED, lineHeight: 1.6 }}
           >
@@ -366,7 +366,7 @@ function ThemeSurgeExitSettings({ defaults, onChange }) {
             <br />· 전용 청산을 끄면 위 Manual 설정(손절 · 익절 · 트레일링 · 분할익절)을 그대로
             따릅니다. Manual 기본값은 주 단위 스윙에 맞춰져 있으므로 당일 매매에는 권장하지
             않습니다.
-          </MKTypography>
+          </Typography>
         </Box>
       </Collapse>
     </Box>

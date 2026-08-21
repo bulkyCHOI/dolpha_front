@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import Tooltip from "@mui/material/Tooltip";
-import MKTypography from "components/MKTypography";
+import Typography from "@mui/material/Typography";
 import { formatNumber } from "utils/formatters";
 import { todayKST } from "hooks/useThemeSurgeData";
 
@@ -83,7 +83,7 @@ function TimeAxis({ slots, baseMinute }) {
       {slots.map((slot, idx) => (
         <Box key={slot} sx={{ flex: "1 1 0", position: "relative" }}>
           {isEvery(slot, TICK_MINUTES, baseMinute) && (
-            <MKTypography
+            <Typography
               variant="caption"
               sx={{
                 position: "absolute",
@@ -98,7 +98,7 @@ function TimeAxis({ slots, baseMinute }) {
               }}
             >
               {slot}
-            </MKTypography>
+            </Typography>
           )}
         </Box>
       ))}
@@ -211,14 +211,14 @@ function ThemeRow({ theme, slots, baseMinute, signalIndex, nowMinute }) {
           bgcolor: "#fff",
         }}
       >
-        <MKTypography
+        <Typography
           variant="button"
           fontWeight="bold"
           sx={{ fontSize: 13, lineHeight: 1.3, display: "block" }}
         >
           {theme.theme_name}
-        </MKTypography>
-        <MKTypography
+        </Typography>
+        <Typography
           variant="caption"
           sx={{
             fontSize: 11,
@@ -239,7 +239,7 @@ function ThemeRow({ theme, slots, baseMinute, signalIndex, nowMinute }) {
             </Box>
           )}
           {theme.leader && ` · ${theme.leader.stock_name}`}
-        </MKTypography>
+        </Typography>
       </Box>
 
       {/* 히트 트랙 + 급등 밴드 */}
@@ -340,9 +340,9 @@ export function TimelineLegend() {
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: 2, flexWrap: "wrap" }}>
       <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
-        <MKTypography variant="caption" sx={{ fontSize: 11, color: "#7b8794" }}>
+        <Typography variant="caption" sx={{ fontSize: 11, color: "#7b8794" }}>
           등락률
-        </MKTypography>
+        </Typography>
         <Box sx={{ display: "flex", borderRadius: "2px", overflow: "hidden" }}>
           {LEGEND_STOPS.map((rate) => (
             <Box key={rate} sx={{ width: 12, height: 10, bgcolor: heatColor(rate) }} />
@@ -351,25 +351,25 @@ export function TimelineLegend() {
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
         <Box sx={{ width: 18, height: 5, bgcolor: "#ffa000", borderRadius: "1px" }} />
-        <MKTypography variant="caption" sx={{ fontSize: 11, color: "#7b8794" }}>
+        <Typography variant="caption" sx={{ fontSize: 11, color: "#7b8794" }}>
           급등 판정
-        </MKTypography>
+        </Typography>
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
         <Box sx={{ width: 7, height: 7, borderRadius: "50%", bgcolor: "#263238" }} />
-        <MKTypography variant="caption" sx={{ fontSize: 11, color: "#7b8794" }}>
+        <Typography variant="caption" sx={{ fontSize: 11, color: "#7b8794" }}>
           진입 판정
-        </MKTypography>
+        </Typography>
         <Box sx={{ width: 7, height: 7, borderRadius: "50%", bgcolor: "#1b5e20", ml: 0.5 }} />
-        <MKTypography variant="caption" sx={{ fontSize: 11, color: "#7b8794" }}>
+        <Typography variant="caption" sx={{ fontSize: 11, color: "#7b8794" }}>
           실제 진입
-        </MKTypography>
+        </Typography>
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
         <Box sx={{ width: 2, height: 12, bgcolor: "rgba(76,81,191,0.55)" }} />
-        <MKTypography variant="caption" sx={{ fontSize: 11, color: "#7b8794" }}>
+        <Typography variant="caption" sx={{ fontSize: 11, color: "#7b8794" }}>
           현재 시각
-        </MKTypography>
+        </Typography>
       </Box>
     </Box>
   );
@@ -407,12 +407,12 @@ function ThemeTimeline({ slots, themes, signals, date }) {
   if (!slots.length || !themes.length) {
     return (
       <Box py={6} textAlign="center">
-        <MKTypography variant="body2" sx={{ color: "#7b8794" }}>
+        <Typography variant="body2" sx={{ color: "#7b8794" }}>
           해당 날짜에 수집된 급등 테마가 없습니다.
-        </MKTypography>
-        <MKTypography variant="caption" sx={{ color: "#9aa5b1" }}>
+        </Typography>
+        <Typography variant="caption" sx={{ color: "#9aa5b1" }}>
           장중(09:00~15:30)에 5분마다 자동 수집됩니다.
-        </MKTypography>
+        </Typography>
       </Box>
     );
   }

@@ -17,8 +17,7 @@ import { useTheme } from "@mui/material/styles";
 import { useAuth } from "contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-import MKBox from "components/MKBox";
-import MKTypography from "components/MKTypography";
+import Typography from "@mui/material/Typography";
 import DefaultNavbar from "examples/Navbars/DefaultNavbar";
 import routes from "routes";
 
@@ -199,10 +198,8 @@ function TopRising() {
 
   if (loading && stockData.length === 0) {
     return (
-      <MKBox
+      <Box
         component="section"
-        variant="gradient"
-        bgColor="dark"
         position="relative"
         py={6}
         px={{ xs: 2, lg: 0 }}
@@ -216,19 +213,17 @@ function TopRising() {
         }}
       >
         <CircularProgress color="inherit" />
-        <MKTypography color="white" sx={{ ml: 2 }}>
+        <Typography color="white.main" sx={{ ml: 2 }}>
           상승률 TOP 50 데이터를 불러오는 중...
-        </MKTypography>
-      </MKBox>
+        </Typography>
+      </Box>
     );
   }
 
   if (error) {
     return (
-      <MKBox
+      <Box
         component="section"
-        variant="gradient"
-        bgColor="dark"
         position="relative"
         py={6}
         px={{ xs: 2, lg: 0 }}
@@ -241,8 +236,8 @@ function TopRising() {
           justifyContent: "center",
         }}
       >
-        <MKTypography color="white">오류: {error}</MKTypography>
-      </MKBox>
+        <Typography color="white.main">오류: {error}</Typography>
+      </Box>
     );
   }
 
@@ -269,7 +264,7 @@ function TopRising() {
           order: { xs: 1, md: 1 },
         }}
       >
-        <MKBox
+        <Box
           sx={{
             backgroundColor: "white",
             borderRadius: 2,
@@ -281,7 +276,7 @@ function TopRising() {
           }}
         >
           {/* 스크롤 가능한 차트 영역 */}
-          <MKBox
+          <Box
             sx={{
               flex: 1,
               overflow: "auto",
@@ -304,7 +299,7 @@ function TopRising() {
             }}
           >
             {!selectedStock && (
-              <MKBox
+              <Box
                 sx={{
                   display: "flex",
                   alignItems: "center",
@@ -315,7 +310,7 @@ function TopRising() {
                   p: 2,
                 }}
               >
-                <MKBox
+                <Box
                   sx={{
                     width: 64,
                     height: 64,
@@ -327,23 +322,23 @@ function TopRising() {
                     mb: 2,
                   }}
                 >
-                  <MKTypography variant="h4" color="white">
+                  <Typography variant="h4" color="white.main">
                     📈
-                  </MKTypography>
-                </MKBox>
-                <MKTypography variant="h6" color="text" textAlign="center">
+                  </Typography>
+                </Box>
+                <Typography variant="h6" color="text.secondary" textAlign="center">
                   종목을 선택하세요
-                </MKTypography>
-                <MKTypography variant="body2" color="text" textAlign="center">
+                </Typography>
+                <Typography variant="body2" color="text.secondary" textAlign="center">
                   오른쪽 목록에서 종목을 클릭하면
                   <br />
                   캔들스틱 차트가 표시됩니다
-                </MKTypography>
-              </MKBox>
+                </Typography>
+              </Box>
             )}
 
             {selectedStock && (
-              <MKBox sx={{ p: { xs: 1, md: 2 } }}>
+              <Box sx={{ p: { xs: 1, md: 2 } }}>
                 {/* 스크롤 영역 안의 종목 정보 헤더 */}
                 <StockInfoHeader
                   selectedStock={selectedStock}
@@ -370,10 +365,10 @@ function TopRising() {
                   onShowSnackbar={showSnackbar}
                   chartType="top-rising"
                 />
-              </MKBox>
+              </Box>
             )}
-          </MKBox>
-        </MKBox>
+          </Box>
+        </Box>
       </Grid>
 
       {/* 오른쪽 종목 목록 */}
@@ -389,7 +384,7 @@ function TopRising() {
           order: { xs: 2, md: 2 },
         }}
       >
-        <MKBox
+        <Box
           sx={{
             backgroundColor: "white",
             borderRadius: 2,
@@ -401,7 +396,7 @@ function TopRising() {
           }}
         >
           {/* 탭 헤더 */}
-          <MKBox sx={{ flexShrink: 0, borderBottom: "1px solid #e0e0e0" }}>
+          <Box sx={{ flexShrink: 0, borderBottom: "1px solid #e0e0e0" }}>
             <Tabs
               value={activeTab}
               onChange={handleTabChange}
@@ -427,11 +422,11 @@ function TopRising() {
               <Tab label="상승률 TOP" />
               <Tab label="자동매매" />
             </Tabs>
-          </MKBox>
+          </Box>
 
           {/* 기간 선택 탭 - 로딩 중에도 항상 표시 */}
           {activeTab === 0 && stockData.length > 0 && (
-            <MKBox sx={{ flexShrink: 0, borderBottom: "1px solid #e0e0e0", px: 0.5 }}>
+            <Box sx={{ flexShrink: 0, borderBottom: "1px solid #e0e0e0", px: 0.5 }}>
               <Tabs
                 value={period}
                 onChange={(_, v) => setPeriod(v)}
@@ -455,11 +450,11 @@ function TopRising() {
                   <Tab key={p.value} value={p.value} label={p.label} />
                 ))}
               </Tabs>
-            </MKBox>
+            </Box>
           )}
 
           {loading && (
-            <MKBox
+            <Box
               sx={{
                 flex: 1,
                 display: "flex",
@@ -468,11 +463,11 @@ function TopRising() {
               }}
             >
               <CircularProgress />
-            </MKBox>
+            </Box>
           )}
 
           {error && (
-            <MKBox
+            <Box
               sx={{
                 flex: 1,
                 display: "flex",
@@ -480,8 +475,8 @@ function TopRising() {
                 justifyContent: "center",
               }}
             >
-              <MKTypography color="error">데이터 로드 중 오류가 발생했습니다: {error}</MKTypography>
-            </MKBox>
+              <Typography color="error.main">데이터 로드 중 오류가 발생했습니다: {error}</Typography>
+            </Box>
           )}
 
           {!loading && !error && stockData.length > 0 && (
@@ -490,7 +485,7 @@ function TopRising() {
               {activeTab === 0 && (
                 <>
                   {/* 테이블 헤더 */}
-                  <MKBox
+                  <Box
                     sx={{
                       background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
                       p: 1,
@@ -502,64 +497,64 @@ function TopRising() {
                   >
                     <Grid container spacing={0}>
                       <Grid item xs={3} sm={2.5}>
-                        <MKTypography
+                        <Typography
                           variant="subtitle2"
-                          color="white"
+                          color="white.main"
                           fontWeight="bold"
                           sx={{ fontSize: { xs: "0.65rem", md: "0.8rem" } }}
                         >
                           종목명
-                        </MKTypography>
+                        </Typography>
                       </Grid>
                       <Grid item xs={2} sm={2}>
-                        <MKTypography
+                        <Typography
                           variant="subtitle2"
-                          color="white"
+                          color="white.main"
                           fontWeight="bold"
                           textAlign="center"
                           sx={{ fontSize: { xs: "0.65rem", md: "0.8rem" } }}
                         >
                           상승률
-                        </MKTypography>
+                        </Typography>
                       </Grid>
                       <Grid item xs={1.5} sm={1.5}>
-                        <MKTypography
+                        <Typography
                           variant="subtitle2"
-                          color="white"
+                          color="white.main"
                           fontWeight="bold"
                           textAlign="center"
                           sx={{ fontSize: { xs: "0.65rem", md: "0.8rem" } }}
                         >
                           RS
-                        </MKTypography>
+                        </Typography>
                       </Grid>
                       <Grid item xs={2.75} sm={3}>
-                        <MKTypography
+                        <Typography
                           variant="subtitle2"
-                          color="white"
+                          color="white.main"
                           fontWeight="bold"
                           textAlign="center"
                           sx={{ fontSize: { xs: "0.65rem", md: "0.8rem" } }}
                         >
                           매출
-                        </MKTypography>
+                        </Typography>
                       </Grid>
                       <Grid item xs={2.75} sm={3}>
-                        <MKTypography
+                        <Typography
                           variant="subtitle2"
-                          color="white"
+                          color="white.main"
                           fontWeight="bold"
                           textAlign="center"
                           sx={{ fontSize: { xs: "0.65rem", md: "0.8rem" } }}
                         >
                           영업익
-                        </MKTypography>
+                        </Typography>
                       </Grid>
                     </Grid>
-                  </MKBox>
+                  </Box>
 
                   {/* 스크롤 가능한 테이블 바디 */}
-                  <MKBox
+                  <Box
                     sx={{
                       flex: 1,
                       overflow: "auto",
@@ -581,7 +576,7 @@ function TopRising() {
                     }}
                   >
                     {stockData.map((row, rowIndex) => (
-                      <MKBox
+                      <Box
                         key={row.code || rowIndex}
                         onClick={() => handleStockClick(row)}
                         sx={{
@@ -610,8 +605,8 @@ function TopRising() {
                       >
                         <Grid container spacing={0} alignItems="center">
                           <Grid item xs={3} sm={2.5}>
-                            <MKBox>
-                              <MKTypography
+                            <Box>
+                              <Typography
                                 variant="body2"
                                 fontWeight={selectedStock?.code === row.code ? "bold" : "medium"}
                                 color={selectedStock?.code === row.code ? "info" : "text"}
@@ -624,21 +619,21 @@ function TopRising() {
                                 }}
                               >
                                 {row.name || "-"}
-                              </MKTypography>
-                              <MKTypography
+                              </Typography>
+                              <Typography
                                 variant="caption"
-                                color="text"
+                                color="text.secondary"
                                 sx={{
                                   fontSize: { xs: "0.55rem", md: "0.65rem" },
                                   display: { xs: "none", sm: "block" },
                                 }}
                               >
                                 {row.code || ""}
-                              </MKTypography>
-                            </MKBox>
+                              </Typography>
+                            </Box>
                           </Grid>
                           <Grid item xs={2} sm={2}>
-                            <MKBox display="flex" justifyContent="center">
+                            <Box display="flex" justifyContent="center">
                               <Chip
                                 label={`+${((row.change || 0) * 100).toFixed(1)}%`}
                                 size="small"
@@ -669,10 +664,10 @@ function TopRising() {
                                   },
                                 }}
                               />
-                            </MKBox>
+                            </Box>
                           </Grid>
                           <Grid item xs={1.5} sm={1.5}>
-                            <MKBox display="flex" justifyContent="center">
+                            <Box display="flex" justifyContent="center">
                               <Chip
                                 label={Math.floor(row.rsRank) || "-"}
                                 size="small"
@@ -703,11 +698,11 @@ function TopRising() {
                                   },
                                 }}
                               />
-                            </MKBox>
+                            </Box>
                           </Grid>
                           <Grid item xs={2.75} sm={3}>
-                            <MKBox display="flex" justifyContent="center" alignItems="center">
-                              <MKTypography
+                            <Box display="flex" justifyContent="center" alignItems="center">
+                              <Typography
                                 variant="body2"
                                 textAlign="center"
                                 color={row["당기매출"] < 0 ? "info" : "text"}
@@ -718,12 +713,12 @@ function TopRising() {
                                 }}
                               >
                                 {formatNumber(row["당기매출"]) || "0"}
-                              </MKTypography>
-                            </MKBox>
+                              </Typography>
+                            </Box>
                           </Grid>
                           <Grid item xs={2.75} sm={3}>
-                            <MKBox display="flex" justifyContent="center" alignItems="center">
-                              <MKTypography
+                            <Box display="flex" justifyContent="center" alignItems="center">
+                              <Typography
                                 variant="body2"
                                 textAlign="center"
                                 color={row["당기영업이익"] < 0 ? "info" : "text"}
@@ -734,19 +729,19 @@ function TopRising() {
                                 }}
                               >
                                 {formatNumber(row["당기영업이익"]) || "0"}
-                              </MKTypography>
-                            </MKBox>
+                              </Typography>
+                            </Box>
                           </Grid>
                         </Grid>
-                      </MKBox>
+                      </Box>
                     ))}
-                  </MKBox>
+                  </Box>
                 </>
               )}
 
               {/* 자동매매 탭 내용 */}
               {activeTab === 1 && (
-                <MKBox
+                <Box
                   sx={{
                     flex: 1,
                     overflow: "auto",
@@ -768,7 +763,7 @@ function TopRising() {
                   }}
                 >
                   {!isAuthenticated ? (
-                    <MKBox
+                    <Box
                       sx={{
                         display: "flex",
                         flexDirection: "column",
@@ -778,12 +773,12 @@ function TopRising() {
                         textAlign: "center",
                       }}
                     >
-                      <MKTypography variant="h5" sx={{ mb: 2, color: "#666" }}>
+                      <Typography variant="h5" sx={{ mb: 2, color: "#666" }}>
                         로그인이 필요합니다
-                      </MKTypography>
-                      <MKTypography variant="body1" sx={{ mb: 3, color: "#888" }}>
+                      </Typography>
+                      <Typography variant="body1" sx={{ mb: 3, color: "#888" }}>
                         자동매매 기능을 사용하려면 Google 로그인이 필요합니다.
-                      </MKTypography>
+                      </Typography>
                       <Button
                         variant="contained"
                         color="primary"
@@ -800,11 +795,11 @@ function TopRising() {
                       >
                         로그인 하러 가기
                       </Button>
-                    </MKBox>
+                    </Box>
                   ) : (
                     <>
                       {/* 종목별 자동매매 설정 아코디언 */}
-                      <MKBox>
+                      <Box>
                         <AutotradingAccordion
                           autotradingList={autotradingList}
                           expandedAccordion={expandedAccordion}
@@ -819,14 +814,14 @@ function TopRising() {
                           tradingForm={tradingForm}
                           strategyType="top_rising"
                         />
-                      </MKBox>
+                      </Box>
                     </>
                   )}
-                </MKBox>
+                </Box>
               )}
 
               {!loading && !error && stockData.length === 0 && (
-                <MKBox
+                <Box
                   sx={{
                     flex: 1,
                     display: "flex",
@@ -834,20 +829,20 @@ function TopRising() {
                     justifyContent: "center",
                   }}
                 >
-                  <MKTypography color="text">데이터가 없습니다.</MKTypography>
-                </MKBox>
+                  <Typography color="text.secondary">데이터가 없습니다.</Typography>
+                </Box>
               )}
             </>
           )}
-        </MKBox>
+        </Box>
       </Grid>
     </Grid>
   );
 
   // 모바일 종목 탭 렌더링
   const renderMobileStockTab = () => (
-    <MKBox sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
-      <MKBox
+    <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
+      <Box
         sx={{
           backgroundColor: "white",
           borderRadius: 2,
@@ -858,10 +853,10 @@ function TopRising() {
           overflow: "hidden",
         }}
       >
-        <MKBox sx={{ px: 2, py: 1, borderBottom: "1px solid #e0e0e0", flexShrink: 0 }}>
-          <MKTypography variant="h6" fontWeight="bold" sx={{ mb: 0.5 }}>
+        <Box sx={{ px: 2, py: 1, borderBottom: "1px solid #e0e0e0", flexShrink: 0 }}>
+          <Typography variant="h6" fontWeight="bold" sx={{ mb: 0.5 }}>
             상승률 TOP 50
-          </MKTypography>
+          </Typography>
           <Tabs
             value={period}
             onChange={(_, v) => setPeriod(v)}
@@ -885,8 +880,8 @@ function TopRising() {
               <Tab key={p.value} value={p.value} label={p.label} />
             ))}
           </Tabs>
-        </MKBox>
-        <MKBox sx={{ flex: 1, overflow: "auto" }}>
+        </Box>
+        <Box sx={{ flex: 1, overflow: "auto" }}>
           <StockList
             stocks={stockData}
             loading={loading}
@@ -912,15 +907,15 @@ function TopRising() {
               당기영업이익: stock["당기영업이익"],
             })}
           />
-        </MKBox>
-      </MKBox>
-    </MKBox>
+        </Box>
+      </Box>
+    </Box>
   );
 
   // 모바일 차트 탭 렌더링
   const renderMobileChartTab = () => (
-    <MKBox sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
-      <MKBox
+    <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
+      <Box
         sx={{
           backgroundColor: "white",
           borderRadius: 2,
@@ -931,7 +926,7 @@ function TopRising() {
           overflow: "hidden",
         }}
       >
-        <MKBox
+        <Box
           sx={{
             flex: 1,
             overflow: "auto",
@@ -950,7 +945,7 @@ function TopRising() {
           }}
         >
           {!selectedStock && (
-            <MKBox
+            <Box
               sx={{
                 display: "flex",
                 alignItems: "center",
@@ -961,7 +956,7 @@ function TopRising() {
                 p: 2,
               }}
             >
-              <MKBox
+              <Box
                 sx={{
                   width: 64,
                   height: 64,
@@ -973,13 +968,13 @@ function TopRising() {
                   mb: 2,
                 }}
               >
-                <MKTypography variant="h4" color="white">
+                <Typography variant="h4" color="white.main">
                   📈
-                </MKTypography>
-              </MKBox>
-              <MKTypography variant="h6" color="text" textAlign="center">
+                </Typography>
+              </Box>
+              <Typography variant="h6" color="text.secondary" textAlign="center">
                 종목을 선택하세요
-              </MKTypography>
+              </Typography>
               <Button
                 variant="contained"
                 color="primary"
@@ -988,11 +983,11 @@ function TopRising() {
               >
                 종목 선택하기
               </Button>
-            </MKBox>
+            </Box>
           )}
 
           {selectedStock && (
-            <MKBox sx={{ p: 2 }}>
+            <Box sx={{ p: 2 }}>
               <StockInfoHeader
                 selectedStock={selectedStock}
                 ohlcvData={ohlcvData}
@@ -1016,17 +1011,17 @@ function TopRising() {
                 onShowSnackbar={showSnackbar}
                 chartType="top-rising"
               />
-            </MKBox>
+            </Box>
           )}
-        </MKBox>
-      </MKBox>
-    </MKBox>
+        </Box>
+      </Box>
+    </Box>
   );
 
   // 모바일 자동매매 탭 렌더링
   const renderMobileAutotradingTab = () => (
-    <MKBox sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
-      <MKBox
+    <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
+      <Box
         sx={{
           backgroundColor: "white",
           borderRadius: 2,
@@ -1037,19 +1032,19 @@ function TopRising() {
           overflow: "hidden",
         }}
       >
-        <MKBox sx={{ px: 2, py: 1.5, borderBottom: "1px solid #e0e0e0" }}>
-          <MKTypography variant="h6" fontWeight="bold">
+        <Box sx={{ px: 2, py: 1.5, borderBottom: "1px solid #e0e0e0" }}>
+          <Typography variant="h6" fontWeight="bold">
             자동매매 설정
-          </MKTypography>
+          </Typography>
           {selectedStock && (
-            <MKTypography variant="body2" sx={{ color: "text.secondary" }}>
+            <Typography variant="body2" sx={{ color: "text.secondary" }}>
               {selectedStock.name} ({selectedStock.code})
-            </MKTypography>
+            </Typography>
           )}
-        </MKBox>
-        <MKBox sx={{ flex: 1, overflow: "auto", p: 2 }}>
+        </Box>
+        <Box sx={{ flex: 1, overflow: "auto", p: 2 }}>
           {!selectedStock ? (
-            <MKBox
+            <Box
               sx={{
                 display: "flex",
                 alignItems: "center",
@@ -1059,13 +1054,13 @@ function TopRising() {
                 gap: 2,
               }}
             >
-              <MKTypography variant="h6" color="text" textAlign="center">
+              <Typography variant="h6" color="text.secondary" textAlign="center">
                 종목을 선택하세요
-              </MKTypography>
+              </Typography>
               <Button variant="contained" color="primary" onClick={() => setMobileTab(0)}>
                 종목 선택하기
               </Button>
-            </MKBox>
+            </Box>
           ) : (
             <AutotradingAccordion
               selectedStock={selectedStock}
@@ -1082,9 +1077,9 @@ function TopRising() {
               strategyType="top_rising"
             />
           )}
-        </MKBox>
-      </MKBox>
-    </MKBox>
+        </Box>
+      </Box>
+    </Box>
   );
 
   return (

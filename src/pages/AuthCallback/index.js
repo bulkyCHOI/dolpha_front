@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { CircularProgress, Alert } from "@mui/material";
-import MKBox from "components/MKBox";
-import MKTypography from "components/MKTypography";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import { useAuth } from "contexts/AuthContext";
 
 function AuthCallback() {
@@ -95,7 +95,7 @@ function AuthCallback() {
   }, []); // 의존성 배열을 비워서 한 번만 실행
 
   return (
-    <MKBox
+    <Box
       sx={{
         display: "flex",
         flexDirection: "column",
@@ -108,12 +108,12 @@ function AuthCallback() {
       {status === "processing" && (
         <>
           <CircularProgress size={60} sx={{ mb: 3 }} />
-          <MKTypography variant="h5" sx={{ mb: 2 }}>
+          <Typography variant="h5" sx={{ mb: 2 }}>
             로그인 처리 중...
-          </MKTypography>
-          <MKTypography variant="body2" color="text">
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
             잠시만 기다려주세요.
-          </MKTypography>
+          </Typography>
         </>
       )}
 
@@ -130,12 +130,12 @@ function AuthCallback() {
           <Alert severity="error" sx={{ mb: 3, width: "100%", maxWidth: 400 }}>
             {message}
           </Alert>
-          <MKTypography variant="body2" color="text">
+          <Typography variant="body2" color="text.secondary">
             3초 후 로그인 페이지로 이동합니다...
-          </MKTypography>
+          </Typography>
         </>
       )}
-    </MKBox>
+    </Box>
   );
 }
 

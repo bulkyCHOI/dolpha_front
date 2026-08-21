@@ -30,8 +30,8 @@ import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Chip from "@mui/material/Chip";
 
 // Material Kit 2 React components
-import MKBox from "components/MKBox";
-import MKTypography from "components/MKTypography";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 
 import { useState, useEffect } from "react";
 
@@ -374,44 +374,44 @@ function TradingDefaults() {
 
   const renderCompactSection = (title, children) => (
     <Card sx={{ mb: 2, borderRadius: 2 }}>
-      <MKBox p={2}>
-        <MKTypography variant="h6" fontWeight="bold" mb={2}>
+      <Box p={2}>
+        <Typography variant="h6" fontWeight="bold" mb={2}>
           {title}
-        </MKTypography>
+        </Typography>
         {children}
-      </MKBox>
+      </Box>
     </Card>
   );
 
   if (loading) {
     return (
-      <MKBox display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
         <CircularProgress />
-      </MKBox>
+      </Box>
     );
   }
 
   return (
-    <MKBox component="section">
+    <Box component="section">
       <Container>
         <Grid container spacing={2}>
           {/* 헤더 */}
           <Grid item xs={12}>
-            <MKBox mb={1}>
-              <MKTypography variant="h5" mb={0.5} fontWeight="bold">
+            <Box mb={1}>
+              <Typography variant="h5" mb={0.5} fontWeight="bold">
                 자동매매 기본설정
-              </MKTypography>
-              <MKTypography variant="body2" color="text" opacity={0.8}>
+              </Typography>
+              <Typography variant="body2" color="text.secondary" opacity={0.8}>
                 새로운 자동매매 설정 시 사용될 기본값을 관리하세요. 설정된 기본값은 자동매매 설정
                 생성 시 자동으로 적용됩니다.
-              </MKTypography>
-            </MKBox>
+              </Typography>
+            </Box>
           </Grid>
 
           {/* ── Row 1: 계좌 설정 + 매매모드 (하나의 카드) ── */}
           <Grid item xs={12}>
             <Card sx={{ borderRadius: 2 }}>
-              <MKBox p={2}>
+              <Box p={2}>
                 <Grid container spacing={0} alignItems="stretch">
                   {/* 계좌 설정 */}
                   <Grid
@@ -420,14 +420,14 @@ function TradingDefaults() {
                     md={9}
                     sx={{ pr: { md: 3 }, borderRight: { md: "1px solid rgba(0,0,0,0.10)" } }}
                   >
-                    <MKTypography variant="h6" fontWeight="bold" mb={1.5}>
+                    <Typography variant="h6" fontWeight="bold" mb={1.5}>
                       계좌 설정
-                    </MKTypography>
+                    </Typography>
                     <Grid container spacing={2} alignItems="center">
                       <Grid item xs={12} sm="auto">
-                        <MKTypography variant="body2" fontWeight="medium" mb={0.5}>
+                        <Typography variant="body2" fontWeight="medium" mb={0.5}>
                           거래 계좌
-                        </MKTypography>
+                        </Typography>
                         <ToggleButtonGroup
                           value={accountSettings.kis_mode}
                           exclusive
@@ -461,34 +461,34 @@ function TradingDefaults() {
                         </ToggleButtonGroup>
                       </Grid>
                       <Grid item xs={12} sm="auto">
-                        <MKTypography variant="body2" fontWeight="medium" mb={0.5}>
+                        <Typography variant="body2" fontWeight="medium" mb={0.5}>
                           계좌번호
-                        </MKTypography>
-                        <MKBox display="flex" alignItems="center" gap={1}>
-                          <MKTypography
+                        </Typography>
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <Typography
                             variant="body1"
                             fontWeight="bold"
                             sx={{ fontFamily: "monospace", letterSpacing: 1 }}
                           >
                             {accountSettings.current_account_no || "—"}
-                          </MKTypography>
+                          </Typography>
                           <Chip
                             label={accountSettings.kis_mode === "REAL" ? "실계좌" : "가상계좌"}
                             size="small"
                             color={accountSettings.kis_mode === "REAL" ? "error" : "info"}
                             sx={{ fontWeight: 600, fontSize: "0.7rem" }}
                           />
-                        </MKBox>
-                        <MKTypography
+                        </Box>
+                        <Typography
                           variant="caption"
-                          color="text"
+                          color="text.secondary"
                           opacity={0.6}
                           display="block"
                           mt={0.3}
                         >
                           실계좌: {accountSettings.real_account_no || "—"} &nbsp;|&nbsp; 가상계좌:{" "}
                           {accountSettings.virtual_account_no || "—"}
-                        </MKTypography>
+                        </Typography>
                       </Grid>
                       <Grid item xs={12} sm="auto" sx={{ ml: { sm: "auto" } }}>
                         <Button
@@ -526,9 +526,9 @@ function TradingDefaults() {
 
                   {/* 매매모드 선택 */}
                   <Grid item xs={12} md={3} sx={{ pl: { md: 3 }, pt: { xs: 2, md: 0 } }}>
-                    <MKTypography variant="h6" fontWeight="bold" mb={1.5}>
+                    <Typography variant="h6" fontWeight="bold" mb={1.5}>
                       매매모드
-                    </MKTypography>
+                    </Typography>
                     <FormControl component="fieldset">
                       <RadioGroup
                         value={defaults.trading_mode}
@@ -548,7 +548,7 @@ function TradingDefaults() {
                     </FormControl>
                   </Grid>
                 </Grid>
-              </MKBox>
+              </Box>
             </Card>
           </Grid>
 
@@ -557,10 +557,10 @@ function TradingDefaults() {
           {/* 리스크 관리 */}
           <Grid item xs={12} md={4}>
             <Card sx={{ height: "100%", borderRadius: 2 }}>
-              <MKBox p={2}>
-                <MKTypography variant="h6" fontWeight="bold" mb={2}>
+              <Box p={2}>
+                <Typography variant="h6" fontWeight="bold" mb={2}>
                   리스크 관리
-                </MKTypography>
+                </Typography>
                 <Grid container spacing={2}>
                   <Grid item xs={6}>
                     <TextField
@@ -651,17 +651,17 @@ function TradingDefaults() {
                     />
                   </Grid>
                 </Grid>
-              </MKBox>
+              </Box>
             </Card>
           </Grid>
 
           {/* 포지션 분할 */}
           <Grid item xs={12} md={4}>
             <Card sx={{ height: "100%", borderRadius: 2 }}>
-              <MKBox p={2}>
-                <MKTypography variant="h6" fontWeight="bold" mb={2}>
+              <Box p={2}>
+                <Typography variant="h6" fontWeight="bold" mb={2}>
                   포지션 분할
-                </MKTypography>
+                </Typography>
 
                 <Grid container spacing={2} alignItems="center" mb={2}>
                   <Grid item xs={6}>
@@ -717,7 +717,7 @@ function TradingDefaults() {
                   </Grid>
                 </Grid>
 
-                <MKBox mb={2}>
+                <Box mb={2}>
                   <Grid container spacing={2} alignItems="center" mb={1}>
                     <Grid item xs={6}>
                       <TextField
@@ -775,31 +775,31 @@ function TradingDefaults() {
                       </Grid>
                     </Grid>
                   ))}
-                </MKBox>
+                </Box>
 
-                <MKBox display="flex" justifyContent="space-between" alignItems="center">
-                  <MKTypography variant="body2" color="text">
+                <Box display="flex" justifyContent="space-between" alignItems="center">
+                  <Typography variant="body2" color="text.secondary">
                     합계: {positionSum.toFixed(2)}%
-                  </MKTypography>
+                  </Typography>
                   {Math.abs(positionSum - 100) > 0.01 && (
-                    <MKTypography variant="body2" color="error">
+                    <Typography variant="body2" color="error.main">
                       ⚠️ 합계가 100%여야 합니다
-                    </MKTypography>
+                    </Typography>
                   )}
-                </MKBox>
-              </MKBox>
+                </Box>
+              </Box>
             </Card>
           </Grid>
 
           {/* 분할 익절 */}
           <Grid item xs={12} md={4}>
             <Card sx={{ height: "100%", borderRadius: 2 }}>
-              <MKBox p={2}>
-                <MKTypography variant="h6" fontWeight="bold" mb={2}>
+              <Box p={2}>
+                <Typography variant="h6" fontWeight="bold" mb={2}>
                   분할 익절
-                </MKTypography>
+                </Typography>
 
-                <MKBox mb={2}>
+                <Box mb={2}>
                   <ToggleButtonGroup
                     value={defaults.staged_exit_type}
                     exclusive
@@ -830,7 +830,7 @@ function TradingDefaults() {
                       </ToggleButton>
                     ))}
                   </ToggleButtonGroup>
-                </MKBox>
+                </Box>
 
                 {defaults.staged_exit_type !== "none" &&
                   (() => {
@@ -854,54 +854,54 @@ function TradingDefaults() {
                         {/* 헤더 */}
                         <Grid container spacing={1} mb={0.5} sx={{ px: 0.5 }}>
                           <Grid item xs={3}>
-                            <MKTypography variant="caption" color="text" fontWeight="bold">
+                            <Typography variant="caption" color="text.secondary" fontWeight="bold">
                               단계
-                            </MKTypography>
+                            </Typography>
                           </Grid>
                           {defaults.staged_exit_type === "ma" && (
                             <>
                               <Grid item xs={5}>
-                                <MKTypography variant="caption" color="text" fontWeight="bold">
+                                <Typography variant="caption" color="text.secondary" fontWeight="bold">
                                   MA 기간 (일)
-                                </MKTypography>
+                                </Typography>
                               </Grid>
                               <Grid item xs={4}>
-                                <MKTypography variant="caption" color="text" fontWeight="bold">
+                                <Typography variant="caption" color="text.secondary" fontWeight="bold">
                                   매도 %
-                                </MKTypography>
+                                </Typography>
                               </Grid>
                             </>
                           )}
                           {defaults.staged_exit_type === "dead_cross" && (
                             <>
                               <Grid item xs={3}>
-                                <MKTypography variant="caption" color="text" fontWeight="bold">
+                                <Typography variant="caption" color="text.secondary" fontWeight="bold">
                                   단기
-                                </MKTypography>
+                                </Typography>
                               </Grid>
                               <Grid item xs={3}>
-                                <MKTypography variant="caption" color="text" fontWeight="bold">
+                                <Typography variant="caption" color="text.secondary" fontWeight="bold">
                                   장기
-                                </MKTypography>
+                                </Typography>
                               </Grid>
                               <Grid item xs={3}>
-                                <MKTypography variant="caption" color="text" fontWeight="bold">
+                                <Typography variant="caption" color="text.secondary" fontWeight="bold">
                                   매도 %
-                                </MKTypography>
+                                </Typography>
                               </Grid>
                             </>
                           )}
                           {defaults.staged_exit_type === "new_low" && (
                             <>
                               <Grid item xs={5}>
-                                <MKTypography variant="caption" color="text" fontWeight="bold">
+                                <Typography variant="caption" color="text.secondary" fontWeight="bold">
                                   N일
-                                </MKTypography>
+                                </Typography>
                               </Grid>
                               <Grid item xs={4}>
-                                <MKTypography variant="caption" color="text" fontWeight="bold">
+                                <Typography variant="caption" color="text.secondary" fontWeight="bold">
                                   매도 %
-                                </MKTypography>
+                                </Typography>
                               </Grid>
                             </>
                           )}
@@ -913,7 +913,7 @@ function TradingDefaults() {
 
                           if (isDisabled) {
                             return (
-                              <MKBox
+                              <Box
                                 key={num}
                                 display="flex"
                                 alignItems="center"
@@ -927,13 +927,13 @@ function TradingDefaults() {
                                   borderRadius: 1.5,
                                 }}
                               >
-                                <MKTypography
+                                <Typography
                                   variant="body2"
                                   fontWeight="bold"
                                   sx={{ minWidth: 40, color: "#b26a00" }}
                                 >
                                   {label}
-                                </MKTypography>
+                                </Typography>
                                 <Chip
                                   label="트레일링 스탑 대체"
                                   size="small"
@@ -945,12 +945,12 @@ function TradingDefaults() {
                                     border: "1px solid rgba(255,152,0,0.35)",
                                   }}
                                 />
-                              </MKBox>
+                              </Box>
                             );
                           }
 
                           return (
-                            <MKBox
+                            <Box
                               key={num}
                               sx={{
                                 mb: 1,
@@ -963,13 +963,13 @@ function TradingDefaults() {
                             >
                               <Grid container spacing={1} alignItems="center">
                                 <Grid item xs={3}>
-                                  <MKTypography
+                                  <Typography
                                     variant="body2"
                                     fontWeight="medium"
                                     sx={{ pl: 0.5 }}
                                   >
                                     {label}
-                                  </MKTypography>
+                                  </Typography>
                                 </Grid>
 
                                 {defaults.staged_exit_type === "ma" && (
@@ -1092,13 +1092,13 @@ function TradingDefaults() {
                                   </>
                                 )}
                               </Grid>
-                            </MKBox>
+                            </Box>
                           );
                         })}
                       </>
                     );
                   })()}
-              </MKBox>
+              </Box>
             </Card>
           </Grid>
 
@@ -1117,7 +1117,7 @@ function TradingDefaults() {
                 {message.text}
               </Alert>
             )}
-            <MKBox display="flex" justifyContent="flex-end">
+            <Box display="flex" justifyContent="flex-end">
               <Button
                 variant="contained"
                 onClick={handleSave}
@@ -1145,11 +1145,11 @@ function TradingDefaults() {
                   "설정 저장"
                 )}
               </Button>
-            </MKBox>
+            </Box>
           </Grid>
         </Grid>
       </Container>
-    </MKBox>
+    </Box>
   );
 }
 

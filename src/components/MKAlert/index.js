@@ -22,7 +22,7 @@ import PropTypes from "prop-types";
 import Fade from "@mui/material/Fade";
 
 // Material Kit 2 React components
-import MKBox from "components/MKBox";
+import Box from "@mui/material/Box";
 
 // Custom styles for the MKAlert
 import MKAlertRoot from "components/MKAlert/MKAlertRoot";
@@ -37,7 +37,7 @@ function MKAlert({ color, dismissible, children, ...rest }) {
   const alertTemplate = (mount = true) => (
     <Fade in={mount} timeout={300}>
       <MKAlertRoot ownerState={{ color }} {...rest}>
-        <MKBox
+        <Box
           display="flex"
           alignItems="center"
           fontSize="1rem"
@@ -45,7 +45,7 @@ function MKAlert({ color, dismissible, children, ...rest }) {
           color={color === "light" ? "dark" : "white"}
         >
           {children}
-        </MKBox>
+        </Box>
         {dismissible ? (
           <MKAlertCloseIcon onClick={mount ? handleAlertStatus : null}>&times;</MKAlertCloseIcon>
         ) : null}

@@ -19,8 +19,8 @@ import {
   Chip,
 } from "@mui/material";
 import { Close, Refresh } from "@mui/icons-material";
-import MKBox from "components/MKBox";
-import MKTypography from "components/MKTypography";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import { adjustToKRXTickSize, getKRXTickSize } from "utils/formatters";
 import { useTradingForm } from "hooks/useTradingForm";
 import { useAuth } from "contexts/AuthContext";
@@ -124,19 +124,19 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
           alignItems: "center",
         }}
       >
-        <MKBox>
-          <MKTypography variant="h5" fontWeight="bold">
+        <Box>
+          <Typography variant="h5" fontWeight="bold">
             자동매매 설정 상세보기
-          </MKTypography>
+          </Typography>
           {config && (
-            <MKTypography variant="body2" color="text" opacity={0.8} sx={{ mt: 0.5 }}>
+            <Typography variant="body2" color="text.secondary" opacity={0.8} sx={{ mt: 0.5 }}>
               {config.stock_name} ({config.stock_code})
-            </MKTypography>
+            </Typography>
           )}
-        </MKBox>
-        <MKBox display="flex" alignItems="center" gap={1}>
+        </Box>
+        <Box display="flex" alignItems="center" gap={1}>
           <Tooltip title={isActive ? "클릭하면 비활성화됩니다" : "클릭하면 활성화됩니다"}>
-            <MKBox display="flex" alignItems="center" gap={0.5}>
+            <Box display="flex" alignItems="center" gap={0.5}>
               <Chip
                 label={isActive ? "활성" : "비활성"}
                 color={isActive ? "success" : "default"}
@@ -149,7 +149,7 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                 color="success"
                 size="small"
               />
-            </MKBox>
+            </Box>
           </Tooltip>
           <IconButton
             onClick={onClose}
@@ -162,7 +162,7 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
           >
             <Close />
           </IconButton>
-        </MKBox>
+        </Box>
       </DialogTitle>
 
       <DialogContent sx={{ p: 3, pt: 2 }}>
@@ -184,7 +184,7 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
           {/* 좌측 컬럼 */}
           <Grid item xs={12} md={6}>
             {/* 매매모드 선택 */}
-            <MKBox
+            <Box
               sx={{
                 p: 2,
                 mb: 3,
@@ -193,9 +193,9 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                 backgroundColor: "rgba(0, 0, 0, 0.02)",
               }}
             >
-              <MKTypography variant="h6" fontWeight="bold" mb={2}>
+              <Typography variant="h6" fontWeight="bold" mb={2}>
                 매매모드 선택
-              </MKTypography>
+              </Typography>
               <FormControl component="fieldset">
                 <RadioGroup
                   row
@@ -216,19 +216,19 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                   <FormControlLabel
                     value="manual"
                     control={<Radio size="small" />}
-                    label={<MKTypography sx={{ fontSize: "0.875rem" }}>Manual</MKTypography>}
+                    label={<Typography sx={{ fontSize: "0.875rem" }}>Manual</Typography>}
                   />
                   <FormControlLabel
                     value="turtle"
                     control={<Radio size="small" />}
-                    label={<MKTypography sx={{ fontSize: "0.875rem" }}>Turtle(ATR)</MKTypography>}
+                    label={<Typography sx={{ fontSize: "0.875rem" }}>Turtle(ATR)</Typography>}
                   />
                 </RadioGroup>
               </FormControl>
-            </MKBox>
+            </Box>
 
             {/* 리스크 관리 설정 */}
-            <MKBox
+            <Box
               sx={{
                 p: 2,
                 mb: 3,
@@ -237,10 +237,10 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                 backgroundColor: "rgba(0, 0, 0, 0.02)",
               }}
             >
-              <MKBox display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                <MKTypography variant="h6" fontWeight="bold">
+              <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                <Typography variant="h6" fontWeight="bold">
                   리스크 관리 설정
-                </MKTypography>
+                </Typography>
                 <Tooltip title="설정 초기화">
                   <IconButton
                     size="small"
@@ -255,7 +255,7 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                     <Refresh fontSize="small" />
                   </IconButton>
                 </Tooltip>
-              </MKBox>
+              </Box>
 
               <Grid container spacing={2}>
                 <Grid item xs={12}>
@@ -343,13 +343,13 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                   />
                 </Grid>
               </Grid>
-            </MKBox>
+            </Box>
           </Grid>
 
           {/* 우측 컬럼 */}
           <Grid item xs={12} md={6}>
             {/* 포지션 분할 설정 */}
-            <MKBox
+            <Box
               sx={{
                 p: 2,
                 mb: 3,
@@ -358,9 +358,9 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                 backgroundColor: "rgba(0, 0, 0, 0.02)",
               }}
             >
-              <MKTypography variant="h6" fontWeight="bold" mb={2}>
+              <Typography variant="h6" fontWeight="bold" mb={2}>
                 포지션 분할 설정
-              </MKTypography>
+              </Typography>
 
               {/* 첫 번째 행: 피라미딩 횟수, 균등분할 */}
               <Grid container spacing={2} alignItems="center" mb={2}>
@@ -407,7 +407,7 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
               </Grid>
 
               {/* 진입시점과 포지션 설정 */}
-              <MKBox mb={2}>
+              <Box mb={2}>
                 {/* 1차 진입시점과 포지션 */}
                 <Grid container spacing={2} alignItems="center" mb={1}>
                   <Grid item xs={6}>
@@ -509,11 +509,11 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                     </Grid>
                   </Grid>
                 ))}
-              </MKBox>
+              </Box>
 
               {/* 포지션 합계 표시 */}
-              <MKBox display="flex" justifyContent="space-between" alignItems="center">
-                <MKTypography
+              <Box display="flex" justifyContent="space-between" alignItems="center">
+                <Typography
                   variant="body2"
                   sx={{
                     color: Math.abs(tradingForm.positionSum - 100) >= 0.01 ? "#f44336" : "#4caf50",
@@ -521,17 +521,17 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                   }}
                 >
                   포지션 합계: {tradingForm.positionSum.toFixed(1)}%
-                </MKTypography>
+                </Typography>
                 {Math.abs(tradingForm.positionSum - 100) >= 0.01 && (
-                  <MKTypography variant="caption" color="error">
+                  <Typography variant="caption" color="error.main">
                     ⚠️ 포지션 합계가 100%가 되어야 합니다
-                  </MKTypography>
+                  </Typography>
                 )}
-              </MKBox>
+              </Box>
 
               {/* 포지션 합계 경고 */}
               {Math.abs(tradingForm.positionSum - 100) >= 0.01 && (
-                <MKBox
+                <Box
                   sx={{
                     p: 1,
                     bgcolor: "#fff3cd",
@@ -540,13 +540,13 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                     mt: 1,
                   }}
                 >
-                  <MKTypography variant="caption" sx={{ color: "#856404", fontWeight: "bold" }}>
+                  <Typography variant="caption" sx={{ color: "#856404", fontWeight: "bold" }}>
                     ⚠️ 포지션의 합이 100%가 되어야 합니다. (현재:{" "}
                     {tradingForm.positionSum.toFixed(1)}%)
-                  </MKTypography>
-                </MKBox>
+                  </Typography>
+                </Box>
               )}
-            </MKBox>
+            </Box>
           </Grid>
         </Grid>
       </DialogContent>

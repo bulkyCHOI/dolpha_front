@@ -1,8 +1,8 @@
 import React from "react";
 import Grid from "@mui/material/Grid";
 import Chip from "@mui/material/Chip";
-import MKBox from "components/MKBox";
-import MKTypography from "components/MKTypography";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import { formatNumber } from "utils/formatters";
 
 function StockList({
@@ -18,7 +18,7 @@ function StockList({
   // 로딩 상태
   if (loading) {
     return (
-      <MKBox
+      <Box
         sx={{
           display: "flex",
           alignItems: "center",
@@ -27,17 +27,17 @@ function StockList({
           p: 4,
         }}
       >
-        <MKTypography variant="body2" color="text">
+        <Typography variant="body2" color="text.secondary">
           종목 데이터를 불러오는 중...
-        </MKTypography>
-      </MKBox>
+        </Typography>
+      </Box>
     );
   }
 
   // 오류 상태
   if (error) {
     return (
-      <MKBox
+      <Box
         sx={{
           display: "flex",
           alignItems: "center",
@@ -47,22 +47,22 @@ function StockList({
           textAlign: "center",
         }}
       >
-        <MKBox>
-          <MKTypography variant="body2" color="error" sx={{ mb: 1 }}>
+        <Box>
+          <Typography variant="body2" color="error.main" sx={{ mb: 1 }}>
             데이터 로드 중 오류가 발생했습니다
-          </MKTypography>
-          <MKTypography variant="caption" color="text">
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
             {error}
-          </MKTypography>
-        </MKBox>
-      </MKBox>
+          </Typography>
+        </Box>
+      </Box>
     );
   }
 
   // 데이터가 없는 상태
   if (!stocks || !Array.isArray(stocks) || stocks.length === 0) {
     return (
-      <MKBox
+      <Box
         sx={{
           display: "flex",
           alignItems: "center",
@@ -71,10 +71,10 @@ function StockList({
           p: 4,
         }}
       >
-        <MKTypography variant="body2" color="text">
+        <Typography variant="body2" color="text.secondary">
           표시할 종목이 없습니다
-        </MKTypography>
-      </MKBox>
+        </Typography>
+      </Box>
     );
   }
 
@@ -105,7 +105,7 @@ function StockList({
   return (
     <>
       {/* 테이블 헤더 */}
-      <MKBox
+      <Box
         sx={{
           background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
           p: 1,
@@ -118,21 +118,21 @@ function StockList({
         <Grid container spacing={0}>
           {columnHeaders.map((header, index) => (
             <Grid key={header.field} item xs={header.width || 12 / columnHeaders.length}>
-              <MKTypography
+              <Typography
                 variant="subtitle2"
-                color="white"
+                color="white.main"
                 fontWeight="bold"
                 textAlign={index === 0 ? "left" : "center"}
               >
                 {header.label}
-              </MKTypography>
+              </Typography>
             </Grid>
           ))}
         </Grid>
-      </MKBox>
+      </Box>
 
       {/* 스크롤 가능한 테이블 바디 */}
-      <MKBox
+      <Box
         sx={{
           flex: 1,
           overflow: "auto",
@@ -156,7 +156,7 @@ function StockList({
         {stocks.map((row, rowIndex) => {
           const rowData = getRowDataForDisplay(row);
           return (
-            <MKBox
+            <Box
               key={row.code || rowIndex}
               onClick={() => onStockClick(row)}
               sx={{
@@ -189,8 +189,8 @@ function StockList({
                   <Grid key={header.field} item xs={header.width || 12 / columnHeaders.length}>
                     {colIndex === 0 ? (
                       // 첫 번째 컬럼 (종목명)
-                      <MKBox>
-                        <MKTypography
+                      <Box>
+                        <Typography
                           variant="body2"
                           fontWeight={selectedStock?.code === row.code ? "bold" : "medium"}
                           color={selectedStock?.code === row.code ? "info" : "text"}
@@ -203,14 +203,14 @@ function StockList({
                           }}
                         >
                           {rowData[header.field] || row.name || "-"}
-                        </MKTypography>
-                        <MKTypography variant="caption" color="text" sx={{ fontSize: "0.7rem" }}>
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
                           {row.code || ""}
-                        </MKTypography>
-                      </MKBox>
+                        </Typography>
+                      </Box>
                     ) : header.field === "rsRank" ? (
                       // RS 점수 컬럼
-                      <MKBox display="flex" justifyContent="center">
+                      <Box display="flex" justifyContent="center">
                         <Chip
                           label={Math.floor(rowData[header.field]) || "-"}
                           size="small"
@@ -237,10 +237,10 @@ function StockList({
                             height: "20px",
                           }}
                         />
-                      </MKBox>
+                      </Box>
                     ) : header.field === "min_52w_gain_percent" ? (
                       // 52주상승률 컬럼
-                      <MKBox display="flex" justifyContent="center">
+                      <Box display="flex" justifyContent="center">
                         <Chip
                           label={`${rowData[header.field] || 0}%`}
                           size="small"
@@ -264,10 +264,10 @@ function StockList({
                             height: "20px",
                           }}
                         />
-                      </MKBox>
+                      </Box>
                     ) : header.field === "change" ? (
                       // 상승률 컬럼 (TopRising 페이지용)
-                      <MKBox display="flex" justifyContent="center">
+                      <Box display="flex" justifyContent="center">
                         <Chip
                           label={`+${(rowData[header.field] || 0).toFixed(1)}%`}
                           size="small"
@@ -294,11 +294,11 @@ function StockList({
                             height: "20px",
                           }}
                         />
-                      </MKBox>
+                      </Box>
                     ) : (
                       // 일반 데이터 컬럼
-                      <MKBox display="flex" justifyContent="center" alignItems="center">
-                        <MKTypography
+                      <Box display="flex" justifyContent="center" alignItems="center">
+                        <Typography
                           variant="body2"
                           textAlign="center"
                           fontWeight="bold"
@@ -313,16 +313,16 @@ function StockList({
                           {typeof rowData[header.field] === "number"
                             ? formatNumber(rowData[header.field])
                             : rowData[header.field] || "-"}
-                        </MKTypography>
-                      </MKBox>
+                        </Typography>
+                      </Box>
                     )}
                   </Grid>
                 ))}
               </Grid>
-            </MKBox>
+            </Box>
           );
         })}
-      </MKBox>
+      </Box>
     </>
   );
 }

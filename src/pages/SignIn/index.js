@@ -9,8 +9,6 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 
 // Material Kit 2 React components
-import MKBox from "components/MKBox";
-import MKTypography from "components/MKTypography";
 import MKButton from "components/MKButton";
 
 // Custom components
@@ -41,7 +39,7 @@ function SignIn() {
       <Box position="absolute" top={0} left={0} right={0} zIndex={3} p={2}>
         <Container maxWidth="lg">
           <Box display="flex" justifyContent="space-between" alignItems="center">
-            <Typography variant="h6" color="white" fontWeight="bold">
+            <Typography variant="h6" color="white.main" fontWeight="bold">
               Dolpha
             </Typography>
             <Box display="flex" gap={2}>
@@ -49,7 +47,7 @@ function SignIn() {
                 component="a"
                 href="/"
                 variant="button"
-                color="white"
+                color="white.main"
                 sx={{ textDecoration: "none", opacity: 0.8, "&:hover": { opacity: 1 } }}
               >
                 홈
@@ -71,86 +69,98 @@ function SignIn() {
               }}
             >
               {/* Card Header */}
-              <MKBox
-                variant="gradient"
-                bgColor="info"
-                borderRadius="lg"
-                coloredShadow="info"
+              <Box
                 mx={2}
                 mt={-3}
                 p={3}
                 mb={1}
                 textAlign="center"
+                sx={({ palette, functions, borders, boxShadows }) => ({
+                  background: functions.linearGradient(
+                    palette.gradients.info.main,
+                    palette.gradients.info.state
+                  ),
+                  borderRadius: borders.borderRadius.lg,
+                  boxShadow: boxShadows.colored.info,
+                })}
               >
-                <MKTypography variant="h4" fontWeight="medium" color="white" mt={1}>
+                <Typography variant="h4" fontWeight="medium" color="white.main" mt={1}>
                   로그인
-                </MKTypography>
+                </Typography>
                 <Grid container spacing={3} justifyContent="center" sx={{ mt: 1, mb: 2 }}>
                   <Grid item xs={2}>
-                    <MKTypography component="span" variant="body1" color="white">
+                    <Typography component="span" variant="body1" color="white.main">
                       <Box component="i" className="fab fa-facebook" sx={{ fontSize: "1.5rem" }} />
-                    </MKTypography>
+                    </Typography>
                   </Grid>
                   <Grid item xs={2}>
-                    <MKTypography component="span" variant="body1" color="white">
+                    <Typography component="span" variant="body1" color="white.main">
                       <Box component="i" className="fab fa-github" sx={{ fontSize: "1.5rem" }} />
-                    </MKTypography>
+                    </Typography>
                   </Grid>
                   <Grid item xs={2}>
-                    <MKTypography component="span" variant="body1" color="white">
+                    <Typography component="span" variant="body1" color="white.main">
                       <Box component="i" className="fab fa-google" sx={{ fontSize: "1.5rem" }} />
-                    </MKTypography>
+                    </Typography>
                   </Grid>
                 </Grid>
-              </MKBox>
+              </Box>
 
               {/* Card Body */}
-              <MKBox pt={4} pb={3} px={3}>
+              <Box pt={4} pb={3} px={3}>
                 <Box component="form">
                   {/* Google Login Button */}
-                  <MKBox mt={2} mb={3}>
+                  <Box mt={2} mb={3}>
                     <GoogleLoginButton onSuccess={handleLoginSuccess} onError={handleLoginError} />
-                  </MKBox>
+                  </Box>
 
                   {/* Remember Me Switch */}
-                  <MKBox mt={3} display="flex" alignItems="center">
+                  <Box mt={3} display="flex" alignItems="center">
                     <Switch color="info" />
-                    <MKTypography
+                    <Typography
                       variant="button"
                       fontWeight="regular"
-                      color="text"
+                      color="text.secondary"
                       ml={1}
                       sx={{ cursor: "pointer", userSelect: "none" }}
                     >
                       로그인 상태 유지
-                    </MKTypography>
-                  </MKBox>
+                    </Typography>
+                  </Box>
 
                   {/* Disabled Login Button */}
-                  <MKBox mt={4} mb={1}>
+                  <Box mt={4} mb={1}>
                     <MKButton variant="gradient" color="secondary" fullWidth disabled>
                       간편 로그인을 이용해주세요
                     </MKButton>
-                  </MKBox>
+                  </Box>
 
                   {/* Sign Up Link */}
-                  <MKBox mt={3} mb={1} textAlign="center">
-                    <MKTypography variant="button" color="text">
+                  <Box mt={3} mb={1} textAlign="center">
+                    <Typography variant="button" color="text.secondary">
                       처음 이용하시나요?{" "}
-                      <MKTypography
+                      <Typography
                         component="span"
                         variant="button"
-                        color="info"
                         fontWeight="medium"
-                        textGradient
-                        sx={{ cursor: "pointer" }}
+                        sx={({ palette, functions }) => ({
+                          cursor: "pointer",
+                          // MK의 textGradient 대체 — 글자에 그라데이션을 입힌다
+                          backgroundImage: functions.linearGradient(
+                            palette.gradients.info.main,
+                            palette.gradients.info.state
+                          ),
+                          backgroundClip: "text",
+                          WebkitBackgroundClip: "text",
+                          WebkitTextFillColor: "transparent",
+                        })}
                       >
                         Google로 간편가입
-                      </MKTypography>
-                    </MKTypography>
-                  </MKBox>
+                      </Typography>
+                    </Typography>
+                  </Box>
                 </Box>
-              </MKBox>
+              </Box>
             </Card>
           </Grid>
         </Grid>
@@ -159,7 +169,7 @@ function SignIn() {
       {/* Footer */}
       <Box position="absolute" bottom={0} left={0} right={0} py={2} textAlign="center" zIndex={3}>
         <Container maxWidth="lg">
-          <Typography variant="body2" color="white" sx={{ opacity: 0.8 }}>
+          <Typography variant="body2" color="white.main" sx={{ opacity: 0.8 }}>
             © 2024 Dolpha. All rights reserved.
           </Typography>
         </Container>

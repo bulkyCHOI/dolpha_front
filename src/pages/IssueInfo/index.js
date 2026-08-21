@@ -21,8 +21,7 @@ import ShowChartIcon from "@mui/icons-material/ShowChart";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-import MKBox from "components/MKBox";
-import MKTypography from "components/MKTypography";
+import Typography from "@mui/material/Typography";
 import DefaultNavbar from "examples/Navbars/DefaultNavbar";
 import routes from "routes";
 import { fetchMarketIndices } from "utils/twelveDataApi";
@@ -91,9 +90,9 @@ function IssueInfo() {
             );
           })}
         </svg>
-        <MKTypography
+        <Typography
           variant="caption"
-          color="text"
+          color="text.secondary"
           sx={{
             display: "block",
             textAlign: "center",
@@ -103,7 +102,7 @@ function IssueInfo() {
           }}
         >
           30일 추이
-        </MKTypography>
+        </Typography>
       </Box>
     );
   };
@@ -309,7 +308,7 @@ function IssueInfo() {
     return (
       <>
         <DefaultNavbar routes={routes} sticky />
-        <MKBox
+        <Box
           minHeight="100vh"
           width="100%"
           sx={{
@@ -320,7 +319,7 @@ function IssueInfo() {
           }}
         >
           <CircularProgress size={60} color="primary" />
-        </MKBox>
+        </Box>
       </>
     );
   }
@@ -328,7 +327,7 @@ function IssueInfo() {
   return (
     <>
       <DefaultNavbar routes={routes} sticky />
-      <MKBox
+      <Box
         minHeight="100vh"
         width="100%"
         sx={{
@@ -340,15 +339,15 @@ function IssueInfo() {
         <Grid container spacing={3} sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
           {/* 헤더 */}
           <Grid item xs={12}>
-            <MKBox display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-              <MKBox>
-                <MKTypography variant="h3" color="dark" fontWeight="bold">
+            <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+              <Box>
+                <Typography variant="h3" color="text.primary" fontWeight="bold">
                   이슈 정보
-                </MKTypography>
-                <MKTypography variant="body2" color="text" mt={1}>
+                </Typography>
+                <Typography variant="body2" color="text.secondary" mt={1}>
                   주요 지수 15분마다 자동 업데이트(시가총액, 거래대금은 상이)
-                </MKTypography>
-              </MKBox>
+                </Typography>
+              </Box>
               <IconButton
                 onClick={handleRefresh}
                 sx={{
@@ -361,12 +360,12 @@ function IssueInfo() {
               >
                 <RefreshIcon />
               </IconButton>
-            </MKBox>
+            </Box>
 
             {issueData.lastUpdated && (
-              <MKTypography variant="caption" color="text" mb={2} sx={{ display: "block" }}>
+              <Typography variant="caption" color="text.secondary" mb={2} sx={{ display: "block" }}>
                 마지막 업데이트: {issueData.lastUpdated}
-              </MKTypography>
+              </Typography>
             )}
           </Grid>
 
@@ -380,12 +379,12 @@ function IssueInfo() {
               }}
             >
               <CardContent sx={{ p: 3 }}>
-                <MKBox display="flex" alignItems="center" mb={3}>
+                <Box display="flex" alignItems="center" mb={3}>
                   <ShowChartIcon sx={{ mr: 1.5, color: "primary.main", fontSize: 28 }} />
-                  <MKTypography variant="h5" fontWeight="bold" color="dark">
+                  <Typography variant="h5" fontWeight="bold" color="text.primary">
                     주요 지수
-                  </MKTypography>
-                </MKBox>
+                  </Typography>
+                </Box>
 
                 <Grid container spacing={3}>
                   {issueData.marketIndices.map((index) => (
@@ -405,27 +404,27 @@ function IssueInfo() {
                       >
                         <CardContent sx={{ p: 2.5 }}>
                           {/* 지수 헤더 */}
-                          <MKBox
+                          <Box
                             display="flex"
                             justifyContent="space-between"
                             alignItems="center"
                             mb={2}
                           >
-                            <MKBox>
-                              <MKTypography variant="h6" fontWeight="bold" color="dark">
+                            <Box>
+                              <Typography variant="h6" fontWeight="bold" color="text.primary">
                                 {index.name}
-                              </MKTypography>
-                              <MKTypography variant="caption" color="text" sx={{ opacity: 0.7 }}>
+                              </Typography>
+                              <Typography variant="caption" color="text.secondary" sx={{ opacity: 0.7 }}>
                                 {index.code}
-                              </MKTypography>
-                            </MKBox>
-                            <MKBox textAlign="right">
-                              <MKTypography variant="h6" fontWeight="bold" color="dark">
+                              </Typography>
+                            </Box>
+                            <Box textAlign="right">
+                              <Typography variant="h6" fontWeight="bold" color="text.primary">
                                 {formatNumber(index.currentPrice)}
-                              </MKTypography>
-                              <MKBox display="flex" alignItems="center" justifyContent="flex-end">
+                              </Typography>
+                              <Box display="flex" alignItems="center" justifyContent="flex-end">
                                 {getChangeIcon(index.change)}
-                                <MKTypography
+                                <Typography
                                   variant="body2"
                                   sx={{
                                     ml: 0.5,
@@ -440,49 +439,49 @@ function IssueInfo() {
                                 >
                                   {formatChange(index.change)} (
                                   {formatChangePercent(index.changePercent)})
-                                </MKTypography>
-                              </MKBox>
-                            </MKBox>
-                          </MKBox>
+                                </Typography>
+                              </Box>
+                            </Box>
+                          </Box>
 
                           {/* 차트 */}
-                          <MKBox display="flex" justifyContent="center" sx={{ mb: 2 }}>
+                          <Box display="flex" justifyContent="center" sx={{ mb: 2 }}>
                             <MiniChart
                               data={index.chartData}
                               color={getChartColor(index.change)}
                               width={isMobile ? 200 : 240}
                               height={80}
                             />
-                          </MKBox>
+                          </Box>
 
                           {/* 추가 정보 */}
-                          <MKBox>
+                          <Box>
                             <Grid container spacing={1}>
                               <Grid item xs={6}>
-                                <MKTypography variant="caption" color="text" sx={{ opacity: 0.7 }}>
+                                <Typography variant="caption" color="text.secondary" sx={{ opacity: 0.7 }}>
                                   시가총액
-                                </MKTypography>
-                                <MKTypography variant="body2" fontWeight="medium" color="dark">
+                                </Typography>
+                                <Typography variant="body2" fontWeight="medium" color="text.primary">
                                   {index.marketCap}
-                                </MKTypography>
+                                </Typography>
                               </Grid>
                               <Grid item xs={6}>
-                                <MKTypography variant="caption" color="text" sx={{ opacity: 0.7 }}>
+                                <Typography variant="caption" color="text.secondary" sx={{ opacity: 0.7 }}>
                                   거래대금
-                                </MKTypography>
-                                <MKTypography variant="body2" fontWeight="medium" color="dark">
+                                </Typography>
+                                <Typography variant="body2" fontWeight="medium" color="text.primary">
                                   {index.volume}
-                                </MKTypography>
+                                </Typography>
                               </Grid>
                             </Grid>
-                            <MKTypography
+                            <Typography
                               variant="caption"
-                              color="text"
+                              color="text.secondary"
                               sx={{ mt: 1.5, display: "block", opacity: 0.8 }}
                             >
                               {index.description}
-                            </MKTypography>
-                          </MKBox>
+                            </Typography>
+                          </Box>
                         </CardContent>
                       </Card>
                     </Grid>
@@ -502,37 +501,37 @@ function IssueInfo() {
               }}
             >
               <CardContent sx={{ p: 3 }}>
-                <MKBox display="flex" alignItems="center" mb={3}>
+                <Box display="flex" alignItems="center" mb={3}>
                   <NewsIcon sx={{ mr: 1.5, color: "info.main", fontSize: 28 }} />
-                  <MKTypography variant="h5" fontWeight="bold" color="dark">
+                  <Typography variant="h5" fontWeight="bold" color="text.primary">
                     경제 뉴스
-                  </MKTypography>
-                </MKBox>
+                  </Typography>
+                </Box>
 
                 {issueData.economicNews.map((news, index) => (
-                  <MKBox key={news.id} mb={2.5}>
-                    <MKBox
+                  <Box key={news.id} mb={2.5}>
+                    <Box
                       display="flex"
                       justifyContent="space-between"
                       alignItems="flex-start"
                       mb={1}
                     >
-                      <MKTypography variant="h6" fontWeight="medium" sx={{ flex: 1 }} color="dark">
+                      <Typography variant="h6" fontWeight="medium" sx={{ flex: 1 }} color="text.primary">
                         {news.title}
-                      </MKTypography>
+                      </Typography>
                       <Chip
                         label={news.importance}
                         color={getImportanceColor(news.importance)}
                         size="small"
                         sx={{ ml: 1 }}
                       />
-                    </MKBox>
+                    </Box>
 
-                    <MKTypography variant="body2" color="text" mb={1.5} sx={{ opacity: 0.8 }}>
+                    <Typography variant="body2" color="text.secondary" mb={1.5} sx={{ opacity: 0.8 }}>
                       {news.content}
-                    </MKTypography>
+                    </Typography>
 
-                    <MKBox display="flex" justifyContent="space-between" alignItems="center">
+                    <Box display="flex" justifyContent="space-between" alignItems="center">
                       <Chip
                         label={news.category}
                         size="small"
@@ -542,15 +541,15 @@ function IssueInfo() {
                           color: "text.secondary",
                         }}
                       />
-                      <MKTypography variant="caption" color="text" sx={{ opacity: 0.7 }}>
+                      <Typography variant="caption" color="text.secondary" sx={{ opacity: 0.7 }}>
                         {news.date} {news.time}
-                      </MKTypography>
-                    </MKBox>
+                      </Typography>
+                    </Box>
 
                     {index < issueData.economicNews.length - 1 && (
                       <Divider sx={{ mt: 2.5, opacity: 0.6 }} />
                     )}
-                  </MKBox>
+                  </Box>
                 ))}
               </CardContent>
             </Card>
@@ -566,41 +565,41 @@ function IssueInfo() {
               }}
             >
               <CardContent sx={{ p: 3 }}>
-                <MKBox display="flex" alignItems="center" mb={3}>
+                <Box display="flex" alignItems="center" mb={3}>
                   <EventIcon sx={{ mr: 1.5, color: "warning.main", fontSize: 28 }} />
-                  <MKTypography variant="h5" fontWeight="bold" color="dark">
+                  <Typography variant="h5" fontWeight="bold" color="text.primary">
                     기업 이벤트
-                  </MKTypography>
-                </MKBox>
+                  </Typography>
+                </Box>
 
                 {issueData.corporateEvents.map((event, index) => (
-                  <MKBox key={event.id} mb={2.5}>
-                    <MKBox
+                  <Box key={event.id} mb={2.5}>
+                    <Box
                       display="flex"
                       justifyContent="space-between"
                       alignItems="flex-start"
                       mb={1}
                     >
-                      <MKTypography variant="h6" fontWeight="medium" color="dark">
+                      <Typography variant="h6" fontWeight="medium" color="text.primary">
                         {event.company}
-                      </MKTypography>
+                      </Typography>
                       <Chip
                         label={event.impact}
                         color={getImpactColor(event.impact)}
                         size="small"
                         sx={{ ml: 1 }}
                       />
-                    </MKBox>
+                    </Box>
 
-                    <MKTypography variant="subtitle2" color="primary" mb={1} fontWeight="medium">
+                    <Typography variant="subtitle2" color="primary.main" mb={1} fontWeight="medium">
                       {event.event}
-                    </MKTypography>
+                    </Typography>
 
-                    <MKTypography variant="body2" color="text" mb={1.5} sx={{ opacity: 0.8 }}>
+                    <Typography variant="body2" color="text.secondary" mb={1.5} sx={{ opacity: 0.8 }}>
                       {event.description}
-                    </MKTypography>
+                    </Typography>
 
-                    <MKBox display="flex" justifyContent="space-between" alignItems="center">
+                    <Box display="flex" justifyContent="space-between" alignItems="center">
                       <Chip
                         label={event.sector}
                         size="small"
@@ -610,15 +609,15 @@ function IssueInfo() {
                           color: "text.secondary",
                         }}
                       />
-                      <MKTypography variant="caption" color="text" sx={{ opacity: 0.7 }}>
+                      <Typography variant="caption" color="text.secondary" sx={{ opacity: 0.7 }}>
                         {event.date}
-                      </MKTypography>
-                    </MKBox>
+                      </Typography>
+                    </Box>
 
                     {index < issueData.corporateEvents.length - 1 && (
                       <Divider sx={{ mt: 2.5, opacity: 0.6 }} />
                     )}
-                  </MKBox>
+                  </Box>
                 ))}
               </CardContent>
             </Card>
@@ -639,15 +638,15 @@ function IssueInfo() {
               }}
             >
               <AlertTitle sx={{ fontWeight: "bold", color: "dark" }}>정보 안내</AlertTitle>
-              <MKTypography variant="body2" color="text" sx={{ opacity: 0.8 }}>
+              <Typography variant="body2" color="text.secondary" sx={{ opacity: 0.8 }}>
                 주요 지수 데이터는 FinanceDataReader를 통해 실시간으로 제공되며, 15분마다 자동
                 업데이트됩니다. 투자 결정시 참고용으로만 활용하시기 바랍니다. 투자에 대한 최종
                 책임은 투자자 본인에게 있습니다.
-              </MKTypography>
+              </Typography>
             </Alert>
           </Grid>
         </Grid>
-      </MKBox>
+      </Box>
     </>
   );
 }

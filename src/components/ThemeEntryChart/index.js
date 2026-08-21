@@ -9,7 +9,7 @@ import Alert from "@mui/material/Alert";
 import Divider from "@mui/material/Divider";
 import Skeleton from "@mui/material/Skeleton";
 
-import MKTypography from "components/MKTypography";
+import Typography from "@mui/material/Typography";
 import { useThemeEntryChart } from "hooks/useThemeEntryChart";
 import EntryDecisionChart from "./EntryDecisionChart";
 import DecisionList from "./DecisionList";
@@ -75,12 +75,12 @@ function StockTabLabel({ stock }) {
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, textTransform: "none" }}>
       <Box sx={{ textAlign: "left" }}>
-        <MKTypography variant="button" sx={{ fontSize: 13, fontWeight: 700, display: "block" }}>
+        <Typography variant="button" sx={{ fontSize: 13, fontWeight: 700, display: "block" }}>
           {stock.stock_name}
-        </MKTypography>
-        <MKTypography variant="caption" sx={{ fontSize: 10, color: CHART_COLORS.MUTED }}>
+        </Typography>
+        <Typography variant="caption" sx={{ fontSize: 10, color: CHART_COLORS.MUTED }}>
           {stock.theme_name || stock.stock_code} · {stock.total}회
-        </MKTypography>
+        </Typography>
       </Box>
       <Chip
         size="small"
@@ -147,9 +147,9 @@ function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
   if (stocks.length === 0) {
     return (
       <Box sx={{ py: 4, textAlign: "center" }}>
-        <MKTypography variant="body2" sx={{ color: CHART_COLORS.MUTED, fontSize: 13 }}>
+        <Typography variant="body2" sx={{ color: CHART_COLORS.MUTED, fontSize: 13 }}>
           판정 이력이 없습니다.
-        </MKTypography>
+        </Typography>
       </Box>
     );
   }
@@ -189,12 +189,12 @@ function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
         <Skeleton variant="rounded" height={CHART_HEIGHT} />
       ) : chart.bars.length === 0 ? (
         <Box sx={{ py: 5, textAlign: "center" }}>
-          <MKTypography variant="body2" sx={{ color: CHART_COLORS.MUTED, fontSize: 13 }}>
+          <Typography variant="body2" sx={{ color: CHART_COLORS.MUTED, fontSize: 13 }}>
             {chart.stock_name || selectedCode}의 1분봉이 저장되어 있지 않아 차트를 그릴 수 없습니다.
-          </MKTypography>
-          <MKTypography variant="caption" sx={{ color: "#9aa5b1" }}>
+          </Typography>
+          <Typography variant="caption" sx={{ color: "#9aa5b1" }}>
             분봉은 자동매매 사이클이 돌 때 수집됩니다.
-          </MKTypography>
+          </Typography>
         </Box>
       ) : (
         <>
@@ -218,9 +218,9 @@ function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
                   mb: 0.5,
                 }}
               >
-                <MKTypography variant="caption" sx={{ fontSize: 11, color: CHART_COLORS.MUTED }}>
+                <Typography variant="caption" sx={{ fontSize: 11, color: CHART_COLORS.MUTED }}>
                   판정 {listDecisions.length}건 · 눌러서 시점 이동
-                </MKTypography>
+                </Typography>
                 {meaningful.length > 0 && meaningful.length < decisions.length && (
                   <Chip
                     size="small"

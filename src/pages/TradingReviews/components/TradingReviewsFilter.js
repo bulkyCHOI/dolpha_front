@@ -83,7 +83,7 @@ function TradingReviewsFilter({ filters, setFilters, onApplyFilters }) {
               필터링
             </Typography>
             {hasActiveFilters() && (
-              <Typography variant="caption" color="primary">
+              <Typography variant="caption" color="primary.main">
                 (활성화됨)
               </Typography>
             )}

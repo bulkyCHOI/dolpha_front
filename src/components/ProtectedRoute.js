@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "contexts/AuthContext";
-import MKBox from "components/MKBox";
-import MKTypography from "components/MKTypography";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 
 const ProtectedRoute = ({ children }) => {
   const { user, isAuthenticated, loading } = useAuth();
@@ -18,7 +18,7 @@ const ProtectedRoute = ({ children }) => {
   // 로딩 중
   if (loading) {
     return (
-      <MKBox
+      <Box
         minHeight="100vh"
         width="100%"
         sx={{
@@ -27,17 +27,17 @@ const ProtectedRoute = ({ children }) => {
           placeItems: "center",
         }}
       >
-        <MKTypography variant="h4" color="white">
+        <Typography variant="h4" color="white.main">
           로그인 상태 확인 중...
-        </MKTypography>
-      </MKBox>
+        </Typography>
+      </Box>
     );
   }
 
   // 인증되지 않음
   if (!isAuthenticated) {
     return (
-      <MKBox
+      <Box
         minHeight="100vh"
         width="100%"
         sx={{
@@ -46,10 +46,10 @@ const ProtectedRoute = ({ children }) => {
           placeItems: "center",
         }}
       >
-        <MKTypography variant="h4" color="white">
+        <Typography variant="h4" color="white.main">
           로그인이 필요합니다. 리다이렉트 중...
-        </MKTypography>
-      </MKBox>
+        </Typography>
+      </Box>
     );
   }
 
