@@ -1,12 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
-import {
-  createChart,
-  createSeriesMarkers,
-  CandlestickSeries,
-  HistogramSeries,
-  LineStyle,
-} from "lightweight-charts";
+import { LineStyle } from "lightweight-charts";
+
+import TradingViewChart from "components/TradingViewChart";
 
 import ZonePrimitive from "./ZonePrimitive";
 import { CHART_COLORS, ZONE_STYLE, decisionStatus, timeLabel, won } from "./constants";
@@ -173,154 +169,81 @@ function focusRange(bars, decision) {
  * 전고점·눌림 구간·돌파 기준선을 선택된 판정 기준으로 그린다.
  */
 function EntryDecisionChart({ bars, decision, height }) {
-  const containerRef = useRef(null);
-  const chartRef = useRef(null);
-  const candleRef = useRef(null);
-  const volumeRef = useRef(null);
-  const markersRef = useRef(null);
+  // primitive는 차트 수명 동안 같은 인스턴스를 유지해야 한다.
   const zonesRef = useRef(null);
-  const priceLinesRef = useRef([]);
+  if (!zonesRef.current) zonesRef.current = new ZonePrimitive();
 
   const [hoverBar, setHoverBar] = useState(null);
 
-  useEffect(() => {
-    if (!containerRef.current) return undefined;
-
-    const container = containerRef.current;
-    const chart = createChart(container, {
-      width: container.clientWidth,
-      height: container.clientHeight,
-      layout: { background: { color: "#ffffff" }, textColor: "#37474f", fontSize: 11 },
-      grid: {
-        vertLines: { color: CHART_COLORS.GRID },
-        horzLines: { color: CHART_COLORS.GRID },
-      },
-      crosshair: { mode: 1 },
-      rightPriceScale: {
-        borderColor: CHART_COLORS.BORDER,
-        scaleMargins: { top: 0.12, bottom: 0.28 },
-      },
-      timeScale: {
-        borderColor: CHART_COLORS.BORDER,
-        timeVisible: true,
-        secondsVisible: false,
-        shiftVisibleRangeOnNewBar: false,
-      },
-      localization: { locale: "ko-KR" },
-    });
-
-    const candle = chart.addSeries(CandlestickSeries, {
-      upColor: CHART_COLORS.UP,
-      downColor: CHART_COLORS.DOWN,
-      borderUpColor: CHART_COLORS.UP,
-      borderDownColor: CHART_COLORS.DOWN,
-      wickUpColor: CHART_COLORS.UP,
-      wickDownColor: CHART_COLORS.DOWN,
-      priceLineVisible: false,
-      lastValueVisible: false,
-      // 원화는 소수점이 없다
-      priceFormat: { type: "price", precision: 0, minMove: 1 },
-    });
-
-    const volume = chart.addSeries(HistogramSeries, {
-      priceFormat: { type: "volume" },
-      priceScaleId: "volume",
-      priceLineVisible: false,
-      lastValueVisible: false,
-    });
-    chart.priceScale("volume").applyOptions({ scaleMargins: { top: 0.82, bottom: 0 } });
-
-    const zones = new ZonePrimitive();
-    candle.attachPrimitive(zones);
-
-    const handleCrosshairMove = (param) => {
-      const candleData = param.time ? param.seriesData?.get(candle) : null;
-      if (!candleData) {
-        setHoverBar(null);
-        return;
-      }
-      setHoverBar({
-        time: param.time,
-        ...candleData,
-        volume: param.seriesData?.get(volume)?.value,
-      });
-    };
-    chart.subscribeCrosshairMove(handleCrosshairMove);
-
-    chartRef.current = chart;
-    candleRef.current = candle;
-    volumeRef.current = volume;
-    zonesRef.current = zones;
-    markersRef.current = createSeriesMarkers(candle, []);
-
-    // autoSize 는 컨테이너가 0폭일 때 마운트되면 이후 복구되지 않는다
-    // (탭 전환·접힌 영역에서 실제로 발생). 직접 관측해 크기를 넣어 준다.
-    const observer = new ResizeObserver(([entry]) => {
-      const { width, height } = entry.contentRect;
-      if (width > 0 && height > 0) chart.resize(width, height);
-    });
-    observer.observe(container);
-
-    return () => {
-      observer.disconnect();
-      chart.unsubscribeCrosshairMove(handleCrosshairMove);
-      chart.remove();
-      chartRef.current = null;
-      candleRef.current = null;
-      volumeRef.current = null;
-      zonesRef.current = null;
-      markersRef.current = null;
-      priceLinesRef.current = [];
-    };
-  }, []);
-
-  // 분봉 갱신
-  useEffect(() => {
-    const candle = candleRef.current;
-    const volume = volumeRef.current;
-    if (!candle || !volume) return;
-
+  const series = useMemo(() => {
     const decisionBar = decision?.geometry?.decision_bar;
 
-    candle.setData(
-      bars.map(({ time, open, high, low, close }) => ({ time, open, high, low, close }))
-    );
-    volume.setData(
-      bars.map((bar) => ({
-        time: bar.time,
-        value: bar.volume,
-        color:
-          bar.time === decisionBar
-            ? DECISION_VOLUME
-            : bar.close >= bar.open
-            ? UP_VOLUME
-            : DOWN_VOLUME,
-      }))
-    );
-  }, [bars, decision]);
-
-  // 선택된 판정의 마커·음영·가격선 갱신
-  useEffect(() => {
-    const chart = chartRef.current;
-    const candle = candleRef.current;
-    if (!chart || !candle) return;
-
-    priceLinesRef.current.forEach((line) => candle.removePriceLine(line));
-    priceLinesRef.current = buildPriceLines(decision).map((options) =>
-      candle.createPriceLine({ axisLabelVisible: true, ...options })
-    );
-
-    markersRef.current?.setMarkers(buildMarkers(bars, decision));
-
     const { zones, verticals } = buildShapes(decision);
-    zonesRef.current?.setShapes(zones, verticals);
+    zonesRef.current.setShapes(zones, verticals);
 
-    const range = focusRange(bars, decision);
-    if (range) {
-      // setData 렌더가 끝난 뒤에 적용해야 자동 스크롤에 덮이지 않는다
-      requestAnimationFrame(() => chartRef.current?.timeScale().setVisibleRange(range));
-    }
+    return [
+      {
+        id: "candle",
+        type: "candle",
+        pane: 0,
+        data: bars.map(({ time, open, high, low, close }) => ({ time, open, high, low, close })),
+        options: {
+          upColor: CHART_COLORS.UP,
+          downColor: CHART_COLORS.DOWN,
+          borderUpColor: CHART_COLORS.UP,
+          borderDownColor: CHART_COLORS.DOWN,
+          wickUpColor: CHART_COLORS.UP,
+          wickDownColor: CHART_COLORS.DOWN,
+          priceLineVisible: false,
+          lastValueVisible: false,
+          // 원화는 소수점이 없다
+          priceFormat: { type: "price", precision: 0, minMove: 1 },
+        },
+        primitives: [zonesRef.current],
+        markers: buildMarkers(bars, decision),
+        priceLines: buildPriceLines(decision).map((options) => ({
+          axisLabelVisible: true,
+          ...options,
+        })),
+      },
+      {
+        id: "volume",
+        type: "histogram",
+        pane: 0,
+        data: bars.map((bar) => ({
+          time: bar.time,
+          value: bar.volume,
+          color:
+            bar.time === decisionBar
+              ? DECISION_VOLUME
+              : bar.close >= bar.open
+              ? UP_VOLUME
+              : DOWN_VOLUME,
+        })),
+        options: {
+          priceFormat: { type: "volume" },
+          priceScaleId: "volume",
+          priceLineVisible: false,
+          lastValueVisible: false,
+        },
+        priceScaleOptions: { scaleMargins: { top: 0.82, bottom: 0 } },
+      },
+    ];
   }, [bars, decision]);
+
+  const handleCrosshairMove = (param, chart, seriesMap) => {
+    const candleSeries = seriesMap?.get("candle");
+    const candleData = param.time && candleSeries ? param.seriesData?.get(candleSeries) : null;
+    if (!candleData) {
+      setHoverBar(null);
+      return;
+    }
+    setHoverBar({
+      time: param.time,
+      ...candleData,
+      volume: param.seriesData?.get(seriesMap.get("volume"))?.value,
+    });
+  };
 
   // 호버 전 기본값은 '지금 보고 있는 판정'의 봉 — 화면 밖 마지막 봉을 띄우면 혼란스럽다
   const decisionBar = decision?.geometry?.decision_bar;
@@ -331,37 +254,57 @@ function EntryDecisionChart({ bars, decision, height }) {
   const readoutColor =
     readout && readout.close >= readout.open ? CHART_COLORS.UP : CHART_COLORS.DOWN;
 
-  return (
-    <div style={{ position: "relative", width: "100%", height }}>
-      {readout && (
-        <div
-          style={{
-            position: "absolute",
-            top: 6,
-            left: 8,
-            zIndex: 2,
-            fontSize: 11.5,
-            background: "rgba(255,255,255,0.88)",
-            padding: "2px 6px",
-            borderRadius: 4,
-            pointerEvents: "none",
-            fontVariantNumeric: "tabular-nums",
-            whiteSpace: "nowrap",
-          }}
-        >
-          <strong style={{ marginRight: 10 }}>{timeLabel(readout.time)}</strong>
-          <span style={{ color: CHART_COLORS.MUTED, marginRight: 3 }}>고</span>
-          <span style={{ color: readoutColor, marginRight: 8 }}>{won(readout.high)}</span>
-          <span style={{ color: CHART_COLORS.MUTED, marginRight: 3 }}>저</span>
-          <span style={{ color: readoutColor, marginRight: 8 }}>{won(readout.low)}</span>
-          <span style={{ color: CHART_COLORS.MUTED, marginRight: 3 }}>종</span>
-          <span style={{ color: readoutColor, marginRight: 8 }}>{won(readout.close)}</span>
-          <span style={{ color: CHART_COLORS.MUTED, marginRight: 3 }}>거래량</span>
-          <span>{won(readout.volume)}</span>
-        </div>
-      )}
-      <div ref={containerRef} style={{ width: "100%", height: "100%" }} />
+  const readoutOverlay = readout ? (
+    <div
+      style={{
+        position: "absolute",
+        top: 6,
+        left: 8,
+        zIndex: 2,
+        fontSize: 11.5,
+        background: "rgba(255,255,255,0.88)",
+        padding: "2px 6px",
+        borderRadius: 4,
+        pointerEvents: "none",
+        fontVariantNumeric: "tabular-nums",
+        whiteSpace: "nowrap",
+      }}
+    >
+      <strong style={{ marginRight: 10 }}>{timeLabel(readout.time)}</strong>
+      <span style={{ color: CHART_COLORS.MUTED, marginRight: 3 }}>고</span>
+      <span style={{ color: readoutColor, marginRight: 8 }}>{won(readout.high)}</span>
+      <span style={{ color: CHART_COLORS.MUTED, marginRight: 3 }}>저</span>
+      <span style={{ color: readoutColor, marginRight: 8 }}>{won(readout.low)}</span>
+      <span style={{ color: CHART_COLORS.MUTED, marginRight: 3 }}>종</span>
+      <span style={{ color: readoutColor, marginRight: 8 }}>{won(readout.close)}</span>
+      <span style={{ color: CHART_COLORS.MUTED, marginRight: 3 }}>거래량</span>
+      <span>{won(readout.volume)}</span>
     </div>
+  ) : null;
+
+  return (
+    <TradingViewChart
+      series={series}
+      panes={[{ stretch: 1 }]}
+      height={height}
+      intraday
+      // 판정이 바뀔 때마다 해당 구간으로 화면을 다시 맞춘다
+      fitContentKey={`${decision?.time ?? "none"}-${bars.length}`}
+      initialVisibleRange={focusRange(bars, decision)}
+      onCrosshairMove={handleCrosshairMove}
+      overlay={readoutOverlay}
+      chartOptions={{
+        layout: { background: { color: "#ffffff" }, textColor: "#37474f", fontSize: 11 },
+        grid: {
+          vertLines: { color: CHART_COLORS.GRID },
+          horzLines: { color: CHART_COLORS.GRID },
+        },
+        rightPriceScale: {
+          borderColor: CHART_COLORS.BORDER,
+          scaleMargins: { top: 0.12, bottom: 0.28 },
+        },
+      }}
+    />
   );
 }
 

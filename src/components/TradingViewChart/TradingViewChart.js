@@ -121,6 +121,8 @@ TradingViewChart.propTypes = {
       priceLines: PropTypes.array,
       // primitive는 시리즈 생성 시 1회만 부착되므로 안정된 인스턴스를 넘겨야 한다.
       primitives: PropTypes.array,
+      // 이 시리즈가 쓰는 가격 축 옵션 (오버레이 축의 scaleMargins 등)
+      priceScaleOptions: PropTypes.object,
     })
   ),
   panes: PropTypes.arrayOf(

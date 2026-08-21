@@ -134,6 +134,7 @@ export default function useTradingViewChart({
       const definition = resolveSeriesDefinition(spec.type);
       const seriesApi = chart.addSeries(definition, spec.options ?? {}, spec.pane ?? 0);
       (spec.primitives ?? []).forEach((primitive) => seriesApi.attachPrimitive(primitive));
+      if (spec.priceScaleOptions) seriesApi.priceScale().applyOptions(spec.priceScaleOptions);
       primitivesMapRef.current.set(spec.id, spec.primitives ?? []);
       seriesMap.set(spec.id, seriesApi);
     });
