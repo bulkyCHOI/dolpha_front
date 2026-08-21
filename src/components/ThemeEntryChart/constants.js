@@ -1,8 +1,23 @@
 /** 진입 판정 차트 공용 상수 — 색/라벨을 한 곳에서 관리한다. */
 
-import { COLORS } from "constants/styles";
+import { COLORS, resolveColor } from "constants/styles";
 
-export const CHART_COLORS = {
+/**
+ * 캔버스용 색 묶음. CSS 변수는 앱 마운트 후에야 존재하므로
+ * 모듈 로드 시점이 아니라 접근 시점에 해석한다.
+ */
+const canvasColors = (map) =>
+  Object.defineProperties(
+    {},
+    Object.fromEntries(
+      Object.entries(map).map(([key, value]) => [
+        key,
+        { get: () => resolveColor(value), enumerable: true },
+      ])
+    )
+  );
+
+export const CHART_COLORS = canvasColors({
   UP: COLORS.UP,
   DOWN: "#3b82f6",
   PREV_HIGH: COLORS.UP,
@@ -14,7 +29,7 @@ export const CHART_COLORS = {
   MUTED: COLORS.TEXT_SECONDARY,
   GRID: COLORS.DIVIDER,
   BORDER: "#d9dee5",
-};
+});
 
 export const ZONE_STYLE = {
   PULLBACK: {

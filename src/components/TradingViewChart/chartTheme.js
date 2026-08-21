@@ -1,15 +1,37 @@
 /**
  * TradingView(lightweight-charts) 차트 공용 테마.
  *
+ * 캔버스는 CSS 변수를 해석하지 못하므로 여기 값들은 resolveColor 를 거친
+ * 실제 색이다. 모듈 로드 시점에 한 번 계산되므로, 테마를 바꾸면
+ * 차트를 다시 만들어야 반영된다 (useTradingViewChart 가 mode 로 처리).
+ *
  * 색은 디자인 토큰(assets/theme/base/colors)에서 가져온다.
  * 차트와 UI가 같은 팔레트를 쓰도록 하는 것이 이 파일의 목적이며,
  * 차트 전용으로 새 색을 만들지 않는다.
  */
 import colors from "assets/theme/base/colors";
 import typography from "assets/theme/base/typography";
-import { COLORS } from "constants/styles";
+import { COLORS, resolveColor } from "constants/styles";
 
 const { bearish, bullish, flat, grey, info, success, warning } = colors;
+
+
+/**
+ * 캔버스용 색 묶음을 만든다.
+ *
+ * 값을 미리 계산하면 안 된다. CSS 변수는 앱이 마운트된 뒤에야 문서에
+ * 주입되므로, 모듈 로드 시점에 읽으면 비어 있다. 접근할 때 해석한다.
+ */
+const canvasColors = (map) =>
+  Object.defineProperties(
+    {},
+    Object.fromEntries(
+      Object.entries(map).map(([key, value]) => [
+        key,
+        { get: () => resolveColor(value), enumerable: true },
+      ])
+    )
+  );
 
 // 상승/하락 (국내 관례: 상승 적색 / 하락 청색)
 export const UP_COLOR = bullish.main;
@@ -21,15 +43,15 @@ export const UP_COLOR_FADED = "rgba(239, 68, 68, 0.5)";
 export const DOWN_COLOR_FADED = "rgba(59, 130, 246, 0.5)";
 
 // 이동평균선 (기간이 짧을수록 밝고 얇게)
-export const MA_COLORS = {
+export const MA_COLORS = canvasColors({
   ma5: COLORS.WARNING,
   ma20: COLORS.UP,
   ma60: COLORS.SUCCESS,
   ma120: "#a855f7",
-};
+});
 
 // 보조지표
-export const INDICATOR_COLORS = {
+export const INDICATOR_COLORS = canvasColors({
   rsRank: bullish.main,
   rsRank1m: success.main,
   rsRank3m: info.main,
@@ -41,15 +63,15 @@ export const INDICATOR_COLORS = {
   atrRatio: "#795548",
   mtt: success.main,
   mttOff: COLORS.WARNING,
-};
+});
 
 // 마커 / 진입선
-export const MARKER_COLORS = {
+export const MARKER_COLORS = canvasColors({
   htfStart: success.main,
   htfPeak: bullish.main,
   inflectionUp: bullish.main,
   inflectionDown: bearish.main,
-};
+});
 
 export const PRICE_LINE_COLORS = [
   colors.primary.main,

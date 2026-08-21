@@ -32,20 +32,31 @@ export const PANE = {
  * 종가에서 직접 계산한다 (buildMovingAverage).
  */
 export const MA_FIELDS = [
-  { field: "ma5", period: 5, label: "5일선", color: MA_COLORS.ma5 },
-  { field: "ma20", period: 20, label: "20일선", color: MA_COLORS.ma20 },
-  { field: "ma60", period: 60, label: "60일선", color: MA_COLORS.ma60 },
-  { field: "ma120", period: 120, label: "120일선", color: MA_COLORS.ma120 },
-];
+  { field: "ma5", period: 5, label: "5일선" },
+  { field: "ma20", period: 20, label: "20일선" },
+  { field: "ma60", period: 60, label: "60일선" },
+  { field: "ma120", period: 120, label: "120일선" },
+].map((item) => ({
+  ...item,
+  // 색은 접근할 때 읽는다 (CSS 변수는 앱 마운트 후에야 존재한다)
+  get color() {
+    return MA_COLORS[item.field];
+  },
+}));
 
 /** RS Rank 계열 정의 — 차트 시리즈와 범례가 함께 사용한다. */
 export const RS_FIELDS = [
-  { field: "rsRank", label: "RS", color: INDICATOR_COLORS.rsRank },
-  { field: "rsRank1m", label: "1M", color: INDICATOR_COLORS.rsRank1m },
-  { field: "rsRank3m", label: "3M", color: INDICATOR_COLORS.rsRank3m },
-  { field: "rsRank6m", label: "6M", color: INDICATOR_COLORS.rsRank6m },
-  { field: "rsRank12m", label: "12M", color: INDICATOR_COLORS.rsRank12m },
-];
+  { field: "rsRank", label: "RS", key: "rsRank" },
+  { field: "rsRank1m", label: "1M", key: "rsRank1m" },
+  { field: "rsRank3m", label: "3M", key: "rsRank3m" },
+  { field: "rsRank6m", label: "6M", key: "rsRank6m" },
+  { field: "rsRank12m", label: "12M", key: "rsRank12m" },
+].map((item) => ({
+  ...item,
+  get color() {
+    return INDICATOR_COLORS[item.key];
+  },
+}));
 
 const LINE_BASE_OPTIONS = {
   lineWidth: 2,

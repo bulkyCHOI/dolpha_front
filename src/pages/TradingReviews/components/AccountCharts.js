@@ -11,19 +11,24 @@ import Typography from "@mui/material/Typography";
 import SsidChartIcon from "@mui/icons-material/SsidChart";
 
 import TradingViewChart, { ChartLegend } from "components/TradingViewChart";
-import { COLORS, alpha } from "constants/styles";
+import { COLORS, alpha, resolveColor } from "constants/styles";
 
 const CHART_HEIGHT = 220;
 
-/** 계좌 차트 전용 색. 공용 토큰을 그대로 쓰고 이름만 용도에 맞춘다. */
-const SERIES_COLORS = {
-  totalMoney: COLORS.DOWN,
-  stockMoney: COLORS.WARNING,
-  profit: alpha(COLORS.SUCCESS, 0.75),
-  loss: alpha(COLORS.UP, 0.75),
-  profitLine: COLORS.SUCCESS,
-  lossLine: COLORS.UP,
-};
+/**
+ * 계좌 차트 전용 색. 공용 토큰을 쓰되 이름만 용도에 맞춘다.
+ *
+ * 캔버스는 CSS 변수를 해석하지 못하므로 실제 값으로 바꿔서 넘긴다.
+ * 렌더 시점에 읽어야 테마 전환이 반영된다.
+ */
+const seriesColors = () => ({
+  totalMoney: resolveColor(COLORS.DOWN),
+  stockMoney: resolveColor(COLORS.WARNING),
+  profit: alpha(resolveColor(COLORS.SUCCESS), 0.75),
+  loss: alpha(resolveColor(COLORS.UP), 0.75),
+  profitLine: resolveColor(COLORS.SUCCESS),
+  lossLine: resolveColor(COLORS.UP),
+});
 
 /** 원 → 만원 */
 const toManwon = (value) => Math.round((value ?? 0) / 10000);
@@ -51,8 +56,9 @@ const BASE_LINE_OPTIONS = {
  * 종목 차트와 동일하게 TradingView 엔진을 사용한다.
  */
 function AccountCharts({ accountSnapshots, dailyPnl, loading }) {
-  const equitySeries = useMemo(
-    () => [
+  const equitySeries = useMemo(() => {
+    const SERIES_COLORS = seriesColors();
+    return [
       {
         id: "totalMoney",
         type: "area",
@@ -84,11 +90,11 @@ function AccountCharts({ accountSnapshots, dailyPnl, loading }) {
           priceFormat: manwonFormat,
         },
       },
-    ],
-    [accountSnapshots]
-  );
+    ];
+  }, [accountSnapshots]);
 
   const pnlSeries = useMemo(() => {
+    const SERIES_COLORS = seriesColors();
     const pnlByDate = Object.fromEntries(dailyPnl.map((item) => [item.date, item.daily_pnl]));
 
     let cumulative = 0;
@@ -127,6 +133,8 @@ function AccountCharts({ accountSnapshots, dailyPnl, loading }) {
       },
     ];
   }, [accountSnapshots, dailyPnl]);
+
+  const legendColors = seriesColors();
 
   if (loading) {
     return (
@@ -168,8 +176,8 @@ function AccountCharts({ accountSnapshots, dailyPnl, loading }) {
                 {
                   title: "평가금액",
                   items: [
-                    { field: "totalMoney", label: "총 평가금액", color: SERIES_COLORS.totalMoney },
-                    { field: "stockMoney", label: "주식 평가금액", color: SERIES_COLORS.stockMoney },
+                    { field: "totalMoney", label: "총 평가금액", color: legendColors.totalMoney },
+                    { field: "stockMoney", label: "주식 평가금액", color: legendColors.stockMoney },
                   ],
                 },
               ]}
@@ -189,8 +197,8 @@ function AccountCharts({ accountSnapshots, dailyPnl, loading }) {
                 {
                   title: "손익",
                   items: [
-                    { field: "dailyPnl", label: "일자별 확정", color: SERIES_COLORS.profitLine },
-                    { field: "cumulativePnl", label: "누적", color: SERIES_COLORS.totalMoney },
+                    { field: "dailyPnl", label: "일자별 확정", color: legendColors.profitLine },
+                    { field: "cumulativePnl", label: "누적", color: legendColors.totalMoney },
                   ],
                 },
               ]}

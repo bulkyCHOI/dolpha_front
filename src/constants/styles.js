@@ -19,82 +19,108 @@
  *   GoogleLoginButton    Google 브랜드 색 (임의로 바꾸면 안 됨)
  */
 import colors from "assets/theme/base/colors";
+import { cssVar } from "constants/palette";
 
-const { bearish, bullish, flat, grey, info, primary, success, warning, error } = colors;
-
-/** rgba 문자열을 만든다. 테두리·호버 배경처럼 투명도가 필요한 곳에 쓴다. */
-const alpha = (hex, opacity) => {
-  const value = hex.replace("#", "");
+/**
+ * 색에 투명도를 얹는다.
+ *
+ * CSS 변수는 rgba()로 분해할 수 없으므로 color-mix 를 쓴다.
+ * 캔버스(차트)에서는 color-mix 를 해석하지 못하니 resolveColor 로 먼저 값을 얻을 것.
+ */
+export const alpha = (color, opacity) => {
+  if (typeof color === "string" && color.startsWith("var(")) {
+    return `color-mix(in srgb, ${color} ${Math.round(opacity * 100)}%, transparent)`;
+  }
+  const value = String(color).replace("#", "");
   const full = value.length === 3 ? value.replace(/./g, (c) => c + c) : value;
   const [r, g, b] = [0, 2, 4].map((i) => parseInt(full.slice(i, i + 2), 16));
   return `rgba(${r}, ${g}, ${b}, ${opacity})`;
 };
 
+/**
+ * var(--x) 를 실제 색 값으로 바꾼다.
+ *
+ * 캔버스 2D 컨텍스트는 CSS 변수를 해석하지 못하므로, 차트에 색을 넘기기
+ * 전에 이 함수를 거친다. 테마가 바뀌면 다시 호출해야 한다.
+ */
+export const resolveColor = (color) => {
+  if (typeof color !== "string" || !color.startsWith("var(")) return color;
+  const name = color.slice(4, -1).trim();
+  const resolved = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return resolved || color;
+};
+
 /** 브랜드 그라데이션 (헤더 배너 · 강조 버튼) */
 export const GRADIENT_COLORS = {
-  PRIMARY: `linear-gradient(135deg, ${colors.gradients.primary.main} 0%, ${colors.gradients.primary.state} 100%)`,
-  // 호버 시 그라데이션 양끝을 한 단계씩 어둡게
-  PRIMARY_HOVER: `linear-gradient(135deg, ${primary.focus} 0%, ${colors.dark.main} 100%)`,
-  SELECTED_BG: `linear-gradient(135deg, ${alpha(primary.main, 0.1)} 0%, ${alpha(
-    colors.gradients.primary.state,
-    0.1
+  PRIMARY: `linear-gradient(135deg, ${cssVar("primary")} 0%, ${cssVar("primary-dark")} 100%)`,
+  PRIMARY_HOVER: `linear-gradient(135deg, ${cssVar("primary-hover")} 0%, ${cssVar(
+    "primary"
+  )} 100%)`,
+  SELECTED_BG: `linear-gradient(135deg, ${cssVar("tint-primary")} 0%, ${cssVar(
+    "tint-primary"
   )} 100%)`,
   DARK_GRADIENT: `linear-gradient(135deg, ${colors.dark.main} 0%, ${colors.dark.focus} 100%)`,
 };
 
+/**
+ * 화면에서 쓰는 색.
+ *
+ * 값은 CSS 변수 참조라 테마가 바뀌면 그대로 따라온다.
+ * 캔버스에 넘길 때는 resolveColor() 를 거칠 것.
+ */
 export const COLORS = {
   // 브랜드
-  PRIMARY: primary.main,
-  PRIMARY_HOVER: primary.focus,
-  PRIMARY_DARK: colors.gradients.primary.state,
-  PRIMARY_BLUE: primary.main, // 기존 이름 유지 (사용처 다수)
-  HOVER_BG: alpha(primary.main, 0.08),
-  SELECTED_BG: alpha(primary.main, 0.12),
+  PRIMARY: cssVar("primary"),
+  PRIMARY_HOVER: cssVar("primary-hover"),
+  PRIMARY_DARK: cssVar("primary-dark"),
+  PRIMARY_BLUE: cssVar("primary"), // 기존 이름 유지 (사용처 다수)
+  HOVER_BG: cssVar("hover-bg"),
+  SELECTED_BG: cssVar("selected-bg"),
 
   // 텍스트
-  TEXT: colors.text.primary,
-  TEXT_SECONDARY: colors.text.secondary,
-  TEXT_MUTED: colors.text.muted,
+  TEXT: cssVar("text"),
+  TEXT_SECONDARY: cssVar("text-secondary"),
+  TEXT_MUTED: cssVar("text-muted"),
 
   // 표면 · 경계
-  SURFACE: colors.background.surface,
-  SURFACE_SUNKEN: colors.background.sunken,
-  SURFACE_ALT: grey[100], // 표 줄무늬 · 비활성 영역처럼 아주 옅게 눌린 면
-  BORDER: grey[300],
-  BORDER_STRONG: grey[400],
-  DIVIDER: grey[200],
+  SURFACE: cssVar("surface"),
+  SURFACE_ALT: cssVar("surface-alt"),
+  SURFACE_SUNKEN: cssVar("surface-sunken"),
+  BORDER: cssVar("border"),
+  BORDER_STRONG: cssVar("border-strong"),
+  DIVIDER: cssVar("divider"),
 
   // 상태
-  INFO: info.main,
-  INFO_DARK: info.focus,
-  SUCCESS: success.main,
-  SUCCESS_DARK: success.focus,
-  WARNING: warning.main,
-  WARNING_DARK: warning.focus,
-  ERROR: error.main,
-  ERROR_DARK: error.focus,
-  ERROR_BLUE: info.focus, // 기존 이름 유지
+  INFO: cssVar("info"),
+  INFO_DARK: cssVar("info-dark"),
+  SUCCESS: cssVar("success"),
+  SUCCESS_DARK: cssVar("success-dark"),
+  WARNING: cssVar("warning"),
+  WARNING_DARK: cssVar("warning-dark"),
+  ERROR: cssVar("error"),
+  ERROR_DARK: cssVar("error-dark"),
+  ERROR_BLUE: cssVar("info-dark"), // 기존 이름 유지
 
   // 시세 방향 (국내 관례: 상승 적색 / 하락 청색)
-  UP: bullish.main,
-  DOWN: bearish.main,
-  FLAT: flat.main,
-  UP_BG: bullish.faded,
-  DOWN_BG: bearish.faded,
+  UP: cssVar("up"),
+  DOWN: cssVar("down"),
+  FLAT: cssVar("flat"),
+  UP_BG: cssVar("up-bg"),
+  DOWN_BG: cssVar("down-bg"),
 
-  // 배지·구간 강조에 쓰는 옅은 배경. 같은 계열의 텍스트 색과 짝지어 쓴다.
-  TINT_PRIMARY: alpha(primary.main, 0.12),
-  TINT_UP: bullish.faded,
-  TINT_DOWN: bearish.faded,
-  TINT_SUCCESS: alpha(success.main, 0.14),
-  TINT_WARNING: alpha(warning.main, 0.16),
-  TINT_ERROR: alpha(error.main, 0.12),
+  // 배지·구간 강조용 옅은 배경
+  TINT_PRIMARY: cssVar("tint-primary"),
+  TINT_UP: cssVar("tint-up"),
+  TINT_DOWN: cssVar("tint-down"),
+  TINT_SUCCESS: cssVar("tint-success"),
+  TINT_WARNING: cssVar("tint-warning"),
+  TINT_ERROR: cssVar("tint-error"),
 
   RS_RANK: {
-    HIGH: success.main,
-    MEDIUM: warning.main,
-    LOW: error.main,
-    DEFAULT: flat.main,
+    HIGH: cssVar("rank-high"),
+    MEDIUM: cssVar("rank-medium"),
+    LOW: cssVar("rank-low"),
+    DEFAULT: cssVar("rank-default"),
   },
 };
 
@@ -103,20 +129,19 @@ export const LAYOUT = {
   CONTENT_HEIGHT: "calc(100vh - 80px)",
   BOX_SHADOW: "0 4px 6px rgba(0, 0, 0, 0.1)",
   HOVER_SHADOW: "0 2px 8px rgba(0, 0, 0, 0.08)",
-  SELECTED_SHADOW: `0 2px 12px ${alpha(primary.main, 0.2)}`,
+  SELECTED_SHADOW: `0 2px 12px ${cssVar("tint-primary")}`,
 };
 
 export const SCROLLBAR_STYLES = {
   width: "8px",
   track: {
-    background: grey[200],
+    background: cssVar("divider"),
     borderRadius: "4px",
   },
   thumb: {
-    background: grey[400],
+    background: cssVar("border-strong"),
     borderRadius: "4px",
-    hover: grey[500],
+    hover: cssVar("text-muted"),
   },
 };
 
-export { alpha };

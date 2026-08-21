@@ -72,5 +72,8 @@
         "browser": true
       }
     }
-  ]
+  ],
+  "globals": {
+    "process": "readonly"
+  }
 }

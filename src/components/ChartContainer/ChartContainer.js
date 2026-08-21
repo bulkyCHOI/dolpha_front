@@ -43,10 +43,11 @@ import {
   buildStockChartSeries,
   compactPanes,
 } from "./buildStockSeries";
-import { COLORS, alpha } from "constants/styles";
+import { COLORS, alpha, resolveColor } from "constants/styles";
 
-const DRAW_LINE_COLOR = COLORS.PRIMARY;
-const PYRAMIDING_LINE_COLOR = COLORS.WARNING;
+// 가격선은 캔버스에 그려지므로 CSS 변수가 아니라 실제 색 값이 필요하다.
+const drawLineColor = () => resolveColor(COLORS.PRIMARY);
+const pyramidingLineColor = () => resolveColor(COLORS.WARNING);
 
 const CHART_HEIGHT = { xs: 480, md: 640 };
 const INDEX_CHART_HEIGHT = { xs: 240, md: 300 };
@@ -221,7 +222,7 @@ const ChartContainer = ({
 
       setHorizontalLines((prev) => [
         ...prev,
-        { id: Date.now(), value: adjusted, color: DRAW_LINE_COLOR, type: "entry" },
+        { id: Date.now(), value: adjusted, color: drawLineColor(), type: "entry" },
       ]);
     },
     [isDrawingMode, movingLineId]
@@ -244,7 +245,7 @@ const ChartContainer = ({
     setHorizontalLines((prev) =>
       prev.map((item) =>
         item.id === lineId
-          ? { ...item, type: "entry", color: DRAW_LINE_COLOR, label: "1차 진입" }
+          ? { ...item, type: "entry", color: drawLineColor(), label: "1차 진입" }
           : item
       )
     );
@@ -272,7 +273,7 @@ const ChartContainer = ({
           ? {
               ...item,
               type: "pyramiding",
-              color: PYRAMIDING_LINE_COLOR,
+              color: pyramidingLineColor(),
               pyramidingIndex: index,
               label: `${index + 2}차 진입`,
             }
@@ -299,11 +300,11 @@ const ChartContainer = ({
           }}
           size="small"
           sx={{
-            border: `1px solid ${DRAW_LINE_COLOR}`,
-            color: isDrawingMode ? COLORS.SURFACE : DRAW_LINE_COLOR,
-            backgroundColor: isDrawingMode ? DRAW_LINE_COLOR : "rgba(255, 255, 255, 0.9)",
+            border: `1px solid ${COLORS.PRIMARY}`,
+            color: isDrawingMode ? COLORS.SURFACE : COLORS.PRIMARY,
+            backgroundColor: isDrawingMode ? COLORS.PRIMARY : alpha(COLORS.SURFACE, 0.9),
             "&.Mui-selected": {
-              backgroundColor: DRAW_LINE_COLOR,
+              backgroundColor: COLORS.PRIMARY,
               color: COLORS.SURFACE,
               "&:hover": { backgroundColor: COLORS.PRIMARY_HOVER },
             },
@@ -324,7 +325,7 @@ const ChartContainer = ({
             sx={{
               border: `1px solid ${COLORS.ERROR}`,
               color: COLORS.ERROR,
-              backgroundColor: "rgba(255, 255, 255, 0.9)",
+              backgroundColor: alpha(COLORS.SURFACE, 0.9),
               "&:hover": { backgroundColor: "rgba(244, 67, 54, 0.1)" },
             }}
           >
