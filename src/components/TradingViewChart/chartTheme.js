@@ -1,15 +1,19 @@
 /**
  * TradingView(lightweight-charts) 차트 공용 테마.
  *
- * 프로젝트 전역의 차트 색상은 모두 이 파일을 통해서만 정의한다.
- * Phase 1(디자인 토큰)에서 이 파일의 값만 테마 토큰으로 교체하면
- * 전체 차트의 색이 한 번에 바뀐다.
+ * 색은 디자인 토큰(assets/theme/base/colors)에서 가져온다.
+ * 차트와 UI가 같은 팔레트를 쓰도록 하는 것이 이 파일의 목적이며,
+ * 차트 전용으로 새 색을 만들지 않는다.
  */
+import colors from "assets/theme/base/colors";
+import typography from "assets/theme/base/typography";
+
+const { bearish, bullish, flat, grey, info, success, warning } = colors;
 
 // 상승/하락 (국내 관례: 상승 적색 / 하락 청색)
-export const UP_COLOR = "#ef4444";
-export const DOWN_COLOR = "#3b82f6";
-export const FLAT_COLOR = "#9ca3af";
+export const UP_COLOR = bullish.main;
+export const DOWN_COLOR = bearish.main;
+export const FLAT_COLOR = flat.main;
 
 // 거래량 막대 (캔들 색의 반투명)
 export const UP_COLOR_FADED = "rgba(239, 68, 68, 0.5)";
@@ -24,35 +28,41 @@ export const MA_COLORS = {
 
 // 보조지표
 export const INDICATOR_COLORS = {
-  rsRank: "#ef4444",
-  rsRank1m: "#22c55e",
-  rsRank3m: "#3b82f6",
+  rsRank: bullish.main,
+  rsRank1m: success.main,
+  rsRank3m: info.main,
   rsRank6m: "#a855f7",
-  rsRank12m: "#334155",
-  rsBaseline: "#f59e0b",
+  rsRank12m: grey[800],
+  rsBaseline: warning.main,
   atr: "rgba(255, 87, 34, 0.6)",
   atrBorder: "#ff5722",
   atrRatio: "#795548",
-  mtt: "#22c55e",
+  mtt: success.main,
   mttOff: "#ff5722",
 };
 
 // 마커 / 진입선
 export const MARKER_COLORS = {
-  htfStart: "#22c55e",
-  htfPeak: "#ef4444",
-  inflectionUp: "#ef4444",
-  inflectionDown: "#3b82f6",
+  htfStart: success.main,
+  htfPeak: bullish.main,
+  inflectionUp: bullish.main,
+  inflectionDown: bearish.main,
 };
 
-export const PRICE_LINE_COLORS = ["#667eea", "#f59e0b", "#22c55e", "#a855f7", "#ec4899"];
+export const PRICE_LINE_COLORS = [
+  colors.primary.main,
+  warning.main,
+  success.main,
+  "#a855f7",
+  "#ec4899",
+];
 
 // 차트 레이아웃 (라이트 테마 기준 — Phase 2에서 다크 대응 추가)
 export const CHART_SURFACE = {
-  background: "#ffffff",
-  textColor: "#4b5563",
-  gridColor: "#f1f5f9",
-  borderColor: "#e2e8f0",
+  background: colors.background.surface,
+  textColor: colors.text.main,
+  gridColor: grey[200],
+  borderColor: grey[300],
 };
 
 /**
@@ -67,6 +77,8 @@ export function baseChartOptions({ intraday = false } = {}) {
     layout: {
       background: { color: CHART_SURFACE.background },
       textColor: CHART_SURFACE.textColor,
+      // 축 라벨도 UI와 같은 폰트를 쓴다
+      fontFamily: typography.fontFamily,
       attributionLogo: false,
       panes: {
         separatorColor: CHART_SURFACE.borderColor,
