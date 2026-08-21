@@ -47,7 +47,7 @@ import {
 const DRAW_LINE_COLOR = "#667eea";
 const PYRAMIDING_LINE_COLOR = "#ff9800";
 
-const CHART_HEIGHT = { xs: 560, md: 760 };
+const CHART_HEIGHT = { xs: 480, md: 640 };
 const INDEX_CHART_HEIGHT = { xs: 240, md: 300 };
 
 const chartSurfaceSx = {
@@ -285,8 +285,9 @@ const ChartContainer = ({
   const activeLine = horizontalLines.find((line) => line.id === menuState.lineId);
 
   // ── 차트 위 컨트롤 ─────────────────────────────────────────────
-  const overlay = (
-    <Box sx={{ position: "absolute", top: 8, left: 8, zIndex: 10, display: "flex", gap: 1 }}>
+  // 차트 위에 띄우면 좌상단 판독바와 겹친다 (특히 모바일). 범례 줄에 인라인으로 둔다.
+  const toolbar = (
+    <Box sx={{ display: "flex", gap: 0.5, alignItems: "center" }}>
       <Tooltip title={isDrawingMode ? "수평선 그리기 종료" : "수평선 그리기 시작"}>
         <ToggleButton
           value="drawing"
@@ -367,8 +368,9 @@ const ChartContainer = ({
         <>
           {/* 범례 + 수평선 목록 — 항상 존재하는 한 줄이라 차트가 밀리지 않는다 */}
           <Box
-            sx={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 1, minHeight: 28 }}
+            sx={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 1, minHeight: 32 }}
           >
+            {toolbar}
             <ChartLegend
               groups={[
                 { title: "이동평균", items: MA_FIELDS },
@@ -426,7 +428,6 @@ const ChartContainer = ({
               overlay={
                 <>
                   <OhlcLegend bar={readout?.bar} change={readout?.change} />
-                  {overlay}
                   {drawingHint}
                 </>
               }
