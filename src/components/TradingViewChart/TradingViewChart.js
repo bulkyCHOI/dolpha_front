@@ -54,6 +54,16 @@ function TradingViewChart({
     if (!chart || barCount === 0) return;
     if (appliedFitKeyRef.current === fitContentKey) return;
 
+    // 가격축을 드래그하면 autoScale이 꺼진 채로 남는다. 대상이 바뀌면
+    // 값 범위도 달라지므로 자동 조정을 다시 켜준다.
+    chart.panes().forEach((pane, index) => {
+      try {
+        chart.priceScale("right", index).applyOptions({ autoScale: true });
+      } catch (error) {
+        // 해당 pane에 우측 축이 없으면 무시한다
+      }
+    });
+
     const timeScale = chart.timeScale();
     if (initialVisibleRange) {
       // setData 렌더링이 끝난 뒤 적용해야 auto-scroll에 덮이지 않는다.

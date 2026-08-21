@@ -15,6 +15,9 @@ const { PUBLIC_ROUTES, AUTH_ROUTES, VIEWPORTS } = require("./routes");
  * 각 항목은 "왜 지금 고치지 않는가"가 분명한 것만 넣는다.
  * 새 에러가 이 목록에 추가되어야 한다면, 먼저 고칠 수 있는지부터 검토할 것.
  */
+// dev 서버가 번들을 동시에 내주면 첫 렌더가 느려진다. settle 대기보다 넉넉히.
+test.describe.configure({ timeout: 90_000 });
+
 const IGNORED_CONSOLE_PATTERNS = [
   /Download the React DevTools/,
   /React Router Future Flag Warning/,
@@ -54,9 +57,13 @@ function collectConsoleErrors(page) {
  */
 async function settle(page) {
   await page.waitForLoadState("load").catch(() => {});
-  // 목록 API 응답으로 본문이 채워질 때까지 기다린다 (페이지마다 로딩 속도가 다르다)
+  // 목록 API 응답으로 본문이 채워질 때까지 기다린다.
+  // dev 서버가 여러 브라우저에 번들을 동시에 내줄 때 첫 렌더가 크게 느려지므로
+  // 넉넉히 잡는다 (npm run test:visual 은 워커를 2개로 제한한다).
+  // 기준을 60자로 둔다. 로그인 화면은 본문이 100자 남짓이라 200자로 잡으면
+  // 정상인데도 끝까지 기다리다 테스트 타임아웃에 걸린다.
   await page
-    .waitForFunction(() => document.body.innerText.length > 200, null, { timeout: 20000 })
+    .waitForFunction(() => document.body.innerText.length > 60, null, { timeout: 30000 })
     .catch(() => {});
   // 차트 마운트 + 첫 렌더
   await page.waitForTimeout(1500);

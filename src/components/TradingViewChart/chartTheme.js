@@ -100,7 +100,11 @@ export function baseChartOptions({ intraday = false } = {}) {
       axisPressedMouseMove: true,
       axisDoubleClickReset: true,
     },
-    rightPriceScale: { borderColor: CHART_SURFACE.borderColor },
+    rightPriceScale: {
+      borderColor: CHART_SURFACE.borderColor,
+      // 기본값(위 0.2 / 아래 0.1)은 여백이 커서 시세가 pane 가운데 좁게 몰린다.
+      scaleMargins: { top: 0.1, bottom: 0.08 },
+    },
     timeScale: {
       borderColor: CHART_SURFACE.borderColor,
       timeVisible: intraday,

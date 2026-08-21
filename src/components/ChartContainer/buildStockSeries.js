@@ -394,13 +394,13 @@ export function compactPanes(series, paneStretch) {
 
 /**
  * pane 높이 비율.
- * 보조지표(RS · MTT · ATR)는 가격 pane 대비 존재감이 과했어서
- * 기존 값의 75% 수준으로 낮췄다.
+ * 보조지표(RS · MTT · ATR)는 가격 흐름을 보는 데 방해되지 않도록
+ * 세 개를 같은 높이로 낮게 유지한다.
  */
 export const PANE_STRETCH = {
   [PANE.PRICE]: 5,
   [PANE.VOLUME]: 1.1,
-  [PANE.RS]: 1.2,
+  [PANE.RS]: 0.53,
   [PANE.MTT]: 0.53,
-  [PANE.ATR]: 1.05,
+  [PANE.ATR]: 0.53,
 };

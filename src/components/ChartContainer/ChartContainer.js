@@ -90,6 +90,16 @@ const ChartContainer = ({
 
   const { readout, onCrosshairMove: onHoverMove } = useSeriesHover(ohlcvData);
 
+  /**
+   * 초기 구간을 다시 맞출 기준.
+   *
+   * selectedStock은 클릭 즉시 바뀌지만 ohlcvData는 응답이 온 뒤에 바뀐다.
+   * selectedStock을 기준으로 삼으면 옛 데이터에 대고 구간을 잡은 뒤
+   * "적용 완료"로 표시되어, 정작 새 데이터에는 반영되지 않는다.
+   * 그래서 실제로 로드된 데이터가 어느 종목인지를 기준으로 쓴다.
+   */
+  const loadedStockCode = ohlcvData?.[0]?.code ?? null;
+
   const updateLineValue = useCallback((id, price) => {
     setHorizontalLines((prev) =>
       prev.map((line) => (line.id === id ? { ...line, value: price } : line))
@@ -401,7 +411,7 @@ const ChartContainer = ({
               panes={panes}
               height="100%"
               initialVisibleBars={CHART_INITIAL_VISIBLE_BARS}
-              fitContentKey={selectedStock?.code ?? null}
+              fitContentKey={loadedStockCode}
               onClick={handleChartClick}
               onCrosshairMove={handleCrosshairMove}
               onMouseDown={handleMouseDown}
