@@ -26,6 +26,9 @@ import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import ShowChartIcon from "@mui/icons-material/ShowChart";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
 
 // Enhanced components
 import FullWidthContainer from "components/FullWidthContainer";
@@ -79,6 +82,24 @@ const formatTradingValue = (value, tradingMode, field) => {
 
   // 그 외에는 % 단위
   return `${value}%`;
+};
+
+const THEME_SURGE_STRATEGY = "theme_surge";
+
+// 등록 시각(ISO) → KST 기준 YYYY-MM-DD. 급등테마주 후보는 등록일 단위로 묶어 본다.
+const toKstDateKey = (isoString) => {
+  if (!isoString) return "";
+  return new Date(isoString).toLocaleDateString("sv-SE", { timeZone: "Asia/Seoul" });
+};
+
+const formatKstDateLabel = (dateKey) => {
+  if (!dateKey) return "-";
+  const [year, month, day] = dateKey.split("-");
+  const weekday = new Date(`${dateKey}T00:00:00+09:00`).toLocaleDateString("ko-KR", {
+    weekday: "short",
+    timeZone: "Asia/Seoul",
+  });
+  return `${year}년 ${Number(month)}월 ${Number(day)}일 (${weekday})`;
 };
 
 const getStrategyTypeLabel = (strategyType) => {
@@ -148,6 +169,7 @@ export default function TradingConfigs() {
   const [error, setError] = useState(null);
   const [allTradingConfigs, setAllTradingConfigs] = useState([]);
   const [activeTab, setActiveTab] = useState(0); // 0: 일반 전략, 1: 급등테마주
+  const [selectedThemeDate, setSelectedThemeDate] = useState(""); // 급등테마주 탭에서 보고 있는 등록일
   const allTradingConfigsRef = useRef([]);
   const [currentPrices, setCurrentPrices] = useState({}); // 종목별 현재가 저장
   const [tradingStatus, setTradingStatus] = useState({}); // 거래 상태 정보 저장
@@ -955,6 +977,69 @@ export default function TradingConfigs() {
     }
   };
 
+  // 급등테마주 후보의 등록일 목록 (과거 → 최신)
+  const themeSurgeDates = [
+    ...new Set(
+      allTradingConfigs
+        .filter((config) => config.strategy_type === THEME_SURGE_STRATEGY)
+        .map((config) => toKstDateKey(config.created_at))
+        .filter(Boolean)
+    ),
+  ].sort();
+
+  // 보고 있던 날짜가 사라지면 가장 최근 날짜로 되돌린다
+  useEffect(() => {
+    if (themeSurgeDates.length === 0) {
+      setSelectedThemeDate("");
+      return;
+    }
+    if (!themeSurgeDates.includes(selectedThemeDate)) {
+      setSelectedThemeDate(themeSurgeDates[themeSurgeDates.length - 1]);
+    }
+  }, [themeSurgeDates.join(","), selectedThemeDate]);
+
+  // 선택한 등록일의 후보 설정 + 1분봉 + 진입 판정을 한 번에 삭제
+  const handleDeleteThemeDate = async () => {
+    if (!selectedThemeDate) return;
+
+    const targetCount = allTradingConfigs.filter(
+      (config) =>
+        config.strategy_type === THEME_SURGE_STRATEGY &&
+        toKstDateKey(config.created_at) === selectedThemeDate
+    ).length;
+
+    const isConfirmed = window.confirm(
+      `${formatKstDateLabel(
+        selectedThemeDate
+      )}의 급등테마주 후보 ${targetCount}건을 삭제합니다.\n` +
+        "해당 종목의 그날 1분봉과 진입 조건 판정 이력도 함께 삭제되어 차트를 다시 볼 수 없습니다.\n" +
+        "(보유 중인 포지션의 설정은 청산 관리를 위해 남습니다)\n\n계속할까요?"
+    );
+    if (!isConfirmed) return;
+
+    try {
+      const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
+      const response = await authenticatedFetch(
+        `${apiBaseUrl}/api/theme-surge/candidates?date=${selectedThemeDate}`,
+        { method: "DELETE" }
+      );
+      const result = await response.json();
+      if (!response.ok || result.status !== "OK") {
+        throw new Error(result.message || "삭제 요청에 실패했습니다.");
+      }
+
+      const { deleted_configs: deleted, kept_positions: kept } = result.data;
+      showSnackbar(
+        `${formatKstDateLabel(selectedThemeDate)} 후보 ${deleted}건을 삭제했습니다.` +
+          (kept > 0 ? ` (보유 중 ${kept}건은 유지)` : ""),
+        "success"
+      );
+      await loadAllTradingConfigs();
+    } catch (err) {
+      showSnackbar(`삭제 실패: ${err.message}`, "error");
+    }
+  };
+
   // 초기 로드
   useEffect(() => {
     if (user) {
@@ -994,14 +1079,25 @@ export default function TradingConfigs() {
   }
 
   // 탭별 설정 분리 (급등테마주는 별도 탭으로 구분)
-  const THEME_SURGE_STRATEGY = "theme_surge";
   const themeSurgeConfigs = allTradingConfigs.filter(
     (config) => config.strategy_type === THEME_SURGE_STRATEGY
   );
   const generalConfigs = allTradingConfigs.filter(
     (config) => config.strategy_type !== THEME_SURGE_STRATEGY
   );
-  const displayedConfigs = activeTab === 1 ? themeSurgeConfigs : generalConfigs;
+  // 급등테마주는 등록일별로 쌓이므로 선택한 날짜의 후보만 표시한다
+  const themeSurgeConfigsOfDate = themeSurgeConfigs.filter(
+    (config) => toKstDateKey(config.created_at) === selectedThemeDate
+  );
+  const displayedConfigs = activeTab === 1 ? themeSurgeConfigsOfDate : generalConfigs;
+
+  const themeDateIndex = themeSurgeDates.indexOf(selectedThemeDate);
+  const hasPrevThemeDate = themeDateIndex > 0;
+  const hasNextThemeDate = themeDateIndex >= 0 && themeDateIndex < themeSurgeDates.length - 1;
+  const moveThemeDate = (step) => {
+    const next = themeSurgeDates[themeDateIndex + step];
+    if (next) setSelectedThemeDate(next);
+  };
 
   return (
     <>
@@ -1246,6 +1342,62 @@ export default function TradingConfigs() {
                 <Tab label={`일반 전략 (${generalConfigs.length})`} />
                 <Tab label={`급등테마주 (${themeSurgeConfigs.length})`} />
               </Tabs>
+
+              {/* 급등테마주 등록일 네비게이터 — 후보는 날짜별로 쌓이므로 하루씩 넘겨 본다 */}
+              {activeTab === 1 && themeSurgeDates.length > 0 && (
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  gap={1}
+                  mt={2}
+                  flexWrap="wrap"
+                >
+                  <IconButton
+                    size="small"
+                    onClick={() => moveThemeDate(-1)}
+                    disabled={!hasPrevThemeDate}
+                    aria-label="이전 등록일"
+                  >
+                    <ChevronLeftIcon />
+                  </IconButton>
+
+                  <Box textAlign="center" sx={{ minWidth: 200 }}>
+                    <MKTypography variant="h6" fontWeight="bold" sx={{ color: "#7b1fa2" }}>
+                      {formatKstDateLabel(selectedThemeDate)}
+                    </MKTypography>
+                    <MKTypography variant="caption" color="text" opacity={0.7}>
+                      후보 {themeSurgeConfigsOfDate.length}건 · 전체 {themeSurgeDates.length}일 중{" "}
+                      {themeDateIndex + 1}번째
+                    </MKTypography>
+                  </Box>
+
+                  <IconButton
+                    size="small"
+                    onClick={() => moveThemeDate(1)}
+                    disabled={!hasNextThemeDate}
+                    aria-label="다음 등록일"
+                  >
+                    <ChevronRightIcon />
+                  </IconButton>
+
+                  <Tooltip title="이 날짜의 후보 설정·1분봉·진입 판정을 모두 삭제합니다">
+                    <span>
+                      <MKButton
+                        variant="outlined"
+                        color="error"
+                        size="small"
+                        startIcon={<DeleteSweepIcon />}
+                        onClick={handleDeleteThemeDate}
+                        disabled={!selectedThemeDate}
+                        sx={{ ml: 1 }}
+                      >
+                        이 날짜 삭제
+                      </MKButton>
+                    </span>
+                  </Tooltip>
+                </Box>
+              )}
             </MKBox>
           )}
 
