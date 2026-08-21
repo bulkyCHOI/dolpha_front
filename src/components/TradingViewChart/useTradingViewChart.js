@@ -1,5 +1,7 @@
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createChart, createSeriesMarkers } from "lightweight-charts";
+
+import { useThemeMode } from "contexts/ThemeModeContext";
 
 import { baseChartOptions } from "./chartTheme";
 import { resolveSeriesDefinition } from "./seriesDefinitions";
@@ -45,8 +47,19 @@ export default function useTradingViewChart({
   onCrosshairMove,
   chartOptions,
 }) {
+  // 캔버스는 생성 시점의 색을 그대로 굳히므로, 테마가 바뀌면 다시 만든다.
+  const { mode } = useThemeMode();
+
   const containerRef = useRef(null);
   const chartRef = useRef(null);
+  /**
+   * 차트 인스턴스 세대.
+   *
+   * 차트를 다시 만들면 시리즈도 전부 사라진다. 시리즈 생성 effect 는
+   * 구성이 바뀔 때만 도는데, 테마 전환은 구성을 바꾸지 않으므로
+   * 이 값을 의존성에 넣어 다시 채워 넣도록 한다.
+   */
+  const [generation, setGeneration] = useState(0);
   const seriesMapRef = useRef(new Map());
   const markersMapRef = useRef(new Map());
   const priceLinesMapRef = useRef(new Map());
@@ -72,6 +85,7 @@ export default function useTradingViewChart({
       height: container.clientHeight || 1,
     });
     chartRef.current = chart;
+    setGeneration((value) => value + 1);
 
     const handleClick = (param) => onClickRef.current?.(param, chart, seriesMapRef.current);
     const handleMove = (param) => onCrosshairMoveRef.current?.(param, chart, seriesMapRef.current);
@@ -100,8 +114,8 @@ export default function useTradingViewChart({
       primitivesMapRef.current.clear();
       lastDataMapRef.current.clear();
     };
-    // intraday가 바뀌면 시간축 성격이 달라지므로 차트를 새로 만든다.
-  }, [intraday]);
+    // intraday 는 시간축 성격이, mode 는 색이 달라지므로 차트를 새로 만든다.
+  }, [intraday, mode]);
 
   // ── 시리즈 구조 동기화 ──────────────────────────────────────────
   const structureSignature = buildStructureSignature(series);
@@ -150,7 +164,7 @@ export default function useTradingViewChart({
       if (!pane) return;
       pane.setStretchFactor(paneSpec?.stretch ?? DEFAULT_STRETCH);
     });
-  }, [structureSignature, panes.length]);
+  }, [structureSignature, panes.length, generation]);
 
   // ── 옵션 / 데이터 / 마커 / 가격선 동기화 ────────────────────────
   useEffect(() => {
@@ -195,7 +209,7 @@ export default function useTradingViewChart({
       );
       priceLinesMapRef.current.set(spec.id, nextLines);
     });
-  }, [series]);
+  }, [series, generation]);
 
   // ── 가격 스케일 옵션 (pane별) ───────────────────────────────────
   useEffect(() => {

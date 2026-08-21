@@ -20,12 +20,10 @@ Coded by www.creative-tim.com
  */
 
 // Material Kit 2 React Base Styles
-import colors from "assets/theme/base/colors";
 
 // Material Kit 2 React Helper Functions
 import pxToRem from "assets/theme/functions/pxToRem";
-
-const { dark } = colors;
+import { cssVar } from "constants/palette";
 
 /**
  * 타이포그래피 토큰.
@@ -55,13 +53,14 @@ const baseProperties = {
 };
 
 const baseHeadingProperties = {
-  color: dark.main,
+  // 고정 색을 쓰면 다크에서 제목이 배경에 묻힌다. CSS 변수로 둔다.
+  color: cssVar("text"),
   fontWeight: baseProperties.fontWeightBold,
 };
 
 const baseDisplayProperties = {
   fontFamily: baseProperties.fontFamily,
-  color: dark.main,
+  color: cssVar("text"),
   fontWeight: baseProperties.fontWeightLight,
   lineHeight: 1.2,
 };

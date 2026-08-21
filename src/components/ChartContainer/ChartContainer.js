@@ -32,6 +32,7 @@ import useInflectionPoints from "hooks/useInflectionPoints";
 // Utils
 import { adjustToKRXTickSize } from "utils/formatters";
 import { CHART_INITIAL_VISIBLE_BARS } from "constants/chart";
+import { useThemeMode } from "contexts/ThemeModeContext";
 
 import {
   MA_FIELDS,
@@ -89,6 +90,8 @@ const ChartContainer = ({
   const [menuState, setMenuState] = useState({ anchorEl: null, lineId: null });
   // 범례에서 끈 계열 (Chart.js 범례의 표시/숨김을 대체)
   const [hiddenSeriesIds, setHiddenSeriesIds] = useState([]);
+  // 시리즈 색은 테마에 따라 달라지므로 모드가 바뀌면 다시 만든다.
+  const { mode } = useThemeMode();
 
   const { readout, onCrosshairMove: onHoverMove } = useSeriesHover(ohlcvData);
 
@@ -183,6 +186,7 @@ const ChartContainer = ({
     }
     return compactPanes(withVisibility, PANE_STRETCH);
   }, [
+    mode,
     hiddenSeriesIds,
     ohlcvData,
     analysisData,

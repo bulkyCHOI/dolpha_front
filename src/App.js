@@ -8,14 +8,26 @@ import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 
 import theme from "assets/theme";
+import darkTheme from "assets/theme/dark";
 
 import routes from "routes";
 
 // Auth components
 import { AuthProvider } from "contexts/AuthContext";
+import { ThemeModeProvider, useThemeMode } from "contexts/ThemeModeContext";
 import AuthCallback from "pages/AuthCallback";
 
 export default function App() {
+  return (
+    <ThemeModeProvider>
+      <ThemedApp />
+    </ThemeModeProvider>
+  );
+}
+
+/** 테마 모드를 읽어 실제 화면을 그린다. */
+function ThemedApp() {
+  const { mode } = useThemeMode();
   const { pathname } = useLocation();
 
   // Setting page scroll to 0 when changing the route
@@ -38,7 +50,7 @@ export default function App() {
     });
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={mode === "dark" ? darkTheme : theme}>
       <CssBaseline />
       <AuthProvider>
         <Routes>

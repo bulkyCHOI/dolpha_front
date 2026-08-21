@@ -82,12 +82,16 @@ export const PRICE_LINE_COLORS = [
 ];
 
 // 차트 레이아웃 (라이트 테마 기준 — Phase 2에서 다크 대응 추가)
-export const CHART_SURFACE = {
-  background: colors.background.surface,
-  textColor: colors.text.main,
-  gridColor: grey[200],
-  borderColor: grey[300],
-};
+/**
+ * 차트 표면 색.
+ * 캔버스에 들어가므로 접근 시점에 실제 값으로 해석한다.
+ */
+export const CHART_SURFACE = canvasColors({
+  background: COLORS.SURFACE,
+  textColor: COLORS.TEXT_SECONDARY,
+  gridColor: COLORS.DIVIDER,
+  borderColor: COLORS.BORDER,
+});
 
 /**
  * createChart()에 넘길 기본 옵션을 만든다.

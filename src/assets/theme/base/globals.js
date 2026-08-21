@@ -14,11 +14,7 @@ Coded by www.creative-tim.com
 */
 
 // Material Kit 2 React Base Styles
-import colors from "assets/theme/base/colors";
-import { DARK_PALETTE, LIGHT_PALETTE, toCssVars } from "constants/palette";
-
-const { info, dark, text } = colors;
-
+import { DARK_PALETTE, LIGHT_PALETTE, cssVar, toCssVars } from "constants/palette";
 
 export default {
   html: {
@@ -40,16 +36,18 @@ export default {
   },
   body: {
     // MKBox가 모든 요소에 강제하던 본문 색을 여기서 한 번만 정의한다.
-    color: text.primary,
+    // 고정 값이 아니라 변수를 써야 다크에서도 따라온다.
+    color: cssVar("text"),
+    backgroundColor: cssVar("surface-sunken"),
   },
   "a, a:link, a:visited": {
     textDecoration: "none !important",
   },
   "a.link, .link, a.link:link, .link:link, a.link:visited, .link:visited": {
-    color: `${dark.main} !important`,
+    color: `${cssVar("text")} !important`,
     transition: "color 150ms ease-in !important",
   },
   "a.link:hover, .link:hover, a.link:focus, .link:focus": {
-    color: `${info.main} !important`,
+    color: `${cssVar("info")} !important`,
   },
 };

@@ -26,13 +26,17 @@ import MuiLink from "@mui/material/Link";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
+import Tooltip from "@mui/material/Tooltip";
+
 import AppHeaderDropdown from "components/AppHeader/AppHeaderDropdown";
+import { useThemeMode } from "contexts/ThemeModeContext";
 import AppHeaderMobile from "components/AppHeader/AppHeaderMobile";
 
 import breakpoints from "assets/theme/base/breakpoints";
 import { COLORS } from "constants/styles";
 
 function AppHeader({ brand, routes, sticky }) {
+  const { mode, toggleMode } = useThemeMode();
   const [dropdown, setDropdown] = useState("");
   const [dropdownEl, setDropdownEl] = useState("");
   const [dropdownName, setDropdownName] = useState("");
@@ -507,6 +511,33 @@ function AppHeader({ brand, routes, sticky }) {
           >
             {renderNavbarItems}
           </Box>
+          <Tooltip title={mode === "dark" ? "라이트 모드로" : "다크 모드로"}>
+            <Box
+              component="button"
+              aria-label={mode === "dark" ? "라이트 모드로 전환" : "다크 모드로 전환"}
+              onClick={toggleMode}
+              lineHeight={0}
+              color="white.main"
+              sx={{
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                minWidth: { xs: "44px", md: "40px" },
+                minHeight: { xs: "44px", md: "40px" },
+                ml: { xs: "auto", lg: 1 },
+                border: "none",
+                borderRadius: 1,
+                background: "transparent",
+                "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.12)" },
+                "&:focus": { outline: "2px solid #fff", outlineOffset: "2px" },
+              }}
+            >
+              <Icon sx={{ fontSize: "1.25rem" }}>
+                {mode === "dark" ? "light_mode" : "dark_mode"}
+              </Icon>
+            </Box>
+          </Tooltip>
           <Box
             component="button"
             aria-label={mobileNavbar ? "Close mobile menu" : "Open mobile menu"}
