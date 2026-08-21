@@ -678,11 +678,11 @@ function TradingDefaults() {
                       onClick={handleReset}
                       fullWidth
                       sx={{
-                        borderColor: "#f44336",
-                        color: "#f44336",
+                        borderColor: COLORS.UP,
+                        color: COLORS.UP,
                         fontSize: "0.75rem",
                         "&:hover": {
-                          borderColor: "#d32f2f",
+                          borderColor: COLORS.UP,
                           backgroundColor: "rgba(244,67,54,0.08)",
                         },
                       }}

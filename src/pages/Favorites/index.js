@@ -576,9 +576,9 @@ function Favorites() {
                           }}
                           sx={{
                             p: 0.5,
-                            color: stock.is_favorite ? "#ff6b6b" : "#ddd",
+                            color: stock.is_favorite ? COLORS.UP : "#ddd",
                             "&:hover": {
-                              color: "#ff6b6b",
+                              color: COLORS.UP,
                             },
                           }}
                         >
@@ -592,7 +592,7 @@ function Favorites() {
                             sx={{
                               fontSize: { xs: "0.7rem", md: "0.8rem" },
                               fontWeight: "bold",
-                              color: "#333",
+                              color: COLORS.TEXT,
                               lineHeight: 1.2,
                             }}
                           >
@@ -617,7 +617,7 @@ function Favorites() {
                           sx={{
                             fontSize: { xs: "0.7rem", md: "0.8rem" },
                             fontWeight: "bold",
-                            color: "#333",
+                            color: COLORS.TEXT,
                           }}
                         >
                           {stock.current_price ? stock.current_price.toLocaleString() : "-"}
@@ -644,9 +644,9 @@ function Favorites() {
                             fontWeight: "bold",
                             color:
                               stock.change_percent > 0
-                                ? "#d32f2f"
+                                ? COLORS.UP
                                 : stock.change_percent < 0
-                                ? "#1976d2"
+                                ? COLORS.DOWN
                                 : COLORS.TEXT_SECONDARY,
                           }}
                         >
@@ -845,9 +845,9 @@ function Favorites() {
                                 }}
                                 sx={{
                                   padding: "4px",
-                                  color: stock.is_favorite ? "#ffc107" : COLORS.BORDER_STRONG,
+                                  color: stock.is_favorite ? COLORS.WARNING : COLORS.BORDER_STRONG,
                                   "&:hover": {
-                                    color: "#ffc107",
+                                    color: COLORS.WARNING,
                                     backgroundColor: "rgba(255, 193, 7, 0.1)",
                                   },
                                 }}
@@ -922,15 +922,15 @@ function Favorites() {
                                 sx={{
                                   backgroundColor:
                                     stock.rsRank >= 90
-                                      ? "#f44336"
+                                      ? COLORS.UP
                                       : stock.rsRank >= 80
-                                      ? "#ff5722"
+                                      ? COLORS.WARNING
                                       : stock.rsRank >= 70
-                                      ? "#ffc107"
+                                      ? COLORS.WARNING
                                       : stock.rsRank >= 60
-                                      ? "#4caf50"
+                                      ? COLORS.SUCCESS
                                       : stock.rsRank >= 50
-                                      ? "#2196f3"
+                                      ? COLORS.DOWN
                                       : COLORS.TEXT_MUTED,
                                   color:
                                     stock.rsRank >= 70 && stock.rsRank < 80 ? "black" : "white",
@@ -952,9 +952,9 @@ function Favorites() {
                                   fontSize: { xs: "0.65rem", md: "0.75rem" },
                                   color:
                                     stock.change_percent > 0
-                                      ? "#f44336"
+                                      ? COLORS.UP
                                       : stock.change_percent < 0
-                                      ? "#2196f3"
+                                      ? COLORS.DOWN
                                       : "inherit",
                                 }}
                               >
@@ -1144,9 +1144,9 @@ function Favorites() {
                         }}
                         sx={{
                           p: 0.5,
-                          color: stock.is_favorite ? "#ff6b6b" : "#ddd",
+                          color: stock.is_favorite ? COLORS.UP : "#ddd",
                           "&:hover": {
-                            color: "#ff6b6b",
+                            color: COLORS.UP,
                           },
                         }}
                       >
@@ -1164,7 +1164,7 @@ function Favorites() {
                           sx={{
                             fontSize: "0.8rem",
                             fontWeight: "bold",
-                            color: "#333",
+                            color: COLORS.TEXT,
                             lineHeight: 1.2,
                           }}
                         >
@@ -1189,7 +1189,7 @@ function Favorites() {
                           sx={{
                             fontSize: "0.8rem",
                             fontWeight: "bold",
-                            color: "#333",
+                            color: COLORS.TEXT,
                           }}
                         >
                           {stock.current_price ? stock.current_price.toLocaleString() : "-"}
@@ -1201,9 +1201,9 @@ function Favorites() {
                             fontWeight: "bold",
                             color:
                               stock.change_percent > 0
-                                ? "#d32f2f"
+                                ? COLORS.UP
                                 : stock.change_percent < 0
-                                ? "#1976d2"
+                                ? COLORS.DOWN
                                 : COLORS.TEXT_SECONDARY,
                           }}
                         >
@@ -1302,9 +1302,9 @@ function Favorites() {
                           }}
                           sx={{
                             p: 0.5,
-                            color: "#ff6b6b",
+                            color: COLORS.UP,
                             "&:hover": {
-                              color: "#ff6b6b",
+                              color: COLORS.UP,
                             },
                           }}
                         >
@@ -1318,7 +1318,7 @@ function Favorites() {
                             sx={{
                               fontSize: "0.8rem",
                               fontWeight: "bold",
-                              color: "#333",
+                              color: COLORS.TEXT,
                               lineHeight: 1.2,
                             }}
                           >
@@ -1343,7 +1343,7 @@ function Favorites() {
                             sx={{
                               fontSize: "0.8rem",
                               fontWeight: "bold",
-                              color: "#333",
+                              color: COLORS.TEXT,
                             }}
                           >
                             {stock.current_price ? stock.current_price.toLocaleString() : "-"}
@@ -1355,9 +1355,9 @@ function Favorites() {
                               fontWeight: "bold",
                               color:
                                 stock.change_percent > 0
-                                  ? "#d32f2f"
+                                  ? COLORS.UP
                                   : stock.change_percent < 0
-                                  ? "#1976d2"
+                                  ? COLORS.DOWN
                                   : COLORS.TEXT_SECONDARY,
                             }}
                           >

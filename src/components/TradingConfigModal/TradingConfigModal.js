@@ -517,7 +517,7 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                 <Typography
                   variant="body2"
                   sx={{
-                    color: Math.abs(tradingForm.positionSum - 100) >= 0.01 ? "#f44336" : "#4caf50",
+                    color: Math.abs(tradingForm.positionSum - 100) >= 0.01 ? COLORS.UP : COLORS.SUCCESS,
                     fontWeight: "bold",
                   }}
                 >

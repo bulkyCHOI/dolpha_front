@@ -19,17 +19,17 @@ const InflectionPointToggle = ({
         disabled={disabled}
         color="primary"
         sx={{
-          border: "1px solid #2196f3",
-          color: showInflectionPoints ? "white" : "#2196f3",
-          backgroundColor: showInflectionPoints ? "#2196f3" : "transparent",
+          border: `1px solid ${COLORS.DOWN}`,
+          color: showInflectionPoints ? "white" : COLORS.DOWN,
+          backgroundColor: showInflectionPoints ? COLORS.DOWN : "transparent",
           "&:hover": {
-            backgroundColor: showInflectionPoints ? "#1976d2" : "rgba(33, 150, 243, 0.1)",
+            backgroundColor: showInflectionPoints ? COLORS.DOWN : "rgba(33, 150, 243, 0.1)",
           },
           "&.Mui-selected": {
-            backgroundColor: "#2196f3",
+            backgroundColor: COLORS.DOWN,
             color: "white",
             "&:hover": {
-              backgroundColor: "#1976d2",
+              backgroundColor: COLORS.DOWN,
             },
           },
           "&.Mui-disabled": {

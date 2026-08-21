@@ -171,33 +171,33 @@ function HTF() {
 
   // HTF 상승률에 따른 색상 결정
   const getGainColor = (gain) => {
-    if (gain >= 300) return "#d32f2f"; // 300% 이상: 진한 빨강
-    if (gain >= 200) return "#f44336"; // 200% 이상: 빨강
-    if (gain >= 150) return "#ff5722"; // 150% 이상: 주황
-    if (gain >= 100) return "#2196f3"; // 100% 이상: 파랑
+    if (gain >= 300) return COLORS.UP; // 300% 이상: 진한 빨강
+    if (gain >= 200) return COLORS.UP; // 200% 이상: 빨강
+    if (gain >= 150) return COLORS.WARNING; // 150% 이상: 주황
+    if (gain >= 100) return COLORS.DOWN; // 100% 이상: 파랑
     return COLORS.TEXT_MUTED; // 미만: 회색
   };
 
   // HTF 조정폭에 따른 색상 결정
   const getPullbackColor = (pullback) => {
-    if (pullback <= 10) return "#4caf50"; // 10% 이하: 초록
+    if (pullback <= 10) return COLORS.SUCCESS; // 10% 이하: 초록
     if (pullback <= 15) return "#8bc34a"; // 15% 이하: 연초록
-    if (pullback <= 20) return "#ffc107"; // 20% 이하: 노랑
-    if (pullback <= 25) return "#ff9800"; // 25% 이하: 주황
-    return "#f44336"; // 초과: 빨강
+    if (pullback <= 20) return COLORS.WARNING; // 20% 이하: 노랑
+    if (pullback <= 25) return COLORS.WARNING; // 25% 이하: 주황
+    return COLORS.UP; // 초과: 빨강
   };
 
   // HTF 상태에 따른 색상과 텍스트 결정
   const getStatusChip = (status) => {
     const statusConfig = {
-      rising: { color: "#4caf50", text: "상승중" },
-      pullback: { color: "#ff9800", text: "조정중" },
-      breakout: { color: "#2196f3", text: "돌파" },
+      rising: { color: COLORS.SUCCESS, text: "상승중" },
+      pullback: { color: COLORS.WARNING, text: "조정중" },
+      breakout: { color: COLORS.DOWN, text: "돌파" },
       none: { color: COLORS.TEXT_MUTED, text: "해당없음" },
       // 한국어 상태도 지원 (호환성)
-      상승중: { color: "#4caf50", text: "상승중" },
-      조정중: { color: "#ff9800", text: "조정중" },
-      돌파: { color: "#2196f3", text: "돌파" },
+      상승중: { color: COLORS.SUCCESS, text: "상승중" },
+      조정중: { color: COLORS.WARNING, text: "조정중" },
+      돌파: { color: COLORS.DOWN, text: "돌파" },
       해당없음: { color: COLORS.TEXT_MUTED, text: "해당없음" },
     };
 

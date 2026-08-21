@@ -31,7 +31,7 @@ const heatColor = (rate) => {
   if (rate > -1) return "#cfe3f7";
   if (rate > -2.5) return "#93c2ef";
   if (rate > -4) return "#4a95dd";
-  return "#1565c0";
+  return COLORS.DOWN;
 };
 
 const LEGEND_STOPS = [-3, -1, 0, 1, 2.5, 4, 6, 8];
@@ -235,7 +235,7 @@ function ThemeRow({ theme, slots, baseMinute, signalIndex, nowMinute }) {
             {theme.peak_rate}%
           </Box>
           {theme.surge_slots.length > 0 && (
-            <Box component="span" sx={{ color: "#ef6c00", fontWeight: 600 }}>
+            <Box component="span" sx={{ color: COLORS.WARNING, fontWeight: 600 }}>
               {` · 급등 ${theme.surge_slots.length}회`}
             </Box>
           )}

@@ -16,9 +16,9 @@ const MUTED = COLORS.TEXT_SECONDARY;
 /** 시리즈 색상 — 명도/색상이 충분히 구분되는 순서로 배치 */
 const SERIES_COLORS = [
   "#e53935",
-  "#1565c0",
-  "#2e7d32",
-  "#ef6c00",
+  COLORS.DOWN,
+  COLORS.SUCCESS,
+  COLORS.WARNING,
   "#6a1b9a",
   "#00838f",
   "#c2185b",

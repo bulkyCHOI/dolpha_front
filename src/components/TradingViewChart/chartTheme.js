@@ -7,6 +7,7 @@
  */
 import colors from "assets/theme/base/colors";
 import typography from "assets/theme/base/typography";
+import { COLORS } from "constants/styles";
 
 const { bearish, bullish, flat, grey, info, success, warning } = colors;
 
@@ -36,10 +37,10 @@ export const INDICATOR_COLORS = {
   rsRank12m: grey[800],
   rsBaseline: warning.main,
   atr: "rgba(255, 87, 34, 0.6)",
-  atrBorder: "#ff5722",
+  atrBorder: COLORS.WARNING,
   atrRatio: "#795548",
   mtt: success.main,
-  mttOff: "#ff5722",
+  mttOff: COLORS.WARNING,
 };
 
 // 마커 / 진입선

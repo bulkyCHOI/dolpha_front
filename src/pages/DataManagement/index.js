@@ -110,7 +110,7 @@ function AnalysisGapCard({ gap }) {
         </Typography>
         <Typography variant="body2" color="text.secondary">
           OHLCV만 있고 분석 없음:{" "}
-          <strong style={{ color: gap.ohlcv_only > 0 ? "#f44336" : "#4caf50" }}>
+          <strong style={{ color: gap.ohlcv_only > 0 ? COLORS.UP : COLORS.SUCCESS }}>
             {fmt(gap.ohlcv_only)}종목
           </strong>
         </Typography>
@@ -130,7 +130,7 @@ function AnalysisGapCard({ gap }) {
 // ─────────────────────────────────────────────
 function cellColor(ratio) {
   if (ratio === undefined || ratio === null) return { bg: COLORS.DIVIDER, text: "#aaa" };
-  if (ratio >= 95) return { bg: "#e8f5e9", text: "#2e7d32", border: "#a5d6a7" };
+  if (ratio >= 95) return { bg: "#e8f5e9", text: COLORS.SUCCESS, border: "#a5d6a7" };
   if (ratio >= 70) return { bg: `#fff8e1`, text: "#e65100", border: "#ffe082" };
   return { bg: "#ffebee", text: "#c62828", border: "#ef9a9a" };
 }
@@ -203,7 +203,7 @@ function PipelineGrid({ grid }) {
       <Box display="flex" gap={2} mb={2} alignItems="center">
         <Typography variant="caption" color="text.secondary">완료율 범례:</Typography>
         {[
-          { label: "≥ 95%", bg: "#e8f5e9", border: "#a5d6a7", text: "#2e7d32" },
+          { label: "≥ 95%", bg: "#e8f5e9", border: "#a5d6a7", text: COLORS.SUCCESS },
           { label: "≥ 70%", bg: `#fff8e1`, border: "#ffe082", text: "#e65100" },
           { label: "< 70%", bg: "#ffebee", border: "#ef9a9a", text: "#c62828" },
           { label: "없음",  bg: COLORS.DIVIDER, border: COLORS.BORDER, text: "#aaa"    },
@@ -525,7 +525,7 @@ function DailyPipelinePanel({ processes, onTriggerDone }) {
             ⚡ 일간 전체 파이프라인
           </Typography>
           {isRunning && (
-            <Chip label="실행 중" size="small" sx={{ bgcolor: "#4caf50", color: "white" }} />
+            <Chip label="실행 중" size="small" sx={{ bgcolor: COLORS.SUCCESS, color: "white" }} />
           )}
           <Typography variant="body2" color="white.main" sx={{ opacity: 0.85, ml: "auto", mr: 2 }}>
             수집 → 가공 전 과정을 순서대로 한번에 실행

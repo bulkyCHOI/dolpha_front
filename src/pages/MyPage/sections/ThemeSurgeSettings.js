@@ -25,7 +25,7 @@ import Typography from "@mui/material/Typography";
 import ThemeSurgeExitSettings from "./ThemeSurgeExitSettings";
 import { COLORS } from "constants/styles";
 
-const ACCENT = "#ef6c00";
+const ACCENT = COLORS.WARNING;
 const MUTED = COLORS.TEXT_SECONDARY;
 
 /** 억 단위 입력 ↔ 원 단위 저장 */

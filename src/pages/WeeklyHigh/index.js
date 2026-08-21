@@ -631,15 +631,15 @@ function WeeklyHigh() {
                                 sx={{
                                   backgroundColor:
                                     row.min_52w_gain_percent >= 300
-                                      ? "#f44336" // 300%이상 빨강
+                                      ? COLORS.UP // 300%이상 빨강
                                       : row.min_52w_gain_percent >= 200
-                                      ? "#ff9800" // 200%이상 주황
+                                      ? COLORS.WARNING // 200%이상 주황
                                       : row.min_52w_gain_percent >= 100
                                       ? "#ffeb3b" // 100%이상 노랑
                                       : row.min_52w_gain_percent >= 75
-                                      ? "#4caf50" // 75%이상 녹색
+                                      ? COLORS.SUCCESS // 75%이상 녹색
                                       : row.min_52w_gain_percent >= 50
-                                      ? "#2196f3" // 50%이상 파랑
+                                      ? COLORS.DOWN // 50%이상 파랑
                                       : COLORS.TEXT_MUTED, // 50%미만 회색
                                   color: "white",
                                   fontWeight: "bold",
@@ -662,15 +662,15 @@ function WeeklyHigh() {
                                 sx={{
                                   backgroundColor:
                                     row.rsRank >= 90
-                                      ? "#f44336" // 90 이상: 빨강
+                                      ? COLORS.UP // 90 이상: 빨강
                                       : row.rsRank >= 80
-                                      ? "#ff5722" // 80 이상: 주황
+                                      ? COLORS.WARNING // 80 이상: 주황
                                       : row.rsRank >= 70
-                                      ? "#ffc107" // 70 이상: 노랑
+                                      ? COLORS.WARNING // 70 이상: 노랑
                                       : row.rsRank >= 60
-                                      ? "#4caf50" // 60 이상: 초록
+                                      ? COLORS.SUCCESS // 60 이상: 초록
                                       : row.rsRank >= 50
-                                      ? "#2196f3" // 50 이상: 파랑
+                                      ? COLORS.DOWN // 50 이상: 파랑
                                       : COLORS.TEXT_MUTED, // 50 이하: 회색
                                   color:
                                     row.rsRank >= 70 && row.rsRank < 80
@@ -697,7 +697,7 @@ function WeeklyHigh() {
                                 fontWeight={row["당기매출"] < 0 ? "bold" : "bold"}
                                 sx={{
                                   fontSize: { xs: "0.65rem", md: "0.75rem" },
-                                  color: row["당기매출"] < 0 ? "#1976d2" : "inherit",
+                                  color: row["당기매출"] < 0 ? COLORS.DOWN : "inherit",
                                   fontWeight: row["당기매출"] < 0 ? "bold" : "bold",
                                 }}
                               >
@@ -714,7 +714,7 @@ function WeeklyHigh() {
                                 fontWeight={row["당기영업이익"] < 0 ? "bold" : "bold"}
                                 sx={{
                                   fontSize: { xs: "0.65rem", md: "0.8rem" },
-                                  color: row["당기영업이익"] < 0 ? "#1976d2" : "inherit",
+                                  color: row["당기영업이익"] < 0 ? COLORS.DOWN : "inherit",
                                   fontWeight: row["당기영업이익"] < 0 ? "bold" : "bold",
                                 }}
                               >

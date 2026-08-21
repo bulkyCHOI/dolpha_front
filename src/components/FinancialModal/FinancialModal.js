@@ -21,6 +21,7 @@ import { Close } from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { formatFinancialAmount } from "utils/formatters";
+import { COLORS } from "constants/styles";
 
 /**
  * 재무제표 모달 컴포넌트
@@ -219,7 +220,7 @@ const FinancialModal = ({
                                   textAlign: "right",
                                   fontSize: isMobile ? "0.65rem" : "inherit",
                                   p: isMobile ? 0.5 : 1,
-                                  color: item && item.amount < 0 ? "#1976d2" : "inherit",
+                                  color: item && item.amount < 0 ? COLORS.DOWN : "inherit",
                                   fontWeight: item && item.amount < 0 ? "bold" : "normal",
                                   display: "flex",
                                   alignItems: "center",
@@ -347,7 +348,7 @@ const FinancialModal = ({
                                   textAlign: "right",
                                   fontSize: isMobile ? "0.65rem" : "inherit",
                                   p: isMobile ? 0.5 : 1,
-                                  color: item && item.amount < 0 ? "#1976d2" : "inherit",
+                                  color: item && item.amount < 0 ? COLORS.DOWN : "inherit",
                                   fontWeight: item && item.amount < 0 ? "bold" : "normal",
                                   display: "flex",
                                   alignItems: "center",

@@ -113,10 +113,10 @@ const getStrategyTypeLabel = (strategyType) => {
 const getStrategyTypeColor = (strategyType) => {
   // 붉은색 계열로 전략 종류별 구분 - 차이를 극대화
   const colors = {
-    mtt: "#d32f2f", // 진한 다크 레드 - 주력 전략 (Minervini)
-    weekly_high: "#ff5722", // 딥 오렌지 - 장기 전략 (52주 신고가)
-    fifty_day_high: "#ff9800", // 밝은 오렌지 - 중기 전략 (50일 신고가)
-    daily_top50: "#ffc107", // 엠버(황금색) - 단기 전략 (일일 Top50)
+    mtt: COLORS.UP, // 진한 다크 레드 - 주력 전략 (Minervini)
+    weekly_high: COLORS.WARNING, // 딥 오렌지 - 장기 전략 (52주 신고가)
+    fifty_day_high: COLORS.WARNING, // 밝은 오렌지 - 중기 전략 (50일 신고가)
+    daily_top50: COLORS.WARNING, // 엠버(황금색) - 단기 전략 (일일 Top50)
     theme_surge: "#7b1fa2", // 퍼플 - 급등테마주 전략
   };
   return colors[strategyType] || COLORS.TEXT_MUTED;
@@ -134,7 +134,7 @@ const getTradingModeLabel = (tradingMode) => {
 const getTradingModeColor = (tradingMode) => {
   // 푸른색 계열로 매매모드 구분 - 차이를 극대화
   const colors = {
-    manual: "#2196f3", // 밝은 파란색 - 수동 매매
+    manual: COLORS.DOWN, // 밝은 파란색 - 수동 매매
     turtle: "#0d47a1", // 진한 네이비 블루 - 터틀 매매
     atr: "#0d47a1", // 진한 네이비 블루 - 자동 매매 (Turtle)
   };
@@ -144,7 +144,7 @@ const getTradingModeColor = (tradingMode) => {
 // 배경색에 따른 텍스트 색상 결정 함수
 const getTextColor = (backgroundColor) => {
   // MTT(다크레드)와 Turtle(네이비)만 흰색, 나머지는 검은색
-  const darkColors = ["#d32f2f", "#0d47a1", "#7b1fa2"]; // MTT, Turtle/ATR, 급등테마주
+  const darkColors = [COLORS.UP, "#0d47a1", "#7b1fa2"]; // MTT, Turtle/ATR, 급등테마주
   return darkColors.includes(backgroundColor) ? "white" : "black";
 };
 
@@ -1331,9 +1331,9 @@ export default function TradingConfigs() {
                   borderColor: "divider",
                   "& .MuiTab-root": { fontWeight: "bold", textTransform: "none" },
                   "& .MuiTabs-indicator": {
-                    backgroundColor: activeTab === 1 ? "#7b1fa2" : "#d32f2f",
+                    backgroundColor: activeTab === 1 ? "#7b1fa2" : COLORS.UP,
                   },
-                  "& .Mui-selected": { color: activeTab === 1 ? "#7b1fa2" : "#d32f2f" },
+                  "& .Mui-selected": { color: activeTab === 1 ? "#7b1fa2" : COLORS.UP },
                 }}
               >
                 <Tab label={`일반 전략 (${generalConfigs.length})`} />

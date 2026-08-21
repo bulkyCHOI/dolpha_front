@@ -28,7 +28,7 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import Typography from "@mui/material/Typography";
 import { COLORS } from "constants/styles";
 
-const ACCENT = "#ef6c00";
+const ACCENT = COLORS.WARNING;
 const MUTED = COLORS.TEXT_SECONDARY;
 
 const BAR_UNITS = [

@@ -218,15 +218,15 @@ function StockList({
                           sx={{
                             backgroundColor:
                               rowData[header.field] >= 90
-                                ? "#f44336" // 90 이상: 빨강
+                                ? COLORS.UP // 90 이상: 빨강
                                 : rowData[header.field] >= 80
-                                ? "#ff5722" // 80 이상: 주황
+                                ? COLORS.WARNING // 80 이상: 주황
                                 : rowData[header.field] >= 70
-                                ? "#ffc107" // 70 이상: 노랑
+                                ? COLORS.WARNING // 70 이상: 노랑
                                 : rowData[header.field] >= 60
-                                ? "#4caf50" // 60 이상: 초록
+                                ? COLORS.SUCCESS // 60 이상: 초록
                                 : rowData[header.field] >= 50
-                                ? "#2196f3" // 50 이상: 파랑
+                                ? COLORS.DOWN // 50 이상: 파랑
                                 : COLORS.TEXT_MUTED, // 50 이하: 회색
                             color:
                               rowData[header.field] >= 70 && rowData[header.field] < 80
@@ -248,15 +248,15 @@ function StockList({
                           sx={{
                             backgroundColor:
                               rowData[header.field] >= 300
-                                ? "#f44336" // 300%이상 빨강
+                                ? COLORS.UP // 300%이상 빨강
                                 : rowData[header.field] >= 200
-                                ? "#ff9800" // 200%이상 주황
+                                ? COLORS.WARNING // 200%이상 주황
                                 : rowData[header.field] >= 100
                                 ? "#ffeb3b" // 100%이상 노랑
                                 : rowData[header.field] >= 75
-                                ? "#4caf50" // 75%이상 녹색
+                                ? COLORS.SUCCESS // 75%이상 녹색
                                 : rowData[header.field] >= 50
-                                ? "#2196f3" // 50%이상 파랑
+                                ? COLORS.DOWN // 50%이상 파랑
                                 : COLORS.TEXT_MUTED, // 50%미만 회색
                             color: "white",
                             fontWeight: "bold",
@@ -275,15 +275,15 @@ function StockList({
                           sx={{
                             backgroundColor:
                               rowData[header.field] >= 25
-                                ? "#f44336" // 25% 이상: 빨강
+                                ? COLORS.UP // 25% 이상: 빨강
                                 : rowData[header.field] >= 20
-                                ? "#ff5722" // 20% 이상: 주황
+                                ? COLORS.WARNING // 20% 이상: 주황
                                 : rowData[header.field] >= 15
-                                ? "#ffc107" // 15% 이상: 노랑
+                                ? COLORS.WARNING // 15% 이상: 노랑
                                 : rowData[header.field] >= 10
-                                ? "#4caf50" // 10% 이상: 초록
+                                ? COLORS.SUCCESS // 10% 이상: 초록
                                 : rowData[header.field] >= 5
-                                ? "#2196f3" // 5% 이상: 파랑
+                                ? COLORS.DOWN // 5% 이상: 파랑
                                 : COLORS.TEXT_MUTED, // 5% 미만: 회색
                             color:
                               rowData[header.field] >= 15 && rowData[header.field] < 20
@@ -307,7 +307,7 @@ function StockList({
                             fontSize: "0.75rem",
                             color:
                               typeof rowData[header.field] === "number" && rowData[header.field] < 0
-                                ? "#1976d2"
+                                ? COLORS.DOWN
                                 : "inherit",
                           }}
                         >

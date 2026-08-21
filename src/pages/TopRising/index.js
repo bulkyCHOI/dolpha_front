@@ -640,15 +640,15 @@ function TopRising() {
                                 sx={{
                                   backgroundColor:
                                     (row.change || 0) * 100 >= 25
-                                      ? "#f44336" // 25% 이상: 빨강
+                                      ? COLORS.UP // 25% 이상: 빨강
                                       : (row.change || 0) * 100 >= 20
-                                      ? "#ff5722" // 20% 이상: 주황
+                                      ? COLORS.WARNING // 20% 이상: 주황
                                       : (row.change || 0) * 100 >= 15
-                                      ? "#ffc107" // 15% 이상: 노랑
+                                      ? COLORS.WARNING // 15% 이상: 노랑
                                       : (row.change || 0) * 100 >= 10
-                                      ? "#4caf50" // 10% 이상: 초록
+                                      ? COLORS.SUCCESS // 10% 이상: 초록
                                       : (row.change || 0) * 100 >= 5
-                                      ? "#2196f3" // 5% 이상: 파랑
+                                      ? COLORS.DOWN // 5% 이상: 파랑
                                       : COLORS.TEXT_MUTED, // 5% 미만: 회색
                                   color:
                                     (row.change || 0) * 100 >= 15 && (row.change || 0) * 100 < 20
@@ -674,15 +674,15 @@ function TopRising() {
                                 sx={{
                                   backgroundColor:
                                     row.rsRank >= 90
-                                      ? "#f44336" // 90 이상: 빨강
+                                      ? COLORS.UP // 90 이상: 빨강
                                       : row.rsRank >= 80
-                                      ? "#ff5722" // 80 이상: 주황
+                                      ? COLORS.WARNING // 80 이상: 주황
                                       : row.rsRank >= 70
-                                      ? "#ffc107" // 70 이상: 노랑
+                                      ? COLORS.WARNING // 70 이상: 노랑
                                       : row.rsRank >= 60
-                                      ? "#4caf50" // 60 이상: 초록
+                                      ? COLORS.SUCCESS // 60 이상: 초록
                                       : row.rsRank >= 50
-                                      ? "#2196f3" // 50 이상: 파랑
+                                      ? COLORS.DOWN // 50 이상: 파랑
                                       : COLORS.TEXT_MUTED, // 50 이하: 회색
                                   color:
                                     row.rsRank >= 70 && row.rsRank < 80
@@ -709,7 +709,7 @@ function TopRising() {
                                 fontWeight={row["당기매출"] < 0 ? "bold" : "bold"}
                                 sx={{
                                   fontSize: { xs: "0.65rem", md: "0.75rem" },
-                                  color: row["당기매출"] < 0 ? "#1976d2" : "inherit",
+                                  color: row["당기매출"] < 0 ? COLORS.DOWN : "inherit",
                                 }}
                               >
                                 {formatNumber(row["당기매출"]) || "0"}
@@ -725,7 +725,7 @@ function TopRising() {
                                 fontWeight={row["당기영업이익"] < 0 ? "bold" : "bold"}
                                 sx={{
                                   fontSize: { xs: "0.65rem", md: "0.75rem" },
-                                  color: row["당기영업이익"] < 0 ? "#1976d2" : "inherit",
+                                  color: row["당기영업이익"] < 0 ? COLORS.DOWN : "inherit",
                                 }}
                               >
                                 {formatNumber(row["당기영업이익"]) || "0"}

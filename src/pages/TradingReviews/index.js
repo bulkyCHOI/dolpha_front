@@ -98,7 +98,7 @@ const getTradingModeLabel = (tradingMode) => {
 
 const getTradingModeColor = (tradingMode) => {
   const colors = {
-    manual: "#2196f3", // 파란색 - 수동 매매
+    manual: COLORS.DOWN, // 파란색 - 수동 매매
     turtle: "#0d47a1", // 진한 네이비 블루 - 터틀 매매
     atr: "#0d47a1", // 진한 네이비 블루 - 자동 매매
   };
@@ -367,12 +367,12 @@ export default function TradingReviews() {
       cell: (row) => (
         <Box>
           <Typography variant="body2" sx={{ fontSize: "0.8rem", lineHeight: 1.2 }}>
-            <span style={{ color: "#2196f3", fontWeight: "bold" }}>
+            <span style={{ color: COLORS.DOWN, fontWeight: "bold" }}>
               진입 {row.entry_count}회
             </span>
           </Typography>
           <Typography variant="caption" sx={{ fontSize: "0.7rem", lineHeight: 1.2 }}>
-            <span style={{ color: "#ff9800", fontWeight: "bold" }}>
+            <span style={{ color: COLORS.WARNING, fontWeight: "bold" }}>
               청산 {row.exit_count}회
             </span>
           </Typography>
@@ -758,7 +758,7 @@ export default function TradingReviews() {
                 const plAmount = pos.profit_loss_amount;
                 const plRate = pos.profit_loss_rate;
                 const isProfit = plAmount != null ? plAmount >= 0 : null;
-                const plColor = isProfit == null ? "text.secondary" : isProfit ? "#ef5350" : "#1976d2";
+                const plColor = isProfit == null ? "text.secondary" : isProfit ? "#ef5350" : COLORS.DOWN;
                 const isAtr = pos.trading_mode === "atr" || pos.trading_mode === "turtle";
 
 
@@ -837,7 +837,7 @@ export default function TradingReviews() {
                           <Typography variant="caption" color="text.secondary">
                             손절가{isAtr && pos.atr ? ` (${pos.atr.toFixed(0)} ATR기준)` : ""}
                           </Typography>
-                          <Typography variant="caption" fontWeight="bold" sx={{ color: "#d32f2f" }}>
+                          <Typography variant="caption" fontWeight="bold" sx={{ color: COLORS.UP }}>
                             {formatCurrency(pos.stop_price)}원
                           </Typography>
                         </Box>

@@ -11,16 +11,18 @@ import Typography from "@mui/material/Typography";
 import SsidChartIcon from "@mui/icons-material/SsidChart";
 
 import TradingViewChart, { ChartLegend } from "components/TradingViewChart";
+import { COLORS, alpha } from "constants/styles";
 
 const CHART_HEIGHT = 220;
 
-const COLORS = {
-  totalMoney: "#1976d2",
-  stockMoney: "#f57c00",
-  profit: "rgba(56, 142, 60, 0.75)",
-  loss: "rgba(211, 47, 47, 0.75)",
-  profitLine: "#388e3c",
-  lossLine: "#d32f2f",
+/** 계좌 차트 전용 색. 공용 토큰을 그대로 쓰고 이름만 용도에 맞춘다. */
+const SERIES_COLORS = {
+  totalMoney: COLORS.DOWN,
+  stockMoney: COLORS.WARNING,
+  profit: alpha(COLORS.SUCCESS, 0.75),
+  loss: alpha(COLORS.UP, 0.75),
+  profitLine: COLORS.SUCCESS,
+  lossLine: COLORS.UP,
 };
 
 /** 원 → 만원 */
@@ -61,7 +63,7 @@ function AccountCharts({ accountSnapshots, dailyPnl, loading }) {
         })),
         options: {
           ...BASE_LINE_OPTIONS,
-          lineColor: COLORS.totalMoney,
+          lineColor: SERIES_COLORS.totalMoney,
           topColor: "rgba(25, 118, 210, 0.18)",
           bottomColor: "rgba(25, 118, 210, 0.02)",
           priceFormat: manwonFormat,
@@ -77,7 +79,7 @@ function AccountCharts({ accountSnapshots, dailyPnl, loading }) {
         })),
         options: {
           ...BASE_LINE_OPTIONS,
-          color: COLORS.stockMoney,
+          color: SERIES_COLORS.stockMoney,
           priceScaleId: "left",
           priceFormat: manwonFormat,
         },
@@ -99,7 +101,7 @@ function AccountCharts({ accountSnapshots, dailyPnl, loading }) {
       daily.push({
         time: snapshot.date,
         value,
-        color: value >= 0 ? COLORS.profit : COLORS.loss,
+        color: value >= 0 ? SERIES_COLORS.profit : SERIES_COLORS.loss,
       });
       cumulativeData.push({ time: snapshot.date, value: cumulative });
     });
@@ -119,7 +121,7 @@ function AccountCharts({ accountSnapshots, dailyPnl, loading }) {
         data: cumulativeData,
         options: {
           ...BASE_LINE_OPTIONS,
-          color: cumulative >= 0 ? COLORS.profitLine : COLORS.lossLine,
+          color: cumulative >= 0 ? SERIES_COLORS.profitLine : SERIES_COLORS.lossLine,
           priceFormat: signedManwonFormat,
         },
       },
@@ -166,8 +168,8 @@ function AccountCharts({ accountSnapshots, dailyPnl, loading }) {
                 {
                   title: "평가금액",
                   items: [
-                    { field: "totalMoney", label: "총 평가금액", color: COLORS.totalMoney },
-                    { field: "stockMoney", label: "주식 평가금액", color: COLORS.stockMoney },
+                    { field: "totalMoney", label: "총 평가금액", color: SERIES_COLORS.totalMoney },
+                    { field: "stockMoney", label: "주식 평가금액", color: SERIES_COLORS.stockMoney },
                   ],
                 },
               ]}
@@ -187,8 +189,8 @@ function AccountCharts({ accountSnapshots, dailyPnl, loading }) {
                 {
                   title: "손익",
                   items: [
-                    { field: "dailyPnl", label: "일자별 확정", color: COLORS.profitLine },
-                    { field: "cumulativePnl", label: "누적", color: COLORS.totalMoney },
+                    { field: "dailyPnl", label: "일자별 확정", color: SERIES_COLORS.profitLine },
+                    { field: "cumulativePnl", label: "누적", color: SERIES_COLORS.totalMoney },
                   ],
                 },
               ]}

@@ -5,9 +5,9 @@ import { COLORS } from "constants/styles";
 export const CHART_COLORS = {
   UP: "#ef4444",
   DOWN: "#3b82f6",
-  PREV_HIGH: "#d32f2f",
-  BREAKOUT: "#ef6c00",
-  PULLBACK: "#1565c0",
+  PREV_HIGH: COLORS.UP,
+  BREAKOUT: COLORS.WARNING,
+  PULLBACK: COLORS.DOWN,
   DECISION: "#616161",
   PASSED: "#f59e0b",
   EXECUTED: "#16a34a",
@@ -21,7 +21,7 @@ export const ZONE_STYLE = {
     fill: "rgba(21, 101, 192, 0.10)",
     stroke: "rgba(21, 101, 192, 0.40)",
     label: "눌림 구간",
-    labelColor: "#1565c0",
+    labelColor: COLORS.DOWN,
   },
   RISE: {
     fill: "rgba(239, 68, 68, 0.07)",
@@ -51,8 +51,8 @@ export const LEGEND_ITEMS = [
 /** 판정 결과 → 표시 텍스트/색 */
 export const decisionStatus = (decision) => {
   if (!decision) return { label: "—", color: CHART_COLORS.MUTED, bg: "#eceff1" };
-  if (decision.executed) return { label: "진입", color: "#2e7d32", bg: "#e8f5e9" };
-  if (decision.passed) return { label: "충족", color: "#ef6c00", bg: `#fff8e1` };
+  if (decision.executed) return { label: "진입", color: COLORS.SUCCESS, bg: "#e8f5e9" };
+  if (decision.passed) return { label: "충족", color: COLORS.WARNING, bg: `#fff8e1` };
   return { label: "대기", color: CHART_COLORS.MUTED, bg: "#eceff1" };
 };
 

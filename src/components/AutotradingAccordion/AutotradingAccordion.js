@@ -333,7 +333,7 @@ const AutotradingAccordion = ({
                       <Typography
                         variant="caption"
                         sx={{
-                          color: Math.abs(positionSum - 100) >= 0.01 ? "#f44336" : "#4caf50",
+                          color: Math.abs(positionSum - 100) >= 0.01 ? COLORS.UP : COLORS.SUCCESS,
                           fontWeight: "bold",
                         }}
                       >
@@ -756,7 +756,7 @@ const AutotradingAccordion = ({
                           <Typography
                             variant="caption"
                             sx={{
-                              color: Math.abs(positionSum - 100) >= 0.01 ? "#f44336" : "#4caf50",
+                              color: Math.abs(positionSum - 100) >= 0.01 ? COLORS.UP : COLORS.SUCCESS,
                               fontWeight: "bold",
                             }}
                           >
@@ -1066,10 +1066,10 @@ const AutotradingAccordion = ({
                         size="small"
                         sx={{
                           "& .MuiSwitch-switchBase.Mui-checked": {
-                            color: "#4caf50",
+                            color: COLORS.SUCCESS,
                           },
                           "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
-                            backgroundColor: "#4caf50",
+                            backgroundColor: COLORS.SUCCESS,
                           },
                         }}
                       />
@@ -1253,7 +1253,7 @@ const AutotradingAccordion = ({
                         <Typography
                           variant="caption"
                           sx={{
-                            color: Math.abs(positionSum - 100) >= 0.01 ? "#f44336" : "#4caf50",
+                            color: Math.abs(positionSum - 100) >= 0.01 ? COLORS.UP : COLORS.SUCCESS,
                             fontWeight: "bold",
                           }}
                         >
@@ -1438,10 +1438,10 @@ const AutotradingAccordion = ({
                         onClick={() => onDelete(stockConfig.stock_code, stockConfig.stock_name)}
                         sx={{
                           flex: 1,
-                          borderColor: "#f44336",
-                          color: "#f44336",
+                          borderColor: COLORS.UP,
+                          color: COLORS.UP,
                           "&:hover": {
-                            borderColor: "#d32f2f",
+                            borderColor: COLORS.UP,
                             backgroundColor: "rgba(244, 67, 54, 0.04)",
                           },
                         }}

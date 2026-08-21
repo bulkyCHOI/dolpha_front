@@ -43,10 +43,10 @@ import {
   buildStockChartSeries,
   compactPanes,
 } from "./buildStockSeries";
-import { COLORS } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 
 const DRAW_LINE_COLOR = COLORS.PRIMARY;
-const PYRAMIDING_LINE_COLOR = "#ff9800";
+const PYRAMIDING_LINE_COLOR = COLORS.WARNING;
 
 const CHART_HEIGHT = { xs: 480, md: 640 };
 const INDEX_CHART_HEIGHT = { xs: 240, md: 300 };
@@ -322,8 +322,8 @@ const ChartContainer = ({
             }}
             size="small"
             sx={{
-              border: "1px solid #f44336",
-              color: "#f44336",
+              border: `1px solid ${COLORS.ERROR}`,
+              color: COLORS.ERROR,
               backgroundColor: "rgba(255, 255, 255, 0.9)",
               "&:hover": { backgroundColor: "rgba(244, 67, 54, 0.1)" },
             }}
@@ -350,7 +350,7 @@ const ChartContainer = ({
         bottom: 28,
         left: 8,
         zIndex: 10,
-        backgroundColor: movingLineId ? "rgba(255, 152, 0, 0.92)" : "rgba(102, 126, 234, 0.92)",
+        backgroundColor: movingLineId ? alpha(COLORS.WARNING, 0.92) : alpha(COLORS.PRIMARY, 0.92),
         color: COLORS.SURFACE,
         borderRadius: 1,
         px: 1,
@@ -401,7 +401,8 @@ const ChartContainer = ({
                   height: 22,
                   borderLeft: `4px solid ${line.color}`,
                   fontWeight: 600,
-                  backgroundColor: movingLineId === line.id ? "rgba(255, 152, 0, 0.15)" : undefined,
+                  backgroundColor:
+                    movingLineId === line.id ? alpha(COLORS.WARNING, 0.15) : undefined,
                 }}
               />
             ))}
@@ -518,7 +519,7 @@ const ChartContainer = ({
             >
               위치 이동
             </MenuItem>
-            <MenuItem onClick={() => handleDeleteLine(menuState.lineId)} sx={{ color: "#f44336" }}>
+            <MenuItem onClick={() => handleDeleteLine(menuState.lineId)} sx={{ color: COLORS.ERROR }}>
               삭제
             </MenuItem>
           </Menu>

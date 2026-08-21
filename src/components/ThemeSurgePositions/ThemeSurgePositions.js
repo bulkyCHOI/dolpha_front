@@ -13,10 +13,10 @@ import { Link as RouterLink } from "react-router-dom";
 import Typography from "@mui/material/Typography";
 import { COLORS } from "constants/styles";
 
-const RISE = "#d32f2f";
-const FALL = "#1565c0";
+const RISE = COLORS.UP;
+const FALL = COLORS.DOWN;
 const MUTED = COLORS.TEXT_SECONDARY;
-const OK = "#2e7d32";
+const OK = COLORS.SUCCESS;
 
 const cardSx = {
   p: 2,
@@ -213,7 +213,7 @@ function WatchingCard({ item: w }) {
             fontSize: 11,
             fontWeight: 700,
             bgcolor: w.conditions_met >= 2 ? `#fff8e1` : "#eceff1",
-            color: w.conditions_met >= 2 ? "#ef6c00" : MUTED,
+            color: w.conditions_met >= 2 ? COLORS.WARNING : MUTED,
           }}
         />
       </Box>

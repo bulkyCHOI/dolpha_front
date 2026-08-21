@@ -37,8 +37,8 @@ import { formatNumber } from "utils/formatters";
 const AUTO_REFRESH_MS = 60000;
 const LIVE_THEME_LIMIT = 10;
 
-const RISE = "#d32f2f";
-const FALL = "#1565c0";
+const RISE = COLORS.UP;
+const FALL = COLORS.DOWN;
 const MUTED = COLORS.TEXT_SECONDARY;
 
 const cardSx = {
@@ -209,7 +209,7 @@ function ConditionMark({ ok }) {
         height: 18,
         borderRadius: "50%",
         bgcolor: ok ? "#e8f5e9" : "#f1f4f8",
-        color: ok ? "#2e7d32" : "#c2ccd6",
+        color: ok ? COLORS.SUCCESS : "#c2ccd6",
         fontSize: 11,
         fontWeight: 700,
         lineHeight: "18px",
@@ -415,7 +415,7 @@ function ThemeSurge() {
             fontSize: 11,
             fontWeight: 600,
             bgcolor: r.executed ? "#e8f5e9" : r.passed ? `#fff8e1` : "#eceff1",
-            color: r.executed ? "#2e7d32" : r.passed ? "#ef6c00" : MUTED,
+            color: r.executed ? COLORS.SUCCESS : r.passed ? COLORS.WARNING : MUTED,
           }}
         />
       ),
@@ -584,7 +584,7 @@ function ThemeSurge() {
                 label="실제 진입"
                 value={summary.entry_count}
                 unit="건"
-                accent="#2e7d32"
+                accent={COLORS.SUCCESS}
               />
             </Grid>
           </Grid>
@@ -621,7 +621,7 @@ function ThemeSurge() {
                   <Chip
                     size="small"
                     label="실시간"
-                    sx={{ height: 20, fontSize: 11, bgcolor: "#e8f5e9", color: "#2e7d32" }}
+                    sx={{ height: 20, fontSize: 11, bgcolor: "#e8f5e9", color: COLORS.SUCCESS }}
                   />
                 }
                 sx={{ height: "100%", p: 1.75 }}
