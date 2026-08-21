@@ -1,19 +1,27 @@
 // FinanceDataReader 기반 백엔드 API를 사용한 주요 지수 데이터 가져오기
 
-// 백엔드 API 엔드포인트 (현재 서버의 8000 포트 사용)
-const BACKEND_API_URL = "http://218.152.32.218:8000/api/market-indices/";
+// 응답이 없는 백엔드에 무한정 매달리지 않도록 상한을 둔다.
+const REQUEST_TIMEOUT_MS = 5000;
+
+/** 다른 데이터 훅과 동일한 규칙으로 API 주소를 정한다. */
+const getMarketIndicesUrl = () => {
+  const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
+  return `${apiBaseUrl}/api/market-indices/`;
+};
 
 // 메인 함수: 백엔드에서 모든 지수 데이터 가져오기
 export const fetchMarketIndices = async () => {
-  try {
-    console.log("백엔드 FinanceDataReader API에서 지수 데이터 가져오기 시작...");
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
-    const response = await fetch(BACKEND_API_URL, {
+  try {
+    const response = await fetch(getMarketIndicesUrl(), {
       method: "GET",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
+      signal: controller.signal,
     });
 
     if (!response.ok) {
@@ -22,18 +30,18 @@ export const fetchMarketIndices = async () => {
 
     const data = await response.json();
 
-    console.log("백엔드에서 받은 데이터:", data);
-
     if (Array.isArray(data) && data.length > 0) {
       return data;
     } else {
       throw new Error("Invalid data format from backend");
     }
   } catch (error) {
-    console.error("백엔드 API 호출 실패:", error);
+    console.error("지수 데이터 API 호출 실패:", error);
 
-    // 백엔드 연결 실패 시 더미 데이터 반환
+    // 백엔드 연결 실패 시 더미 데이터로 화면을 채운다
     return getFullDummyData();
+  } finally {
+    clearTimeout(timeoutId);
   }
 };
 

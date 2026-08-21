@@ -208,12 +208,8 @@ function IssueInfo() {
   const loadIssueData = async () => {
     setLoading(true);
     try {
-      console.log("백엔드 API에서 지수 데이터 가져오는 중...");
-
       // 백엔드 API에서 실시간 지수 데이터 가져오기
       const marketIndices = await fetchMarketIndices();
-
-      console.log("가져온 지수 데이터:", marketIndices);
 
       // 경제 뉴스와 기업 이벤트는 기존 모의 데이터 사용
       const updatedData = {
