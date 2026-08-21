@@ -1,8 +1,11 @@
 /**
  * 디자인 리팩터링 회귀 검증 대상 화면.
  *
- * auth: true 인 화면은 로그인이 필요해 스모크 대상에서 제외한다.
- * (로그인 게이트 화면 자체가 렌더되는지는 auth-gate 테스트가 확인한다.)
+ * PUBLIC_ROUTES: 누구나 접근 가능. layout-invariants.spec.js 가 검사한다.
+ * AUTH_ROUTES:   로그인 필요.
+ *   - 비로그인 상태에서 로그인 화면으로 가는지는 layout-invariants 가,
+ *   - 로그인 상태의 실제 화면은 auth-routes.spec.js 가 검사한다
+ *     (`npm run test:visual:login` 으로 세션을 1회 저장해야 동작).
  */
 const PUBLIC_ROUTES = [
   { path: "/", name: "mtt", label: "MTT", hasChart: true },
@@ -20,6 +23,7 @@ const AUTH_ROUTES = [
   { path: "/trading-configs", name: "trading-configs", label: "설정 목록" },
   { path: "/trading-reviews", name: "trading-reviews", label: "매매복기" },
   { path: "/favorites", name: "favorites", label: "즐겨찾기" },
+  { path: "/pages/my-page", name: "my-page", label: "마이페이지" },
 ];
 
 const VIEWPORTS = [
