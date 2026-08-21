@@ -16,6 +16,11 @@ export default {
     sunken: "#eef1f7",
   },
 
+  /**
+   * text에는 MK 규약(main/focus)과 MUI 규약(primary/secondary/disabled)을 함께 둔다.
+   * MUI 기본 컴포넌트는 palette.text.primary를 참조하므로, 이게 없으면
+   * 본문 색이 브라우저 기본값으로 떨어진다.
+   */
   text: {
     main: "#64748b",
     focus: "#475569",
@@ -23,6 +28,10 @@ export default {
     strong: "#0f172a",
     // 보조 설명
     muted: "#94a3b8",
+
+    primary: "#1e293b",
+    secondary: "#64748b",
+    disabled: "#94a3b8",
   },
 
   transparent: {

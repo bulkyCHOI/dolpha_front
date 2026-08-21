@@ -16,7 +16,7 @@ Coded by www.creative-tim.com
 // Material Kit 2 React Base Styles
 import colors from "assets/theme/base/colors";
 
-const { info, dark } = colors;
+const { info, dark, text } = colors;
 
 export default {
   html: {
@@ -25,6 +25,10 @@ export default {
   "*, *::before, *::after": {
     margin: 0,
     padding: 0,
+  },
+  body: {
+    // MKBox가 모든 요소에 강제하던 본문 색을 여기서 한 번만 정의한다.
+    color: text.primary,
   },
   "a, a:link, a:visited": {
     textDecoration: "none !important",
