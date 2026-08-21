@@ -74,7 +74,7 @@ function ThemeBadge({ name }) {
     <Chip
       size="small"
       label={name}
-      sx={{ height: 19, fontSize: 11, bgcolor: COLORS.TINT_PRIMARY, color: "#4c51bf", fontWeight: 600 }}
+      sx={{ height: 19, fontSize: 11, bgcolor: COLORS.TINT_PRIMARY, color: COLORS.PRIMARY_DARK, fontWeight: 600 }}
     />
   );
 }

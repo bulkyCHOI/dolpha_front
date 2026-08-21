@@ -19,7 +19,7 @@ import { ExpandMore, Refresh, Delete, Save } from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { adjustToKRXTickSize, getKRXTickSize } from "utils/formatters";
-import { COLORS } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 
 /**
  * 자동매매 아코디언 컴포넌트
@@ -112,9 +112,9 @@ const AutotradingAccordion = ({
             <AccordionSummary
               expandIcon={<ExpandMore />}
               sx={{
-                backgroundColor: "rgba(33, 150, 243, 0.1)", // 파란색 배경
+                backgroundColor: alpha(COLORS.DOWN, 0.1), // 파란색 배경
                 "&:hover": {
-                  backgroundColor: "rgba(33, 150, 243, 0.2)",
+                  backgroundColor: alpha(COLORS.DOWN, 0.2),
                 },
                 borderRadius: expandedAccordion === selectedStock.code ? "4px 4px 0 0" : "4px",
               }}
@@ -161,7 +161,7 @@ const AutotradingAccordion = ({
                       minWidth: { xs: "48px", md: "32px" },
                       minHeight: { xs: "48px", md: "32px" },
                       "&:hover": {
-                        backgroundColor: "rgba(102, 126, 234, 0.1)",
+                        backgroundColor: alpha(COLORS.PRIMARY, 0.1),
                       },
                     }}
                   >
@@ -352,7 +352,7 @@ const AutotradingAccordion = ({
                           color: COLORS.PRIMARY,
                           "&:hover": {
                             borderColor: COLORS.PRIMARY_HOVER,
-                            backgroundColor: "rgba(102, 126, 234, 0.04)",
+                            backgroundColor: alpha(COLORS.PRIMARY, 0.04),
                           },
                         }}
                       >
@@ -543,9 +543,9 @@ const AutotradingAccordion = ({
                 <AccordionSummary
                   expandIcon={<ExpandMore />}
                   sx={{
-                    backgroundColor: "rgba(33, 150, 243, 0.1)", // 파란색 배경
+                    backgroundColor: alpha(COLORS.DOWN, 0.1), // 파란색 배경
                     "&:hover": {
-                      backgroundColor: "rgba(33, 150, 243, 0.2)",
+                      backgroundColor: alpha(COLORS.DOWN, 0.2),
                     },
                     borderRadius: expandedAccordion === selectedStock.code ? "4px 4px 0 0" : "4px",
                   }}
@@ -592,7 +592,7 @@ const AutotradingAccordion = ({
                         sx={{
                           color: COLORS.PRIMARY,
                           "&:hover": {
-                            backgroundColor: "rgba(102, 126, 234, 0.1)",
+                            backgroundColor: alpha(COLORS.PRIMARY, 0.1),
                           },
                         }}
                       >
@@ -775,7 +775,7 @@ const AutotradingAccordion = ({
                               color: COLORS.PRIMARY,
                               "&:hover": {
                                 borderColor: COLORS.PRIMARY_HOVER,
-                                backgroundColor: "rgba(102, 126, 234, 0.04)",
+                                backgroundColor: alpha(COLORS.PRIMARY, 0.04),
                               },
                             }}
                           >
@@ -952,13 +952,13 @@ const AutotradingAccordion = ({
                 sx={{
                   backgroundColor: (() => {
                     if (!stockConfig.hasConfig) return COLORS.SURFACE_ALT;
-                    if (stockConfig.is_active) return "rgba(76, 175, 80, 0.1)";
+                    if (stockConfig.is_active) return alpha(COLORS.SUCCESS, 0.1);
                     return "rgba(158, 158, 158, 0.1)";
                   })(),
                   "&:hover": {
                     backgroundColor: (() => {
                       if (!stockConfig.hasConfig) return COLORS.BORDER;
-                      if (stockConfig.is_active) return "rgba(76, 175, 80, 0.2)";
+                      if (stockConfig.is_active) return alpha(COLORS.SUCCESS, 0.2);
                       return "rgba(158, 158, 158, 0.2)";
                     })(),
                   },
@@ -1088,7 +1088,7 @@ const AutotradingAccordion = ({
                         sx={{
                           color: COLORS.PRIMARY,
                           "&:hover": {
-                            backgroundColor: "rgba(102, 126, 234, 0.1)",
+                            backgroundColor: alpha(COLORS.PRIMARY, 0.1),
                           },
                         }}
                       >
@@ -1272,7 +1272,7 @@ const AutotradingAccordion = ({
                             color: COLORS.PRIMARY,
                             "&:hover": {
                               borderColor: COLORS.PRIMARY_HOVER,
-                              backgroundColor: "rgba(102, 126, 234, 0.04)",
+                              backgroundColor: alpha(COLORS.PRIMARY, 0.04),
                             },
                           }}
                         >
@@ -1442,7 +1442,7 @@ const AutotradingAccordion = ({
                           color: COLORS.UP,
                           "&:hover": {
                             borderColor: COLORS.UP,
-                            backgroundColor: "rgba(244, 67, 54, 0.04)",
+                            backgroundColor: alpha(COLORS.UP, 0.04),
                           },
                         }}
                       >

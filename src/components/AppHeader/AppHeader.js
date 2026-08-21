@@ -33,7 +33,7 @@ import { useThemeMode } from "contexts/ThemeModeContext";
 import AppHeaderMobile from "components/AppHeader/AppHeaderMobile";
 
 import breakpoints from "assets/theme/base/breakpoints";
-import { COLORS } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 
 function AppHeader({ brand, routes, sticky }) {
   const { mode, toggleMode } = useThemeMode();
@@ -529,7 +529,7 @@ function AppHeader({ brand, routes, sticky }) {
                 border: "none",
                 borderRadius: 1,
                 background: "transparent",
-                "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.12)" },
+                "&:hover": { backgroundColor: alpha(COLORS.SURFACE, 0.12) },
                 "&:focus": { outline: "2px solid #fff", outlineOffset: "2px" },
               }}
             >
@@ -557,7 +557,7 @@ function AppHeader({ brand, routes, sticky }) {
               border: "none",
               background: "transparent",
               "&:hover": {
-                backgroundColor: "rgba(255, 255, 255, 0.1)",
+                backgroundColor: alpha(COLORS.SURFACE, 0.1),
               },
               "&:focus": {
                 outline: `2px solid ${COLORS.SURFACE}`,

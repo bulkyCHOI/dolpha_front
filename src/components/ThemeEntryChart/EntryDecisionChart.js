@@ -6,16 +6,16 @@ import TradingViewChart from "components/TradingViewChart";
 
 import ZonePrimitive from "components/TradingViewChart/ZonePrimitive";
 import { CHART_COLORS, ZONE_STYLE, decisionStatus, timeLabel, won } from "./constants";
-import { COLORS } from "constants/styles";
+import { COLORS, alpha, resolveColor } from "constants/styles";
 
 const MINUTE = 60;
 const LEAD_MINUTES = 4; // 탐색 구간 시작 앞쪽 여백
 const TRAIL_MINUTES = 12; // 판정 시점 뒤쪽 여백
 const FALLBACK_BARS = 90; // 판정 좌표가 없을 때 보여줄 최근 봉 수
 
-const UP_VOLUME = "rgba(239, 68, 68, 0.45)";
-const DOWN_VOLUME = "rgba(59, 130, 246, 0.45)";
-const DECISION_VOLUME = "rgba(97, 97, 97, 0.75)";
+const upVolume = () => alpha(resolveColor(COLORS.UP), 0.45);
+const downVolume = () => alpha(resolveColor(COLORS.DOWN), 0.45);
+const decisionVolume = () => "rgba(97, 97, 97, 0.75)";
 
 /** 차트에 실제로 존재하는 봉 시각으로 스냅한다 (마커는 데이터 시각에만 붙는다). */
 function snapToBar(bars, time) {
@@ -216,10 +216,10 @@ function EntryDecisionChart({ bars, decision, height }) {
           value: bar.volume,
           color:
             bar.time === decisionBar
-              ? DECISION_VOLUME
+              ? decisionVolume()
               : bar.close >= bar.open
-              ? UP_VOLUME
-              : DOWN_VOLUME,
+              ? upVolume()
+              : downVolume(),
         })),
         options: {
           priceFormat: { type: "volume" },
@@ -263,7 +263,7 @@ function EntryDecisionChart({ bars, decision, height }) {
         left: 8,
         zIndex: 2,
         fontSize: 11.5,
-        background: "rgba(255,255,255,0.88)",
+        background: alpha(COLORS.SURFACE, 0.88),
         padding: "2px 6px",
         borderRadius: 4,
         pointerEvents: "none",

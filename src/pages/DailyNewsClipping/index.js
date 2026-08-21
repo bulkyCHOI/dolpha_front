@@ -22,7 +22,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import Typography from "@mui/material/Typography";
 import AppHeader from "components/AppHeader";
 import routes from "routes";
-import { COLORS } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 
 function DailyNewsClipping() {
   const theme = useTheme();
@@ -244,9 +244,9 @@ function DailyNewsClipping() {
                     icon={<AccessTimeIcon />}
                     label={`마지막 업데이트: ${lastUpdated.toLocaleString("ko-KR")}`}
                     sx={{
-                      backgroundColor: "rgba(102, 126, 234, 0.1)",
-                      color: "rgba(102, 126, 234, 1)",
-                      borderColor: "rgba(102, 126, 234, 0.3)",
+                      backgroundColor: alpha(COLORS.PRIMARY, 0.1),
+                      color: alpha(COLORS.PRIMARY, 1),
+                      borderColor: alpha(COLORS.PRIMARY, 0.3),
                       fontSize: "0.85rem",
                     }}
                     variant="outlined"
@@ -255,15 +255,15 @@ function DailyNewsClipping() {
                     onClick={handleRefresh}
                     disabled={loading}
                     sx={{
-                      color: "rgba(102, 126, 234, 1)",
-                      backgroundColor: "rgba(102, 126, 234, 0.1)",
+                      color: alpha(COLORS.PRIMARY, 1),
+                      backgroundColor: alpha(COLORS.PRIMARY, 0.1),
                       "&:hover": {
-                        backgroundColor: "rgba(102, 126, 234, 0.2)",
+                        backgroundColor: alpha(COLORS.PRIMARY, 0.2),
                       },
                     }}
                   >
                     {loading ? (
-                      <CircularProgress size={24} sx={{ color: "rgba(102, 126, 234, 1)" }} />
+                      <CircularProgress size={24} sx={{ color: alpha(COLORS.PRIMARY, 1) }} />
                     ) : (
                       <RefreshIcon />
                     )}
@@ -297,8 +297,8 @@ function DailyNewsClipping() {
                 <Alert
                   severity="info"
                   sx={{
-                    backgroundColor: "rgba(33, 150, 243, 0.1)",
-                    border: "1px solid rgba(33, 150, 243, 0.2)",
+                    backgroundColor: alpha(COLORS.DOWN, 0.1),
+                    border: `1px solid ${alpha(COLORS.DOWN, 0.2)}`,
                     "& .MuiAlert-icon": {
                       color: theme.palette.info.main,
                     },

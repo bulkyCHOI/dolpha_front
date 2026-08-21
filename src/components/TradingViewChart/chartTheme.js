@@ -11,7 +11,7 @@
  */
 import colors from "assets/theme/base/colors";
 import typography from "assets/theme/base/typography";
-import { COLORS, resolveColor } from "constants/styles";
+import { COLORS, alpha, resolveColor } from "constants/styles";
 
 const { bearish, bullish, flat, grey, info, success, warning } = colors;
 
@@ -39,8 +39,9 @@ export const DOWN_COLOR = bearish.main;
 export const FLAT_COLOR = flat.main;
 
 // 거래량 막대 (캔들 색의 반투명)
-export const UP_COLOR_FADED = "rgba(239, 68, 68, 0.5)";
-export const DOWN_COLOR_FADED = "rgba(59, 130, 246, 0.5)";
+// 캔버스는 color-mix 를 파싱하지 못하므로, 실제 색으로 바꾼 뒤 rgba 를 만든다.
+export const fadedUpColor = () => alpha(resolveColor(COLORS.UP), 0.5);
+export const fadedDownColor = () => alpha(resolveColor(COLORS.DOWN), 0.5);
 
 // 이동평균선 (기간이 짧을수록 밝고 얇게)
 export const MA_COLORS = canvasColors({
@@ -110,7 +111,7 @@ export function baseChartOptions({ intraday = false } = {}) {
       attributionLogo: false,
       panes: {
         separatorColor: CHART_SURFACE.borderColor,
-        separatorHoverColor: "rgba(102, 126, 234, 0.2)",
+        separatorHoverColor: alpha(resolveColor(COLORS.PRIMARY), 0.2),
         enableResize: true,
       },
     },

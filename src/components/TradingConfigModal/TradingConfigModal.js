@@ -24,7 +24,7 @@ import Typography from "@mui/material/Typography";
 import { adjustToKRXTickSize, getKRXTickSize } from "utils/formatters";
 import { useTradingForm } from "hooks/useTradingForm";
 import { useAuth } from "contexts/AuthContext";
-import { COLORS } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 
 /**
  * 자동매매 설정 상세보기/수정 모달 컴포넌트
@@ -117,8 +117,8 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
           p: 3,
           pb: 1,
           background:
-            "linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%)",
-          border: "1px solid rgba(102, 126, 234, 0.1)",
+            `linear-gradient(135deg, ${alpha(COLORS.PRIMARY, 0.08)} 0%, ${alpha(COLORS.PRIMARY_DARK, 0.08)} 100%)`,
+          border: `1px solid ${alpha(COLORS.PRIMARY, 0.1)}`,
           borderBottom: "none",
           display: "flex",
           justifyContent: "space-between",
@@ -249,7 +249,7 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                     sx={{
                       color: COLORS.PRIMARY,
                       "&:hover": {
-                        backgroundColor: "rgba(102, 126, 234, 0.1)",
+                        backgroundColor: alpha(COLORS.PRIMARY, 0.1),
                       },
                     }}
                   >
@@ -398,7 +398,7 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                       fontSize: "0.75rem",
                       "&:hover": {
                         borderColor: COLORS.PRIMARY_HOVER,
-                        backgroundColor: "rgba(102, 126, 234, 0.08)",
+                        backgroundColor: alpha(COLORS.PRIMARY, 0.08),
                       },
                     }}
                   >
@@ -593,7 +593,7 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                 ? `linear-gradient(135deg, ${COLORS.PRIMARY_HOVER} 0%, #6a4190 100%)`
                 : COLORS.BORDER_STRONG,
               transform: tradingForm.isFormValid() ? "translateY(-1px)" : "none",
-              boxShadow: tradingForm.isFormValid() ? "0 6px 20px rgba(102, 126, 234, 0.3)" : "none",
+              boxShadow: tradingForm.isFormValid() ? `0 6px 20px ${alpha(COLORS.PRIMARY, 0.3)}` : "none",
             },
             "&:disabled": {
               background: `${COLORS.BORDER_STRONG} !important`,

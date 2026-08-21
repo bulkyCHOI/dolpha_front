@@ -12,7 +12,7 @@ import Typography from "@mui/material/Typography";
 
 import { useState, useEffect } from "react";
 import { useAuth } from "contexts/AuthContext";
-import { COLORS } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 
 function Profile() {
   const [userInfo, setUserInfo] = useState({
@@ -83,8 +83,8 @@ function Profile() {
             sx={{
               p: { xs: 2, md: 3 },
               background:
-                "linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%)",
-              border: "1px solid rgba(102, 126, 234, 0.1)",
+                `linear-gradient(135deg, ${alpha(COLORS.PRIMARY, 0.08)} 0%, ${alpha(COLORS.PRIMARY_DARK, 0.08)} 100%)`,
+              border: `1px solid ${alpha(COLORS.PRIMARY, 0.1)}`,
               borderRadius: 3,
             }}
           >
@@ -95,8 +95,8 @@ function Profile() {
                   sx={{
                     width: { xs: 100, md: 120 },
                     height: { xs: 100, md: 120 },
-                    border: "4px solid rgba(102, 126, 234, 0.2)",
-                    boxShadow: "0 8px 32px rgba(102, 126, 234, 0.2)",
+                    border: `4px solid ${alpha(COLORS.PRIMARY, 0.2)}`,
+                    boxShadow: `0 8px 32px ${alpha(COLORS.PRIMARY, 0.2)}`,
                   }}
                 >
                   {userInfo.name ? userInfo.name[0] : "U"}
@@ -192,7 +192,7 @@ function Profile() {
                   "&:hover": {
                     background: `linear-gradient(135deg, ${COLORS.PRIMARY_HOVER} 0%, #6a4190 100%)`,
                     transform: "translateY(-1px)",
-                    boxShadow: "0 6px 20px rgba(102, 126, 234, 0.3)",
+                    boxShadow: `0 6px 20px ${alpha(COLORS.PRIMARY, 0.3)}`,
                   },
                   transition: "all 0.3s ease",
                 }}

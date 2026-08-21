@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 
 import useTradingViewChart from "./useTradingViewChart";
-import { COLORS } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 
 /**
  * 프로젝트 공용 TradingView(lightweight-charts) 차트.
@@ -112,7 +112,7 @@ function TradingViewChart({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            background: "rgba(255, 255, 255, 0.6)",
+            background: alpha(COLORS.SURFACE, 0.6),
             color: COLORS.TEXT_SECONDARY,
             fontSize: "14px",
           }}

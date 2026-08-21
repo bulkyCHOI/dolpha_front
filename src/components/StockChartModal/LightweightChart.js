@@ -3,10 +3,10 @@ import PropTypes from "prop-types";
 
 import TradingViewChart, {
   DOWN_COLOR,
-  DOWN_COLOR_FADED,
+  fadedDownColor,
   OhlcLegend,
   UP_COLOR,
-  UP_COLOR_FADED,
+  fadedUpColor,
   useOhlcHover,
 } from "components/TradingViewChart";
 
@@ -79,7 +79,7 @@ function LightweightChart({ data, mode, loading, initialVisibleBars }) {
     const volumeData = (data ?? []).map((item) => ({
       time: item.time,
       value: item.volume,
-      color: item.close >= item.open ? UP_COLOR_FADED : DOWN_COLOR_FADED,
+      color: item.close >= item.open ? fadedUpColor() : fadedDownColor(),
     }));
 
     // 밴드는 일봉 전용

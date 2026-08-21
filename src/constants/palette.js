@@ -96,7 +96,7 @@ export const DARK_PALETTE = {
 
   text: "#e2e8f0",
   "text-secondary": "#94a3b8",
-  "text-muted": "#64748b",
+  "text-muted": "#8b98ac",
 
   surface: "#1e293b",
   "surface-alt": "#243244",

@@ -31,7 +31,7 @@ import ThemeEntryChart from "components/ThemeEntryChart";
 import ThemeRateLineChart from "components/ThemeRateLineChart";
 import { useThemeSurgeData, todayKST } from "hooks/useThemeSurgeData";
 import { useThemeSurgePositions } from "hooks/useThemeSurgePositions";
-import { COLORS, GRADIENT_COLORS } from "constants/styles";
+import { COLORS, alpha, GRADIENT_COLORS } from "constants/styles";
 import { formatNumber } from "utils/formatters";
 
 const AUTO_REFRESH_MS = 60000;
@@ -60,7 +60,7 @@ function StatCard({ icon: Icon, label, value, unit, accent }) {
           borderRadius: 1.5,
           display: "grid",
           placeItems: "center",
-          bgcolor: `${accent}1f`,
+          bgcolor: alpha(accent, 0.12),
           color: accent,
           flexShrink: 0,
         }}
@@ -235,7 +235,7 @@ const tableStyles = (minWidth, compact = false) => ({
   table: { style: { width: "100%", tableLayout: "auto", minWidth } },
   headRow: {
     style: {
-      backgroundColor: "#f8fafc",
+      backgroundColor: COLORS.SURFACE_ALT,
       borderBottomWidth: "1px",
       borderBottomColor: COLORS.BORDER,
       fontSize: "12px",
@@ -255,6 +255,8 @@ const tableStyles = (minWidth, compact = false) => ({
   },
   rows: {
     style: {
+      backgroundColor: COLORS.SURFACE,
+      color: COLORS.TEXT,
       minHeight: compact ? "0px" : "48px",
       lineHeight: compact ? 1.1 : "inherit",
       fontSize: "13px",
@@ -262,7 +264,7 @@ const tableStyles = (minWidth, compact = false) => ({
       "&:hover": { backgroundColor: `${COLORS.HOVER_BG} !important` },
     },
   },
-  cells: { style: { padding: compact ? "0px 6px" : "8px" } },
+  cells: { style: { color: COLORS.TEXT, padding: compact ? "0px 6px" : "8px" } },
   pagination: {
     style: { backgroundColor: COLORS.SURFACE, borderTop: `1px solid ${COLORS.SURFACE_ALT}`, fontSize: "12px" },
   },
@@ -436,7 +438,7 @@ function ThemeSurge() {
   return (
     <>
       <AppHeader routes={routes} sticky />
-      <Box minHeight="100vh" pt={10} pb={5} sx={{ bgcolor: "#f4f6f8" }}>
+      <Box minHeight="100vh" pt={10} pb={5} sx={{ bgcolor: COLORS.SURFACE_SUNKEN }}>
         <FullWidthContainer>
           {/* ── 헤더 ───────────────────────────────── */}
           <Box
@@ -466,7 +468,7 @@ function ThemeSurge() {
                   <Chip
                     size="small"
                     label={`${lastSlot} 까지 수집`}
-                    sx={{ height: 20, fontSize: 11, bgcolor: COLORS.TINT_PRIMARY, color: "#4c51bf" }}
+                    sx={{ height: 20, fontSize: 11, bgcolor: COLORS.TINT_PRIMARY, color: COLORS.PRIMARY_DARK }}
                   />
                 )}
                 {lastUpdated && (

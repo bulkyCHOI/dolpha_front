@@ -7,12 +7,12 @@
  */
 import {
   DOWN_COLOR,
-  DOWN_COLOR_FADED,
+  fadedDownColor,
   INDICATOR_COLORS,
   MARKER_COLORS,
   MA_COLORS,
   UP_COLOR,
-  UP_COLOR_FADED,
+  fadedUpColor,
 } from "components/TradingViewChart/chartTheme";
 import { COLORS } from "constants/styles";
 
@@ -128,7 +128,7 @@ export function buildVolumeSeries(ohlcvData) {
     .map((item) => ({
       time: item.date,
       value: item.volume ?? 0,
-      color: item.close >= item.open ? UP_COLOR_FADED : DOWN_COLOR_FADED,
+      color: item.close >= item.open ? fadedUpColor() : fadedDownColor(),
     }));
 }
 

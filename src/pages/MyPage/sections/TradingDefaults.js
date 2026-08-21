@@ -30,7 +30,7 @@ import { useState, useEffect } from "react";
 
 import ThemeSurgeSettings from "./ThemeSurgeSettings";
 import { useAuth } from "contexts/AuthContext";
-import { COLORS } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 
 function TradingDefaults() {
   const [defaults, setDefaults] = useState({
@@ -683,7 +683,7 @@ function TradingDefaults() {
                         fontSize: "0.75rem",
                         "&:hover": {
                           borderColor: COLORS.UP,
-                          backgroundColor: "rgba(244,67,54,0.08)",
+                          backgroundColor: alpha(COLORS.UP, 0.08),
                         },
                       }}
                     >
@@ -702,7 +702,7 @@ function TradingDefaults() {
                         fontSize: "0.75rem",
                         "&:hover": {
                           borderColor: COLORS.PRIMARY_HOVER,
-                          backgroundColor: "rgba(102,126,234,0.08)",
+                          backgroundColor: alpha(COLORS.PRIMARY, 0.08),
                         },
                       }}
                     >
@@ -916,8 +916,8 @@ function TradingDefaults() {
                                 sx={{
                                   px: 1.5,
                                   py: 1,
-                                  bgcolor: "rgba(255,152,0,0.07)",
-                                  border: "1px dashed rgba(255,152,0,0.45)",
+                                  bgcolor: alpha(COLORS.WARNING, 0.07),
+                                  border: `1px dashed ${alpha(COLORS.WARNING, 0.45)}`,
                                   borderRadius: 1.5,
                                 }}
                               >
@@ -932,11 +932,11 @@ function TradingDefaults() {
                                   label="트레일링 스탑 대체"
                                   size="small"
                                   sx={{
-                                    bgcolor: "rgba(255,152,0,0.15)",
+                                    bgcolor: alpha(COLORS.WARNING, 0.15),
                                     color: COLORS.WARNING,
                                     fontWeight: 700,
                                     fontSize: "0.72rem",
-                                    border: "1px solid rgba(255,152,0,0.35)",
+                                    border: `1px solid ${alpha(COLORS.WARNING, 0.35)}`,
                                   }}
                                 />
                               </Box>
@@ -950,8 +950,8 @@ function TradingDefaults() {
                                 mb: 1,
                                 px: 0.5,
                                 py: 0.5,
-                                bgcolor: "rgba(102,126,234,0.04)",
-                                border: "1px solid rgba(102,126,234,0.15)",
+                                bgcolor: alpha(COLORS.PRIMARY, 0.04),
+                                border: `1px solid ${alpha(COLORS.PRIMARY, 0.15)}`,
                                 borderRadius: 1.5,
                               }}
                             >

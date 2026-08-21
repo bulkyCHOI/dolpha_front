@@ -17,6 +17,7 @@ const surface = cssVar("surface");
 const surfaceAlt = cssVar("surface-alt");
 const text = cssVar("text");
 const border = cssVar("border");
+const onAccent = DARK_PALETTE["on-accent"];
 
 export default createTheme(baseTheme, {
   palette: {
@@ -32,11 +33,25 @@ export default createTheme(baseTheme, {
       main: DARK_PALETTE["text-secondary"],
       focus: DARK_PALETTE.text,
     },
-    primary: { main: DARK_PALETTE.primary, focus: DARK_PALETTE["primary-hover"] },
-    info: { main: DARK_PALETTE.info, focus: DARK_PALETTE["info-dark"] },
-    success: { main: DARK_PALETTE.success, focus: DARK_PALETTE["success-dark"] },
-    warning: { main: DARK_PALETTE.warning, focus: DARK_PALETTE["warning-dark"] },
-    error: { main: DARK_PALETTE.error, focus: DARK_PALETTE["error-dark"] },
+    // 다크에서는 강조색이 밝아지므로 그 위 글자는 어두워야 읽힌다.
+    // 지정하지 않으면 MUI 가 흰색으로 계산해 Chip·Button 글자가 흐려진다.
+    primary: {
+      main: DARK_PALETTE.primary,
+      focus: DARK_PALETTE["primary-hover"],
+      contrastText: onAccent,
+    },
+    info: { main: DARK_PALETTE.info, focus: DARK_PALETTE["info-dark"], contrastText: onAccent },
+    success: {
+      main: DARK_PALETTE.success,
+      focus: DARK_PALETTE["success-dark"],
+      contrastText: onAccent,
+    },
+    warning: {
+      main: DARK_PALETTE.warning,
+      focus: DARK_PALETTE["warning-dark"],
+      contrastText: onAccent,
+    },
+    error: { main: DARK_PALETTE.error, focus: DARK_PALETTE["error-dark"], contrastText: onAccent },
     divider: DARK_PALETTE.divider,
   },
   components: {
@@ -76,6 +91,15 @@ export default createTheme(baseTheme, {
           "&:hover": { backgroundColor: cssVar("hover-bg") },
           "&.Mui-selected": { backgroundColor: cssVar("selected-bg") },
         },
+      },
+    },
+    // Alert 기본 배경은 밝은 파스텔이라 다크에서 글자가 묻힌다.
+    MuiAlert: {
+      styleOverrides: {
+        standardInfo: { backgroundColor: cssVar("tint-down"), color: text },
+        standardSuccess: { backgroundColor: cssVar("tint-success"), color: text },
+        standardWarning: { backgroundColor: cssVar("tint-warning"), color: text },
+        standardError: { backgroundColor: cssVar("tint-error"), color: text },
       },
     },
     MuiTooltip: {

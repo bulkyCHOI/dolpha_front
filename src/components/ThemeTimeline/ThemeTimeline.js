@@ -5,7 +5,7 @@ import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { formatNumber } from "utils/formatters";
 import { todayKST } from "hooks/useThemeSurgeData";
-import { COLORS } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 
 const LABEL_WIDTH = 168;
 const TRACK_MIN_WIDTH = 620; // 이보다 좁아지면 가로 스크롤
@@ -58,7 +58,7 @@ function CellTooltip({ themeName, slot, cell, signals }) {
       </Box>
       <Box sx={{ mt: 0.5, opacity: 0.85 }}>{cell.reason}</Box>
       {signals.length > 0 && (
-        <Box sx={{ mt: 0.75, pt: 0.75, borderTop: "1px solid rgba(255,255,255,0.25)" }}>
+        <Box sx={{ mt: 0.75, pt: 0.75, borderTop: `1px solid ${alpha(COLORS.SURFACE, 0.25)}` }}>
           {signals.map((s, i) => (
             <Box key={i}>
               [{s.executed ? "진입" : s.passed ? "조건충족" : "판정"}] {s.stock_name} — {s.reason}

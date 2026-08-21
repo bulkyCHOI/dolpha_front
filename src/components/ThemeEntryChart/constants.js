@@ -1,6 +1,6 @@
 /** 진입 판정 차트 공용 상수 — 색/라벨을 한 곳에서 관리한다. */
 
-import { COLORS, resolveColor } from "constants/styles";
+import { COLORS, alpha, resolveColor } from "constants/styles";
 
 /**
  * 캔버스용 색 묶음. CSS 변수는 앱 마운트 후에야 존재하므로
@@ -39,8 +39,8 @@ export const ZONE_STYLE = {
     labelColor: COLORS.DOWN,
   },
   RISE: {
-    fill: "rgba(239, 68, 68, 0.07)",
-    stroke: "rgba(239, 68, 68, 0.30)",
+    fill: alpha(resolveColor(COLORS.UP), 0.07),
+    stroke: alpha(resolveColor(COLORS.UP), 0.3),
     // 차트 안 라벨은 구간 폭에 들어가야 그려지므로 짧게 쓴다 (범례에는 전체 이름)
     label: "상승 구간",
     labelColor: COLORS.UP,

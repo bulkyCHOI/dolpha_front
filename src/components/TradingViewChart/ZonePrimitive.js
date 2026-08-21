@@ -14,6 +14,8 @@
  *   );
  */
 
+import { COLORS, alpha } from "constants/styles";
+
 const LABEL_FONT = "600 11px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
 const LABEL_TOP = 6;
 const LABEL_PADDING = 4;
@@ -103,7 +105,7 @@ class ZoneRenderer {
     const width = ctx.measureText(text).width;
     const boxLeft = align === "center" ? x - width / 2 - LABEL_PADDING : x - LABEL_PADDING;
 
-    ctx.fillStyle = "rgba(255,255,255,0.82)";
+    ctx.fillStyle = alpha(COLORS.SURFACE, 0.82);
     ctx.fillRect(boxLeft, y - 2, width + LABEL_PADDING * 2, 15);
 
     ctx.fillStyle = color;

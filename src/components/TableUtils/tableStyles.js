@@ -181,6 +181,8 @@ export const getCustomTableStyles = (theme) => ({
   },
   headCells: {
     style: {
+      backgroundColor: COLORS.SURFACE_ALT,
+      color: COLORS.TEXT,
       paddingLeft: "12px",
       paddingRight: "12px",
       paddingTop: "12px",
@@ -202,6 +204,8 @@ export const getCustomTableStyles = (theme) => ({
   rows: {
     style: {
       minHeight: "65px",
+      backgroundColor: COLORS.SURFACE,
+      color: COLORS.TEXT,
       borderBottomWidth: "1px",
       borderBottomColor: COLORS.BORDER,
       "&:nth-of-type(odd)": {
@@ -219,6 +223,7 @@ export const getCustomTableStyles = (theme) => ({
   },
   cells: {
     style: {
+      color: COLORS.TEXT,
       paddingLeft: "12px",
       paddingRight: "12px",
       paddingTop: "8px",

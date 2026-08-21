@@ -49,17 +49,39 @@ test.describe("다크 테마", () => {
       const lowContrast = await page.evaluate(
         ([luminanceSource]) => {
           const luminance = eval(luminanceSource);
+          /**
+           * 계산된 색 문자열을 0~255 RGB 로 바꾼다.
+           * color-mix() 결과는 브라우저가 color(srgb 0..1) 로 돌려주므로
+           * 그대로 읽으면 전부 검정으로 오인한다.
+           */
           const parse = (value) => {
-            const match = value.match(/\d+(\.\d+)?/g);
-            return match ? match.slice(0, 3).map(Number) : null;
+            const numbers = value.match(/[\d.]+/g);
+            if (!numbers) return null;
+            const parts = numbers.slice(0, 3).map(Number);
+            if (parts.length < 3) return null;
+            return value.startsWith("color(") ? parts.map((n) => n * 255) : parts;
           };
 
-          /** 실제로 칠해진 배경을 찾을 때까지 부모를 거슬러 올라간다. */
+          /** 색 문자열의 알파. 없으면 1. */
+          const alphaOf = (value) => {
+            const slash = value.match(/\/\s*([\d.]+)\s*\)/); // color(srgb r g b / a)
+            if (slash) return Number(slash[1]);
+            const numbers = value.match(/[\d.]+/g);
+            return value.startsWith("rgba") && numbers && numbers.length > 3
+              ? Number(numbers[3])
+              : 1;
+          };
+
+          /**
+           * 실제로 칠해진 배경을 찾을 때까지 부모를 거슬러 올라간다.
+           * 반투명 배경(옅은 틴트)은 아래 색이 비쳐 보이므로 건너뛴다 —
+           * 그대로 배경으로 삼으면 글자색과 같은 계열이라 대비가 1에 가깝게 나온다.
+           */
           const backgroundOf = (element) => {
             let node = element;
             while (node && node !== document.documentElement) {
               const bg = getComputedStyle(node).backgroundColor;
-              if (bg && !bg.startsWith("rgba(0, 0, 0, 0)")) return parse(bg);
+              if (bg && !bg.startsWith("rgba(0, 0, 0, 0)") && alphaOf(bg) >= 0.9) return parse(bg);
               node = node.parentElement;
             }
             return [15, 23, 42];

@@ -12,7 +12,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
 import Chip from "@mui/material/Chip";
 import FlowTable from "./FlowTable";
-import { COLORS } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 
 const API_BASE = () => window.REACT_APP_API_BASE_URL || "http://localhost:8000";
 const RIGHT_ALIGN = { justifyContent: "flex-end" };
@@ -88,7 +88,7 @@ function NetChip({ value }) {
       label={formatNumber(value)}
       size="small"
       sx={{
-        backgroundColor: n > 0 ? "rgba(255, 82, 82, 0.15)" : "rgba(33, 150, 243, 0.15)",
+        backgroundColor: n > 0 ? "rgba(255, 82, 82, 0.15)" : alpha(COLORS.DOWN, 0.15),
         color: n > 0 ? "#ff5252" : COLORS.DOWN,
         fontWeight: 600,
         fontSize: "0.75rem",

@@ -6,7 +6,7 @@ import ArrowDownward from "@mui/icons-material/ArrowDownward";
 import Assessment from "@mui/icons-material/Assessment";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { COLORS } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 
 function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinancialModal }) {
   const getChangeRate = () => {
@@ -34,7 +34,7 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
       sx={{
         background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
         borderRadius: { xs: 2, md: 1 },
-        boxShadow: "0 2px 8px rgba(102, 126, 234, 0.1)",
+        boxShadow: `0 2px 8px ${alpha(COLORS.PRIMARY, 0.1)}`,
         position: "relative",
         p: { xs: 1.5, md: 1.5 },
         mb: 2,
@@ -59,7 +59,7 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
               color: COLORS.ON_ACCENT,
               padding: "8px",
               "&:hover": {
-                backgroundColor: "rgba(255,255,255,0.1)",
+                backgroundColor: alpha(COLORS.SURFACE, 0.1),
               },
             }}
             title="재무제표 보기"
@@ -288,7 +288,7 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
                   color: COLORS.ON_ACCENT,
                   padding: "2px",
                   "&:hover": {
-                    backgroundColor: "rgba(255,255,255,0.1)",
+                    backgroundColor: alpha(COLORS.SURFACE, 0.1),
                   },
                 }}
                 title="재무제표 보기"

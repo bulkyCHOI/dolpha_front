@@ -166,7 +166,7 @@ function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
           minHeight: 46,
           borderBottom: `1px solid ${COLORS.SURFACE_ALT}`,
           mb: 1.5,
-          "& .MuiTabs-indicator": { height: 2, bgcolor: "#4c51bf" },
+          "& .MuiTabs-indicator": { height: 2, bgcolor: COLORS.PRIMARY_DARK },
           "& .MuiTab-root": { minHeight: 46, py: 0.5, px: 1.5 },
           "& .MuiTabs-flexContainer": { gap: 0.5 },
         }}
@@ -237,7 +237,7 @@ function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
                       fontSize: 10.5,
                       fontWeight: 600,
                       bgcolor: onlyMeaningful ? COLORS.TINT_PRIMARY : COLORS.SURFACE_ALT,
-                      color: onlyMeaningful ? "#4c51bf" : CHART_COLORS.MUTED,
+                      color: onlyMeaningful ? COLORS.PRIMARY_DARK : CHART_COLORS.MUTED,
                     }}
                   />
                 )}

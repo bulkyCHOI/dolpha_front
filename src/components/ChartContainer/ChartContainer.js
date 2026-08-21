@@ -330,7 +330,7 @@ const ChartContainer = ({
               border: `1px solid ${COLORS.ERROR}`,
               color: COLORS.ERROR,
               backgroundColor: alpha(COLORS.SURFACE, 0.9),
-              "&:hover": { backgroundColor: "rgba(244, 67, 54, 0.1)" },
+              "&:hover": { backgroundColor: alpha(COLORS.UP, 0.1) },
             }}
           >
             <Delete sx={{ fontSize: "16px" }} />

@@ -32,7 +32,7 @@ import AutotradingAccordion from "components/AutotradingAccordion/AutotradingAcc
 import ChartContainer from "components/ChartContainer/ChartContainer";
 import StockInfoHeader from "components/StockInfoHeader/StockInfoHeader";
 import StockList from "components/StockList/StockList";
-import { COLORS, GRADIENT_COLORS, LAYOUT } from "constants/styles";
+import { COLORS, GRADIENT_COLORS, LAYOUT, alpha } from "constants/styles";
 import { formatNumber } from "utils/formatters";
 
 function MTT() {
@@ -804,19 +804,19 @@ function MTT() {
                                 transition: "all 0.2s ease",
                                 backgroundColor:
                                   selectedStock?.code === row.code
-                                    ? "linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)"
+                                    ? `linear-gradient(135deg, ${alpha(COLORS.PRIMARY, 0.1)} 0%, ${alpha(COLORS.PRIMARY_DARK, 0.1)} 100%)`
                                     : rowIndex % 2 === 0
                                     ? COLORS.SURFACE_ALT
                                     : COLORS.ON_ACCENT,
                                 "&:hover": {
-                                  backgroundColor: "rgba(102, 126, 234, 0.08)",
+                                  backgroundColor: alpha(COLORS.PRIMARY, 0.08),
                                   transform: "translateX(4px)",
                                   boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
                                   borderLeft: `3px solid ${COLORS.PRIMARY}`,
                                 },
                                 ...(selectedStock?.code === row.code && {
                                   borderLeft: `3px solid ${COLORS.PRIMARY}`,
-                                  boxShadow: "0 2px 12px rgba(102, 126, 234, 0.2)",
+                                  boxShadow: `0 2px 12px ${alpha(COLORS.PRIMARY, 0.2)}`,
                                 }),
                               }}
                             >

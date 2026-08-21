@@ -20,7 +20,7 @@ import TradingDefaults from "./sections/TradingDefaults";
 
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { COLORS } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 
 function MyPage() {
   const [activeTab, setActiveTab] = useState(0);
@@ -137,10 +137,10 @@ function MyPage() {
                       "&.Mui-selected": {
                         color: COLORS.PRIMARY,
                         fontWeight: 600,
-                        backgroundColor: "rgba(102, 126, 234, 0.08)",
+                        backgroundColor: alpha(COLORS.PRIMARY, 0.08),
                       },
                       "&:hover": {
-                        backgroundColor: "rgba(102, 126, 234, 0.04)",
+                        backgroundColor: alpha(COLORS.PRIMARY, 0.04),
                       },
                     },
                   }}
