@@ -57,7 +57,7 @@ function OhlcLegend({ bar, change, intraday }) {
 
   const isUp = bar.close >= bar.open;
   const valueColor = isUp ? UP_COLOR : DOWN_COLOR;
-  const changeColor = change ? (change.diff >= 0 ? UP_COLOR : DOWN_COLOR) : "#64748b";
+  const changeColor = change ? (change.diff >= 0 ? UP_COLOR : DOWN_COLOR) : COLORS.TEXT_SECONDARY;
 
   const renderItem = (label, value) => (
     <span style={labelStyle}>
@@ -81,7 +81,7 @@ function OhlcLegend({ bar, change, intraday }) {
         fontVariantNumeric: "tabular-nums",
       }}
     >
-      <span style={{ ...labelStyle, color: "#334155", fontWeight: 600 }}>
+      <span style={{ ...labelStyle, color: COLORS.TEXT, fontWeight: 600 }}>
         {formatChartTime(bar.time, intraday)}
       </span>
       {renderItem("시", formatNumber(bar.open))}
@@ -96,7 +96,7 @@ function OhlcLegend({ bar, change, intraday }) {
       )}
       {bar.volume != null && (
         <span style={{ marginLeft: 12, color: COLORS.TEXT_MUTED, whiteSpace: "nowrap" }}>
-          거래량 <span style={{ color: "#334155" }}>{formatVolume(bar.volume)}</span>
+          거래량 <span style={{ color: COLORS.TEXT }}>{formatVolume(bar.volume)}</span>
         </span>
       )}
     </div>

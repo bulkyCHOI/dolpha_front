@@ -20,7 +20,7 @@ const GRID_MINUTES = 30; // 세로 그리드 간격
  * 채도를 낮춰 급등 밴드(호박색)와 시각적으로 경쟁하지 않게 한다.
  */
 const heatColor = (rate) => {
-  if (rate === null || rate === undefined) return "#f1f4f8"; // 미수집 슬롯
+  if (rate === null || rate === undefined) return COLORS.SURFACE_ALT; // 미수집 슬롯
   if (rate >= 8) return "#8e0000";
   if (rate >= 6) return "#b71c1c";
   if (rate >= 4) return COLORS.UP;

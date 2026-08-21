@@ -53,7 +53,7 @@ const INDEX_CHART_HEIGHT = { xs: 240, md: 300 };
 
 const chartSurfaceSx = {
   backgroundColor: COLORS.SURFACE,
-  border: "1px solid #e2e8f0",
+  border: `1px solid ${COLORS.BORDER}`,
   borderRadius: 1,
   p: 0.5,
   mb: 1,
@@ -420,7 +420,7 @@ const ChartContainer = ({
               onCrosshairMove={handleCrosshairMove}
               onMouseDown={handleMouseDown}
               chartOptions={{
-                leftPriceScale: { visible: true, borderColor: "#e2e8f0" },
+                leftPriceScale: { visible: true, borderColor: COLORS.BORDER },
                 // 자석 모드(1)는 커서를 OHLC 값에 붙여서, 선을 끌 때 값이 튄다.
                 crosshair: { mode: isDrawingMode || movingLineId || draggingId != null ? 0 : 1 },
               }}
@@ -442,7 +442,7 @@ const ChartContainer = ({
               <Box
                 sx={{
                   p: 0.5,
-                  borderBottom: "1px solid #f1f5f9",
+                  borderBottom: `1px solid ${COLORS.DIVIDER}`,
                   mb: 0.5,
                   display: "flex",
                   justifyContent: "space-between",

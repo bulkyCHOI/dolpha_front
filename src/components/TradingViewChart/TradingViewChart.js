@@ -113,7 +113,7 @@ function TradingViewChart({
             alignItems: "center",
             justifyContent: "center",
             background: "rgba(255, 255, 255, 0.6)",
-            color: "#64748b",
+            color: COLORS.TEXT_SECONDARY,
             fontSize: "14px",
           }}
         >

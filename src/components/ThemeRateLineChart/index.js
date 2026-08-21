@@ -356,11 +356,11 @@ function ThemeRateLineChart({ slots, themes, loading }) {
                 cursor: "pointer",
                 opacity: hidden ? 0.4 : 1,
                 userSelect: "none",
-                "&:hover": { bgcolor: "#f5f7ff" },
+                "&:hover": { bgcolor: COLORS.HOVER_BG },
               }}
             >
               <Box sx={{ width: 10, height: 2.5, borderRadius: 1, bgcolor: s.color }} />
-              <Typography variant="caption" sx={{ fontSize: 11.5, color: "#37474f" }}>
+              <Typography variant="caption" sx={{ fontSize: 11.5, color: COLORS.TEXT }}>
                 {s.name}
               </Typography>
             </Box>

@@ -295,7 +295,7 @@ function EntryDecisionChart({ bars, decision, height }) {
       onCrosshairMove={handleCrosshairMove}
       overlay={readoutOverlay}
       chartOptions={{
-        layout: { background: { color: COLORS.SURFACE }, textColor: "#37474f", fontSize: 11 },
+        layout: { background: { color: COLORS.SURFACE }, textColor: COLORS.TEXT, fontSize: 11 },
         grid: {
           vertLines: { color: CHART_COLORS.GRID },
           horzLines: { color: CHART_COLORS.GRID },

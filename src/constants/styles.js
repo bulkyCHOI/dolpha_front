@@ -4,6 +4,19 @@
  * 값은 디자인 토큰(assets/theme/base/colors)에서 가져온다.
  * 페이지나 컴포넌트에 hex를 직접 쓰지 말고 여기를 거친다.
  * 다크 테마를 도입할 때 이 파일과 토큰만 손보면 전체가 따라온다.
+ *
+ * ── 예외: 여기로 옮기지 않는 색 ────────────────────────────────
+ * 아래는 "의미"가 아니라 "용도 전용 팔레트"라 시맨틱 토큰으로 옮기면
+ * 오히려 뜻이 흐려진다. 각자 쓰이는 파일에 이름 붙은 상수로 둔다.
+ * 다만 다크 테마에서는 각각 따로 손봐야 하므로 여기 적어둔다.
+ *
+ *   ThemeTimeline        급등 강도 히트맵 스케일 (연속 색상 램프)
+ *   ThemeRateLineChart   산업군 계열 구분색 (범주형 팔레트)
+ *   ThemeEntryChart      진입 판정 구간/마커 색
+ *   TradingViewChart     차트 지표 색 (chartTheme.js 가 토큰을 참조)
+ *   DataManagement       로그 뷰어 구문 강조 테마
+ *   TradingConfigs       전략별 식별색 (MTT · Turtle · 급등테마주)
+ *   GoogleLoginButton    Google 브랜드 색 (임의로 바꾸면 안 됨)
  */
 import colors from "assets/theme/base/colors";
 

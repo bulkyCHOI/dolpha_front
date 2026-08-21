@@ -179,7 +179,7 @@ function AccountCharts({ accountSnapshots, dailyPnl, loading }) {
               panes={[{ stretch: 1 }]}
               height={CHART_HEIGHT}
               fitContentKey={`equity-${accountSnapshots.length}`}
-              chartOptions={{ leftPriceScale: { visible: true, borderColor: "#e2e8f0" } }}
+              chartOptions={{ leftPriceScale: { visible: true, borderColor: COLORS.BORDER } }}
             />
           </Grid>
 

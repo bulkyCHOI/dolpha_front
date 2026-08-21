@@ -224,7 +224,7 @@ function PipelineGrid({ grid }) {
             sx={{
               display: "flex",
               alignItems: "flex-end",
-              bgcolor: "#f0f2f5",
+              bgcolor: COLORS.SURFACE_SUNKEN,
               borderRadius: "8px 8px 0 0",
               borderBottom: `2px solid ${COLORS.BORDER_STRONG}`,
               pb: 1,
@@ -285,7 +285,7 @@ function PipelineGrid({ grid }) {
               sx={{
                 display: "flex",
                 alignItems: "center",
-                bgcolor: si % 2 === 0 ? COLORS.SURFACE : "#f8f9fb",
+                bgcolor: si % 2 === 0 ? COLORS.SURFACE : COLORS.SURFACE_ALT,
                 borderBottom: si < steps.length - 1 ? `1px solid ${COLORS.SURFACE_ALT}` : "none",
                 "&:last-child": { borderRadius: "0 0 8px 8px" },
                 py: 1,
@@ -928,7 +928,7 @@ function DataManagement() {
   return (
     <>
       <AppHeader routes={routes} sticky />
-      <Box minHeight="100vh" pt={10} pb={4} sx={{ bgcolor: "#f5f5f5" }}>
+      <Box minHeight="100vh" pt={10} pb={4} sx={{ bgcolor: COLORS.SURFACE_SUNKEN }}>
         <Container maxWidth="xl">
           <Typography variant="h4" fontWeight="bold" mb={1}>
             데이터 관리
