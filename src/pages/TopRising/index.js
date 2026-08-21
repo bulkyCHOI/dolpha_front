@@ -32,7 +32,7 @@ import AutotradingAccordion from "components/AutotradingAccordion/AutotradingAcc
 import ChartContainer from "components/ChartContainer/ChartContainer";
 import StockInfoHeader from "components/StockInfoHeader/StockInfoHeader";
 import StockList from "components/StockList/StockList";
-import { GRADIENT_COLORS } from "constants/styles";
+import { COLORS, GRADIENT_COLORS } from "constants/styles";
 import { formatNumber } from "utils/formatters";
 
 const PERIODS = [
@@ -315,7 +315,7 @@ function TopRising() {
                     width: 64,
                     height: 64,
                     borderRadius: "50%",
-                    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                    background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -404,7 +404,7 @@ function TopRising() {
               sx={{
                 minHeight: { xs: "44px", md: "48px" },
                 "& .MuiTabs-indicator": {
-                  backgroundColor: "#667eea",
+                  backgroundColor: COLORS.PRIMARY,
                   height: "3px",
                 },
                 "& .MuiTab-root": {
@@ -414,7 +414,7 @@ function TopRising() {
                   minWidth: "auto",
                   padding: { xs: "8px 12px", md: "12px 16px" },
                   "&.Mui-selected": {
-                    color: "#667eea",
+                    color: COLORS.PRIMARY,
                   },
                 },
               }}
@@ -434,7 +434,7 @@ function TopRising() {
                 scrollButtons="auto"
                 sx={{
                   minHeight: "36px",
-                  "& .MuiTabs-indicator": { backgroundColor: "#667eea", height: "2px" },
+                  "& .MuiTabs-indicator": { backgroundColor: COLORS.PRIMARY, height: "2px" },
                   "& .MuiTab-root": {
                     minHeight: "36px",
                     fontSize: "0.75rem",
@@ -442,7 +442,7 @@ function TopRising() {
                     color: "#888",
                     padding: "6px 12px",
                     minWidth: "auto",
-                    "&.Mui-selected": { color: "#667eea" },
+                    "&.Mui-selected": { color: COLORS.PRIMARY },
                   },
                 }}
               >
@@ -487,7 +487,7 @@ function TopRising() {
                   {/* 테이블 헤더 */}
                   <Box
                     sx={{
-                      background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                      background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
                       p: 1,
                       display: "flex",
                       alignItems: "center",
@@ -595,10 +595,10 @@ function TopRising() {
                             backgroundColor: "rgba(102, 126, 234, 0.08)",
                             transform: "translateX(4px)",
                             boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                            borderLeft: "3px solid #667eea",
+                            borderLeft: `3px solid ${COLORS.PRIMARY}`,
                           },
                           ...(selectedStock?.code === row.code && {
-                            borderLeft: "3px solid #667eea",
+                            borderLeft: `3px solid ${COLORS.PRIMARY}`,
                             boxShadow: "0 2px 12px rgba(102, 126, 234, 0.2)",
                           }),
                         }}
@@ -864,7 +864,7 @@ function TopRising() {
             scrollButtons="auto"
             sx={{
               minHeight: "32px",
-              "& .MuiTabs-indicator": { backgroundColor: "#667eea", height: "2px" },
+              "& .MuiTabs-indicator": { backgroundColor: COLORS.PRIMARY, height: "2px" },
               "& .MuiTab-root": {
                 minHeight: "32px",
                 fontSize: "0.7rem",
@@ -872,7 +872,7 @@ function TopRising() {
                 color: "#888",
                 padding: "4px 10px",
                 minWidth: "auto",
-                "&.Mui-selected": { color: "#667eea" },
+                "&.Mui-selected": { color: COLORS.PRIMARY },
               },
             }}
           >
@@ -961,7 +961,7 @@ function TopRising() {
                   width: 64,
                   height: 64,
                   borderRadius: "50%",
-                  background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",

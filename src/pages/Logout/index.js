@@ -4,6 +4,7 @@ import { useAuth } from "contexts/AuthContext";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
+import { COLORS } from "constants/styles";
 
 function Logout() {
   const { logout, isAuthenticated } = useAuth();
@@ -53,7 +54,7 @@ function Logout() {
           textAlign: "center",
         }}
       >
-        <CircularProgress size={60} sx={{ color: "#667eea" }} />
+        <CircularProgress size={60} sx={{ color: COLORS.PRIMARY }} />
         <Typography variant="h4" color="text.secondary">
           로그아웃 중...
         </Typography>

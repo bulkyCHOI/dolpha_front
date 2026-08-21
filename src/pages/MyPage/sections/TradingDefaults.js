@@ -30,6 +30,7 @@ import { useState, useEffect } from "react";
 
 import ThemeSurgeSettings from "./ThemeSurgeSettings";
 import { useAuth } from "contexts/AuthContext";
+import { COLORS } from "constants/styles";
 
 function TradingDefaults() {
   const [defaults, setDefaults] = useState({
@@ -696,11 +697,11 @@ function TradingDefaults() {
                       onClick={handleEqualDivision}
                       fullWidth
                       sx={{
-                        borderColor: "#667eea",
-                        color: "#667eea",
+                        borderColor: COLORS.PRIMARY,
+                        color: COLORS.PRIMARY,
                         fontSize: "0.75rem",
                         "&:hover": {
-                          borderColor: "#5a6fd8",
+                          borderColor: COLORS.PRIMARY_HOVER,
                           backgroundColor: "rgba(102,126,234,0.08)",
                         },
                       }}
@@ -1117,7 +1118,7 @@ function TradingDefaults() {
                 disabled={saveLoading}
                 size="medium"
                 sx={{
-                  background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
                   color: "white",
                   px: 3,
                   py: 1,
@@ -1125,7 +1126,7 @@ function TradingDefaults() {
                   textTransform: "none",
                   fontSize: "0.9rem",
                   fontWeight: 500,
-                  "&:hover": { background: "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)" },
+                  "&:hover": { background: `linear-gradient(135deg, ${COLORS.PRIMARY_HOVER} 0%, #6a4190 100%)` },
                   "&:disabled": { opacity: 0.6 },
                 }}
               >

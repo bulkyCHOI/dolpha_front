@@ -40,7 +40,7 @@ import FinancialModal from "components/FinancialModal/FinancialModal";
 import AutotradingAccordion from "components/AutotradingAccordion/AutotradingAccordion";
 import ChartContainer from "components/ChartContainer/ChartContainer";
 import StockInfoHeader from "components/StockInfoHeader/StockInfoHeader";
-import { GRADIENT_COLORS, LAYOUT } from "constants/styles";
+import { COLORS, GRADIENT_COLORS, LAYOUT } from "constants/styles";
 import { formatNumber } from "utils/formatters";
 
 function Favorites() {
@@ -297,7 +297,7 @@ function Favorites() {
                     width: 64,
                     height: 64,
                     borderRadius: "50%",
-                    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                    background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -387,7 +387,7 @@ function Favorites() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SearchIcon sx={{ color: "#667eea" }} />
+                    <SearchIcon sx={{ color: COLORS.PRIMARY }} />
                   </InputAdornment>
                 ),
                 endAdornment: searchQuery && (
@@ -402,7 +402,7 @@ function Favorites() {
                 "& .MuiOutlinedInput-root": {
                   borderRadius: 2,
                   "&.Mui-focused fieldset": {
-                    borderColor: "#667eea",
+                    borderColor: COLORS.PRIMARY,
                   },
                 },
               }}
@@ -419,7 +419,7 @@ function Favorites() {
                 sx={{
                   minHeight: { xs: "44px", md: "48px" },
                   "& .MuiTabs-indicator": {
-                    backgroundColor: "#667eea",
+                    backgroundColor: COLORS.PRIMARY,
                     height: "3px",
                   },
                   "& .MuiTab-root": {
@@ -429,7 +429,7 @@ function Favorites() {
                     minWidth: "auto",
                     padding: { xs: "8px 12px", md: "12px 16px" },
                     "&.Mui-selected": {
-                      color: "#667eea",
+                      color: COLORS.PRIMARY,
                     },
                   },
                 }}
@@ -472,7 +472,7 @@ function Favorites() {
               {/* 검색 결과 헤더 */}
               <Box
                 sx={{
-                  background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
                   p: 1,
                   display: "flex",
                   alignItems: "center",
@@ -694,7 +694,7 @@ function Favorites() {
                   {/* 테이블 헤더 */}
                   <Box
                     sx={{
-                      background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                      background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
                       p: 1,
                       display: "flex",
                       alignItems: "center",
@@ -825,11 +825,11 @@ function Favorites() {
                             backgroundColor: "rgba(102, 126, 234, 0.08)",
                             transform: "translateX(4px)",
                             boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                            borderLeft: "3px solid #667eea",
+                            borderLeft: `3px solid ${COLORS.PRIMARY}`,
                           },
                           ...((selectedStock?.code === (stock.code || stock.stock_code) ||
                             selectedStock?.stock_code === (stock.code || stock.stock_code)) && {
-                            borderLeft: "3px solid #667eea",
+                            borderLeft: `3px solid ${COLORS.PRIMARY}`,
                             boxShadow: "0 2px 12px rgba(102, 126, 234, 0.2)",
                           }),
                         }}
@@ -1089,7 +1089,7 @@ function Favorites() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SearchIcon sx={{ color: "#667eea" }} />
+                    <SearchIcon sx={{ color: COLORS.PRIMARY }} />
                   </InputAdornment>
                 ),
                 endAdornment: searchQuery && (
@@ -1104,7 +1104,7 @@ function Favorites() {
                 "& .MuiOutlinedInput-root": {
                   borderRadius: 2,
                   "&.Mui-focused fieldset": {
-                    borderColor: "#667eea",
+                    borderColor: COLORS.PRIMARY,
                   },
                 },
               }}
@@ -1429,7 +1429,7 @@ function Favorites() {
                   width: 64,
                   height: 64,
                   borderRadius: "50%",
-                  background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",

@@ -12,6 +12,7 @@ import Typography from "@mui/material/Typography";
 
 import { useState, useEffect } from "react";
 import { useAuth } from "contexts/AuthContext";
+import { COLORS } from "constants/styles";
 
 function Profile() {
   const [userInfo, setUserInfo] = useState({
@@ -149,11 +150,11 @@ function Profile() {
                     "& .MuiOutlinedInput-root": {
                       borderRadius: 2,
                       "&.Mui-focused fieldset": {
-                        borderColor: "#667eea",
+                        borderColor: COLORS.PRIMARY,
                       },
                     },
                     "& .MuiInputLabel-root.Mui-focused": {
-                      color: "#667eea",
+                      color: COLORS.PRIMARY,
                     },
                   }}
                 />
@@ -180,7 +181,7 @@ function Profile() {
                 variant="contained"
                 onClick={handleSave}
                 sx={{
-                  background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
                   color: "white",
                   px: 4,
                   py: 1.5,
@@ -189,7 +190,7 @@ function Profile() {
                   fontSize: "1rem",
                   fontWeight: 500,
                   "&:hover": {
-                    background: "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)",
+                    background: `linear-gradient(135deg, ${COLORS.PRIMARY_HOVER} 0%, #6a4190 100%)`,
                     transform: "translateY(-1px)",
                     boxShadow: "0 6px 20px rgba(102, 126, 234, 0.3)",
                   },

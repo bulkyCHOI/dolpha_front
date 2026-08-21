@@ -32,7 +32,7 @@ import AutotradingAccordion from "components/AutotradingAccordion/AutotradingAcc
 import ChartContainer from "components/ChartContainer/ChartContainer";
 import StockInfoHeader from "components/StockInfoHeader/StockInfoHeader";
 import HTFStockList from "components/HTFStockList/HTFStockList";
-import { GRADIENT_COLORS, LAYOUT } from "constants/styles";
+import { COLORS, GRADIENT_COLORS, LAYOUT } from "constants/styles";
 import { formatNumber } from "utils/formatters";
 
 function HTF() {
@@ -300,7 +300,7 @@ function HTF() {
                   width: 64,
                   height: 64,
                   borderRadius: "50%",
-                  background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -589,7 +589,7 @@ function HTF() {
                           width: 64,
                           height: 64,
                           borderRadius: "50%",
-                          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                          background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
@@ -676,7 +676,7 @@ function HTF() {
                     sx={{
                       minHeight: { xs: "44px", md: "48px" },
                       "& .MuiTabs-indicator": {
-                        backgroundColor: "#667eea",
+                        backgroundColor: COLORS.PRIMARY,
                         height: "3px",
                       },
                       "& .MuiTab-root": {
@@ -686,7 +686,7 @@ function HTF() {
                         minWidth: "auto",
                         padding: { xs: "8px 12px", md: "12px 16px" },
                         "&.Mui-selected": {
-                          color: "#667eea",
+                          color: COLORS.PRIMARY,
                         },
                       },
                     }}

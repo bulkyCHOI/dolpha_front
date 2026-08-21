@@ -14,6 +14,7 @@ import {
   UP_COLOR,
   UP_COLOR_FADED,
 } from "components/TradingViewChart/chartTheme";
+import { COLORS } from "constants/styles";
 
 /** pane 인덱스 정의 — 위에서 아래 순서 */
 export const PANE = {
@@ -207,7 +208,7 @@ export function buildPriceLines(horizontalLines, entryPoint) {
   if (entryPoint !== "" && entryPoint !== null && !Number.isNaN(entryPrice) && entryPrice > 0) {
     lines.push({
       price: entryPrice,
-      color: "#667eea",
+      color: COLORS.PRIMARY,
       lineWidth: 2,
       lineStyle: 0, // Solid
       axisLabelVisible: true,

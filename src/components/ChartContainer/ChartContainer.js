@@ -43,8 +43,9 @@ import {
   buildStockChartSeries,
   compactPanes,
 } from "./buildStockSeries";
+import { COLORS } from "constants/styles";
 
-const DRAW_LINE_COLOR = "#667eea";
+const DRAW_LINE_COLOR = COLORS.PRIMARY;
 const PYRAMIDING_LINE_COLOR = "#ff9800";
 
 const CHART_HEIGHT = { xs: 480, md: 640 };
@@ -304,7 +305,7 @@ const ChartContainer = ({
             "&.Mui-selected": {
               backgroundColor: DRAW_LINE_COLOR,
               color: "#ffffff",
-              "&:hover": { backgroundColor: "#5a6fd8" },
+              "&:hover": { backgroundColor: COLORS.PRIMARY_HOVER },
             },
           }}
         >

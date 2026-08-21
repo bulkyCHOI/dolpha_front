@@ -11,6 +11,7 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { Link as RouterLink } from "react-router-dom";
 
 import Typography from "@mui/material/Typography";
+import { COLORS } from "constants/styles";
 
 const RISE = "#d32f2f";
 const FALL = "#1565c0";
@@ -170,7 +171,7 @@ function PositionCard({ position: p }) {
           gap: 0.4,
           mt: 1,
           fontSize: 11,
-          color: "#667eea",
+          color: COLORS.PRIMARY,
           textDecoration: "none",
           "&:hover": { textDecoration: "underline" },
         }}

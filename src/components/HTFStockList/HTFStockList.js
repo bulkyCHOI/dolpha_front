@@ -4,6 +4,7 @@ import Chip from "@mui/material/Chip";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { formatNumber } from "utils/formatters";
+import { COLORS } from "constants/styles";
 
 function HTFStockList({
   stocks,
@@ -91,7 +92,7 @@ function HTFStockList({
       {/* 테이블 헤더 */}
       <Box
         sx={{
-          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+          background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
           p: 1,
           display: "flex",
           alignItems: "center",
@@ -201,10 +202,10 @@ function HTFStockList({
                   backgroundColor: "rgba(102, 126, 234, 0.08)",
                   transform: "translateX(4px)",
                   boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                  borderLeft: "3px solid #667eea",
+                  borderLeft: `3px solid ${COLORS.PRIMARY}`,
                 },
                 ...(selectedStock?.code === stock.code && {
-                  borderLeft: "3px solid #667eea",
+                  borderLeft: `3px solid ${COLORS.PRIMARY}`,
                   boxShadow: "0 2px 12px rgba(102, 126, 234, 0.2)",
                 }),
               }}

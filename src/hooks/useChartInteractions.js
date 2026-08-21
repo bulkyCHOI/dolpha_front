@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { adjustToKRXTickSize } from "utils/formatters";
+import { COLORS } from "constants/styles";
 
 /**
  * Custom hook for managing chart interactions and reference lines
@@ -211,7 +212,7 @@ export const useChartInteractions = (
       const adjustedPrice = adjustToKRXTickSize(line.value);
       onEntryPointChange(adjustedPrice.toString());
       setHorizontalLines((prev) =>
-        prev.map((l) => (l.id === lineId ? { ...l, type: "entry", color: "#667eea" } : l))
+        prev.map((l) => (l.id === lineId ? { ...l, type: "entry", color: COLORS.PRIMARY } : l))
       );
     }
   };
@@ -417,7 +418,7 @@ export const useChartInteractions = (
         backgroundColor: "rgba(0,0,0,0.9)",
         titleColor: "#fff",
         bodyColor: "#fff",
-        borderColor: "#667eea",
+        borderColor: COLORS.PRIMARY,
         borderWidth: 1,
         cornerRadius: 8,
         displayColors: true,

@@ -24,6 +24,7 @@ import Typography from "@mui/material/Typography";
 import { adjustToKRXTickSize, getKRXTickSize } from "utils/formatters";
 import { useTradingForm } from "hooks/useTradingForm";
 import { useAuth } from "contexts/AuthContext";
+import { COLORS } from "constants/styles";
 
 /**
  * 자동매매 설정 상세보기/수정 모달 컴포넌트
@@ -206,9 +207,9 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                       margin: "0 16px 0 0",
                     },
                     "& .MuiRadio-root": {
-                      color: "#667eea",
+                      color: COLORS.PRIMARY,
                       "&.Mui-checked": {
-                        color: "#667eea",
+                        color: COLORS.PRIMARY,
                       },
                     },
                   }}
@@ -246,7 +247,7 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                     size="small"
                     onClick={handleReset}
                     sx={{
-                      color: "#667eea",
+                      color: COLORS.PRIMARY,
                       "&:hover": {
                         backgroundColor: "rgba(102, 126, 234, 0.1)",
                       },
@@ -273,11 +274,11 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                     sx={{
                       "& .MuiOutlinedInput-root": {
                         "&.Mui-focused fieldset": {
-                          borderColor: "#667eea",
+                          borderColor: COLORS.PRIMARY,
                         },
                       },
                       "& .MuiInputLabel-root.Mui-focused": {
-                        color: "#667eea",
+                        color: COLORS.PRIMARY,
                       },
                     }}
                   />
@@ -293,11 +294,11 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                     sx={{
                       "& .MuiOutlinedInput-root": {
                         "&.Mui-focused fieldset": {
-                          borderColor: "#667eea",
+                          borderColor: COLORS.PRIMARY,
                         },
                       },
                       "& .MuiInputLabel-root.Mui-focused": {
-                        color: "#667eea",
+                        color: COLORS.PRIMARY,
                       },
                     }}
                   />
@@ -313,11 +314,11 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                     sx={{
                       "& .MuiOutlinedInput-root": {
                         "&.Mui-focused fieldset": {
-                          borderColor: "#667eea",
+                          borderColor: COLORS.PRIMARY,
                         },
                       },
                       "& .MuiInputLabel-root.Mui-focused": {
-                        color: "#667eea",
+                        color: COLORS.PRIMARY,
                       },
                     }}
                   />
@@ -333,11 +334,11 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                     sx={{
                       "& .MuiOutlinedInput-root": {
                         "&.Mui-focused fieldset": {
-                          borderColor: "#667eea",
+                          borderColor: COLORS.PRIMARY,
                         },
                       },
                       "& .MuiInputLabel-root.Mui-focused": {
-                        color: "#667eea",
+                        color: COLORS.PRIMARY,
                       },
                     }}
                   />
@@ -376,11 +377,11 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                     sx={{
                       "& .MuiOutlinedInput-root": {
                         "&.Mui-focused fieldset": {
-                          borderColor: "#667eea",
+                          borderColor: COLORS.PRIMARY,
                         },
                       },
                       "& .MuiInputLabel-root.Mui-focused": {
-                        color: "#667eea",
+                        color: COLORS.PRIMARY,
                       },
                     }}
                   />
@@ -392,11 +393,11 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                     onClick={tradingForm.handleEqualDivision}
                     fullWidth
                     sx={{
-                      borderColor: "#667eea",
-                      color: "#667eea",
+                      borderColor: COLORS.PRIMARY,
+                      color: COLORS.PRIMARY,
                       fontSize: "0.75rem",
                       "&:hover": {
-                        borderColor: "#5a6fd8",
+                        borderColor: COLORS.PRIMARY_HOVER,
                         backgroundColor: "rgba(102, 126, 234, 0.08)",
                       },
                     }}
@@ -425,11 +426,11 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                       sx={{
                         "& .MuiOutlinedInput-root": {
                           "&.Mui-focused fieldset": {
-                            borderColor: "#667eea",
+                            borderColor: COLORS.PRIMARY,
                           },
                         },
                         "& .MuiInputLabel-root.Mui-focused": {
-                          color: "#667eea",
+                          color: COLORS.PRIMARY,
                         },
                       }}
                     />
@@ -446,11 +447,11 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                       sx={{
                         "& .MuiOutlinedInput-root": {
                           "&.Mui-focused fieldset": {
-                            borderColor: "#667eea",
+                            borderColor: COLORS.PRIMARY,
                           },
                         },
                         "& .MuiInputLabel-root.Mui-focused": {
-                          color: "#667eea",
+                          color: COLORS.PRIMARY,
                         },
                       }}
                     />
@@ -475,11 +476,11 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                         sx={{
                           "& .MuiOutlinedInput-root": {
                             "&.Mui-focused fieldset": {
-                              borderColor: "#667eea",
+                              borderColor: COLORS.PRIMARY,
                             },
                           },
                           "& .MuiInputLabel-root.Mui-focused": {
-                            color: "#667eea",
+                            color: COLORS.PRIMARY,
                           },
                         }}
                       />
@@ -498,11 +499,11 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                         sx={{
                           "& .MuiOutlinedInput-root": {
                             "&.Mui-focused fieldset": {
-                              borderColor: "#667eea",
+                              borderColor: COLORS.PRIMARY,
                             },
                           },
                           "& .MuiInputLabel-root.Mui-focused": {
-                            color: "#667eea",
+                            color: COLORS.PRIMARY,
                           },
                         }}
                       />
@@ -578,7 +579,7 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
           disabled={!tradingForm.isFormValid() || loading}
           sx={{
             background: tradingForm.isFormValid()
-              ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+              ? `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`
               : "#ccc",
             color: "white",
             px: 3,
@@ -589,7 +590,7 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
             fontWeight: 500,
             "&:hover": {
               background: tradingForm.isFormValid()
-                ? "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)"
+                ? `linear-gradient(135deg, ${COLORS.PRIMARY_HOVER} 0%, #6a4190 100%)`
                 : "#ccc",
               transform: tradingForm.isFormValid() ? "translateY(-1px)" : "none",
               boxShadow: tradingForm.isFormValid() ? "0 6px 20px rgba(102, 126, 234, 0.3)" : "none",

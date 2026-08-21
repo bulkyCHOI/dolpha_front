@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "contexts/AuthContext";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import { COLORS } from "constants/styles";
 
 const ProtectedRoute = ({ children }) => {
   const { user, isAuthenticated, loading } = useAuth();
@@ -22,7 +23,7 @@ const ProtectedRoute = ({ children }) => {
         minHeight="100vh"
         width="100%"
         sx={{
-          backgroundImage: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+          backgroundImage: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
           display: "grid",
           placeItems: "center",
         }}
@@ -41,7 +42,7 @@ const ProtectedRoute = ({ children }) => {
         minHeight="100vh"
         width="100%"
         sx={{
-          backgroundImage: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+          backgroundImage: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
           display: "grid",
           placeItems: "center",
         }}

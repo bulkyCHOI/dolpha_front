@@ -20,6 +20,7 @@ import TradingDefaults from "./sections/TradingDefaults";
 
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { COLORS } from "constants/styles";
 
 function MyPage() {
   const [activeTab, setActiveTab] = useState(0);
@@ -54,7 +55,7 @@ function MyPage() {
         minHeight={{ xs: "25vh", md: "30vh" }}
         width="100%"
         sx={{
-          backgroundImage: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+          backgroundImage: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
           backgroundSize: "cover",
           backgroundPosition: "top",
           display: "grid",
@@ -120,7 +121,7 @@ function MyPage() {
                   variant="fullWidth"
                   sx={{
                     "& .MuiTabs-indicator": {
-                      backgroundColor: "#667eea",
+                      backgroundColor: COLORS.PRIMARY,
                       height: 3,
                       borderRadius: "4px 4px 0 0",
                     },
@@ -134,7 +135,7 @@ function MyPage() {
                       borderRadius: "8px 8px 0 0",
                       transition: "all 0.3s ease",
                       "&.Mui-selected": {
-                        color: "#667eea",
+                        color: COLORS.PRIMARY,
                         fontWeight: 600,
                         backgroundColor: "rgba(102, 126, 234, 0.08)",
                       },

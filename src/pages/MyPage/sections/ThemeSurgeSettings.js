@@ -23,6 +23,7 @@ import { Link as RouterLink } from "react-router-dom";
 
 import Typography from "@mui/material/Typography";
 import ThemeSurgeExitSettings from "./ThemeSurgeExitSettings";
+import { COLORS } from "constants/styles";
 
 const ACCENT = "#ef6c00";
 const MUTED = "#7b8794";
@@ -213,7 +214,7 @@ function ThemeSurgeSettings({ defaults, onChange }) {
               <Box
                 component={RouterLink}
                 to="/theme-surge"
-                sx={{ color: "#667eea", fontWeight: 600, textDecoration: "none" }}
+                sx={{ color: COLORS.PRIMARY, fontWeight: 600, textDecoration: "none" }}
               >
                 급등테마주 페이지
               </Box>

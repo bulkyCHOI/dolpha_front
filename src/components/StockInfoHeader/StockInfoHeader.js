@@ -6,6 +6,7 @@ import ArrowDownward from "@mui/icons-material/ArrowDownward";
 import Assessment from "@mui/icons-material/Assessment";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import { COLORS } from "constants/styles";
 
 function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinancialModal }) {
   const getChangeRate = () => {
@@ -31,7 +32,7 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
   return (
     <Box
       sx={{
-        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+        background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
         borderRadius: { xs: 2, md: 1 },
         boxShadow: "0 2px 8px rgba(102, 126, 234, 0.1)",
         position: "relative",
