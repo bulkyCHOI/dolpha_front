@@ -1,0 +1,150 @@
+import { useEffect, useRef } from "react";
+import PropTypes from "prop-types";
+
+import useTradingViewChart from "./useTradingViewChart";
+
+/**
+ * 프로젝트 공용 TradingView(lightweight-charts) 차트.
+ *
+ * 여러 지표를 pane으로 쌓으면 시간축과 크로스헤어가 자동으로 동기화된다.
+ *
+ * @example
+ * <TradingViewChart
+ *   height={520}
+ *   panes={[{ stretch: 3 }, { stretch: 1 }]}
+ *   series={[
+ *     { id: "candle", type: "candle", pane: 0, data: candles },
+ *     { id: "volume", type: "histogram", pane: 1, data: volumes },
+ *   ]}
+ * />
+ */
+function TradingViewChart({
+  series,
+  panes,
+  height,
+  intraday,
+  loading,
+  emptyMessage,
+  initialVisibleBars,
+  fitContentKey,
+  onClick,
+  onCrosshairMove,
+  chartOptions,
+  overlay,
+  sx,
+}) {
+  const { containerRef, chartRef } = useTradingViewChart({
+    series,
+    panes,
+    intraday,
+    onClick,
+    onCrosshairMove,
+    chartOptions,
+  });
+
+  // 초기 뷰 범위는 대상이 바뀔 때(fitContentKey) 한 번만 맞춘다.
+  // 폴링 갱신 때마다 맞추면 사용자의 줌/팬 상태가 초기화된다.
+  const appliedFitKeyRef = useRef(null);
+  const barCount = series[0]?.data?.length ?? 0;
+
+  useEffect(() => {
+    const chart = chartRef.current;
+    if (!chart || barCount === 0) return;
+    if (appliedFitKeyRef.current === fitContentKey) return;
+
+    const timeScale = chart.timeScale();
+    if (initialVisibleBars && barCount > initialVisibleBars) {
+      timeScale.setVisibleLogicalRange({ from: barCount - initialVisibleBars, to: barCount - 1 });
+    } else {
+      timeScale.fitContent();
+    }
+    appliedFitKeyRef.current = fitContentKey;
+  }, [fitContentKey, barCount, initialVisibleBars, chartRef]);
+
+  const isEmpty = !loading && barCount === 0;
+
+  return (
+    <div style={{ position: "relative", width: "100%", height, ...sx }}>
+      <div ref={containerRef} style={{ width: "100%", height: "100%" }} />
+      {overlay}
+      {isEmpty && (
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#94a3b8",
+            fontSize: "14px",
+            pointerEvents: "none",
+          }}
+        >
+          {emptyMessage}
+        </div>
+      )}
+      {loading && (
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "rgba(255, 255, 255, 0.6)",
+            color: "#64748b",
+            fontSize: "14px",
+          }}
+        >
+          로딩 중...
+        </div>
+      )}
+    </div>
+  );
+}
+
+TradingViewChart.propTypes = {
+  series: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      type: PropTypes.oneOf(["candle", "bar", "line", "area", "baseline", "histogram"]).isRequired,
+      pane: PropTypes.number,
+      data: PropTypes.array,
+      options: PropTypes.object,
+      markers: PropTypes.array,
+      priceLines: PropTypes.array,
+    })
+  ),
+  panes: PropTypes.arrayOf(
+    PropTypes.shape({ stretch: PropTypes.number, priceScale: PropTypes.object })
+  ),
+  height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  intraday: PropTypes.bool,
+  loading: PropTypes.bool,
+  emptyMessage: PropTypes.string,
+  initialVisibleBars: PropTypes.number,
+  fitContentKey: PropTypes.string,
+  onClick: PropTypes.func,
+  onCrosshairMove: PropTypes.func,
+  chartOptions: PropTypes.object,
+  overlay: PropTypes.node,
+  sx: PropTypes.object,
+};
+
+TradingViewChart.defaultProps = {
+  series: [],
+  panes: [],
+  height: 400,
+  intraday: false,
+  loading: false,
+  emptyMessage: "차트 데이터를 사용할 수 없습니다",
+  initialVisibleBars: null,
+  fitContentKey: null,
+  onClick: undefined,
+  onCrosshairMove: undefined,
+  chartOptions: undefined,
+  overlay: null,
+  sx: undefined,
+};
+
+export default TradingViewChart;
