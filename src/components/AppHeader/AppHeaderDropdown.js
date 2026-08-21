@@ -7,7 +7,6 @@ import { Link } from "react-router-dom";
 import Collapse from "@mui/material/Collapse";
 import Icon from "@mui/material/Icon";
 
-// Material Kit 2 React components
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 

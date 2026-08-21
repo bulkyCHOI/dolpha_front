@@ -1,9 +1,3 @@
-/*
-=========================================================
-* Material Kit 2 React - MyPage Profile Section
-=========================================================
-*/
-
 // @mui material components
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
@@ -13,7 +7,6 @@ import Divider from "@mui/material/Divider";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 
-// Material Kit 2 React components
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 

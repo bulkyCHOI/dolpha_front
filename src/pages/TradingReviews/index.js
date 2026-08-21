@@ -47,11 +47,9 @@ import FullWidthContainer from "components/FullWidthContainer";
 import EnhancedDataTable from "components/EnhancedDataTable";
 import ResponsiveTableWrapper from "components/ResponsiveTableWrapper";
 
-// Material Kit 2 React components
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 
-// Material Kit 2 React examples
 import AppHeader from "components/AppHeader";
 import AppFooter from "components/AppFooter";
 

@@ -8,7 +8,6 @@ import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 
-// Material Kit 2 React components
 import Button from "@mui/material/Button";
 
 // Custom components

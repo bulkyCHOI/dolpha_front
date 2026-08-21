@@ -30,12 +30,10 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import Divider from "@mui/material/Divider";
 
-// Material Kit 2 React components
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import DatePicker from "components/DatePicker";
 
-// Material Kit 2 React examples
 import AppHeader from "components/AppHeader";
 import AppFooter from "components/AppFooter";
 

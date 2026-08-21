@@ -10,11 +10,9 @@ import PropTypes from "prop-types";
 import Collapse from "@mui/material/Collapse";
 import MuiLink from "@mui/material/Link";
 
-// Material Kit 2 React components
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
-// Material Kit 2 React example components
 import AppHeaderDropdown from "components/AppHeader/AppHeaderDropdown";
 
 function AppHeaderMobile({ routes, open }) {

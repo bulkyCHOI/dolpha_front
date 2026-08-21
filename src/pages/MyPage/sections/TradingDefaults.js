@@ -1,9 +1,3 @@
-/*
-=========================================================
-* Material Kit 2 React - MyPage Trading Defaults Section
-=========================================================
-*/
-
 // @mui material components
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
@@ -29,7 +23,6 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Chip from "@mui/material/Chip";
 
-// Material Kit 2 React components
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
