@@ -27,8 +27,15 @@ yarn.lock
 
 commit.sh
 src/pages/Presentation/index.js.backup
-tests/
+# 일회성 디버그 spec들이 쌓여 있어 tests/ 전체는 추적하지 않는다.
+# 단, 회귀 안전망으로 유지하는 tests/visual 은 예외로 커밋한다.
+# 디렉터리 자체를 ignore 하면 하위 예외(!)가 동작하지 않으므로 tests/* 로 쓴다.
+tests/*
+!tests/visual/
 nohup.out
 
 # dev 서버 로그
 frontend.log
+
+# before/after 비교용 스크린샷 (용량이 크고 시세에 따라 매번 바뀐다)
+tests/visual/__archive__/

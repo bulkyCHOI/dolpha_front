@@ -51,7 +51,9 @@
     "test:e2e:headed": "playwright test --headed",
     "eject": "react-scripts eject",
     "lint": "eslint ./src",
-    "prettify": "prettier --write ."
+    "prettify": "prettier --write .",
+    "test:visual": "playwright test tests/visual/layout-invariants.spec.js --project=chromium",
+    "test:visual:snap": "playwright test tests/visual/screenshots.spec.js --project=chromium"
   },
   "eslintConfig": {
     "extends": [
