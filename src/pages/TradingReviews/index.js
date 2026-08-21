@@ -99,8 +99,8 @@ const getTradingModeLabel = (tradingMode) => {
 const getTradingModeColor = (tradingMode) => {
   const colors = {
     manual: COLORS.DOWN, // 파란색 - 수동 매매
-    turtle: "#0d47a1", // 진한 네이비 블루 - 터틀 매매
-    atr: "#0d47a1", // 진한 네이비 블루 - 자동 매매
+    turtle: COLORS.DOWN, // 진한 네이비 블루 - 터틀 매매
+    atr: COLORS.DOWN, // 진한 네이비 블루 - 자동 매매
   };
   return colors[tradingMode] || COLORS.TEXT_MUTED;
 };
@@ -125,7 +125,7 @@ const getFinalStatusColor = (status) => {
 
 // 배경색에 따른 텍스트 색상 결정 함수
 const getTextColor = (backgroundColor) => {
-  const darkColors = ["#0d47a1"];
+  const darkColors = [COLORS.DOWN];
   return darkColors.includes(backgroundColor) ? "white" : "black";
 };
 
@@ -758,7 +758,7 @@ export default function TradingReviews() {
                 const plAmount = pos.profit_loss_amount;
                 const plRate = pos.profit_loss_rate;
                 const isProfit = plAmount != null ? plAmount >= 0 : null;
-                const plColor = isProfit == null ? "text.secondary" : isProfit ? "#ef5350" : COLORS.DOWN;
+                const plColor = isProfit == null ? "text.secondary" : isProfit ? COLORS.UP : COLORS.DOWN;
                 const isAtr = pos.trading_mode === "atr" || pos.trading_mode === "turtle";
 
 
@@ -845,7 +845,7 @@ export default function TradingReviews() {
                       {pos.trailing_stop_price != null && (
                         <Box display="flex" justifyContent="space-between">
                           <Typography variant="caption" color="text.secondary">Trailing Stop</Typography>
-                          <Typography variant="caption" fontWeight="bold" sx={{ color: "#e65100" }}>
+                          <Typography variant="caption" fontWeight="bold" sx={{ color: COLORS.WARNING }}>
                             {formatCurrency(pos.trailing_stop_price)}원
                           </Typography>
                         </Box>

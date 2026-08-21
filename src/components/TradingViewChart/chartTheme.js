@@ -22,9 +22,9 @@ export const DOWN_COLOR_FADED = "rgba(59, 130, 246, 0.5)";
 
 // 이동평균선 (기간이 짧을수록 밝고 얇게)
 export const MA_COLORS = {
-  ma5: "#f59e0b",
-  ma20: "#ef4444",
-  ma60: "#22c55e",
+  ma5: COLORS.WARNING,
+  ma20: COLORS.UP,
+  ma60: COLORS.SUCCESS,
   ma120: "#a855f7",
 };
 

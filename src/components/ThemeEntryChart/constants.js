@@ -3,14 +3,14 @@
 import { COLORS } from "constants/styles";
 
 export const CHART_COLORS = {
-  UP: "#ef4444",
+  UP: COLORS.UP,
   DOWN: "#3b82f6",
   PREV_HIGH: COLORS.UP,
   BREAKOUT: COLORS.WARNING,
   PULLBACK: COLORS.DOWN,
   DECISION: "#616161",
-  PASSED: "#f59e0b",
-  EXECUTED: "#16a34a",
+  PASSED: COLORS.WARNING,
+  EXECUTED: COLORS.SUCCESS,
   MUTED: COLORS.TEXT_SECONDARY,
   GRID: COLORS.DIVIDER,
   BORDER: "#d9dee5",
@@ -28,7 +28,7 @@ export const ZONE_STYLE = {
     stroke: "rgba(239, 68, 68, 0.30)",
     // 차트 안 라벨은 구간 폭에 들어가야 그려지므로 짧게 쓴다 (범례에는 전체 이름)
     label: "상승 구간",
-    labelColor: "#c62828",
+    labelColor: COLORS.UP,
   },
 };
 
@@ -50,10 +50,10 @@ export const LEGEND_ITEMS = [
 
 /** 판정 결과 → 표시 텍스트/색 */
 export const decisionStatus = (decision) => {
-  if (!decision) return { label: "—", color: CHART_COLORS.MUTED, bg: "#eceff1" };
-  if (decision.executed) return { label: "진입", color: COLORS.SUCCESS, bg: "#e8f5e9" };
-  if (decision.passed) return { label: "충족", color: COLORS.WARNING, bg: `#fff8e1` };
-  return { label: "대기", color: CHART_COLORS.MUTED, bg: "#eceff1" };
+  if (!decision) return { label: "—", color: CHART_COLORS.MUTED, bg: COLORS.SURFACE_ALT };
+  if (decision.executed) return { label: "진입", color: COLORS.SUCCESS, bg: COLORS.TINT_SUCCESS };
+  if (decision.passed) return { label: "충족", color: COLORS.WARNING, bg: `${COLORS.TINT_WARNING}` };
+  return { label: "대기", color: CHART_COLORS.MUTED, bg: COLORS.SURFACE_ALT };
 };
 
 export const won = (value) =>

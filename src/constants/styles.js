@@ -69,6 +69,14 @@ export const COLORS = {
   UP_BG: bullish.faded,
   DOWN_BG: bearish.faded,
 
+  // 배지·구간 강조에 쓰는 옅은 배경. 같은 계열의 텍스트 색과 짝지어 쓴다.
+  TINT_PRIMARY: alpha(primary.main, 0.12),
+  TINT_UP: bullish.faded,
+  TINT_DOWN: bearish.faded,
+  TINT_SUCCESS: alpha(success.main, 0.14),
+  TINT_WARNING: alpha(warning.main, 0.16),
+  TINT_ERROR: alpha(error.main, 0.12),
+
   RS_RANK: {
     HIGH: success.main,
     MEDIUM: warning.main,

@@ -129,10 +129,10 @@ function AnalysisGapCard({ gap }) {
 // Tab 2: 날짜별 파이프라인 격자
 // ─────────────────────────────────────────────
 function cellColor(ratio) {
-  if (ratio === undefined || ratio === null) return { bg: COLORS.DIVIDER, text: "#aaa" };
-  if (ratio >= 95) return { bg: "#e8f5e9", text: COLORS.SUCCESS, border: "#a5d6a7" };
-  if (ratio >= 70) return { bg: `#fff8e1`, text: "#e65100", border: "#ffe082" };
-  return { bg: "#ffebee", text: "#c62828", border: "#ef9a9a" };
+  if (ratio === undefined || ratio === null) return { bg: COLORS.DIVIDER, text: COLORS.TEXT_MUTED };
+  if (ratio >= 95) return { bg: COLORS.TINT_SUCCESS, text: COLORS.SUCCESS, border: COLORS.TINT_SUCCESS };
+  if (ratio >= 70) return { bg: `${COLORS.TINT_WARNING}`, text: COLORS.WARNING, border: COLORS.TINT_WARNING };
+  return { bg: COLORS.TINT_UP, text: COLORS.UP, border: COLORS.TINT_UP };
 }
 
 function GridCell({ dateKey, step }) {
@@ -181,7 +181,7 @@ function GridCell({ dateKey, step }) {
             {data.ratio}%
           </Typography>
         ) : (
-          <Typography variant="caption" sx={{ color: "#bbb" }}>—</Typography>
+          <Typography variant="caption" sx={{ color: COLORS.TEXT_MUTED }}>—</Typography>
         )}
       </Box>
     </Tooltip>
@@ -203,10 +203,10 @@ function PipelineGrid({ grid }) {
       <Box display="flex" gap={2} mb={2} alignItems="center">
         <Typography variant="caption" color="text.secondary">완료율 범례:</Typography>
         {[
-          { label: "≥ 95%", bg: "#e8f5e9", border: "#a5d6a7", text: COLORS.SUCCESS },
-          { label: "≥ 70%", bg: `#fff8e1`, border: "#ffe082", text: "#e65100" },
-          { label: "< 70%", bg: "#ffebee", border: "#ef9a9a", text: "#c62828" },
-          { label: "없음",  bg: COLORS.DIVIDER, border: COLORS.BORDER, text: "#aaa"    },
+          { label: "≥ 95%", bg: COLORS.TINT_SUCCESS, border: COLORS.TINT_SUCCESS, text: COLORS.SUCCESS },
+          { label: "≥ 70%", bg: `${COLORS.TINT_WARNING}`, border: COLORS.TINT_WARNING, text: COLORS.WARNING },
+          { label: "< 70%", bg: COLORS.TINT_UP, border: COLORS.TINT_UP, text: COLORS.UP },
+          { label: "없음",  bg: COLORS.DIVIDER, border: COLORS.BORDER, text: COLORS.TEXT_MUTED    },
         ].map(({ label, bg, border, text }) => (
           <Box key={label} display="flex" alignItems="center" gap={0.5}>
             <Box sx={{ width: 14, height: 14, bgcolor: bg, border: `1px solid ${border}`, borderRadius: 0.5 }} />
@@ -226,7 +226,7 @@ function PipelineGrid({ grid }) {
               alignItems: "flex-end",
               bgcolor: "#f0f2f5",
               borderRadius: "8px 8px 0 0",
-              borderBottom: "2px solid #c5cad4",
+              borderBottom: `2px solid ${COLORS.BORDER_STRONG}`,
               pb: 1,
               pt: 0.5,
             }}
@@ -239,7 +239,7 @@ function PipelineGrid({ grid }) {
                 maxWidth: LABEL_W,
                 flexShrink: 0,
                 px: 1.5,
-                borderRight: "2px solid #c5cad4",
+                borderRight: `2px solid ${COLORS.BORDER_STRONG}`,
               }}
             >
               <Typography variant="caption" fontWeight="bold" color="text.secondary">
@@ -286,7 +286,7 @@ function PipelineGrid({ grid }) {
                 display: "flex",
                 alignItems: "center",
                 bgcolor: si % 2 === 0 ? COLORS.SURFACE : "#f8f9fb",
-                borderBottom: si < steps.length - 1 ? "1px solid #ebebeb" : "none",
+                borderBottom: si < steps.length - 1 ? `1px solid ${COLORS.SURFACE_ALT}` : "none",
                 "&:last-child": { borderRadius: "0 0 8px 8px" },
                 py: 1,
               }}
@@ -299,7 +299,7 @@ function PipelineGrid({ grid }) {
                   maxWidth: LABEL_W,
                   flexShrink: 0,
                   px: 1.5,
-                  borderRight: "2px solid #c5cad4",
+                  borderRight: `2px solid ${COLORS.BORDER_STRONG}`,
                 }}
               >
                 <Typography variant="caption" fontWeight="bold" display="block">
@@ -407,7 +407,7 @@ function LogViewer({ source, autoRefresh }) {
         ref={logBoxRef}
         sx={{
           bgcolor: "#1e1e1e",
-          color: "#d4d4d4",
+          color: COLORS.BORDER_STRONG,
           fontFamily: "monospace",
           fontSize: "0.75rem",
           p: 2,
@@ -431,7 +431,7 @@ function LogViewer({ source, autoRefresh }) {
                 ? "#dcdcaa"
                 : line.includes("[데이터수집]")
                 ? "#9cdcfe"
-                : "#d4d4d4";
+                : COLORS.BORDER_STRONG;
             return (
               <div key={i} style={{ color }}>
                 {line}
@@ -545,7 +545,7 @@ function DailyPipelinePanel({ processes, onTriggerDone }) {
                   <Box
                     sx={{
                       width: 24, height: 24, borderRadius: "50%",
-                      bgcolor: isSkipped ? "#bdbdbd" : "primary.main",
+                      bgcolor: isSkipped ? COLORS.BORDER_STRONG : "primary.main",
                       display: "flex", alignItems: "center", justifyContent: "center",
                       flexShrink: 0,
                     }}

@@ -20,13 +20,13 @@ const LABEL_FONT = "600 11px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
 const LABEL_PADDING = 4;
 
 // T 수축 깊이별 색 (T1 진한 빨강 → T4 연한 노랑)
-const DEPTH_COLORS = ["#dc2626", "#ea580c", "#d97706", "#ca8a04"];
+const DEPTH_COLORS = ["#dc2626", COLORS.WARNING, COLORS.WARNING, "#ca8a04"];
 
-const PEAK_LINE_COLOR = "#ef4444";
+const PEAK_LINE_COLOR = COLORS.UP;
 const TROUGH_LINE_COLOR = "#3b82f6";
 const PIVOT_COLOR = "#8b5cf6";
 const PIVOT_LABEL_COLOR = "#7c3aed";
-const WARN_COLOR = "#f59e0b";
+const WARN_COLOR = COLORS.WARNING;
 
 const TICK_HALF_WIDTH = 12;
 

@@ -23,7 +23,7 @@ const heatColor = (rate) => {
   if (rate === null || rate === undefined) return "#f1f4f8"; // 미수집 슬롯
   if (rate >= 8) return "#8e0000";
   if (rate >= 6) return "#b71c1c";
-  if (rate >= 4) return "#e53935";
+  if (rate >= 4) return COLORS.UP;
   if (rate >= 2.5) return "#f4776e";
   if (rate >= 1) return "#ffab9e";
   if (rate > 0) return "#ffdad4";
@@ -230,7 +230,7 @@ function ThemeRow({ theme, slots, baseMinute, signalIndex, nowMinute }) {
             textOverflow: "ellipsis",
           }}
         >
-          <Box component="span" sx={{ color: "#c62828", fontWeight: 700 }}>
+          <Box component="span" sx={{ color: COLORS.UP, fontWeight: 700 }}>
             {theme.peak_rate >= 0 ? "+" : ""}
             {theme.peak_rate}%
           </Box>
@@ -274,7 +274,7 @@ function ThemeRow({ theme, slots, baseMinute, signalIndex, nowMinute }) {
                       width: 7,
                       height: 7,
                       borderRadius: "50%",
-                      bgcolor: signals.some((s) => s.executed) ? "#1b5e20" : "#263238",
+                      bgcolor: signals.some((s) => s.executed) ? COLORS.SUCCESS : "#263238",
                       boxShadow: `0 0 0 1.5px ${COLORS.SURFACE}`,
                     }}
                   />
@@ -315,7 +315,7 @@ function ThemeRow({ theme, slots, baseMinute, signalIndex, nowMinute }) {
                 bottom: 0,
                 left: `${(seg.start / slots.length) * 100}%`,
                 width: `${(seg.length / slots.length) * 100}%`,
-                bgcolor: "#ffa000",
+                bgcolor: COLORS.WARNING,
                 borderRadius: "2px",
                 zIndex: 2,
               }}
@@ -351,7 +351,7 @@ export function TimelineLegend() {
         </Box>
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
-        <Box sx={{ width: 18, height: 5, bgcolor: "#ffa000", borderRadius: "1px" }} />
+        <Box sx={{ width: 18, height: 5, bgcolor: COLORS.WARNING, borderRadius: "1px" }} />
         <Typography variant="caption" sx={{ fontSize: 11, color: COLORS.TEXT_SECONDARY }}>
           급등 판정
         </Typography>
@@ -361,7 +361,7 @@ export function TimelineLegend() {
         <Typography variant="caption" sx={{ fontSize: 11, color: COLORS.TEXT_SECONDARY }}>
           진입 판정
         </Typography>
-        <Box sx={{ width: 7, height: 7, borderRadius: "50%", bgcolor: "#1b5e20", ml: 0.5 }} />
+        <Box sx={{ width: 7, height: 7, borderRadius: "50%", bgcolor: COLORS.SUCCESS, ml: 0.5 }} />
         <Typography variant="caption" sx={{ fontSize: 11, color: COLORS.TEXT_SECONDARY }}>
           실제 진입
         </Typography>

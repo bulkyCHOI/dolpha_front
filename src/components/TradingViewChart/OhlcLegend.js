@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 
 import { DOWN_COLOR, UP_COLOR } from "./chartTheme";
+import { COLORS } from "constants/styles";
 
 function formatNumber(value) {
   if (value == null || Number.isNaN(value)) return "-";
@@ -60,7 +61,7 @@ function OhlcLegend({ bar, change, intraday }) {
 
   const renderItem = (label, value) => (
     <span style={labelStyle}>
-      <span style={{ color: "#94a3b8", marginRight: 4 }}>{label}</span>
+      <span style={{ color: COLORS.TEXT_MUTED, marginRight: 4 }}>{label}</span>
       <span style={{ color: valueColor, fontWeight: 600 }}>{value}</span>
     </span>
   );
@@ -94,7 +95,7 @@ function OhlcLegend({ bar, change, intraday }) {
         </span>
       )}
       {bar.volume != null && (
-        <span style={{ marginLeft: 12, color: "#94a3b8", whiteSpace: "nowrap" }}>
+        <span style={{ marginLeft: 12, color: COLORS.TEXT_MUTED, whiteSpace: "nowrap" }}>
           거래량 <span style={{ color: "#334155" }}>{formatVolume(bar.volume)}</span>
         </span>
       )}

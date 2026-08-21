@@ -47,7 +47,7 @@ export default function FlowTable({ columns, data, minWidth }) {
               minHeight: ROW_MIN_HEIGHT,
               fontSize: "13px",
               "&:nth-of-type(odd)": { backgroundColor: COLORS.SURFACE_ALT },
-              "&:hover": { backgroundColor: "#e3f2fd !important" },
+              "&:hover": { backgroundColor: `${COLORS.TINT_DOWN} !important` },
             },
           },
           cells: {

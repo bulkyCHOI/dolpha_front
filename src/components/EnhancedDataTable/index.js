@@ -26,7 +26,7 @@ const StyledEnhancedDataTable = styled(DataTable)`
       background-color: ${COLORS.SURFACE_ALT};
     }
     &:hover {
-      background-color: #e3f2fd !important;
+      background-color: ${COLORS.TINT_DOWN} !important;
     }
   }
 
@@ -154,7 +154,7 @@ const EnhancedDataTable = ({ columns, data, autoOptimizeColumns = true, ...props
               backgroundColor: COLORS.SURFACE_ALT,
             },
             "&:hover": {
-              backgroundColor: "#e3f2fd !important",
+              backgroundColor: `${COLORS.TINT_DOWN} !important`,
             },
           },
         },

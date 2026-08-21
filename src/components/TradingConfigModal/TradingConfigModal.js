@@ -535,13 +535,13 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                 <Box
                   sx={{
                     p: 1,
-                    bgcolor: `#fff3cd`,
-                    border: "1px solid #ffeaa7",
+                    bgcolor: `${COLORS.TINT_WARNING}`,
+                    border: `1px solid ${COLORS.TINT_WARNING}`,
                     borderRadius: 1,
                     mt: 1,
                   }}
                 >
-                  <Typography variant="caption" sx={{ color: "#856404", fontWeight: "bold" }}>
+                  <Typography variant="caption" sx={{ color: COLORS.WARNING, fontWeight: "bold" }}>
                     ⚠️ 포지션의 합이 100%가 되어야 합니다. (현재:{" "}
                     {tradingForm.positionSum.toFixed(1)}%)
                   </Typography>

@@ -556,7 +556,7 @@ function Favorites() {
                       backgroundColor:
                         selectedStock?.code === stock.code ||
                         selectedStock?.stock_code === stock.code
-                          ? "#f8f9ff"
+                          ? COLORS.TINT_PRIMARY
                           : index % 2 === 0
                           ? COLORS.SURFACE_ALT
                           : "white",
@@ -576,7 +576,7 @@ function Favorites() {
                           }}
                           sx={{
                             p: 0.5,
-                            color: stock.is_favorite ? COLORS.UP : "#ddd",
+                            color: stock.is_favorite ? COLORS.UP : COLORS.BORDER,
                             "&:hover": {
                               color: COLORS.UP,
                             },
@@ -1124,7 +1124,7 @@ function Favorites() {
                     cursor: "pointer",
                     backgroundColor:
                       selectedStock?.code === stock.code || selectedStock?.stock_code === stock.code
-                        ? "#f8f9ff"
+                        ? COLORS.TINT_PRIMARY
                         : index % 2 === 0
                         ? COLORS.SURFACE_ALT
                         : "white",
@@ -1144,7 +1144,7 @@ function Favorites() {
                         }}
                         sx={{
                           p: 0.5,
-                          color: stock.is_favorite ? COLORS.UP : "#ddd",
+                          color: stock.is_favorite ? COLORS.UP : COLORS.BORDER,
                           "&:hover": {
                             color: COLORS.UP,
                           },
@@ -1278,7 +1278,7 @@ function Favorites() {
                       backgroundColor:
                         selectedStock?.code === stock.stock_code ||
                         selectedStock?.stock_code === stock.stock_code
-                          ? "#f8f9ff"
+                          ? COLORS.TINT_PRIMARY
                           : index % 2 === 0
                           ? COLORS.SURFACE_ALT
                           : "white",

@@ -8,6 +8,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
 import LightweightChart from "./LightweightChart";
+import { COLORS } from "constants/styles";
 
 const DAILY_LIMIT = 20000;
 const DAILY_INITIAL_VISIBLE = 150;
@@ -238,7 +239,7 @@ function StockChartModal({ open, onClose, stockCode, stockName }) {
             <Typography variant="caption" color="text.secondary" mb={0.5}>
               일봉 (전체 {dailyData.length}일, 최근 {DAILY_INITIAL_VISIBLE}일 표시)
             </Typography>
-            <Box sx={{ flex: 1, minHeight: 0, border: "1px solid #eee", borderRadius: 1 }}>
+            <Box sx={{ flex: 1, minHeight: 0, border: `1px solid ${COLORS.DIVIDER}`, borderRadius: 1 }}>
               <LightweightChart
                 data={dailyWithCurrent}
                 mode="daily"
@@ -251,7 +252,7 @@ function StockChartModal({ open, onClose, stockCode, stockName }) {
             <Typography variant="caption" color="text.secondary" mb={0.5}>
               1분봉 (정규장 09:00~15:30, {Math.round(MINUTE_REFRESH_MS / 1000)}초마다 갱신)
             </Typography>
-            <Box sx={{ flex: 1, minHeight: 0, border: "1px solid #eee", borderRadius: 1 }}>
+            <Box sx={{ flex: 1, minHeight: 0, border: `1px solid ${COLORS.DIVIDER}`, borderRadius: 1 }}>
               <LightweightChart data={minuteData} mode="intraday" loading={minuteLoading} />
             </Box>
           </Box>

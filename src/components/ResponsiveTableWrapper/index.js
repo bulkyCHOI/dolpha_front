@@ -22,7 +22,7 @@ const TableContainer = styled(Box)(({ theme }) => ({
     backgroundColor: COLORS.BORDER_STRONG,
     borderRadius: "4px",
     "&:hover": {
-      backgroundColor: "#a8a8a8",
+      backgroundColor: COLORS.TEXT_MUTED,
     },
   },
 

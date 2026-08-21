@@ -6,6 +6,7 @@ import ButtonBase from "@mui/material/ButtonBase";
 
 import Typography from "@mui/material/Typography";
 import { CHART_COLORS, CONDITIONS, decisionStatus } from "./constants";
+import { COLORS } from "constants/styles";
 
 /** 3조건 충족 여부를 점 3개로 압축 표시한다. */
 function ConditionDots({ decision }) {
@@ -55,8 +56,8 @@ function DecisionRow({ decision, selected, onSelect }) {
         textAlign: "left",
         border: "1px solid",
         borderColor: selected ? "#c7d2fe" : "transparent",
-        bgcolor: selected ? "#eef2ff" : "transparent",
-        "&:hover": { bgcolor: selected ? "#eef2ff" : "#f5f7fa" },
+        bgcolor: selected ? COLORS.TINT_PRIMARY : "transparent",
+        "&:hover": { bgcolor: selected ? COLORS.TINT_PRIMARY : "#f5f7fa" },
       }}
     >
       <Box sx={{ display: "flex", alignItems: "center", gap: 1, minWidth: 0 }}>

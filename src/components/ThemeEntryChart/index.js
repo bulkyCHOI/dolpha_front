@@ -164,7 +164,7 @@ function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
         scrollButtons="auto"
         sx={{
           minHeight: 46,
-          borderBottom: "1px solid #eef1f4",
+          borderBottom: `1px solid ${COLORS.SURFACE_ALT}`,
           mb: 1.5,
           "& .MuiTabs-indicator": { height: 2, bgcolor: "#4c51bf" },
           "& .MuiTab-root": { minHeight: 46, py: 0.5, px: 1.5 },
@@ -201,7 +201,7 @@ function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
         <>
           <Grid container spacing={1.5}>
             <Grid item xs={12} lg={9}>
-              <Box sx={{ border: "1px solid #eef1f4", borderRadius: 1.5, overflow: "hidden" }}>
+              <Box sx={{ border: `1px solid ${COLORS.SURFACE_ALT}`, borderRadius: 1.5, overflow: "hidden" }}>
                 <EntryDecisionChart
                   bars={chart.bars}
                   decision={selectedDecision}
@@ -236,7 +236,7 @@ function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
                       height: 20,
                       fontSize: 10.5,
                       fontWeight: 600,
-                      bgcolor: onlyMeaningful ? "#eef2ff" : "#eceff1",
+                      bgcolor: onlyMeaningful ? COLORS.TINT_PRIMARY : COLORS.SURFACE_ALT,
                       color: onlyMeaningful ? "#4c51bf" : CHART_COLORS.MUTED,
                     }}
                   />

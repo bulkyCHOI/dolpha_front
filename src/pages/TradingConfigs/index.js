@@ -135,8 +135,8 @@ const getTradingModeColor = (tradingMode) => {
   // 푸른색 계열로 매매모드 구분 - 차이를 극대화
   const colors = {
     manual: COLORS.DOWN, // 밝은 파란색 - 수동 매매
-    turtle: "#0d47a1", // 진한 네이비 블루 - 터틀 매매
-    atr: "#0d47a1", // 진한 네이비 블루 - 자동 매매 (Turtle)
+    turtle: COLORS.DOWN, // 진한 네이비 블루 - 터틀 매매
+    atr: COLORS.DOWN, // 진한 네이비 블루 - 자동 매매 (Turtle)
   };
   return colors[tradingMode] || COLORS.TEXT_MUTED;
 };
@@ -144,7 +144,7 @@ const getTradingModeColor = (tradingMode) => {
 // 배경색에 따른 텍스트 색상 결정 함수
 const getTextColor = (backgroundColor) => {
   // MTT(다크레드)와 Turtle(네이비)만 흰색, 나머지는 검은색
-  const darkColors = [COLORS.UP, "#0d47a1", "#7b1fa2"]; // MTT, Turtle/ATR, 급등테마주
+  const darkColors = [COLORS.UP, COLORS.DOWN, "#7b1fa2"]; // MTT, Turtle/ATR, 급등테마주
   return darkColors.includes(backgroundColor) ? "white" : "black";
 };
 

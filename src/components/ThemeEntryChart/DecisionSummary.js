@@ -36,7 +36,7 @@ function ConditionCard({ label, ok, color, metrics }) {
             fontSize: 10,
             fontWeight: 700,
             color: COLORS.SURFACE,
-            bgcolor: ok ? color : "#c2ccd6",
+            bgcolor: ok ? color : COLORS.BORDER_STRONG,
           }}
         >
           {ok ? OK_ICON : NG_ICON}
@@ -184,7 +184,7 @@ function DecisionSummary({ decision, params }) {
             <Chip
               size="small"
               label="좌표 추정"
-              sx={{ height: 19, fontSize: 10.5, bgcolor: `#fff3e0`, color: "#e65100" }}
+              sx={{ height: 19, fontSize: 10.5, bgcolor: `#fff3e0`, color: COLORS.WARNING }}
             />
           </Tooltip>
         )}
@@ -192,7 +192,7 @@ function DecisionSummary({ decision, params }) {
           <Chip
             size="small"
             label="분봉 부족 — 좌표 복원 불가"
-            sx={{ height: 19, fontSize: 10.5, bgcolor: "#eceff1", color: CHART_COLORS.MUTED }}
+            sx={{ height: 19, fontSize: 10.5, bgcolor: COLORS.SURFACE_ALT, color: CHART_COLORS.MUTED }}
           />
         )}
         <Typography variant="caption" sx={{ fontSize: 11.5, color: CHART_COLORS.MUTED }}>

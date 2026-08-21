@@ -35,11 +35,11 @@ const toWon = (eok) => Math.max(0, Math.round((eok || 0) * 100000000));
 function FieldLabel({ text, help }) {
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 0.5 }}>
-      <Typography variant="caption" fontWeight="bold" sx={{ color: "#344767" }}>
+      <Typography variant="caption" fontWeight="bold" sx={{ color: COLORS.TEXT }}>
         {text}
       </Typography>
       <Tooltip title={help} arrow placement="top">
-        <HelpOutlineIcon sx={{ fontSize: 14, color: "#b0bac5", cursor: "help" }} />
+        <HelpOutlineIcon sx={{ fontSize: 14, color: COLORS.TEXT_MUTED, cursor: "help" }} />
       </Tooltip>
     </Box>
   );

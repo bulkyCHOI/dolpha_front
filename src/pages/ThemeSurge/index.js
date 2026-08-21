@@ -208,8 +208,8 @@ function ConditionMark({ ok }) {
         width: 18,
         height: 18,
         borderRadius: "50%",
-        bgcolor: ok ? "#e8f5e9" : "#f1f4f8",
-        color: ok ? COLORS.SUCCESS : "#c2ccd6",
+        bgcolor: ok ? COLORS.TINT_SUCCESS : "#f1f4f8",
+        color: ok ? COLORS.SUCCESS : COLORS.BORDER_STRONG,
         fontSize: 11,
         fontWeight: 700,
         lineHeight: "18px",
@@ -258,13 +258,13 @@ const tableStyles = (minWidth, compact = false) => ({
       minHeight: compact ? "0px" : "48px",
       lineHeight: compact ? 1.1 : "inherit",
       fontSize: "13px",
-      "&:not(:last-of-type)": { borderBottomColor: "#eef1f4" },
+      "&:not(:last-of-type)": { borderBottomColor: COLORS.SURFACE_ALT },
       "&:hover": { backgroundColor: "#f5f7ff !important" },
     },
   },
   cells: { style: { padding: compact ? "0px 6px" : "8px" } },
   pagination: {
-    style: { backgroundColor: COLORS.SURFACE, borderTop: "1px solid #eef1f4", fontSize: "12px" },
+    style: { backgroundColor: COLORS.SURFACE, borderTop: `1px solid ${COLORS.SURFACE_ALT}`, fontSize: "12px" },
   },
 });
 
@@ -414,7 +414,7 @@ function ThemeSurge() {
             height: 20,
             fontSize: 11,
             fontWeight: 600,
-            bgcolor: r.executed ? "#e8f5e9" : r.passed ? `#fff8e1` : "#eceff1",
+            bgcolor: r.executed ? COLORS.TINT_SUCCESS : r.passed ? `${COLORS.TINT_WARNING}` : COLORS.SURFACE_ALT,
             color: r.executed ? COLORS.SUCCESS : r.passed ? COLORS.WARNING : MUTED,
           }}
         />
@@ -466,7 +466,7 @@ function ThemeSurge() {
                   <Chip
                     size="small"
                     label={`${lastSlot} 까지 수집`}
-                    sx={{ height: 20, fontSize: 11, bgcolor: "#eef2ff", color: "#4c51bf" }}
+                    sx={{ height: 20, fontSize: 11, bgcolor: COLORS.TINT_PRIMARY, color: "#4c51bf" }}
                   />
                 )}
                 {lastUpdated && (
@@ -506,7 +506,7 @@ function ThemeSurge() {
                     borderColor: `${COLORS.PRIMARY_BLUE} !important`,
                   },
                   "&.Mui-disabled": {
-                    color: "#b0bac5 !important",
+                    color: `${COLORS.TEXT_MUTED} !important`,
                     borderColor: "#dfe3e8 !important",
                   },
                 }}
@@ -621,7 +621,7 @@ function ThemeSurge() {
                   <Chip
                     size="small"
                     label="실시간"
-                    sx={{ height: 20, fontSize: 11, bgcolor: "#e8f5e9", color: COLORS.SUCCESS }}
+                    sx={{ height: 20, fontSize: 11, bgcolor: COLORS.TINT_SUCCESS, color: COLORS.SUCCESS }}
                   />
                 }
                 sx={{ height: "100%", p: 1.75 }}

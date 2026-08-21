@@ -33,7 +33,7 @@ const InflectionPointToggle = ({
             },
           },
           "&.Mui-disabled": {
-            color: "#bdbdbd",
+            color: COLORS.BORDER_STRONG,
             backgroundColor: "transparent",
             border: `1px solid ${COLORS.BORDER}`,
           },

@@ -924,7 +924,7 @@ function TradingDefaults() {
                                 <Typography
                                   variant="body2"
                                   fontWeight="bold"
-                                  sx={{ minWidth: 40, color: "#b26a00" }}
+                                  sx={{ minWidth: 40, color: COLORS.WARNING }}
                                 >
                                   {label}
                                 </Typography>
@@ -933,7 +933,7 @@ function TradingDefaults() {
                                   size="small"
                                   sx={{
                                     bgcolor: "rgba(255,152,0,0.15)",
-                                    color: "#b26a00",
+                                    color: COLORS.WARNING,
                                     fontWeight: 700,
                                     fontSize: "0.72rem",
                                     border: "1px solid rgba(255,152,0,0.35)",

@@ -43,11 +43,11 @@ const MAX_STAGES = 5;
 function Label({ text, help }) {
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 0.5 }}>
-      <Typography variant="caption" fontWeight="bold" sx={{ color: "#344767" }}>
+      <Typography variant="caption" fontWeight="bold" sx={{ color: COLORS.TEXT }}>
         {text}
       </Typography>
       <Tooltip title={help} arrow placement="top">
-        <HelpOutlineIcon sx={{ fontSize: 14, color: "#b0bac5", cursor: "help" }} />
+        <HelpOutlineIcon sx={{ fontSize: 14, color: COLORS.TEXT_MUTED, cursor: "help" }} />
       </Tooltip>
     </Box>
   );
@@ -96,7 +96,7 @@ function ThemeSurgeExitSettings({ defaults, onChange }) {
 
       <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 2 }}>
         <Box>
-          <Typography variant="button" fontWeight="bold" sx={{ color: "#344767" }}>
+          <Typography variant="button" fontWeight="bold" sx={{ color: COLORS.TEXT }}>
             청산 설정 (데이 트레이딩)
           </Typography>
           <Typography variant="caption" sx={{ display: "block", color: MUTED }}>
@@ -195,7 +195,7 @@ function ThemeSurgeExitSettings({ defaults, onChange }) {
 
           {/* ── 분할 익절 차수 ───────────────────────────── */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
-            <Typography variant="button" fontWeight="bold" sx={{ color: "#344767" }}>
+            <Typography variant="button" fontWeight="bold" sx={{ color: COLORS.TEXT }}>
               분할 익절 차수
             </Typography>
             <Tooltip
@@ -203,7 +203,7 @@ function ThemeSurgeExitSettings({ defaults, onChange }) {
               arrow
               placement="top"
             >
-              <HelpOutlineIcon sx={{ fontSize: 14, color: "#b0bac5", cursor: "help" }} />
+              <HelpOutlineIcon sx={{ fontSize: 14, color: COLORS.TEXT_MUTED, cursor: "help" }} />
             </Tooltip>
             <Typography variant="caption" sx={{ color: MUTED, ml: "auto" }}>
               누적 {totalSellPct.toFixed(0)}% · 트레일링 몫 {remainPct.toFixed(0)}%
@@ -274,7 +274,7 @@ function ThemeSurgeExitSettings({ defaults, onChange }) {
           <Divider sx={{ my: 2 }} />
           <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <Box>
-              <Typography variant="button" fontWeight="bold" sx={{ color: "#344767" }}>
+              <Typography variant="button" fontWeight="bold" sx={{ color: COLORS.TEXT }}>
                 잔여 물량 트레일링 스탑
               </Typography>
               <Typography variant="caption" sx={{ display: "block", color: MUTED }}>

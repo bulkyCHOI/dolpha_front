@@ -38,7 +38,7 @@ export const TableContainer = styled(Box)(({ theme }) => ({
     borderRadius: "4px",
 
     "&:hover": {
-      backgroundColor: "#a8a8a8",
+      backgroundColor: COLORS.TEXT_MUTED,
     },
   },
 
@@ -208,7 +208,7 @@ export const getCustomTableStyles = (theme) => ({
         backgroundColor: COLORS.SURFACE_ALT,
       },
       "&:hover": {
-        backgroundColor: "#e3f2fd !important",
+        backgroundColor: `${COLORS.TINT_DOWN} !important`,
         cursor: "pointer",
       },
 
