@@ -4,4 +4,5 @@ export { default as useTradingViewChart } from "./useTradingViewChart";
 export { default as ChartLegend } from "./ChartLegend";
 export { default as OhlcLegend, formatChartTime } from "./OhlcLegend";
 export { default as useOhlcHover } from "./useOhlcHover";
+export { default as useSeriesHover } from "./useSeriesHover";
 export * from "./chartTheme";

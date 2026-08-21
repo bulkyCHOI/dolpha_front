@@ -18,7 +18,11 @@ import Delete from "@mui/icons-material/Delete";
 import Timeline from "@mui/icons-material/Timeline";
 
 // 차트
-import TradingViewChart, { ChartLegend } from "components/TradingViewChart";
+import TradingViewChart, {
+  ChartLegend,
+  OhlcLegend,
+  useSeriesHover,
+} from "components/TradingViewChart";
 import InflectionPointToggle from "components/InflectionPointToggle";
 import useInflectionPoints from "hooks/useInflectionPoints";
 
@@ -33,7 +37,6 @@ import {
   buildStockChartSeries,
   compactPanes,
 } from "./buildStockSeries";
-
 
 const DRAW_LINE_COLOR = "#667eea";
 const PYRAMIDING_LINE_COLOR = "#ff9800";
@@ -76,6 +79,10 @@ const ChartContainer = ({
   // 이동 모드: 선을 고른 뒤 차트를 클릭하면 그 가격으로 옮긴다.
   const [movingLineId, setMovingLineId] = useState(null);
   const [menuState, setMenuState] = useState({ anchorEl: null, lineId: null });
+  // 범례에서 끈 계열 (Chart.js 범례의 표시/숨김을 대체)
+  const [hiddenSeriesIds, setHiddenSeriesIds] = useState([]);
+
+  const { readout, onCrosshairMove } = useSeriesHover(ohlcvData);
 
   const {
     showInflectionPoints,
@@ -96,8 +103,14 @@ const ChartContainer = ({
       inflectionAnalysisResult,
       showInflectionPoints,
     });
-    return compactPanes(built, PANE_STRETCH);
+    const withVisibility = built.map((spec) =>
+      hiddenSeriesIds.includes(spec.id)
+        ? { ...spec, options: { ...spec.options, visible: false } }
+        : spec
+    );
+    return compactPanes(withVisibility, PANE_STRETCH);
   }, [
+    hiddenSeriesIds,
     ohlcvData,
     analysisData,
     horizontalLines,
@@ -307,6 +320,13 @@ const ChartContainer = ({
               { title: "이동평균", items: MA_FIELDS },
               { title: "RS Rank", items: RS_FIELDS },
             ]}
+            values={readout?.values}
+            hiddenIds={hiddenSeriesIds}
+            onToggle={(field) =>
+              setHiddenSeriesIds((prev) =>
+                prev.includes(field) ? prev.filter((id) => id !== field) : [...prev, field]
+              )
+            }
           />
 
           {/* 캔들 · 거래량 · RS · ATR · MTT (pane 통합) */}
@@ -315,9 +335,9 @@ const ChartContainer = ({
               series={series}
               panes={panes}
               height="100%"
-              initialVisibleBars={120}
               fitContentKey={selectedStock?.code ?? null}
               onClick={handleChartClick}
+              onCrosshairMove={onCrosshairMove}
               chartOptions={{
                 leftPriceScale: { visible: true, borderColor: "#e2e8f0" },
                 crosshair: { mode: isDrawingMode || movingLineId ? 0 : 1 },
@@ -325,6 +345,7 @@ const ChartContainer = ({
               sx={{ cursor: isDrawingMode || movingLineId ? "crosshair" : "default" }}
               overlay={
                 <>
+                  <OhlcLegend bar={readout?.bar} change={readout?.change} />
                   {overlay}
                   {drawingHint}
                 </>
@@ -376,7 +397,6 @@ const ChartContainer = ({
                   series={indexSeries}
                   panes={[{ stretch: 1 }]}
                   height="100%"
-                  initialVisibleBars={120}
                   fitContentKey={selectedIndexCode || null}
                   emptyMessage={
                     selectedIndexCode ? "인덱스 데이터를 로드하는 중..." : "인덱스를 선택하세요"
