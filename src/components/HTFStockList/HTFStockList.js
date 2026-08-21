@@ -168,14 +168,14 @@ function HTFStockList({
             width: "8px",
           },
           "&::-webkit-scrollbar-track": {
-            background: "#f1f1f1",
+            background: COLORS.DIVIDER,
             borderRadius: "4px",
           },
           "&::-webkit-scrollbar-thumb": {
-            background: "#c1c1c1",
+            background: COLORS.BORDER_STRONG,
             borderRadius: "4px",
             "&:hover": {
-              background: "#a1a1a1",
+              background: COLORS.TEXT_MUTED,
             },
           },
         }}
@@ -189,14 +189,14 @@ function HTFStockList({
               onClick={() => onStockClick(stock)}
               sx={{
                 p: 0.5,
-                borderBottom: rowIndex === stocks.length - 1 ? "none" : "1px solid #f0f0f0",
+                borderBottom: rowIndex === stocks.length - 1 ? "none" : `1px solid ${COLORS.DIVIDER}`,
                 cursor: "pointer",
                 transition: "all 0.2s ease",
                 backgroundColor:
                   selectedStock?.code === stock.code
                     ? "linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)"
                     : rowIndex % 2 === 0
-                    ? "#fafafa"
+                    ? COLORS.SURFACE_ALT
                     : "white",
                 "&:hover": {
                   backgroundColor: "rgba(102, 126, 234, 0.08)",

@@ -9,6 +9,7 @@
 
 import Box from "@mui/material/Box";
 import EnhancedDataTable from "components/EnhancedDataTable";
+import { COLORS } from "constants/styles";
 
 const ROW_MIN_HEIGHT = "40px";
 const SCROLL_HEIGHT = "380px";
@@ -30,9 +31,9 @@ export default function FlowTable({ columns, data, minWidth }) {
           },
           headRow: {
             style: {
-              backgroundColor: "#f8f9fa",
+              backgroundColor: COLORS.SURFACE_ALT,
               borderBottomWidth: "2px",
-              borderBottomColor: "#e9ecef",
+              borderBottomColor: COLORS.BORDER,
               fontSize: "13px",
               fontWeight: "bold",
               minHeight: ROW_MIN_HEIGHT,
@@ -45,7 +46,7 @@ export default function FlowTable({ columns, data, minWidth }) {
             style: {
               minHeight: ROW_MIN_HEIGHT,
               fontSize: "13px",
-              "&:nth-of-type(odd)": { backgroundColor: "#fafafa" },
+              "&:nth-of-type(odd)": { backgroundColor: COLORS.SURFACE_ALT },
               "&:hover": { backgroundColor: "#e3f2fd !important" },
             },
           },

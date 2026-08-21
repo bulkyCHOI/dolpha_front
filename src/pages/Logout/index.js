@@ -41,7 +41,7 @@ function Logout() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#f8f9fa",
+        backgroundColor: COLORS.SURFACE_ALT,
       }}
     >
       <Box

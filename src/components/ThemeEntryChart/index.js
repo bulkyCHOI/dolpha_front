@@ -15,6 +15,7 @@ import EntryDecisionChart from "./EntryDecisionChart";
 import DecisionList from "./DecisionList";
 import DecisionSummary, { ChartLegend } from "./DecisionSummary";
 import { CHART_COLORS, decisionStatus } from "./constants";
+import { COLORS } from "constants/styles";
 
 const CHART_HEIGHT = 400;
 
@@ -192,7 +193,7 @@ function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
           <Typography variant="body2" sx={{ color: CHART_COLORS.MUTED, fontSize: 13 }}>
             {chart.stock_name || selectedCode}의 1분봉이 저장되어 있지 않아 차트를 그릴 수 없습니다.
           </Typography>
-          <Typography variant="caption" sx={{ color: "#9aa5b1" }}>
+          <Typography variant="caption" sx={{ color: COLORS.TEXT_MUTED }}>
             분봉은 자동매매 사이클이 돌 때 수집됩니다.
           </Typography>
         </Box>

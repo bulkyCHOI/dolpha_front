@@ -61,6 +61,7 @@ import { useAuth } from "contexts/AuthContext";
 
 // Notification system
 import { useNotification } from "components/NotificationSystem/NotificationSystem";
+import { COLORS } from "constants/styles";
 
 // Utility functions
 const formatCurrency = (value) => {
@@ -101,7 +102,7 @@ const getTradingModeColor = (tradingMode) => {
     turtle: "#0d47a1", // 진한 네이비 블루 - 터틀 매매
     atr: "#0d47a1", // 진한 네이비 블루 - 자동 매매
   };
-  return colors[tradingMode] || "#9e9e9e";
+  return colors[tradingMode] || COLORS.TEXT_MUTED;
 };
 
 const getFinalStatusLabel = (status) => {

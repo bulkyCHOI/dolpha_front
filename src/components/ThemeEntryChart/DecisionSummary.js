@@ -7,6 +7,7 @@ import Tooltip from "@mui/material/Tooltip";
 
 import Typography from "@mui/material/Typography";
 import { CHART_COLORS, LEGEND_ITEMS, decisionStatus, pct, ratio, won } from "./constants";
+import { COLORS } from "constants/styles";
 
 const OK_ICON = "✓";
 const NG_ICON = "✕";
@@ -34,7 +35,7 @@ function ConditionCard({ label, ok, color, metrics }) {
             placeItems: "center",
             fontSize: 10,
             fontWeight: 700,
-            color: "#fff",
+            color: COLORS.SURFACE,
             bgcolor: ok ? color : "#c2ccd6",
           }}
         >
@@ -183,7 +184,7 @@ function DecisionSummary({ decision, params }) {
             <Chip
               size="small"
               label="좌표 추정"
-              sx={{ height: 19, fontSize: 10.5, bgcolor: "#fff3e0", color: "#e65100" }}
+              sx={{ height: 19, fontSize: 10.5, bgcolor: `#fff3e0`, color: "#e65100" }}
             />
           </Tooltip>
         )}

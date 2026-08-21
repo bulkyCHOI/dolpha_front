@@ -26,9 +26,10 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 
 import Typography from "@mui/material/Typography";
+import { COLORS } from "constants/styles";
 
 const ACCENT = "#ef6c00";
-const MUTED = "#7b8794";
+const MUTED = COLORS.TEXT_SECONDARY;
 
 const BAR_UNITS = [
   { value: "1m", label: "1분봉" },

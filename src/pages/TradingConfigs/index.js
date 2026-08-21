@@ -56,6 +56,7 @@ import StockChartModal from "components/StockChartModal";
 
 // 매매동향 모달
 import InvestorFlowModal from "components/InvestorFlowModal";
+import { COLORS } from "constants/styles";
 
 // Remove the old styled component - now using EnhancedDataTable
 
@@ -118,7 +119,7 @@ const getStrategyTypeColor = (strategyType) => {
     daily_top50: "#ffc107", // 엠버(황금색) - 단기 전략 (일일 Top50)
     theme_surge: "#7b1fa2", // 퍼플 - 급등테마주 전략
   };
-  return colors[strategyType] || "#9e9e9e";
+  return colors[strategyType] || COLORS.TEXT_MUTED;
 };
 
 const getTradingModeLabel = (tradingMode) => {
@@ -137,7 +138,7 @@ const getTradingModeColor = (tradingMode) => {
     turtle: "#0d47a1", // 진한 네이비 블루 - 터틀 매매
     atr: "#0d47a1", // 진한 네이비 블루 - 자동 매매 (Turtle)
   };
-  return colors[tradingMode] || "#9e9e9e";
+  return colors[tradingMode] || COLORS.TEXT_MUTED;
 };
 
 // 배경색에 따른 텍스트 색상 결정 함수

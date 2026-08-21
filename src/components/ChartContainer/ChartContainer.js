@@ -52,7 +52,7 @@ const CHART_HEIGHT = { xs: 480, md: 640 };
 const INDEX_CHART_HEIGHT = { xs: 240, md: 300 };
 
 const chartSurfaceSx = {
-  backgroundColor: "#ffffff",
+  backgroundColor: COLORS.SURFACE,
   border: "1px solid #e2e8f0",
   borderRadius: 1,
   p: 0.5,
@@ -300,11 +300,11 @@ const ChartContainer = ({
           size="small"
           sx={{
             border: `1px solid ${DRAW_LINE_COLOR}`,
-            color: isDrawingMode ? "#ffffff" : DRAW_LINE_COLOR,
+            color: isDrawingMode ? COLORS.SURFACE : DRAW_LINE_COLOR,
             backgroundColor: isDrawingMode ? DRAW_LINE_COLOR : "rgba(255, 255, 255, 0.9)",
             "&.Mui-selected": {
               backgroundColor: DRAW_LINE_COLOR,
-              color: "#ffffff",
+              color: COLORS.SURFACE,
               "&:hover": { backgroundColor: COLORS.PRIMARY_HOVER },
             },
           }}
@@ -351,7 +351,7 @@ const ChartContainer = ({
         left: 8,
         zIndex: 10,
         backgroundColor: movingLineId ? "rgba(255, 152, 0, 0.92)" : "rgba(102, 126, 234, 0.92)",
-        color: "#ffffff",
+        color: COLORS.SURFACE,
         borderRadius: 1,
         px: 1,
         py: 0.5,

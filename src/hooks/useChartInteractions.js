@@ -335,7 +335,7 @@ export const useChartInteractions = (
           autoSkip: true,
           autoSkipPadding: 10,
           maxTicksLimit: 10,
-          color: "#666",
+          color: COLORS.TEXT_SECONDARY,
           font: {
             size: 12,
           },
@@ -352,7 +352,7 @@ export const useChartInteractions = (
           color: "rgba(0,0,0,0.1)",
         },
         ticks: {
-          color: "#666",
+          color: COLORS.TEXT_SECONDARY,
           font: {
             size: 12,
           },
@@ -377,7 +377,7 @@ export const useChartInteractions = (
           font: {
             size: 10,
           },
-          color: "#666",
+          color: COLORS.TEXT_SECONDARY,
         },
       },
       tooltip: {
@@ -416,8 +416,8 @@ export const useChartInteractions = (
           },
         },
         backgroundColor: "rgba(0,0,0,0.9)",
-        titleColor: "#fff",
-        bodyColor: "#fff",
+        titleColor: COLORS.SURFACE,
+        bodyColor: COLORS.SURFACE,
         borderColor: COLORS.PRIMARY,
         borderWidth: 1,
         cornerRadius: 8,

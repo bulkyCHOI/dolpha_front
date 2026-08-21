@@ -126,7 +126,7 @@ function MyPage() {
                       borderRadius: "4px 4px 0 0",
                     },
                     "& .MuiTab-root": {
-                      color: "#666",
+                      color: COLORS.TEXT_SECONDARY,
                       fontWeight: 500,
                       fontSize: { xs: "0.95rem", md: "1.1rem" },
                       minWidth: { xs: "auto", md: 180 },

@@ -4,6 +4,7 @@
 
 import DataTable from "react-data-table-component";
 import styled from "styled-components";
+import { COLORS } from "constants/styles";
 
 const StyledEnhancedDataTable = styled(DataTable)`
   .rdt_Table {
@@ -14,15 +15,15 @@ const StyledEnhancedDataTable = styled(DataTable)`
   }
 
   .rdt_TableHeadRow {
-    background-color: #f8f9fa;
-    border-bottom: 2px solid #e9ecef;
+    background-color: ${COLORS.SURFACE_ALT};
+    border-bottom: 2px solid ${COLORS.BORDER};
     font-weight: bold;
   }
 
   .rdt_TableRow {
     transition: background-color 0.2s ease;
     &:nth-of-type(odd) {
-      background-color: #fafafa;
+      background-color: ${COLORS.SURFACE_ALT};
     }
     &:hover {
       background-color: #e3f2fd !important;
@@ -52,8 +53,8 @@ const StyledEnhancedDataTable = styled(DataTable)`
   }
 
   .rdt_Pagination {
-    background-color: #f8f9fa;
-    border-top: 1px solid #e9ecef;
+    background-color: ${COLORS.SURFACE_ALT};
+    border-top: 1px solid ${COLORS.BORDER};
   }
 `;
 
@@ -131,9 +132,9 @@ const EnhancedDataTable = ({ columns, data, autoOptimizeColumns = true, ...props
         },
         headRow: {
           style: {
-            backgroundColor: "#f8f9fa",
+            backgroundColor: COLORS.SURFACE_ALT,
             borderBottomWidth: "2px",
-            borderBottomColor: "#e9ecef",
+            borderBottomColor: COLORS.BORDER,
             fontSize: "14px",
             fontWeight: "bold",
           },
@@ -150,7 +151,7 @@ const EnhancedDataTable = ({ columns, data, autoOptimizeColumns = true, ...props
           style: {
             minHeight: "65px",
             "&:nth-of-type(odd)": {
-              backgroundColor: "#fafafa",
+              backgroundColor: COLORS.SURFACE_ALT,
             },
             "&:hover": {
               backgroundColor: "#e3f2fd !important",
@@ -164,8 +165,8 @@ const EnhancedDataTable = ({ columns, data, autoOptimizeColumns = true, ...props
         },
         pagination: {
           style: {
-            backgroundColor: "#f8f9fa",
-            borderTop: "1px solid #e9ecef",
+            backgroundColor: COLORS.SURFACE_ALT,
+            borderTop: `1px solid ${COLORS.BORDER}`,
             fontSize: "14px",
           },
         },

@@ -5,6 +5,7 @@ import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { formatNumber } from "utils/formatters";
 import { todayKST } from "hooks/useThemeSurgeData";
+import { COLORS } from "constants/styles";
 
 const LABEL_WIDTH = 168;
 const TRACK_MIN_WIDTH = 620; // 이보다 좁아지면 가로 스크롤
@@ -92,7 +93,7 @@ function TimeAxis({ slots, baseMinute }) {
                 transform: idx === 0 ? "none" : "translateX(-50%)",
                 fontSize: 10,
                 lineHeight: "16px",
-                color: "#7b8794",
+                color: COLORS.TEXT_SECONDARY,
                 whiteSpace: "nowrap",
                 fontVariantNumeric: "tabular-nums",
               }}
@@ -208,7 +209,7 @@ function ThemeRow({ theme, slots, baseMinute, signalIndex, nowMinute }) {
           position: "sticky",
           left: 0,
           zIndex: 3,
-          bgcolor: "#fff",
+          bgcolor: COLORS.SURFACE,
         }}
       >
         <Typography
@@ -222,7 +223,7 @@ function ThemeRow({ theme, slots, baseMinute, signalIndex, nowMinute }) {
           variant="caption"
           sx={{
             fontSize: 11,
-            color: "#7b8794",
+            color: COLORS.TEXT_SECONDARY,
             display: "block",
             whiteSpace: "nowrap",
             overflow: "hidden",
@@ -274,7 +275,7 @@ function ThemeRow({ theme, slots, baseMinute, signalIndex, nowMinute }) {
                       height: 7,
                       borderRadius: "50%",
                       bgcolor: signals.some((s) => s.executed) ? "#1b5e20" : "#263238",
-                      boxShadow: "0 0 0 1.5px #fff",
+                      boxShadow: `0 0 0 1.5px ${COLORS.SURFACE}`,
                     }}
                   />
                 )}
@@ -340,7 +341,7 @@ export function TimelineLegend() {
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: 2, flexWrap: "wrap" }}>
       <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
-        <Typography variant="caption" sx={{ fontSize: 11, color: "#7b8794" }}>
+        <Typography variant="caption" sx={{ fontSize: 11, color: COLORS.TEXT_SECONDARY }}>
           등락률
         </Typography>
         <Box sx={{ display: "flex", borderRadius: "2px", overflow: "hidden" }}>
@@ -351,23 +352,23 @@ export function TimelineLegend() {
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
         <Box sx={{ width: 18, height: 5, bgcolor: "#ffa000", borderRadius: "1px" }} />
-        <Typography variant="caption" sx={{ fontSize: 11, color: "#7b8794" }}>
+        <Typography variant="caption" sx={{ fontSize: 11, color: COLORS.TEXT_SECONDARY }}>
           급등 판정
         </Typography>
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
         <Box sx={{ width: 7, height: 7, borderRadius: "50%", bgcolor: "#263238" }} />
-        <Typography variant="caption" sx={{ fontSize: 11, color: "#7b8794" }}>
+        <Typography variant="caption" sx={{ fontSize: 11, color: COLORS.TEXT_SECONDARY }}>
           진입 판정
         </Typography>
         <Box sx={{ width: 7, height: 7, borderRadius: "50%", bgcolor: "#1b5e20", ml: 0.5 }} />
-        <Typography variant="caption" sx={{ fontSize: 11, color: "#7b8794" }}>
+        <Typography variant="caption" sx={{ fontSize: 11, color: COLORS.TEXT_SECONDARY }}>
           실제 진입
         </Typography>
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
         <Box sx={{ width: 2, height: 12, bgcolor: "rgba(76,81,191,0.55)" }} />
-        <Typography variant="caption" sx={{ fontSize: 11, color: "#7b8794" }}>
+        <Typography variant="caption" sx={{ fontSize: 11, color: COLORS.TEXT_SECONDARY }}>
           현재 시각
         </Typography>
       </Box>
@@ -407,10 +408,10 @@ function ThemeTimeline({ slots, themes, signals, date }) {
   if (!slots.length || !themes.length) {
     return (
       <Box py={6} textAlign="center">
-        <Typography variant="body2" sx={{ color: "#7b8794" }}>
+        <Typography variant="body2" sx={{ color: COLORS.TEXT_SECONDARY }}>
           해당 날짜에 수집된 급등 테마가 없습니다.
         </Typography>
-        <Typography variant="caption" sx={{ color: "#9aa5b1" }}>
+        <Typography variant="caption" sx={{ color: COLORS.TEXT_MUTED }}>
           장중(09:00~15:30)에 5분마다 자동 수집됩니다.
         </Typography>
       </Box>

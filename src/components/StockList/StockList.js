@@ -142,14 +142,14 @@ function StockList({
             width: "8px",
           },
           "&::-webkit-scrollbar-track": {
-            background: "#f1f1f1",
+            background: COLORS.DIVIDER,
             borderRadius: "4px",
           },
           "&::-webkit-scrollbar-thumb": {
-            background: "#c1c1c1",
+            background: COLORS.BORDER_STRONG,
             borderRadius: "4px",
             "&:hover": {
-              background: "#a1a1a1",
+              background: COLORS.TEXT_MUTED,
             },
           },
         }}
@@ -162,7 +162,7 @@ function StockList({
               onClick={() => onStockClick(row)}
               sx={{
                 p: 0.5,
-                borderBottom: rowIndex === stocks.length - 1 ? "none" : "1px solid #f0f0f0",
+                borderBottom: rowIndex === stocks.length - 1 ? "none" : `1px solid ${COLORS.DIVIDER}`,
                 cursor: "pointer",
                 transition: "all 0.2s ease",
                 backgroundColor:
@@ -171,7 +171,7 @@ function StockList({
                     : disableStripes
                     ? "white"
                     : rowIndex % 2 === 0
-                    ? "#fafafa"
+                    ? COLORS.SURFACE_ALT
                     : "white",
                 "&:hover": {
                   backgroundColor: "rgba(102, 126, 234, 0.08)",
@@ -227,7 +227,7 @@ function StockList({
                                 ? "#4caf50" // 60 이상: 초록
                                 : rowData[header.field] >= 50
                                 ? "#2196f3" // 50 이상: 파랑
-                                : "#9e9e9e", // 50 이하: 회색
+                                : COLORS.TEXT_MUTED, // 50 이하: 회색
                             color:
                               rowData[header.field] >= 70 && rowData[header.field] < 80
                                 ? "black" // 노란색일 때는 검은색 텍스트
@@ -257,7 +257,7 @@ function StockList({
                                 ? "#4caf50" // 75%이상 녹색
                                 : rowData[header.field] >= 50
                                 ? "#2196f3" // 50%이상 파랑
-                                : "#9e9e9e", // 50%미만 회색
+                                : COLORS.TEXT_MUTED, // 50%미만 회색
                             color: "white",
                             fontWeight: "bold",
                             fontSize: "0.7rem",
@@ -284,7 +284,7 @@ function StockList({
                                 ? "#4caf50" // 10% 이상: 초록
                                 : rowData[header.field] >= 5
                                 ? "#2196f3" // 5% 이상: 파랑
-                                : "#9e9e9e", // 5% 미만: 회색
+                                : COLORS.TEXT_MUTED, // 5% 미만: 회색
                             color:
                               rowData[header.field] >= 15 && rowData[header.field] < 20
                                 ? "black" // 노란색일 때는 검은색 텍스트

@@ -26,7 +26,7 @@ import ThemeSurgeExitSettings from "./ThemeSurgeExitSettings";
 import { COLORS } from "constants/styles";
 
 const ACCENT = "#ef6c00";
-const MUTED = "#7b8794";
+const MUTED = COLORS.TEXT_SECONDARY;
 
 /** 억 단위 입력 ↔ 원 단위 저장 */
 const toEok = (won) => Math.round((won || 0) / 100000000);

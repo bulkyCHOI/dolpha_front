@@ -134,7 +134,7 @@ const AutotradingAccordion = ({
               </Box>
             </AccordionSummary>
 
-            <AccordionDetails sx={{ backgroundColor: "#ffffff", position: "relative" }}>
+            <AccordionDetails sx={{ backgroundColor: COLORS.SURFACE, position: "relative" }}>
               {/* 우측 상단 컨트롤 영역 - 신규이므로 초기화 버튼만 */}
               <Box
                 sx={{
@@ -366,7 +366,7 @@ const AutotradingAccordion = ({
                     <Box
                       sx={{
                         p: 1,
-                        bgcolor: "#fff3cd",
+                        bgcolor: `#fff3cd`,
                         border: "1px solid #ffeaa7",
                         borderRadius: 1,
                         mb: 1,
@@ -485,20 +485,20 @@ const AutotradingAccordion = ({
                       flex: 1,
                       background: isFormValid()
                         ? `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`
-                        : "#ccc",
+                        : COLORS.BORDER_STRONG,
                       color: "white !important",
                       "&:hover": {
                         background: isFormValid()
                           ? `linear-gradient(135deg, ${COLORS.PRIMARY_HOVER} 0%, #6a4190 100%)`
-                          : "#ccc",
+                          : COLORS.BORDER_STRONG,
                         color: "white !important",
                       },
                       "&:disabled": {
-                        background: "#ccc !important",
+                        background: `${COLORS.BORDER_STRONG} !important`,
                         color: "white !important",
                       },
                       "&.Mui-disabled": {
-                        background: "#ccc !important",
+                        background: `${COLORS.BORDER_STRONG} !important`,
                         color: "white !important",
                       },
                     }}
@@ -568,7 +568,7 @@ const AutotradingAccordion = ({
                   </Box>
                 </AccordionSummary>
 
-                <AccordionDetails sx={{ backgroundColor: "#ffffff", position: "relative" }}>
+                <AccordionDetails sx={{ backgroundColor: COLORS.SURFACE, position: "relative" }}>
                   {/* 우측 상단 컨트롤 영역 - 신규이므로 초기화 버튼만 */}
                   <Box
                     sx={{
@@ -789,7 +789,7 @@ const AutotradingAccordion = ({
                         <Box
                           sx={{
                             p: 1,
-                            bgcolor: "#fff3cd",
+                            bgcolor: `#fff3cd`,
                             border: "1px solid #ffeaa7",
                             borderRadius: 1,
                             mb: 1,
@@ -912,20 +912,20 @@ const AutotradingAccordion = ({
                           flex: 1,
                           background: isFormValid()
                             ? `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`
-                            : "#ccc",
+                            : COLORS.BORDER_STRONG,
                           color: "white !important",
                           "&:hover": {
                             background: isFormValid()
                               ? `linear-gradient(135deg, ${COLORS.PRIMARY_HOVER} 0%, #6a4190 100%)`
-                              : "#ccc",
+                              : COLORS.BORDER_STRONG,
                             color: "white !important",
                           },
                           "&:disabled": {
-                            background: "#ccc !important",
+                            background: `${COLORS.BORDER_STRONG} !important`,
                             color: "white !important",
                           },
                           "&.Mui-disabled": {
-                            background: "#ccc !important",
+                            background: `${COLORS.BORDER_STRONG} !important`,
                             color: "white !important",
                           },
                         }}
@@ -951,13 +951,13 @@ const AutotradingAccordion = ({
                 expandIcon={<ExpandMore />}
                 sx={{
                   backgroundColor: (() => {
-                    if (!stockConfig.hasConfig) return "#f8f9fa";
+                    if (!stockConfig.hasConfig) return COLORS.SURFACE_ALT;
                     if (stockConfig.is_active) return "rgba(76, 175, 80, 0.1)";
                     return "rgba(158, 158, 158, 0.1)";
                   })(),
                   "&:hover": {
                     backgroundColor: (() => {
-                      if (!stockConfig.hasConfig) return "#e9ecef";
+                      if (!stockConfig.hasConfig) return COLORS.BORDER;
                       if (stockConfig.is_active) return "rgba(76, 175, 80, 0.2)";
                       return "rgba(158, 158, 158, 0.2)";
                     })(),
@@ -983,7 +983,7 @@ const AutotradingAccordion = ({
                       sx={{
                         fontSize: "0.7rem",
                         height: "20px",
-                        backgroundColor: !stockConfig.is_active ? "#9e9e9e" : undefined,
+                        backgroundColor: !stockConfig.is_active ? COLORS.TEXT_MUTED : undefined,
                         color: !stockConfig.is_active ? "white" : undefined,
                       }}
                     />
@@ -1035,7 +1035,7 @@ const AutotradingAccordion = ({
                 </Box>
               </AccordionSummary>
 
-              <AccordionDetails sx={{ backgroundColor: "#ffffff", position: "relative" }}>
+              <AccordionDetails sx={{ backgroundColor: COLORS.SURFACE, position: "relative" }}>
                 {/* 우측 상단 컨트롤 영역 */}
                 {(stockConfig.trading_mode || stockConfig.stop_loss || stockConfig.take_profit) && (
                   <Box
@@ -1286,7 +1286,7 @@ const AutotradingAccordion = ({
                       <Box
                         sx={{
                           p: 1,
-                          bgcolor: "#fff3cd",
+                          bgcolor: `#fff3cd`,
                           border: "1px solid #ffeaa7",
                           borderRadius: 1,
                           mb: 1,
@@ -1409,20 +1409,20 @@ const AutotradingAccordion = ({
                         flex: 1,
                         background: isFormValid()
                           ? `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`
-                          : "#ccc",
+                          : COLORS.BORDER_STRONG,
                         color: "white !important",
                         "&:hover": {
                           background: isFormValid()
                             ? `linear-gradient(135deg, ${COLORS.PRIMARY_HOVER} 0%, #6a4190 100%)`
-                            : "#ccc",
+                            : COLORS.BORDER_STRONG,
                           color: "white !important",
                         },
                         "&:disabled": {
-                          background: "#ccc !important",
+                          background: `${COLORS.BORDER_STRONG} !important`,
                           color: "white !important",
                         },
                         "&.Mui-disabled": {
-                          background: "#ccc !important",
+                          background: `${COLORS.BORDER_STRONG} !important`,
                           color: "white !important",
                         },
                       }}

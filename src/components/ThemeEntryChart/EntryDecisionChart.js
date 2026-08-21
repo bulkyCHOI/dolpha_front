@@ -6,6 +6,7 @@ import TradingViewChart from "components/TradingViewChart";
 
 import ZonePrimitive from "components/TradingViewChart/ZonePrimitive";
 import { CHART_COLORS, ZONE_STYLE, decisionStatus, timeLabel, won } from "./constants";
+import { COLORS } from "constants/styles";
 
 const MINUTE = 60;
 const LEAD_MINUTES = 4; // 탐색 구간 시작 앞쪽 여백
@@ -294,7 +295,7 @@ function EntryDecisionChart({ bars, decision, height }) {
       onCrosshairMove={handleCrosshairMove}
       overlay={readoutOverlay}
       chartOptions={{
-        layout: { background: { color: "#ffffff" }, textColor: "#37474f", fontSize: 11 },
+        layout: { background: { color: COLORS.SURFACE }, textColor: "#37474f", fontSize: 11 },
         grid: {
           vertLines: { color: CHART_COLORS.GRID },
           horzLines: { color: CHART_COLORS.GRID },

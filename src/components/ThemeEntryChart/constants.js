@@ -1,5 +1,7 @@
 /** 진입 판정 차트 공용 상수 — 색/라벨을 한 곳에서 관리한다. */
 
+import { COLORS } from "constants/styles";
+
 export const CHART_COLORS = {
   UP: "#ef4444",
   DOWN: "#3b82f6",
@@ -9,8 +11,8 @@ export const CHART_COLORS = {
   DECISION: "#616161",
   PASSED: "#f59e0b",
   EXECUTED: "#16a34a",
-  MUTED: "#7b8794",
-  GRID: "#f0f0f0",
+  MUTED: COLORS.TEXT_SECONDARY,
+  GRID: COLORS.DIVIDER,
   BORDER: "#d9dee5",
 };
 
@@ -50,7 +52,7 @@ export const LEGEND_ITEMS = [
 export const decisionStatus = (decision) => {
   if (!decision) return { label: "—", color: CHART_COLORS.MUTED, bg: "#eceff1" };
   if (decision.executed) return { label: "진입", color: "#2e7d32", bg: "#e8f5e9" };
-  if (decision.passed) return { label: "충족", color: "#ef6c00", bg: "#fff8e1" };
+  if (decision.passed) return { label: "충족", color: "#ef6c00", bg: `#fff8e1` };
   return { label: "대기", color: CHART_COLORS.MUTED, bg: "#eceff1" };
 };
 

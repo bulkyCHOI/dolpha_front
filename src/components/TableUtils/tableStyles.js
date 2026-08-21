@@ -5,6 +5,7 @@
 
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
+import { COLORS } from "constants/styles";
 
 // Table container with overflow handling
 export const TableContainer = styled(Box)(({ theme }) => ({
@@ -28,12 +29,12 @@ export const TableContainer = styled(Box)(({ theme }) => ({
   },
 
   "&::-webkit-scrollbar-track": {
-    backgroundColor: "#f1f1f1",
+    backgroundColor: COLORS.DIVIDER,
     borderRadius: "4px",
   },
 
   "&::-webkit-scrollbar-thumb": {
-    backgroundColor: "#c1c1c1",
+    backgroundColor: COLORS.BORDER_STRONG,
     borderRadius: "4px",
 
     "&:hover": {
@@ -165,9 +166,9 @@ export const getCustomTableStyles = (theme) => ({
   },
   headRow: {
     style: {
-      backgroundColor: "#f8f9fa",
+      backgroundColor: COLORS.SURFACE_ALT,
       borderBottomWidth: "2px",
-      borderBottomColor: "#e9ecef",
+      borderBottomColor: COLORS.BORDER,
       fontSize: "14px",
       fontWeight: "bold",
       minHeight: "52px",
@@ -202,9 +203,9 @@ export const getCustomTableStyles = (theme) => ({
     style: {
       minHeight: "65px",
       borderBottomWidth: "1px",
-      borderBottomColor: "#e9ecef",
+      borderBottomColor: COLORS.BORDER,
       "&:nth-of-type(odd)": {
-        backgroundColor: "#fafafa",
+        backgroundColor: COLORS.SURFACE_ALT,
       },
       "&:hover": {
         backgroundColor: "#e3f2fd !important",
@@ -243,8 +244,8 @@ export const getCustomTableStyles = (theme) => ({
   },
   pagination: {
     style: {
-      backgroundColor: "#f8f9fa",
-      borderTop: "1px solid #e9ecef",
+      backgroundColor: COLORS.SURFACE_ALT,
+      borderTop: `1px solid ${COLORS.BORDER}`,
       fontSize: "14px",
       padding: "12px",
 

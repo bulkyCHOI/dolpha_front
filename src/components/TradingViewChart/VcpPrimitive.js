@@ -14,6 +14,8 @@
  * timeScale.timeToCoordinate / series.priceToCoordinate 로 바뀌었다.
  */
 
+import { COLORS } from "constants/styles";
+
 const LABEL_FONT = "600 11px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
 const LABEL_PADDING = 4;
 
@@ -98,7 +100,7 @@ class VcpRenderer {
       if (settings.showPercentageLabels) {
         const midY = (highY + lowY) / 2;
         const depth = typeof t.depth === "number" ? t.depth.toFixed(1) : "-";
-        this._drawLabel(ctx, `${t.label} (${depth}%)`, midX, midY, "#ffffff", color);
+        this._drawLabel(ctx, `${t.label} (${depth}%)`, midX, midY, COLORS.SURFACE, color);
 
         // 수축하지 않는(=VCP 조건에 어긋나는) 구간 경고
         if (t.isContracting === false) {
@@ -174,7 +176,7 @@ class VcpRenderer {
 
     if (settings.showPercentageLabels) {
       const price = new Intl.NumberFormat("ko-KR").format(Math.round(pivotPoint.price));
-      this._drawLabel(ctx, `Pivot ${price}`, width - 55, y - 14, "#ffffff", PIVOT_LABEL_COLOR);
+      this._drawLabel(ctx, `Pivot ${price}`, width - 55, y - 14, COLORS.SURFACE, PIVOT_LABEL_COLOR);
     }
   }
 

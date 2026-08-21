@@ -15,7 +15,7 @@ import { COLORS } from "constants/styles";
 
 const RISE = "#d32f2f";
 const FALL = "#1565c0";
-const MUTED = "#7b8794";
+const MUTED = COLORS.TEXT_SECONDARY;
 const OK = "#2e7d32";
 
 const cardSx = {
@@ -96,7 +96,7 @@ function PositionCard({ position: p }) {
             </Typography>
             <ThemeBadge name={p.theme_name} />
           </Box>
-          <Typography variant="caption" sx={{ color: "#9aa5b1", fontSize: 11 }}>
+          <Typography variant="caption" sx={{ color: COLORS.TEXT_MUTED, fontSize: 11 }}>
             {p.stock_code} · {p.entry_count}/{p.max_entries}차 진입
             {p.entered_at ? ` · ${p.entered_at}` : ""}
           </Typography>
@@ -200,7 +200,7 @@ function WatchingCard({ item: w }) {
             </Typography>
             <ThemeBadge name={w.theme_name} />
           </Box>
-          <Typography variant="caption" sx={{ color: "#9aa5b1", fontSize: 11 }}>
+          <Typography variant="caption" sx={{ color: COLORS.TEXT_MUTED, fontSize: 11 }}>
             {w.stock_code}
             {w.checked_at ? ` · ${w.checked_at} 판정` : ""}
           </Typography>
@@ -212,7 +212,7 @@ function WatchingCard({ item: w }) {
             height: 20,
             fontSize: 11,
             fontWeight: 700,
-            bgcolor: w.conditions_met >= 2 ? "#fff8e1" : "#eceff1",
+            bgcolor: w.conditions_met >= 2 ? `#fff8e1` : "#eceff1",
             color: w.conditions_met >= 2 ? "#ef6c00" : MUTED,
           }}
         />
@@ -279,7 +279,7 @@ function ThemeSurgePositions({ positions, watching, summary, loading, error, isA
         <Typography variant="body2" sx={{ color: MUTED }}>
           현재 급등테마주 전략으로 추적 중인 종목이 없습니다.
         </Typography>
-        <Typography variant="caption" sx={{ color: "#9aa5b1" }}>
+        <Typography variant="caption" sx={{ color: COLORS.TEXT_MUTED }}>
           마이페이지에서 급등테마주 자동매매를 켜면 장중 급등 테마의 주도주가 자동으로 등록됩니다.
         </Typography>
       </Card>

@@ -175,7 +175,7 @@ function HTF() {
     if (gain >= 200) return "#f44336"; // 200% 이상: 빨강
     if (gain >= 150) return "#ff5722"; // 150% 이상: 주황
     if (gain >= 100) return "#2196f3"; // 100% 이상: 파랑
-    return "#9e9e9e"; // 미만: 회색
+    return COLORS.TEXT_MUTED; // 미만: 회색
   };
 
   // HTF 조정폭에 따른 색상 결정
@@ -193,12 +193,12 @@ function HTF() {
       rising: { color: "#4caf50", text: "상승중" },
       pullback: { color: "#ff9800", text: "조정중" },
       breakout: { color: "#2196f3", text: "돌파" },
-      none: { color: "#9e9e9e", text: "해당없음" },
+      none: { color: COLORS.TEXT_MUTED, text: "해당없음" },
       // 한국어 상태도 지원 (호환성)
       상승중: { color: "#4caf50", text: "상승중" },
       조정중: { color: "#ff9800", text: "조정중" },
       돌파: { color: "#2196f3", text: "돌파" },
-      해당없음: { color: "#9e9e9e", text: "해당없음" },
+      해당없음: { color: COLORS.TEXT_MUTED, text: "해당없음" },
     };
 
     return statusConfig[status] || statusConfig.none;
@@ -224,7 +224,7 @@ function HTF() {
           overflow: "hidden",
         }}
       >
-        <Box sx={{ px: 2, py: 1.5, borderBottom: "1px solid #e0e0e0" }}>
+        <Box sx={{ px: 2, py: 1.5, borderBottom: `1px solid ${COLORS.BORDER}` }}>
           <Typography variant="h6" fontWeight="bold">
             HTF 패턴 종목
           </Typography>
@@ -273,13 +273,13 @@ function HTF() {
             flexDirection: "column",
             "&::-webkit-scrollbar": { width: "8px" },
             "&::-webkit-scrollbar-track": {
-              background: "#f1f1f1",
+              background: COLORS.DIVIDER,
               borderRadius: "4px",
             },
             "&::-webkit-scrollbar-thumb": {
-              background: "#c1c1c1",
+              background: COLORS.BORDER_STRONG,
               borderRadius: "4px",
-              "&:hover": { background: "#a1a1a1" },
+              "&:hover": { background: COLORS.TEXT_MUTED },
             },
           }}
         >
@@ -371,7 +371,7 @@ function HTF() {
           overflow: "hidden",
         }}
       >
-        <Box sx={{ px: 2, py: 1.5, borderBottom: "1px solid #e0e0e0" }}>
+        <Box sx={{ px: 2, py: 1.5, borderBottom: `1px solid ${COLORS.BORDER}` }}>
           <Typography variant="h6" fontWeight="bold">
             HTF 자동매매 설정
           </Typography>
@@ -431,7 +431,7 @@ function HTF() {
           sx={{
             height: "100vh",
             width: "100%",
-            backgroundColor: "#f8f9fa",
+            backgroundColor: COLORS.SURFACE_ALT,
             display: "flex",
             flexDirection: "column",
             overflow: "hidden",
@@ -509,7 +509,7 @@ function HTF() {
           sx={{
             height: "100vh",
             width: "100%",
-            backgroundColor: "#f8f9fa",
+            backgroundColor: COLORS.SURFACE_ALT,
             display: "flex",
             flexDirection: "column",
             overflow: "hidden",
@@ -560,14 +560,14 @@ function HTF() {
                       width: "8px",
                     },
                     "&::-webkit-scrollbar-track": {
-                      background: "#f1f1f1",
+                      background: COLORS.DIVIDER,
                       borderRadius: "4px",
                     },
                     "&::-webkit-scrollbar-thumb": {
-                      background: "#c1c1c1",
+                      background: COLORS.BORDER_STRONG,
                       borderRadius: "4px",
                       "&:hover": {
-                        background: "#a1a1a1",
+                        background: COLORS.TEXT_MUTED,
                       },
                     },
                   }}
@@ -668,7 +668,7 @@ function HTF() {
                 }}
               >
                 {/* 탭 헤더 */}
-                <Box sx={{ flexShrink: 0, borderBottom: "1px solid #e0e0e0" }}>
+                <Box sx={{ flexShrink: 0, borderBottom: `1px solid ${COLORS.BORDER}` }}>
                   <Tabs
                     value={activeTab}
                     onChange={handleTabChange}
@@ -682,7 +682,7 @@ function HTF() {
                       "& .MuiTab-root": {
                         fontWeight: "bold",
                         fontSize: { xs: "0.8rem", md: "0.9rem" },
-                        color: "#666",
+                        color: COLORS.TEXT_SECONDARY,
                         minWidth: "auto",
                         padding: { xs: "8px 12px", md: "12px 16px" },
                         "&.Mui-selected": {
@@ -738,14 +738,14 @@ function HTF() {
                               width: "8px",
                             },
                             "&::-webkit-scrollbar-track": {
-                              background: "#f1f1f1",
+                              background: COLORS.DIVIDER,
                               borderRadius: "4px",
                             },
                             "&::-webkit-scrollbar-thumb": {
-                              background: "#c1c1c1",
+                              background: COLORS.BORDER_STRONG,
                               borderRadius: "4px",
                               "&:hover": {
-                                background: "#a1a1a1",
+                                background: COLORS.TEXT_MUTED,
                               },
                             },
                           }}
@@ -775,14 +775,14 @@ function HTF() {
                             width: "6px",
                           },
                           "&::-webkit-scrollbar-track": {
-                            background: "#f1f1f1",
+                            background: COLORS.DIVIDER,
                             borderRadius: "3px",
                           },
                           "&::-webkit-scrollbar-thumb": {
-                            background: "#c1c1c1",
+                            background: COLORS.BORDER_STRONG,
                             borderRadius: "3px",
                             "&:hover": {
-                              background: "#a1a1a1",
+                              background: COLORS.TEXT_MUTED,
                             },
                           },
                         }}
@@ -798,10 +798,10 @@ function HTF() {
                               textAlign: "center",
                             }}
                           >
-                            <Typography variant="h5" sx={{ mb: 2, color: "#666" }}>
+                            <Typography variant="h5" sx={{ mb: 2, color: COLORS.TEXT_SECONDARY }}>
                               로그인이 필요합니다
                             </Typography>
-                            <Typography variant="body1" sx={{ mb: 3, color: "#888" }}>
+                            <Typography variant="body1" sx={{ mb: 3, color: COLORS.TEXT_MUTED }}>
                               HTF 자동매매 기능을 사용하려면 Google 로그인이 필요합니다.
                             </Typography>
                             <Button

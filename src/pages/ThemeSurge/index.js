@@ -39,7 +39,7 @@ const LIVE_THEME_LIMIT = 10;
 
 const RISE = "#d32f2f";
 const FALL = "#1565c0";
-const MUTED = "#7b8794";
+const MUTED = COLORS.TEXT_SECONDARY;
 
 const cardSx = {
   p: 2.5,
@@ -144,7 +144,7 @@ function StockCell({ name, code }) {
         {name}
       </Typography>
       {code && (
-        <Typography variant="caption" sx={{ color: "#9aa5b1", lineHeight: 1, fontSize: 11 }}>
+        <Typography variant="caption" sx={{ color: COLORS.TEXT_MUTED, lineHeight: 1, fontSize: 11 }}>
           {code}
         </Typography>
       )}
@@ -173,7 +173,7 @@ function ThemeInlineCell({ name, leader }) {
           sx={{
             fontSize: 10.5,
             lineHeight: 1.05,
-            color: "#9aa5b1",
+            color: COLORS.TEXT_MUTED,
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
@@ -237,7 +237,7 @@ const tableStyles = (minWidth, compact = false) => ({
     style: {
       backgroundColor: "#f8fafc",
       borderBottomWidth: "1px",
-      borderBottomColor: "#e9ecef",
+      borderBottomColor: COLORS.BORDER,
       fontSize: "12px",
       fontWeight: 700,
       color: MUTED,
@@ -264,7 +264,7 @@ const tableStyles = (minWidth, compact = false) => ({
   },
   cells: { style: { padding: compact ? "0px 6px" : "8px" } },
   pagination: {
-    style: { backgroundColor: "#fff", borderTop: "1px solid #eef1f4", fontSize: "12px" },
+    style: { backgroundColor: COLORS.SURFACE, borderTop: "1px solid #eef1f4", fontSize: "12px" },
   },
 });
 
@@ -414,7 +414,7 @@ function ThemeSurge() {
             height: 20,
             fontSize: 11,
             fontWeight: 600,
-            bgcolor: r.executed ? "#e8f5e9" : r.passed ? "#fff8e1" : "#eceff1",
+            bgcolor: r.executed ? "#e8f5e9" : r.passed ? `#fff8e1` : "#eceff1",
             color: r.executed ? "#2e7d32" : r.passed ? "#ef6c00" : MUTED,
           }}
         />
@@ -470,7 +470,7 @@ function ThemeSurge() {
                   />
                 )}
                 {lastUpdated && (
-                  <Typography variant="caption" sx={{ color: "#9aa5b1" }}>
+                  <Typography variant="caption" sx={{ color: COLORS.TEXT_MUTED }}>
                     최종 갱신 {lastUpdated.toLocaleTimeString("ko-KR")} · 1분마다 자동 갱신
                   </Typography>
                 )}
@@ -484,7 +484,7 @@ function ThemeSurge() {
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 sx={{
-                  bgcolor: "#fff",
+                  bgcolor: COLORS.SURFACE,
                   width: { xs: "100%", sm: 160 },
                   "& .MuiInputBase-input": { fontSize: 13 },
                 }}
@@ -497,7 +497,7 @@ function ThemeSurge() {
                 onClick={handleRefresh}
                 disabled={loading}
                 sx={{
-                  bgcolor: "#fff",
+                  bgcolor: COLORS.SURFACE,
                   whiteSpace: "nowrap",
                   color: `${COLORS.PRIMARY_BLUE} !important`,
                   borderColor: `${COLORS.PRIMARY_BLUE}66 !important`,
@@ -521,7 +521,7 @@ function ThemeSurge() {
                 disabled={scanning || !isAuthenticated}
                 sx={{
                   background: GRADIENT_COLORS.PRIMARY,
-                  color: "#fff !important",
+                  color: `${COLORS.SURFACE} !important`,
                   whiteSpace: "nowrap",
                   boxShadow: "none",
                   "&:hover": { background: GRADIENT_COLORS.PRIMARY_HOVER, boxShadow: "none" },
@@ -711,7 +711,7 @@ function ThemeSurge() {
           </Box>
 
           <Divider sx={{ my: 3 }} />
-          <Typography variant="caption" sx={{ color: "#9aa5b1" }}>
+          <Typography variant="caption" sx={{ color: COLORS.TEXT_MUTED }}>
             데이터 출처: 토스증권 산업분류(TICS) 랭킹 · 수급 데이터: 한국투자증권 API. 수집은 개장일
             09:00~15:30에만 이루어집니다. 표시된 정보는 투자 판단의 참고용이며 투자 권유가 아닙니다.
           </Typography>

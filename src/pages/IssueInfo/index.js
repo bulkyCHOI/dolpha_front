@@ -25,6 +25,7 @@ import Typography from "@mui/material/Typography";
 import AppHeader from "components/AppHeader";
 import routes from "routes";
 import { fetchMarketIndices } from "utils/twelveDataApi";
+import { COLORS } from "constants/styles";
 
 function IssueInfo() {
   const theme = useTheme();
@@ -60,7 +61,7 @@ function IssueInfo() {
           p: 1.5,
           border: "1px solid rgba(0,0,0,0.08)",
           borderRadius: 2,
-          backgroundColor: "#fafafa",
+          backgroundColor: COLORS.SURFACE_ALT,
           boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
         }}
       >
@@ -312,7 +313,7 @@ function IssueInfo() {
           minHeight="100vh"
           width="100%"
           sx={{
-            backgroundColor: "#ffffff",
+            backgroundColor: COLORS.SURFACE,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -331,7 +332,7 @@ function IssueInfo() {
         minHeight="100vh"
         width="100%"
         sx={{
-          backgroundColor: "#ffffff",
+          backgroundColor: COLORS.SURFACE,
           pt: 12,
           pb: 4,
         }}

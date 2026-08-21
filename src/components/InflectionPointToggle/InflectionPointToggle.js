@@ -1,6 +1,7 @@
 import React from "react";
 import ToggleButton from "@mui/material/ToggleButton";
 import Tooltip from "@mui/material/Tooltip";
+import { COLORS } from "constants/styles";
 
 const InflectionPointToggle = ({
   showInflectionPoints = false,
@@ -34,7 +35,7 @@ const InflectionPointToggle = ({
           "&.Mui-disabled": {
             color: "#bdbdbd",
             backgroundColor: "transparent",
-            border: "1px solid #e0e0e0",
+            border: `1px solid ${COLORS.BORDER}`,
           },
         }}
       >

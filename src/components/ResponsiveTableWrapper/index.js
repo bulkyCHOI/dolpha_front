@@ -4,6 +4,7 @@
 
 import { Box } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { COLORS } from "constants/styles";
 
 const TableContainer = styled(Box)(({ theme }) => ({
   width: "100%",
@@ -14,11 +15,11 @@ const TableContainer = styled(Box)(({ theme }) => ({
     height: "8px",
   },
   "&::-webkit-scrollbar-track": {
-    backgroundColor: "#f1f1f1",
+    backgroundColor: COLORS.DIVIDER,
     borderRadius: "4px",
   },
   "&::-webkit-scrollbar-thumb": {
-    backgroundColor: "#c1c1c1",
+    backgroundColor: COLORS.BORDER_STRONG,
     borderRadius: "4px",
     "&:hover": {
       backgroundColor: "#a8a8a8",

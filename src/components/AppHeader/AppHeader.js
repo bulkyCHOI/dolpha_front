@@ -30,6 +30,7 @@ import AppHeaderDropdown from "components/AppHeader/AppHeaderDropdown";
 import AppHeaderMobile from "components/AppHeader/AppHeaderMobile";
 
 import breakpoints from "assets/theme/base/breakpoints";
+import { COLORS } from "constants/styles";
 
 function AppHeader({ brand, routes, sticky }) {
   const [dropdown, setDropdown] = useState("");
@@ -528,7 +529,7 @@ function AppHeader({ brand, routes, sticky }) {
                 backgroundColor: "rgba(255, 255, 255, 0.1)",
               },
               "&:focus": {
-                outline: "2px solid #fff",
+                outline: `2px solid ${COLORS.SURFACE}`,
                 outlineOffset: "2px",
               },
             }}

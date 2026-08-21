@@ -2,6 +2,7 @@ import React, { useMemo, useRef, useState, useEffect, useCallback } from "react"
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import { COLORS } from "constants/styles";
 
 const MIN_PLOT_HEIGHT = 260;
 const PADDING = { top: 16, right: 16, bottom: 28, left: 46 };
@@ -10,7 +11,7 @@ const CLOSE_MINUTE = 15 * 60 + 30; // 15:30
 const TICK_MINUTES = 60;
 const TARGET_RATE_TICKS = 6; // 세로축 라벨 목표 개수
 const TICK_STEP_CANDIDATES = [1, 2, 5, 10, 20, 50, 100];
-const MUTED = "#7b8794";
+const MUTED = COLORS.TEXT_SECONDARY;
 
 /** 시리즈 색상 — 명도/색상이 충분히 구분되는 순서로 배치 */
 const SERIES_COLORS = [
@@ -275,7 +276,7 @@ function ThemeRateLineChart({ slots, themes, loading }) {
                     cy={yOf(row.rate)}
                     r="3"
                     fill={row.color}
-                    stroke="#fff"
+                    stroke={COLORS.SURFACE}
                     strokeWidth="1.2"
                   />
                 ))}
@@ -293,7 +294,7 @@ function ThemeRateLineChart({ slots, themes, loading }) {
               left: xOf(hoverMinute) > PADDING.left + plotWidth / 2 ? 12 : "auto",
               right: xOf(hoverMinute) > PADDING.left + plotWidth / 2 ? "auto" : 12,
               bgcolor: "rgba(33,37,41,0.92)",
-              color: "#fff",
+              color: COLORS.SURFACE,
               borderRadius: 1,
               px: 1.25,
               py: 1,
@@ -351,7 +352,7 @@ function ThemeRateLineChart({ slots, themes, loading }) {
                 px: 0.9,
                 py: 0.35,
                 borderRadius: 1,
-                border: "1px solid #e9ecef",
+                border: `1px solid ${COLORS.BORDER}`,
                 cursor: "pointer",
                 opacity: hidden ? 0.4 : 1,
                 userSelect: "none",

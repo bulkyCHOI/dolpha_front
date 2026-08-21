@@ -3,6 +3,7 @@ import { Button } from "@mui/material";
 import { Google } from "@mui/icons-material";
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
+import { COLORS } from "constants/styles";
 
 const GoogleLoginButton = ({ onSuccess, onError, disabled = false }) => {
   const handleGoogleLogin = async () => {
@@ -61,8 +62,8 @@ const GoogleLoginButton = ({ onSuccess, onError, disabled = false }) => {
             backgroundColor: "rgba(66, 133, 244, 0.04)",
           },
           "&:disabled": {
-            borderColor: "#e0e0e0",
-            color: "#9e9e9e",
+            borderColor: COLORS.BORDER,
+            color: COLORS.TEXT_MUTED,
           },
         }}
       >

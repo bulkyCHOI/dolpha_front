@@ -39,6 +39,7 @@ import AppFooter from "components/AppFooter";
 
 // Routes
 import routes from "routes";
+import { COLORS } from "constants/styles";
 
 const apiBase = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
@@ -128,9 +129,9 @@ function AnalysisGapCard({ gap }) {
 // Tab 2: 날짜별 파이프라인 격자
 // ─────────────────────────────────────────────
 function cellColor(ratio) {
-  if (ratio === undefined || ratio === null) return { bg: "#f0f0f0", text: "#aaa" };
+  if (ratio === undefined || ratio === null) return { bg: COLORS.DIVIDER, text: "#aaa" };
   if (ratio >= 95) return { bg: "#e8f5e9", text: "#2e7d32", border: "#a5d6a7" };
-  if (ratio >= 70) return { bg: "#fff8e1", text: "#e65100", border: "#ffe082" };
+  if (ratio >= 70) return { bg: `#fff8e1`, text: "#e65100", border: "#ffe082" };
   return { bg: "#ffebee", text: "#c62828", border: "#ef9a9a" };
 }
 
@@ -163,7 +164,7 @@ function GridCell({ dateKey, step }) {
           alignItems: "center",
           justifyContent: "center",
           bgcolor: bg,
-          border: `1px solid ${border || "#e0e0e0"}`,
+          border: `1px solid ${border || COLORS.BORDER}`,
           borderRadius: 1,
           cursor: "default",
           transition: "transform 0.1s, box-shadow 0.1s",
@@ -203,9 +204,9 @@ function PipelineGrid({ grid }) {
         <Typography variant="caption" color="text.secondary">완료율 범례:</Typography>
         {[
           { label: "≥ 95%", bg: "#e8f5e9", border: "#a5d6a7", text: "#2e7d32" },
-          { label: "≥ 70%", bg: "#fff8e1", border: "#ffe082", text: "#e65100" },
+          { label: "≥ 70%", bg: `#fff8e1`, border: "#ffe082", text: "#e65100" },
           { label: "< 70%", bg: "#ffebee", border: "#ef9a9a", text: "#c62828" },
-          { label: "없음",  bg: "#f0f0f0", border: "#e0e0e0", text: "#aaa"    },
+          { label: "없음",  bg: COLORS.DIVIDER, border: COLORS.BORDER, text: "#aaa"    },
         ].map(({ label, bg, border, text }) => (
           <Box key={label} display="flex" alignItems="center" gap={0.5}>
             <Box sx={{ width: 14, height: 14, bgcolor: bg, border: `1px solid ${border}`, borderRadius: 0.5 }} />
@@ -284,7 +285,7 @@ function PipelineGrid({ grid }) {
               sx={{
                 display: "flex",
                 alignItems: "center",
-                bgcolor: si % 2 === 0 ? "#ffffff" : "#f8f9fb",
+                bgcolor: si % 2 === 0 ? COLORS.SURFACE : "#f8f9fb",
                 borderBottom: si < steps.length - 1 ? "1px solid #ebebeb" : "none",
                 "&:last-child": { borderRadius: "0 0 8px 8px" },
                 py: 1,
@@ -418,7 +419,7 @@ function LogViewer({ source, autoRefresh }) {
         }}
       >
         {lines.length === 0 ? (
-          <span style={{ color: "#888" }}>로그가 없습니다.</span>
+          <span style={{ color: COLORS.TEXT_MUTED }}>로그가 없습니다.</span>
         ) : (
           lines.map((line, i) => {
             const color =
@@ -570,7 +571,7 @@ function DailyPipelinePanel({ processes, onTriggerDone }) {
                   </Box>
                 </Box>
                 {idx < PIPELINE_STEPS.length - 1 && (
-                  <Box ml={1.5} pl={2.5} sx={{ borderLeft: "2px dashed #e0e0e0", height: 8 }} />
+                  <Box ml={1.5} pl={2.5} sx={{ borderLeft: `2px dashed ${COLORS.BORDER}`, height: 8 }} />
                 )}
               </Box>
             );
@@ -725,7 +726,7 @@ function CollectionPanel({ config, processes, onTriggerDone }) {
   };
 
   return (
-    <Box sx={{ py: 1.5, borderBottom: "1px solid #f0f0f0", "&:last-child": { borderBottom: "none" } }}>
+    <Box sx={{ py: 1.5, borderBottom: `1px solid ${COLORS.DIVIDER}`, "&:last-child": { borderBottom: "none" } }}>
       <Box display="flex" alignItems="flex-start" justifyContent="space-between" flexWrap="wrap" gap={2}>
         {/* 좌측: 아이콘 + 설명 */}
         <Box flex={1} minWidth={180}>
@@ -808,7 +809,7 @@ function CollectionTab({ processes, onLogSourceChange }) {
         onChange={(_, v) => setIndividualExpanded(v)}
         elevation={2}
         sx={{
-          border: "1px solid #e0e0e0",
+          border: `1px solid ${COLORS.BORDER}`,
           borderRadius: "12px !important",
           "&:before": { display: "none" },
         }}
@@ -940,7 +941,7 @@ function DataManagement() {
             <Tabs
               value={tab}
               onChange={(_, v) => setTab(v)}
-              sx={{ borderBottom: "1px solid #e0e0e0", px: 2 }}
+              sx={{ borderBottom: `1px solid ${COLORS.BORDER}`, px: 2 }}
             >
               <Tab label="데이터 현황" />
               <Tab label="날짜별 빈 구간" />

@@ -594,7 +594,7 @@ function TradingDefaults() {
                       sx={
                         defaults.staged_exit_type !== "none"
                           ? {
-                              "& .MuiInputBase-root.Mui-disabled": { backgroundColor: "#f0f0f0" },
+                              "& .MuiInputBase-root.Mui-disabled": { backgroundColor: COLORS.DIVIDER },
                               "& .MuiInputBase-input.Mui-disabled": {
                                 color: "rgba(0,0,0,0.45)",
                                 WebkitTextFillColor: "rgba(0,0,0,0.45)",
@@ -721,7 +721,7 @@ function TradingDefaults() {
                         value="자동매매에서 설정"
                         disabled
                         sx={{
-                          "& .MuiInputBase-root.Mui-disabled": { backgroundColor: "#f0f0f0" },
+                          "& .MuiInputBase-root.Mui-disabled": { backgroundColor: COLORS.DIVIDER },
                           "& .MuiInputBase-input.Mui-disabled": {
                             color: "rgba(0,0,0,0.45)",
                             WebkitTextFillColor: "rgba(0,0,0,0.45)",

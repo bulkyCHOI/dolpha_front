@@ -46,6 +46,7 @@ export const COLORS = {
   // 표면 · 경계
   SURFACE: colors.background.surface,
   SURFACE_SUNKEN: colors.background.sunken,
+  SURFACE_ALT: grey[100], // 표 줄무늬 · 비활성 영역처럼 아주 옅게 눌린 면
   BORDER: grey[300],
   BORDER_STRONG: grey[400],
   DIVIDER: grey[200],

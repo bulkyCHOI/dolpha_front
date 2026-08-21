@@ -535,7 +535,7 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                 <Box
                   sx={{
                     p: 1,
-                    bgcolor: "#fff3cd",
+                    bgcolor: `#fff3cd`,
                     border: "1px solid #ffeaa7",
                     borderRadius: 1,
                     mt: 1,
@@ -558,8 +558,8 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
           onClick={onClose}
           disabled={loading}
           sx={{
-            borderColor: "#ccc",
-            color: "#666",
+            borderColor: COLORS.BORDER_STRONG,
+            color: COLORS.TEXT_SECONDARY,
             px: 3,
             py: 1,
             borderRadius: 2,
@@ -580,7 +580,7 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
           sx={{
             background: tradingForm.isFormValid()
               ? `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`
-              : "#ccc",
+              : COLORS.BORDER_STRONG,
             color: "white",
             px: 3,
             py: 1,
@@ -591,12 +591,12 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
             "&:hover": {
               background: tradingForm.isFormValid()
                 ? `linear-gradient(135deg, ${COLORS.PRIMARY_HOVER} 0%, #6a4190 100%)`
-                : "#ccc",
+                : COLORS.BORDER_STRONG,
               transform: tradingForm.isFormValid() ? "translateY(-1px)" : "none",
               boxShadow: tradingForm.isFormValid() ? "0 6px 20px rgba(102, 126, 234, 0.3)" : "none",
             },
             "&:disabled": {
-              background: "#ccc !important",
+              background: `${COLORS.BORDER_STRONG} !important`,
               color: "white !important",
             },
             transition: "all 0.3s ease",

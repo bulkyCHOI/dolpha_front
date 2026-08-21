@@ -286,14 +286,14 @@ function TopRising() {
                 width: "8px",
               },
               "&::-webkit-scrollbar-track": {
-                background: "#f1f1f1",
+                background: COLORS.DIVIDER,
                 borderRadius: "4px",
               },
               "&::-webkit-scrollbar-thumb": {
-                background: "#c1c1c1",
+                background: COLORS.BORDER_STRONG,
                 borderRadius: "4px",
                 "&:hover": {
-                  background: "#a1a1a1",
+                  background: COLORS.TEXT_MUTED,
                 },
               },
             }}
@@ -396,7 +396,7 @@ function TopRising() {
           }}
         >
           {/* 탭 헤더 */}
-          <Box sx={{ flexShrink: 0, borderBottom: "1px solid #e0e0e0" }}>
+          <Box sx={{ flexShrink: 0, borderBottom: `1px solid ${COLORS.BORDER}` }}>
             <Tabs
               value={activeTab}
               onChange={handleTabChange}
@@ -410,7 +410,7 @@ function TopRising() {
                 "& .MuiTab-root": {
                   fontWeight: "bold",
                   fontSize: { xs: "0.8rem", md: "0.9rem" },
-                  color: "#666",
+                  color: COLORS.TEXT_SECONDARY,
                   minWidth: "auto",
                   padding: { xs: "8px 12px", md: "12px 16px" },
                   "&.Mui-selected": {
@@ -426,7 +426,7 @@ function TopRising() {
 
           {/* 기간 선택 탭 - 로딩 중에도 항상 표시 */}
           {activeTab === 0 && stockData.length > 0 && (
-            <Box sx={{ flexShrink: 0, borderBottom: "1px solid #e0e0e0", px: 0.5 }}>
+            <Box sx={{ flexShrink: 0, borderBottom: `1px solid ${COLORS.BORDER}`, px: 0.5 }}>
               <Tabs
                 value={period}
                 onChange={(_, v) => setPeriod(v)}
@@ -439,7 +439,7 @@ function TopRising() {
                     minHeight: "36px",
                     fontSize: "0.75rem",
                     fontWeight: "bold",
-                    color: "#888",
+                    color: COLORS.TEXT_MUTED,
                     padding: "6px 12px",
                     minWidth: "auto",
                     "&.Mui-selected": { color: COLORS.PRIMARY },
@@ -563,14 +563,14 @@ function TopRising() {
                         width: "8px",
                       },
                       "&::-webkit-scrollbar-track": {
-                        background: "#f1f1f1",
+                        background: COLORS.DIVIDER,
                         borderRadius: "4px",
                       },
                       "&::-webkit-scrollbar-thumb": {
-                        background: "#c1c1c1",
+                        background: COLORS.BORDER_STRONG,
                         borderRadius: "4px",
                         "&:hover": {
-                          background: "#a1a1a1",
+                          background: COLORS.TEXT_MUTED,
                         },
                       },
                     }}
@@ -582,14 +582,14 @@ function TopRising() {
                         sx={{
                           p: 0.5,
                           borderBottom:
-                            rowIndex === stockData.length - 1 ? "none" : "1px solid #f0f0f0",
+                            rowIndex === stockData.length - 1 ? "none" : `1px solid ${COLORS.DIVIDER}`,
                           cursor: "pointer",
                           transition: "all 0.2s ease",
                           backgroundColor:
                             selectedStock?.code === row.code
                               ? "linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)"
                               : rowIndex % 2 === 0
-                              ? "#fafafa"
+                              ? COLORS.SURFACE_ALT
                               : "white",
                           "&:hover": {
                             backgroundColor: "rgba(102, 126, 234, 0.08)",
@@ -649,7 +649,7 @@ function TopRising() {
                                       ? "#4caf50" // 10% 이상: 초록
                                       : (row.change || 0) * 100 >= 5
                                       ? "#2196f3" // 5% 이상: 파랑
-                                      : "#9e9e9e", // 5% 미만: 회색
+                                      : COLORS.TEXT_MUTED, // 5% 미만: 회색
                                   color:
                                     (row.change || 0) * 100 >= 15 && (row.change || 0) * 100 < 20
                                       ? "black" // 노란색일 때는 검은색 텍스트
@@ -683,7 +683,7 @@ function TopRising() {
                                       ? "#4caf50" // 60 이상: 초록
                                       : row.rsRank >= 50
                                       ? "#2196f3" // 50 이상: 파랑
-                                      : "#9e9e9e", // 50 이하: 회색
+                                      : COLORS.TEXT_MUTED, // 50 이하: 회색
                                   color:
                                     row.rsRank >= 70 && row.rsRank < 80
                                       ? "black" // 노란색일 때는 검은색 텍스트
@@ -750,14 +750,14 @@ function TopRising() {
                       width: "6px",
                     },
                     "&::-webkit-scrollbar-track": {
-                      background: "#f1f1f1",
+                      background: COLORS.DIVIDER,
                       borderRadius: "3px",
                     },
                     "&::-webkit-scrollbar-thumb": {
-                      background: "#c1c1c1",
+                      background: COLORS.BORDER_STRONG,
                       borderRadius: "3px",
                       "&:hover": {
-                        background: "#a1a1a1",
+                        background: COLORS.TEXT_MUTED,
                       },
                     },
                   }}
@@ -773,10 +773,10 @@ function TopRising() {
                         textAlign: "center",
                       }}
                     >
-                      <Typography variant="h5" sx={{ mb: 2, color: "#666" }}>
+                      <Typography variant="h5" sx={{ mb: 2, color: COLORS.TEXT_SECONDARY }}>
                         로그인이 필요합니다
                       </Typography>
-                      <Typography variant="body1" sx={{ mb: 3, color: "#888" }}>
+                      <Typography variant="body1" sx={{ mb: 3, color: COLORS.TEXT_MUTED }}>
                         자동매매 기능을 사용하려면 Google 로그인이 필요합니다.
                       </Typography>
                       <Button
@@ -853,7 +853,7 @@ function TopRising() {
           overflow: "hidden",
         }}
       >
-        <Box sx={{ px: 2, py: 1, borderBottom: "1px solid #e0e0e0", flexShrink: 0 }}>
+        <Box sx={{ px: 2, py: 1, borderBottom: `1px solid ${COLORS.BORDER}`, flexShrink: 0 }}>
           <Typography variant="h6" fontWeight="bold" sx={{ mb: 0.5 }}>
             상승률 TOP 50
           </Typography>
@@ -869,7 +869,7 @@ function TopRising() {
                 minHeight: "32px",
                 fontSize: "0.7rem",
                 fontWeight: "bold",
-                color: "#888",
+                color: COLORS.TEXT_MUTED,
                 padding: "4px 10px",
                 minWidth: "auto",
                 "&.Mui-selected": { color: COLORS.PRIMARY },
@@ -934,13 +934,13 @@ function TopRising() {
             flexDirection: "column",
             "&::-webkit-scrollbar": { width: "8px" },
             "&::-webkit-scrollbar-track": {
-              background: "#f1f1f1",
+              background: COLORS.DIVIDER,
               borderRadius: "4px",
             },
             "&::-webkit-scrollbar-thumb": {
-              background: "#c1c1c1",
+              background: COLORS.BORDER_STRONG,
               borderRadius: "4px",
-              "&:hover": { background: "#a1a1a1" },
+              "&:hover": { background: COLORS.TEXT_MUTED },
             },
           }}
         >
@@ -1032,7 +1032,7 @@ function TopRising() {
           overflow: "hidden",
         }}
       >
-        <Box sx={{ px: 2, py: 1.5, borderBottom: "1px solid #e0e0e0" }}>
+        <Box sx={{ px: 2, py: 1.5, borderBottom: `1px solid ${COLORS.BORDER}` }}>
           <Typography variant="h6" fontWeight="bold">
             자동매매 설정
           </Typography>
@@ -1092,7 +1092,7 @@ function TopRising() {
           sx={{
             height: "100vh",
             width: "100%",
-            backgroundColor: "#f8f9fa",
+            backgroundColor: COLORS.SURFACE_ALT,
             display: "flex",
             flexDirection: "column",
             overflow: "hidden",
@@ -1173,7 +1173,7 @@ function TopRising() {
           sx={{
             height: "100vh",
             width: "100%",
-            backgroundColor: "#f8f9fa",
+            backgroundColor: COLORS.SURFACE_ALT,
             display: "flex",
             flexDirection: "column",
             overflow: "hidden",
