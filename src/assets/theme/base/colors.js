@@ -1,32 +1,28 @@
 /**
-=========================================================
-* Material Kit 2 React - v2.1.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-kit-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-/**
- * The base colors for the Material Kit 2 React.
- * You can add new color using this file.
- * You can customized the colors for the entire Material Kit 2 React using thie file.
+ * Dolpha 디자인 토큰 — 색상.
+ *
+ * 트레이딩 대시보드 팔레트. 페이지·컴포넌트에서 색을 하드코딩하지 말고
+ * 반드시 이 파일의 값을 참조한다.
+ *
+ * 국내 시장 관례에 따라 상승은 적색, 하락은 청색이다 (bullish / bearish).
  */
 
 export default {
   background: {
-    default: "#f0f2f5",
+    default: "#f5f7fb",
+    // 카드·패널 같은 콘텐츠 표면
+    surface: "#ffffff",
+    // 표 헤더 등 한 단계 눌린 표면
+    sunken: "#eef1f7",
   },
 
   text: {
-    main: "#7b809a",
-    focus: "#7b809a",
+    main: "#64748b",
+    focus: "#475569",
+    // 제목·수치 등 강조 텍스트
+    strong: "#0f172a",
+    // 보조 설명
+    muted: "#94a3b8",
   },
 
   transparent: {
@@ -44,97 +40,121 @@ export default {
     focus: "#000000",
   },
 
+  // 프로젝트 전반에서 이미 사실상의 브랜드 컬러로 쓰이던 인디고
   primary: {
-    main: "#e91e63",
-    focus: "#e91e63",
+    main: "#667eea",
+    focus: "#5a6fd8",
   },
 
   secondary: {
-    main: "#7b809a",
-    focus: "#8f93a9",
+    main: "#64748b",
+    focus: "#475569",
   },
 
   info: {
-    main: "#1A73E8",
-    focus: "#1662C4",
+    main: "#3b82f6",
+    focus: "#2563eb",
   },
 
   success: {
-    main: "#4CAF50",
-    focus: "#67bb6a",
+    main: "#22c55e",
+    focus: "#16a34a",
   },
 
   warning: {
-    main: "#fb8c00",
-    focus: "#fc9d26",
+    main: "#f59e0b",
+    focus: "#d97706",
   },
 
   error: {
-    main: "#F44335",
-    focus: "#f65f53",
+    main: "#ef4444",
+    focus: "#dc2626",
   },
 
   light: {
-    main: "#f0f2f5",
-    focus: "#f0f2f5",
+    main: "#f1f5f9",
+    focus: "#e2e8f0",
   },
 
   dark: {
-    main: "#344767",
-    focus: "#2c3c58",
+    main: "#1e293b",
+    focus: "#0f172a",
   },
 
+  /**
+   * 시세 방향 — 국내 관례(상승 적색 / 하락 청색).
+   * 차트 색상(components/TradingViewChart/chartTheme.js)과 같은 값을 쓴다.
+   */
+  bullish: {
+    main: "#ef4444",
+    focus: "#dc2626",
+    faded: "rgba(239, 68, 68, 0.12)",
+  },
+
+  bearish: {
+    main: "#3b82f6",
+    focus: "#2563eb",
+    faded: "rgba(59, 130, 246, 0.12)",
+  },
+
+  flat: {
+    main: "#94a3b8",
+    focus: "#64748b",
+    faded: "rgba(148, 163, 184, 0.12)",
+  },
+
+  // slate 계열 — 회색은 전부 여기서 가져온다
   grey: {
-    100: "#f8f9fa",
-    200: "#f0f2f5",
-    300: "#dee2e6",
-    400: "#ced4da",
-    500: "#adb5bd",
-    600: "#6c757d",
-    700: "#495057",
-    800: "#343a40",
-    900: "#212529",
+    100: "#f8fafc",
+    200: "#f1f5f9",
+    300: "#e2e8f0",
+    400: "#cbd5e1",
+    500: "#94a3b8",
+    600: "#64748b",
+    700: "#475569",
+    800: "#334155",
+    900: "#1e293b",
   },
 
   gradients: {
     primary: {
-      main: "#EC407A",
-      state: "#D81B60",
+      main: "#667eea",
+      state: "#764ba2",
     },
 
     secondary: {
-      main: "#747b8a",
-      state: "#495361",
+      main: "#94a3b8",
+      state: "#64748b",
     },
 
     info: {
-      main: "#49a3f1",
-      state: "#1A73E8",
+      main: "#60a5fa",
+      state: "#2563eb",
     },
 
     success: {
-      main: "#66BB6A",
-      state: "#43A047",
+      main: "#4ade80",
+      state: "#16a34a",
     },
 
     warning: {
-      main: "#FFA726",
-      state: "#FB8C00",
+      main: "#fbbf24",
+      state: "#d97706",
     },
 
     error: {
-      main: "#EF5350",
-      state: "#E53935",
+      main: "#f87171",
+      state: "#dc2626",
     },
 
     light: {
-      main: "#EBEFF4",
-      state: "#CED4DA",
+      main: "#f1f5f9",
+      state: "#e2e8f0",
     },
 
     dark: {
-      main: "#42424a",
-      state: "#191919",
+      main: "#334155",
+      state: "#0f172a",
     },
   },
 
@@ -202,60 +222,60 @@ export default {
 
   badgeColors: {
     primary: {
-      background: "#f8b3ca",
-      text: "#cc084b",
+      background: "#e0e5fb",
+      text: "#4c5fd7",
     },
 
     secondary: {
-      background: "#d7d9e1",
-      text: "#6c757d",
+      background: "#e2e8f0",
+      text: "#475569",
     },
 
     info: {
-      background: "#aecef7",
-      text: "#095bc6",
+      background: "#dbeafe",
+      text: "#1d4ed8",
     },
 
     success: {
-      background: "#bce2be",
-      text: "#339537",
+      background: "#dcfce7",
+      text: "#15803d",
     },
 
     warning: {
-      background: "#ffd59f",
-      text: "#c87000",
+      background: "#fef3c7",
+      text: "#b45309",
     },
 
     error: {
-      background: "#fcd3d0",
-      text: "#f61200",
+      background: "#fee2e2",
+      text: "#b91c1c",
     },
 
     light: {
-      background: "#ffffff",
-      text: "#c7d3de",
+      background: "#f8fafc",
+      text: "#64748b",
     },
 
     dark: {
-      background: "#8097bf",
-      text: "#1e2e4a",
+      background: "#cbd5e1",
+      text: "#1e293b",
     },
   },
 
   coloredShadows: {
-    primary: "#e91e62",
-    secondary: "#110e0e",
-    info: "#00bbd4",
-    success: "#4caf4f",
-    warning: "#ff9900",
-    error: "#f44336",
-    light: "#adb5bd",
-    dark: "#404040",
+    primary: "#667eea",
+    secondary: "#64748b",
+    info: "#3b82f6",
+    success: "#22c55e",
+    warning: "#f59e0b",
+    error: "#ef4444",
+    light: "#cbd5e1",
+    dark: "#334155",
   },
 
-  inputBorderColor: "#d2d6da",
+  inputBorderColor: "#cbd5e1",
 
   tabs: {
-    indicator: { boxShadow: "#ddd" },
+    indicator: { boxShadow: "#e2e8f0" },
   },
 };
