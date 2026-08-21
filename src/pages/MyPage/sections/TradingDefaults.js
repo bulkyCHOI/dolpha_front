@@ -492,7 +492,7 @@ function TradingDefaults() {
                           size="small"
                           sx={{
                             background: "linear-gradient(135deg, #11998e 0%, #38ef7d 100%)",
-                            color: "white",
+                            color: COLORS.ON_ACCENT,
                             px: 2.5,
                             borderRadius: 2,
                             textTransform: "none",
@@ -504,7 +504,7 @@ function TradingDefaults() {
                           }}
                         >
                           {accountSaveLoading ? (
-                            <CircularProgress size={14} sx={{ color: "white" }} />
+                            <CircularProgress size={14} sx={{ color: COLORS.ON_ACCENT }} />
                           ) : (
                             "적용"
                           )}
@@ -1119,7 +1119,7 @@ function TradingDefaults() {
                 size="medium"
                 sx={{
                   background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
-                  color: "white",
+                  color: COLORS.ON_ACCENT,
                   px: 3,
                   py: 1,
                   borderRadius: 2,
@@ -1132,7 +1132,7 @@ function TradingDefaults() {
               >
                 {saveLoading ? (
                   <>
-                    <CircularProgress size={16} sx={{ mr: 1, color: "white" }} />
+                    <CircularProgress size={16} sx={{ mr: 1, color: COLORS.ON_ACCENT }} />
                     저장 중...
                   </>
                 ) : (

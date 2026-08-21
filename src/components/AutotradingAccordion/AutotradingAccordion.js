@@ -984,7 +984,7 @@ const AutotradingAccordion = ({
                         fontSize: "0.7rem",
                         height: "20px",
                         backgroundColor: !stockConfig.is_active ? COLORS.TEXT_MUTED : undefined,
-                        color: !stockConfig.is_active ? "white" : undefined,
+                        color: !stockConfig.is_active ? COLORS.ON_ACCENT : undefined,
                       }}
                     />
                   ) : (

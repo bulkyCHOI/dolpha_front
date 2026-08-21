@@ -61,7 +61,23 @@ export default createTheme(baseTheme, {
       },
     },
     MuiInputLabel: { styleOverrides: { root: { color: cssVar("text-secondary") } } },
-    MuiSelect: { styleOverrides: { icon: { color: cssVar("text-secondary") } } },
+    MuiSelect: {
+      styleOverrides: {
+        icon: { color: cssVar("text-secondary") },
+        select: { color: text },
+      },
+    },
+    // MK 기본 스타일이 입력 글자색을 고정해 두어, 다크에서 선택 값이 묻힌다.
+    MuiInputBase: { styleOverrides: { root: { color: text }, input: { color: text } } },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          color: text,
+          "&:hover": { backgroundColor: cssVar("hover-bg") },
+          "&.Mui-selected": { backgroundColor: cssVar("selected-bg") },
+        },
+      },
+    },
     MuiTooltip: {
       styleOverrides: {
         tooltip: { backgroundColor: DARK_PALETTE["surface-alt"], color: DARK_PALETTE.text },

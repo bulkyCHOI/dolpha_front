@@ -145,7 +145,7 @@ const getTradingModeColor = (tradingMode) => {
 const getTextColor = (backgroundColor) => {
   // MTT(다크레드)와 Turtle(네이비)만 흰색, 나머지는 검은색
   const darkColors = [COLORS.UP, COLORS.DOWN, "#7b1fa2"]; // MTT, Turtle/ATR, 급등테마주
-  return darkColors.includes(backgroundColor) ? "white" : "black";
+  return darkColors.includes(backgroundColor) ? COLORS.ON_ACCENT : COLORS.ON_ACCENT_LIGHT;
 };
 
 // 수익률 계산 함수

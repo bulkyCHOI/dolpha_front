@@ -581,7 +581,7 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
             background: tradingForm.isFormValid()
               ? `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`
               : COLORS.BORDER_STRONG,
-            color: "white",
+            color: COLORS.ON_ACCENT,
             px: 3,
             py: 1,
             borderRadius: 2,
@@ -604,7 +604,7 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
         >
           {loading ? (
             <>
-              <CircularProgress size={16} sx={{ mr: 1, color: "white" }} />
+              <CircularProgress size={16} sx={{ mr: 1, color: COLORS.ON_ACCENT }} />
               저장 중...
             </>
           ) : (

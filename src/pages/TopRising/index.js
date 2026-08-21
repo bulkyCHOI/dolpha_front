@@ -266,7 +266,7 @@ function TopRising() {
       >
         <Box
           sx={{
-            backgroundColor: "white",
+            backgroundColor: COLORS.SURFACE,
             borderRadius: 2,
             boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
             height: "100%",
@@ -386,7 +386,7 @@ function TopRising() {
       >
         <Box
           sx={{
-            backgroundColor: "white",
+            backgroundColor: COLORS.SURFACE,
             borderRadius: 2,
             boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
             height: "100%",
@@ -558,7 +558,7 @@ function TopRising() {
                     sx={{
                       flex: 1,
                       overflow: "auto",
-                      backgroundColor: "white",
+                      backgroundColor: COLORS.SURFACE,
                       "&::-webkit-scrollbar": {
                         width: "8px",
                       },
@@ -590,7 +590,7 @@ function TopRising() {
                               ? "linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)"
                               : rowIndex % 2 === 0
                               ? COLORS.SURFACE_ALT
-                              : "white",
+                              : COLORS.ON_ACCENT,
                           "&:hover": {
                             backgroundColor: "rgba(102, 126, 234, 0.08)",
                             transform: "translateX(4px)",
@@ -652,8 +652,8 @@ function TopRising() {
                                       : COLORS.TEXT_MUTED, // 5% 미만: 회색
                                   color:
                                     (row.change || 0) * 100 >= 15 && (row.change || 0) * 100 < 20
-                                      ? "black" // 노란색일 때는 검은색 텍스트
-                                      : "white",
+                                      ? COLORS.ON_ACCENT_LIGHT // 노란색일 때는 검은색 텍스트
+                                      : COLORS.ON_ACCENT,
                                   fontWeight: "bold",
                                   fontSize: { xs: "0.55rem", md: "0.65rem" },
                                   minWidth: { xs: "45px", md: "40px" },
@@ -686,8 +686,8 @@ function TopRising() {
                                       : COLORS.TEXT_MUTED, // 50 이하: 회색
                                   color:
                                     row.rsRank >= 70 && row.rsRank < 80
-                                      ? "black" // 노란색일 때는 검은색 텍스트
-                                      : "white",
+                                      ? COLORS.ON_ACCENT_LIGHT // 노란색일 때는 검은색 텍스트
+                                      : COLORS.ON_ACCENT,
                                   fontWeight: "bold",
                                   fontSize: { xs: "0.55rem", md: "0.65rem" },
                                   minWidth: { xs: "35px", md: "30px" },
@@ -785,7 +785,7 @@ function TopRising() {
                         onClick={() => navigate("/pages/authentication/sign-in")}
                         sx={{
                           background: GRADIENT_COLORS.PRIMARY,
-                          color: "white",
+                          color: COLORS.ON_ACCENT,
                           px: 4,
                           py: 1.5,
                           "&:hover": {
@@ -844,7 +844,7 @@ function TopRising() {
     <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
       <Box
         sx={{
-          backgroundColor: "white",
+          backgroundColor: COLORS.SURFACE,
           borderRadius: 2,
           boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
           height: "100%",
@@ -917,7 +917,7 @@ function TopRising() {
     <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
       <Box
         sx={{
-          backgroundColor: "white",
+          backgroundColor: COLORS.SURFACE,
           borderRadius: 2,
           boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
           height: "100%",
@@ -1023,7 +1023,7 @@ function TopRising() {
     <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
       <Box
         sx={{
-          backgroundColor: "white",
+          backgroundColor: COLORS.SURFACE,
           borderRadius: 2,
           boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
           height: "100%",

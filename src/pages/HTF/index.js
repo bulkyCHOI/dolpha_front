@@ -215,7 +215,7 @@ function HTF() {
     <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
       <Box
         sx={{
-          backgroundColor: "white",
+          backgroundColor: COLORS.SURFACE,
           borderRadius: 2,
           boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
           height: "100%",
@@ -256,7 +256,7 @@ function HTF() {
     <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
       <Box
         sx={{
-          backgroundColor: "white",
+          backgroundColor: COLORS.SURFACE,
           borderRadius: 2,
           boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
           height: "100%",
@@ -362,7 +362,7 @@ function HTF() {
     <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
       <Box
         sx={{
-          backgroundColor: "white",
+          backgroundColor: COLORS.SURFACE,
           borderRadius: 2,
           boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
           height: "100%",
@@ -541,7 +541,7 @@ function HTF() {
             >
               <Box
                 sx={{
-                  backgroundColor: "white",
+                  backgroundColor: COLORS.SURFACE,
                   borderRadius: 2,
                   boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
                   height: "100%",
@@ -658,7 +658,7 @@ function HTF() {
             >
               <Box
                 sx={{
-                  backgroundColor: "white",
+                  backgroundColor: COLORS.SURFACE,
                   borderRadius: 2,
                   boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
                   height: "100%",
@@ -733,7 +733,7 @@ function HTF() {
                           sx={{
                             flex: 1,
                             overflow: "auto",
-                            backgroundColor: "white",
+                            backgroundColor: COLORS.SURFACE,
                             "&::-webkit-scrollbar": {
                               width: "8px",
                             },
@@ -810,7 +810,7 @@ function HTF() {
                               onClick={() => navigate("/pages/authentication/sign-in")}
                               sx={{
                                 background: GRADIENT_COLORS.PRIMARY,
-                                color: "white",
+                                color: COLORS.ON_ACCENT,
                                 px: 4,
                                 py: 1.5,
                                 "&:hover": {

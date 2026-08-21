@@ -525,7 +525,7 @@ function DailyPipelinePanel({ processes, onTriggerDone }) {
             ⚡ 일간 전체 파이프라인
           </Typography>
           {isRunning && (
-            <Chip label="실행 중" size="small" sx={{ bgcolor: COLORS.SUCCESS, color: "white" }} />
+            <Chip label="실행 중" size="small" sx={{ bgcolor: COLORS.SUCCESS, color: COLORS.ON_ACCENT }} />
           )}
           <Typography variant="body2" color="white.main" sx={{ opacity: 0.85, ml: "auto", mr: 2 }}>
             수집 → 가공 전 과정을 순서대로 한번에 실행

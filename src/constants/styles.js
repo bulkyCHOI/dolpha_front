@@ -108,6 +108,10 @@ export const COLORS = {
   UP_BG: cssVar("up-bg"),
   DOWN_BG: cssVar("down-bg"),
 
+  // 채도 있는 배경 위 글자색 (배지 · 강조 버튼)
+  ON_ACCENT: cssVar("on-accent"),
+  ON_ACCENT_LIGHT: cssVar("on-accent-light"),
+
   // 배지·구간 강조용 옅은 배경
   TINT_PRIMARY: cssVar("tint-primary"),
   TINT_UP: cssVar("tint-up"),

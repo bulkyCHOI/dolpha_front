@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 
 import { DOWN_COLOR, UP_COLOR } from "./chartTheme";
-import { COLORS } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 
 function formatNumber(value) {
   if (value == null || Number.isNaN(value)) return "-";
@@ -74,7 +74,7 @@ function OhlcLegend({ bar, change, intraday }) {
         left: 8,
         zIndex: 2,
         fontSize: "12px",
-        background: "rgba(255, 255, 255, 0.85)",
+        background: alpha(COLORS.SURFACE, 0.85),
         padding: "2px 6px",
         borderRadius: 4,
         pointerEvents: "none",

@@ -137,7 +137,7 @@ function StockList({
         sx={{
           flex: 1,
           overflow: "auto",
-          backgroundColor: "white",
+          backgroundColor: COLORS.SURFACE,
           "&::-webkit-scrollbar": {
             width: "8px",
           },
@@ -169,10 +169,10 @@ function StockList({
                   selectedStock?.code === row.code
                     ? "linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)"
                     : disableStripes
-                    ? "white"
+                    ? COLORS.ON_ACCENT
                     : rowIndex % 2 === 0
                     ? COLORS.SURFACE_ALT
-                    : "white",
+                    : COLORS.ON_ACCENT,
                 "&:hover": {
                   backgroundColor: "rgba(102, 126, 234, 0.08)",
                   transform: "translateX(4px)",
@@ -230,8 +230,8 @@ function StockList({
                                 : COLORS.TEXT_MUTED, // 50 이하: 회색
                             color:
                               rowData[header.field] >= 70 && rowData[header.field] < 80
-                                ? "black" // 노란색일 때는 검은색 텍스트
-                                : "white",
+                                ? COLORS.ON_ACCENT_LIGHT // 노란색일 때는 검은색 텍스트
+                                : COLORS.ON_ACCENT,
                             fontWeight: "bold",
                             fontSize: "0.7rem",
                             minWidth: "35px",
@@ -258,7 +258,7 @@ function StockList({
                                 : rowData[header.field] >= 50
                                 ? COLORS.DOWN // 50%이상 파랑
                                 : COLORS.TEXT_MUTED, // 50%미만 회색
-                            color: "white",
+                            color: COLORS.ON_ACCENT,
                             fontWeight: "bold",
                             fontSize: "0.7rem",
                             minWidth: "40px",
@@ -287,8 +287,8 @@ function StockList({
                                 : COLORS.TEXT_MUTED, // 5% 미만: 회색
                             color:
                               rowData[header.field] >= 15 && rowData[header.field] < 20
-                                ? "black" // 노란색일 때는 검은색 텍스트
-                                : "white",
+                                ? COLORS.ON_ACCENT_LIGHT // 노란색일 때는 검은색 텍스트
+                                : COLORS.ON_ACCENT,
                             fontWeight: "bold",
                             fontSize: "0.7rem",
                             minWidth: "40px",

@@ -163,7 +163,7 @@ function HTFStockList({
         sx={{
           flex: 1,
           overflow: "auto",
-          backgroundColor: "white",
+          backgroundColor: COLORS.SURFACE,
           "&::-webkit-scrollbar": {
             width: "8px",
           },
@@ -197,7 +197,7 @@ function HTFStockList({
                     ? "linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)"
                     : rowIndex % 2 === 0
                     ? COLORS.SURFACE_ALT
-                    : "white",
+                    : COLORS.ON_ACCENT,
                 "&:hover": {
                   backgroundColor: "rgba(102, 126, 234, 0.08)",
                   transform: "translateX(4px)",
@@ -249,7 +249,7 @@ function HTFStockList({
                       size="small"
                       sx={{
                         backgroundColor: getGainColor(stock.htf_8week_gain || 0),
-                        color: "white",
+                        color: COLORS.ON_ACCENT,
                         fontWeight: "bold",
                         fontSize: { xs: "0.6rem", md: "0.7rem" },
                         minWidth: { xs: "35px", md: "40px" },
@@ -271,7 +271,7 @@ function HTFStockList({
                       size="small"
                       sx={{
                         backgroundColor: getPullbackColor(stock.htf_max_pullback || 0),
-                        color: stock.htf_max_pullback <= 20 ? "white" : "black",
+                        color: stock.htf_max_pullback <= 20 ? COLORS.ON_ACCENT : COLORS.ON_ACCENT_LIGHT,
                         fontWeight: "bold",
                         fontSize: { xs: "0.6rem", md: "0.7rem" },
                         minWidth: { xs: "35px", md: "40px" },
@@ -310,7 +310,7 @@ function HTFStockList({
                       size="small"
                       sx={{
                         backgroundColor: statusChip.color,
-                        color: "white",
+                        color: COLORS.ON_ACCENT,
                         fontWeight: "bold",
                         fontSize: { xs: "0.6rem", md: "0.7rem" },
                         minWidth: { xs: "30px", md: "35px" },

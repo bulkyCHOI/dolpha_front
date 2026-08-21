@@ -126,7 +126,7 @@ const getFinalStatusColor = (status) => {
 // 배경색에 따른 텍스트 색상 결정 함수
 const getTextColor = (backgroundColor) => {
   const darkColors = [COLORS.DOWN];
-  return darkColors.includes(backgroundColor) ? "white" : "black";
+  return darkColors.includes(backgroundColor) ? COLORS.ON_ACCENT : COLORS.ON_ACCENT_LIGHT;
 };
 
 export default function TradingReviews() {
@@ -1370,9 +1370,9 @@ export default function TradingReviews() {
                               }}
                             >
                               {isBuy ? (
-                                <ArrowUpwardIcon sx={{ color: "white", fontSize: 18 }} />
+                                <ArrowUpwardIcon sx={{ color: COLORS.ON_ACCENT, fontSize: 18 }} />
                               ) : (
-                                <ArrowDownwardIcon sx={{ color: "white", fontSize: 18 }} />
+                                <ArrowDownwardIcon sx={{ color: COLORS.ON_ACCENT, fontSize: 18 }} />
                               )}
                             </Box>
 

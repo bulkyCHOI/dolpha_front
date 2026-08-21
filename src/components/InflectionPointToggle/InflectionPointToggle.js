@@ -20,14 +20,14 @@ const InflectionPointToggle = ({
         color="primary"
         sx={{
           border: `1px solid ${COLORS.DOWN}`,
-          color: showInflectionPoints ? "white" : COLORS.DOWN,
+          color: showInflectionPoints ? COLORS.ON_ACCENT : COLORS.DOWN,
           backgroundColor: showInflectionPoints ? COLORS.DOWN : "transparent",
           "&:hover": {
             backgroundColor: showInflectionPoints ? COLORS.DOWN : "rgba(33, 150, 243, 0.1)",
           },
           "&.Mui-selected": {
             backgroundColor: COLORS.DOWN,
-            color: "white",
+            color: COLORS.ON_ACCENT,
             "&:hover": {
               backgroundColor: COLORS.DOWN,
             },

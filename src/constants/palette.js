@@ -65,6 +65,14 @@ export const LIGHT_PALETTE = {
   "tint-warning": rgba(warning.main, 0.16),
   "tint-error": rgba(error.main, 0.12),
 
+  /**
+   * 채도 있는 배경(배지·버튼) 위에 얹는 글자색.
+   * 다크에서는 강조색 자체가 밝아지므로 흰 글자면 대비가 무너진다.
+   */
+  "on-accent": "#ffffff",
+  // 노랑·주황처럼 밝은 배경 위 글자. 두 테마 모두 어두워야 읽힌다.
+  "on-accent-light": "#0f172a",
+
   // 등급 배지
   "rank-high": success.main,
   "rank-medium": warning.main,
@@ -118,6 +126,9 @@ export const DARK_PALETTE = {
   "tint-success": "rgba(74, 222, 128, 0.18)",
   "tint-warning": "rgba(251, 191, 36, 0.2)",
   "tint-error": "rgba(248, 113, 113, 0.18)",
+
+  "on-accent": "#0f172a",
+  "on-accent-light": "#0f172a",
 
   "rank-high": "#4ade80",
   "rank-medium": "#fbbf24",

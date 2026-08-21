@@ -182,7 +182,7 @@ function Profile() {
                 onClick={handleSave}
                 sx={{
                   background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
-                  color: "white",
+                  color: COLORS.ON_ACCENT,
                   px: 4,
                   py: 1.5,
                   borderRadius: 2,

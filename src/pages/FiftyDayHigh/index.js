@@ -286,7 +286,7 @@ function FiftyDayHigh() {
       >
         <Box
           sx={{
-            backgroundColor: "white",
+            backgroundColor: COLORS.SURFACE,
             borderRadius: 2,
             boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
             height: "100%",
@@ -406,7 +406,7 @@ function FiftyDayHigh() {
       >
         <Box
           sx={{
-            backgroundColor: "white",
+            backgroundColor: COLORS.SURFACE,
             borderRadius: 2,
             boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
             height: "100%",
@@ -549,7 +549,7 @@ function FiftyDayHigh() {
                     sx={{
                       flex: 1,
                       overflow: "auto",
-                      backgroundColor: "white",
+                      backgroundColor: COLORS.SURFACE,
                       "&::-webkit-scrollbar": {
                         width: "8px",
                       },
@@ -581,7 +581,7 @@ function FiftyDayHigh() {
                               ? "linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)"
                               : rowIndex % 2 === 0
                               ? COLORS.SURFACE_ALT
-                              : "white",
+                              : COLORS.ON_ACCENT,
                           "&:hover": {
                             backgroundColor: "rgba(102, 126, 234, 0.08)",
                             transform: "translateX(4px)",
@@ -641,7 +641,7 @@ function FiftyDayHigh() {
                                       : row.min_50d_gain_percent >= 10
                                       ? COLORS.DOWN // 10%이상 파랑 (52주 50% 대응)
                                       : COLORS.TEXT_MUTED, // 10%미만 회색
-                                  color: "white",
+                                  color: COLORS.ON_ACCENT,
                                   fontWeight: "bold",
                                   fontSize: { xs: "0.6rem", md: "0.7rem" },
                                   minWidth: { xs: "45px", md: "50px" },
@@ -674,8 +674,8 @@ function FiftyDayHigh() {
                                       : COLORS.TEXT_MUTED, // 50 이하: 회색
                                   color:
                                     row.rsRank >= 70 && row.rsRank < 80
-                                      ? "black" // 노란색일 때는 검은색 텍스트
-                                      : "white",
+                                      ? COLORS.ON_ACCENT_LIGHT // 노란색일 때는 검은색 텍스트
+                                      : COLORS.ON_ACCENT,
                                   fontWeight: "bold",
                                   fontSize: { xs: "0.6rem", md: "0.7rem" },
                                   minWidth: { xs: "30px", md: "35px" },
@@ -775,7 +775,7 @@ function FiftyDayHigh() {
                         onClick={() => navigate("/pages/authentication/sign-in")}
                         sx={{
                           background: GRADIENT_COLORS.PRIMARY,
-                          color: "white",
+                          color: COLORS.ON_ACCENT,
                           px: 4,
                           py: 1.5,
                           "&:hover": {
@@ -834,7 +834,7 @@ function FiftyDayHigh() {
     <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
       <Box
         sx={{
-          backgroundColor: "white",
+          backgroundColor: COLORS.SURFACE,
           borderRadius: 2,
           boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
           height: "100%",
@@ -872,7 +872,7 @@ function FiftyDayHigh() {
     <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
       <Box
         sx={{
-          backgroundColor: "white",
+          backgroundColor: COLORS.SURFACE,
           borderRadius: 2,
           boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
           height: "100%",
@@ -978,7 +978,7 @@ function FiftyDayHigh() {
     <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
       <Box
         sx={{
-          backgroundColor: "white",
+          backgroundColor: COLORS.SURFACE,
           borderRadius: 2,
           boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
           height: "100%",

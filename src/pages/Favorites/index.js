@@ -249,7 +249,7 @@ function Favorites() {
       >
         <Box
           sx={{
-            backgroundColor: "white",
+            backgroundColor: COLORS.SURFACE,
             borderRadius: 2,
             boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
             height: "100%",
@@ -366,7 +366,7 @@ function Favorites() {
       >
         <Box
           sx={{
-            backgroundColor: "white",
+            backgroundColor: COLORS.SURFACE,
             borderRadius: 2,
             boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
             height: "100%",
@@ -559,7 +559,7 @@ function Favorites() {
                           ? COLORS.TINT_PRIMARY
                           : index % 2 === 0
                           ? COLORS.SURFACE_ALT
-                          : "white",
+                          : COLORS.ON_ACCENT,
                       "&:hover": {
                         backgroundColor: "#f0f4ff",
                       },
@@ -765,7 +765,7 @@ function Favorites() {
                     sx={{
                       flex: 1,
                       overflow: "auto",
-                      backgroundColor: "white",
+                      backgroundColor: COLORS.SURFACE,
                       "&::-webkit-scrollbar": {
                         width: "8px",
                       },
@@ -820,7 +820,7 @@ function Favorites() {
                               ? "linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)"
                               : rowIndex % 2 === 0
                               ? COLORS.SURFACE_ALT
-                              : "white",
+                              : COLORS.ON_ACCENT,
                           "&:hover": {
                             backgroundColor: "rgba(102, 126, 234, 0.08)",
                             transform: "translateX(4px)",
@@ -933,7 +933,7 @@ function Favorites() {
                                       ? COLORS.DOWN
                                       : COLORS.TEXT_MUTED,
                                   color:
-                                    stock.rsRank >= 70 && stock.rsRank < 80 ? "black" : "white",
+                                    stock.rsRank >= 70 && stock.rsRank < 80 ? COLORS.ON_ACCENT_LIGHT : COLORS.ON_ACCENT,
                                   fontWeight: "bold",
                                   fontSize: { xs: "0.6rem", md: "0.7rem" },
                                   minWidth: { xs: "25px", md: "30px" },
@@ -1019,7 +1019,7 @@ function Favorites() {
                         onClick={() => navigate("/pages/authentication/sign-in")}
                         sx={{
                           background: GRADIENT_COLORS.PRIMARY,
-                          color: "white",
+                          color: COLORS.ON_ACCENT,
                           px: 4,
                           py: 1.5,
                           "&:hover": {
@@ -1062,7 +1062,7 @@ function Favorites() {
     <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
       <Box
         sx={{
-          backgroundColor: "white",
+          backgroundColor: COLORS.SURFACE,
           borderRadius: 2,
           boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
           height: "100%",
@@ -1127,7 +1127,7 @@ function Favorites() {
                         ? COLORS.TINT_PRIMARY
                         : index % 2 === 0
                         ? COLORS.SURFACE_ALT
-                        : "white",
+                        : COLORS.ON_ACCENT,
                     "&:hover": {
                       backgroundColor: "#f0f4ff",
                     },
@@ -1281,7 +1281,7 @@ function Favorites() {
                           ? COLORS.TINT_PRIMARY
                           : index % 2 === 0
                           ? COLORS.SURFACE_ALT
-                          : "white",
+                          : COLORS.ON_ACCENT,
                       "&:hover": {
                         backgroundColor: "#f0f4ff",
                       },
@@ -1385,7 +1385,7 @@ function Favorites() {
     <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
       <Box
         sx={{
-          backgroundColor: "white",
+          backgroundColor: COLORS.SURFACE,
           borderRadius: 2,
           boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
           height: "100%",
@@ -1491,7 +1491,7 @@ function Favorites() {
     <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
       <Box
         sx={{
-          backgroundColor: "white",
+          backgroundColor: COLORS.SURFACE,
           borderRadius: 2,
           boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
           height: "100%",

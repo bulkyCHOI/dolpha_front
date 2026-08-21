@@ -56,7 +56,7 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
           <IconButton
             onClick={() => onOpenFinancialModal(selectedStock)}
             sx={{
-              color: "white",
+              color: COLORS.ON_ACCENT,
               padding: "8px",
               "&:hover": {
                 backgroundColor: "rgba(255,255,255,0.1)",
@@ -86,9 +86,9 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
             >
               {changeRate !== null &&
                 (changeRate >= 0 ? (
-                  <ArrowUpward sx={{ fontSize: "16px", color: "white" }} />
+                  <ArrowUpward sx={{ fontSize: "16px", color: COLORS.ON_ACCENT }} />
                 ) : (
-                  <ArrowDownward sx={{ fontSize: "16px", color: "white" }} />
+                  <ArrowDownward sx={{ fontSize: "16px", color: COLORS.ON_ACCENT }} />
                 ))}
               <Typography variant="body1" color="white.main" fontWeight="bold">
                 {changeRate !== null
@@ -187,9 +187,9 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
               <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                 {changeRate !== null &&
                   (changeRate >= 0 ? (
-                    <ArrowUpward sx={{ fontSize: "14px", color: "white" }} />
+                    <ArrowUpward sx={{ fontSize: "14px", color: COLORS.ON_ACCENT }} />
                   ) : (
-                    <ArrowDownward sx={{ fontSize: "14px", color: "white" }} />
+                    <ArrowDownward sx={{ fontSize: "14px", color: COLORS.ON_ACCENT }} />
                   ))}
                 <Typography
                   variant="body2"
@@ -285,7 +285,7 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
               <IconButton
                 onClick={() => onOpenFinancialModal(selectedStock)}
                 sx={{
-                  color: "white",
+                  color: COLORS.ON_ACCENT,
                   padding: "2px",
                   "&:hover": {
                     backgroundColor: "rgba(255,255,255,0.1)",
