@@ -8,7 +8,6 @@ import Alert from "@mui/material/Alert";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import Collapse from "@mui/material/Collapse";
-import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
 import CircularProgress from "@mui/material/CircularProgress";
 import RefreshIcon from "@mui/icons-material/Refresh";
@@ -26,9 +25,11 @@ import routes from "routes";
 import { useAuth } from "contexts/AuthContext";
 import { useNotification } from "components/NotificationSystem/NotificationSystem";
 import EnhancedDataTable from "components/EnhancedDataTable";
+import FullWidthContainer from "components/FullWidthContainer";
 import ThemeTimeline, { TimelineLegend } from "components/ThemeTimeline/ThemeTimeline";
 import ThemeSurgePositions from "components/ThemeSurgePositions/ThemeSurgePositions";
 import ThemeEntryChart from "components/ThemeEntryChart";
+import ThemeRateLineChart from "components/ThemeRateLineChart";
 import { useThemeSurgeData, todayKST } from "hooks/useThemeSurgeData";
 import { useThemeSurgePositions } from "hooks/useThemeSurgePositions";
 import { COLORS, GRADIENT_COLORS } from "constants/styles";
@@ -155,6 +156,40 @@ function StockCell({ name, code }) {
 StockCell.propTypes = { name: PropTypes.string.isRequired, code: PropTypes.string };
 StockCell.defaultProps = { code: "" };
 
+/** 실시간 랭킹 표 전용 — 테마명과 주도주를 한 줄에 나란히 둔다 */
+function ThemeInlineCell({ name, leader }) {
+  return (
+    <Box sx={{ display: "flex", alignItems: "baseline", gap: 0.6, minWidth: 0 }}>
+      <MKTypography
+        variant="body2"
+        fontWeight="bold"
+        color="dark"
+        sx={{ fontSize: 12, lineHeight: 1.05, whiteSpace: "nowrap" }}
+      >
+        {name}
+      </MKTypography>
+      {leader && (
+        <MKTypography
+          variant="caption"
+          sx={{
+            fontSize: 10.5,
+            lineHeight: 1.05,
+            color: "#9aa5b1",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {leader}
+        </MKTypography>
+      )}
+    </Box>
+  );
+}
+
+ThemeInlineCell.propTypes = { name: PropTypes.string.isRequired, leader: PropTypes.string };
+ThemeInlineCell.defaultProps = { leader: "" };
+
 function RateCell({ value }) {
   return (
     <MKTypography variant="button" sx={{ fontSize: 13, fontWeight: 700, color: rateColor(value) }}>
@@ -197,7 +232,7 @@ ConditionMark.defaultProps = { ok: false };
  * 이 페이지의 표는 4~6컬럼이라 그대로 쓰면 카드 밖으로 넘치므로 최소 너비만 낮추고,
  * 나머지 룩앤필(헤더 배경·줄무늬·호버)은 동일하게 유지한다.
  */
-const tableStyles = (minWidth) => ({
+const tableStyles = (minWidth, compact = false) => ({
   table: { style: { width: "100%", tableLayout: "auto", minWidth } },
   headRow: {
     style: {
@@ -207,21 +242,28 @@ const tableStyles = (minWidth) => ({
       fontSize: "12px",
       fontWeight: 700,
       color: MUTED,
-      minHeight: "40px",
+      minHeight: compact ? "24px" : "40px",
     },
   },
   headCells: {
-    style: { whiteSpace: "nowrap", overflow: "visible", textOverflow: "unset", padding: "8px" },
+    style: {
+      whiteSpace: "nowrap",
+      overflow: "visible",
+      textOverflow: "unset",
+      padding: compact ? "0px 6px" : "8px",
+      minHeight: compact ? "24px" : "40px",
+    },
   },
   rows: {
     style: {
-      minHeight: "48px",
+      minHeight: compact ? "0px" : "48px",
+      lineHeight: compact ? 1.1 : "inherit",
       fontSize: "13px",
       "&:not(:last-of-type)": { borderBottomColor: "#eef1f4" },
       "&:hover": { backgroundColor: "#f5f7ff !important" },
     },
   },
-  cells: { style: { padding: "8px" } },
+  cells: { style: { padding: compact ? "0px 6px" : "8px" } },
   pagination: {
     style: { backgroundColor: "#fff", borderTop: "1px solid #eef1f4", fontSize: "12px" },
   },
@@ -244,7 +286,7 @@ function ThemeSurge() {
 
   const authFetch = isAuthenticated ? authenticatedFetch : null;
 
-  const { timeline, liveThemes, candidates, loading, error, lastUpdated, refresh, triggerScan } =
+  const { timeline, liveThemes, loading, error, lastUpdated, refresh, triggerScan } =
     useThemeSurgeData(date, authFetch, AUTO_REFRESH_MS);
 
   const topLiveThemes = useMemo(() => liveThemes.slice(0, LIVE_THEME_LIMIT), [liveThemes]);
@@ -287,67 +329,22 @@ function ThemeSurge() {
     : null;
 
   // ── 표 컬럼 정의 (EnhancedDataTable: div 기반이라 헤더/바디 정렬이 항상 일치) ──
-  const candidateColumns = [
-    { name: "시각", selector: (r) => r.slot, width: "72px" },
-    {
-      name: "테마",
-      selector: (r) => r.theme_name,
-      sortable: true,
-      minWidth: "120px",
-      maxWidth: "180px",
-    },
-    {
-      name: "종목",
-      selector: (r) => r.stock_name,
-      sortable: true,
-      grow: 1,
-      minWidth: "150px",
-      maxWidth: "300px",
-      cell: (r) => <StockCell name={r.stock_name} code={r.stock_code} />,
-    },
-    {
-      name: "상승률",
-      selector: (r) => r.change_rate,
-      sortable: true,
-      right: true,
-      width: "90px",
-      cell: (r) => <RateCell value={r.change_rate} />,
-    },
-    {
-      name: "거래대금",
-      selector: (r) => r.trading_value,
-      sortable: true,
-      right: true,
-      width: "104px",
-      cell: (r) => formatNumber(r.trading_value),
-    },
-    {
-      name: "점수",
-      selector: (r) => r.score,
-      sortable: true,
-      right: true,
-      width: "80px",
-      cell: (r) => r.score.toFixed(3),
-    },
-  ];
-
   const liveColumns = [
-    { name: "#", selector: (r) => r.rank, width: "48px" },
+    { name: "#", selector: (r) => r.rank, width: "40px", compact: true },
     {
       name: "테마",
       selector: (r) => r.theme_name,
       sortable: true,
       grow: 1,
-      minWidth: "140px",
-      maxWidth: "320px",
-      cell: (r) => <StockCell name={r.theme_name} code={r.leading_stock_name} />,
+      minWidth: "96px",
+      cell: (r) => <ThemeInlineCell name={r.theme_name} leader={r.leading_stock_name} />,
     },
     {
       name: "등락률",
       selector: (r) => r.fluctuation_rate,
       sortable: true,
       right: true,
-      width: "90px",
+      width: "68px",
       cell: (r) => <RateCell value={r.fluctuation_rate} />,
     },
     {
@@ -355,7 +352,7 @@ function ThemeSurge() {
       selector: (r) => r.trading_value,
       sortable: true,
       right: true,
-      width: "104px",
+      width: "76px",
       cell: (r) => formatNumber(r.trading_value),
     },
   ];
@@ -441,7 +438,7 @@ function ThemeSurge() {
     <>
       <DefaultNavbar routes={routes} sticky />
       <MKBox minHeight="100vh" pt={10} pb={5} sx={{ bgcolor: "#f4f6f8" }}>
-        <Container maxWidth="xl">
+        <FullWidthContainer>
           {/* ── 헤더 ───────────────────────────────── */}
           <Box
             sx={{
@@ -615,31 +612,9 @@ function ThemeSurge() {
             </SectionCard>
           </Box>
 
-          {/* ── 4. 주도주 / 실시간 랭킹 ─────────────── */}
+          {/* ── 4. 실시간 랭킹 + 산업군 등락률 추이 ── */}
           <Grid container spacing={2} sx={{ mt: 0 }}>
-            <Grid item xs={12} xl={7}>
-              <SectionCard
-                title="테마별 1등 종목"
-                subtitle="거래대금과 상승률을 테마 내에서 정규화해 합산한 복합 점수 기준"
-                sx={{ height: "100%" }}
-              >
-                <Box sx={{ overflowX: "auto" }}>
-                  <EnhancedDataTable
-                    columns={candidateColumns}
-                    data={candidates}
-                    autoOptimizeColumns={false}
-                    striped={false}
-                    dense
-                    pagination
-                    paginationPerPage={10}
-                    customStyles={tableStyles("480px")}
-                    noDataComponent={NO_DATA("선정된 주도주가 없습니다.")}
-                  />
-                </Box>
-              </SectionCard>
-            </Grid>
-
-            <Grid item xs={12} xl={5}>
+            <Grid item xs={12} lg={4} xl={3.6}>
               <SectionCard
                 title="지금 뜨는 산업"
                 subtitle="토스증권 테마 랭킹 상위 10개"
@@ -650,7 +625,7 @@ function ThemeSurge() {
                     sx={{ height: 20, fontSize: 11, bgcolor: "#e8f5e9", color: "#2e7d32" }}
                   />
                 }
-                sx={{ height: "100%" }}
+                sx={{ height: "100%", p: 1.75 }}
               >
                 <Box sx={{ overflowX: "auto" }}>
                   <EnhancedDataTable
@@ -660,21 +635,40 @@ function ThemeSurge() {
                     striped={false}
                     dense
                     pagination={false}
-                    customStyles={tableStyles("360px")}
+                    customStyles={tableStyles("0px", true)}
                     noDataComponent={NO_DATA("조회된 테마가 없습니다.")}
                   />
                 </Box>
               </SectionCard>
             </Grid>
+
+            <Grid item xs={12} lg={8} xl={8.4}>
+              <SectionCard
+                title="산업군별 등락률 추이 (09:00 ~ 15:30)"
+                subtitle="가로 = 시각 · 세로 = 등락률 · 범례를 클릭하면 해당 산업군을 숨기거나 다시 표시합니다"
+                sx={{ height: "100%", display: "flex", flexDirection: "column" }}
+              >
+                <ThemeRateLineChart
+                  slots={timeline.slots}
+                  themes={timeline.themes}
+                  loading={loading}
+                />
+              </SectionCard>
+            </Grid>
           </Grid>
 
           {/* ── 5. 진입 조건 판정 (차트 + 표) ────────── */}
-          {isAuthenticated && timeline.signals.length > 0 && (
-            <Box sx={{ mt: 2 }}>
-              <SectionCard
-                title="진입 조건 판정"
-                subtitle="종목 탭에서 판정 시점을 고르면, 그때 전고점·눌림목이 1분봉 어디로 잡혔는지 차트에 그려집니다. 3조건이 모두 ✓ 여야 매수합니다"
-                action={
+          {/*
+            섹션을 조건부로 숨기지 않는다. 로그인이 풀렸거나 판정 이력이 없으면
+            차트가 통째로 사라져 "왜 안 보이는지" 알 수 없었다.
+            비어 있는 사유는 ThemeEntryChart 가 안내 문구로 직접 보여 준다.
+          */}
+          <Box sx={{ mt: 2 }}>
+            <SectionCard
+              title="진입 조건 판정"
+              subtitle="종목 탭에서 판정 시점을 고르면, 그때 전고점·눌림목이 1분봉 어디로 잡혔는지 차트에 그려집니다. 3조건이 모두 ✓ 여야 매수합니다"
+              action={
+                timeline.signals.length > 0 && (
                   <Button
                     size="small"
                     variant="text"
@@ -688,41 +682,41 @@ function ThemeSurge() {
                   >
                     {showSignalTable ? "표 접기" : "전체 표로 보기"}
                   </Button>
-                }
-              >
-                <ThemeEntryChart
-                  date={date}
-                  signals={timeline.signals}
-                  authFetch={authFetch}
-                  isAuthenticated={isAuthenticated}
-                />
+                )
+              }
+            >
+              <ThemeEntryChart
+                date={date}
+                signals={timeline.signals}
+                authFetch={authFetch}
+                isAuthenticated={isAuthenticated}
+              />
 
-                <Collapse in={showSignalTable} unmountOnExit>
-                  <Divider sx={{ my: 2 }} />
-                  <Box sx={{ overflowX: "auto" }}>
-                    <EnhancedDataTable
-                      columns={signalColumns}
-                      data={timeline.signals}
-                      autoOptimizeColumns={false}
-                      striped={false}
-                      dense
-                      pagination
-                      paginationPerPage={15}
-                      customStyles={tableStyles("880px")}
-                      noDataComponent={NO_DATA("판정 이력이 없습니다.")}
-                    />
-                  </Box>
-                </Collapse>
-              </SectionCard>
-            </Box>
-          )}
+              <Collapse in={showSignalTable} unmountOnExit>
+                <Divider sx={{ my: 2 }} />
+                <Box sx={{ overflowX: "auto" }}>
+                  <EnhancedDataTable
+                    columns={signalColumns}
+                    data={timeline.signals}
+                    autoOptimizeColumns={false}
+                    striped={false}
+                    dense
+                    pagination
+                    paginationPerPage={15}
+                    customStyles={tableStyles("880px")}
+                    noDataComponent={NO_DATA("판정 이력이 없습니다.")}
+                  />
+                </Box>
+              </Collapse>
+            </SectionCard>
+          </Box>
 
           <Divider sx={{ my: 3 }} />
           <MKTypography variant="caption" sx={{ color: "#9aa5b1" }}>
             데이터 출처: 토스증권 산업분류(TICS) 랭킹 · 수급 데이터: 한국투자증권 API. 수집은 개장일
             09:00~15:30에만 이루어집니다. 표시된 정보는 투자 판단의 참고용이며 투자 권유가 아닙니다.
           </MKTypography>
-        </Container>
+        </FullWidthContainer>
       </MKBox>
       <NotificationComponent />
     </>
