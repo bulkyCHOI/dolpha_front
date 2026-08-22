@@ -1,7 +1,7 @@
 import React from "react";
 import ToggleButton from "@mui/material/ToggleButton";
 import Tooltip from "@mui/material/Tooltip";
-import { COLORS, alpha } from "constants/styles";
+import { COLORS, alpha, onColor } from "constants/styles";
 
 const InflectionPointToggle = ({
   showInflectionPoints = false,
@@ -27,7 +27,7 @@ const InflectionPointToggle = ({
           },
           "&.Mui-selected": {
             backgroundColor: COLORS.DOWN,
-            color: COLORS.ON_ACCENT,
+            color: onColor(COLORS.DOWN),
             "&:hover": {
               backgroundColor: COLORS.DOWN,
             },

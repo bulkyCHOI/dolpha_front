@@ -20,6 +20,7 @@ import boxShadows from "assets/theme/base/boxShadows";
 
 // Material Kit 2 React helper functions
 import pxToRem from "assets/theme/functions/pxToRem";
+import { cssVar } from "constants/palette";
 
 const { grey, white } = colors;
 const { borderRadius } = borders;
@@ -29,7 +30,7 @@ export default {
   styleOverrides: {
     root: {
       position: "relative",
-      backgroundColor: grey[100],
+      backgroundColor: cssVar("surface-alt"),
       borderRadius: borderRadius.xl,
       minHeight: "unset",
       padding: pxToRem(4),
@@ -55,7 +56,7 @@ export default {
     indicator: {
       height: "100%",
       borderRadius: borderRadius.lg,
-      backgroundColor: white.main,
+      backgroundColor: cssVar("surface"),
       boxShadow: tabsBoxShadow.indicator,
       transition: "all 500ms ease",
     },

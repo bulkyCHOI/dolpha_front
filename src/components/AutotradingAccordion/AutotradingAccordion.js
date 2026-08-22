@@ -19,7 +19,7 @@ import { ExpandMore, Refresh, Delete, Save } from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { adjustToKRXTickSize, getKRXTickSize } from "utils/formatters";
-import { COLORS, alpha } from "constants/styles";
+import { COLORS, GRADIENT_COLORS, alpha } from "constants/styles";
 
 /**
  * 자동매매 아코디언 컴포넌트
@@ -372,7 +372,10 @@ const AutotradingAccordion = ({
                         mb: 1,
                       }}
                     >
-                      <Typography variant="caption" sx={{ color: COLORS.WARNING, fontWeight: "bold" }}>
+                      <Typography
+                        variant="caption"
+                        sx={{ color: COLORS.WARNING, fontWeight: "bold" }}
+                      >
                         ⚠️ 포지션의 합이 100%가 되어야 합니다. (현재: {positionSum.toFixed(1)}%)
                       </Typography>
                     </Box>
@@ -431,7 +434,9 @@ const AutotradingAccordion = ({
                       <Grid container spacing={1} key={index} sx={{ mb: 1 }}>
                         <Grid item xs={12} sm={6}>
                           <TextField
-                            label={`${index + 2}차 진입시점 (${tradingMode === "manual" ? "%" : "ATR"})`}
+                            label={`${index + 2}차 진입시점 (${
+                              tradingMode === "manual" ? "%" : "ATR"
+                            })`}
                             value={entry}
                             onChange={(e) => handlePyramidingEntryChange(index, e.target.value)}
                             size="small"
@@ -483,9 +488,7 @@ const AutotradingAccordion = ({
                     disabled={!isFormValid()}
                     sx={{
                       flex: 1,
-                      background: isFormValid()
-                        ? `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`
-                        : COLORS.BORDER_STRONG,
+                      background: isFormValid() ? GRADIENT_COLORS.PRIMARY : COLORS.BORDER_STRONG,
                       color: "white !important",
                       "&:hover": {
                         background: isFormValid()
@@ -756,7 +759,8 @@ const AutotradingAccordion = ({
                           <Typography
                             variant="caption"
                             sx={{
-                              color: Math.abs(positionSum - 100) >= 0.01 ? COLORS.UP : COLORS.SUCCESS,
+                              color:
+                                Math.abs(positionSum - 100) >= 0.01 ? COLORS.UP : COLORS.SUCCESS,
                               fontWeight: "bold",
                             }}
                           >
@@ -858,7 +862,9 @@ const AutotradingAccordion = ({
                           <Grid container spacing={1} key={index} sx={{ mb: 1 }}>
                             <Grid item xs={6}>
                               <TextField
-                                label={`${index + 2}차 진입시점 (${tradingMode === "manual" ? "%" : "ATR"})`}
+                                label={`${index + 2}차 진입시점 (${
+                                  tradingMode === "manual" ? "%" : "ATR"
+                                })`}
                                 value={entry}
                                 onChange={(e) => handlePyramidingEntryChange(index, e.target.value)}
                                 size="small"
@@ -911,7 +917,7 @@ const AutotradingAccordion = ({
                         sx={{
                           flex: 1,
                           background: isFormValid()
-                            ? `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`
+                            ? GRADIENT_COLORS.PRIMARY
                             : COLORS.BORDER_STRONG,
                           color: "white !important",
                           "&:hover": {
@@ -1355,7 +1361,9 @@ const AutotradingAccordion = ({
                         <Grid container spacing={1} key={index} sx={{ mb: 1 }}>
                           <Grid item xs={6}>
                             <TextField
-                              label={`${index + 2}차 진입시점 (${tradingMode === "manual" ? "%" : "ATR"})`}
+                              label={`${index + 2}차 진입시점 (${
+                                tradingMode === "manual" ? "%" : "ATR"
+                              })`}
                               value={entry}
                               onChange={(e) => handlePyramidingEntryChange(index, e.target.value)}
                               size="small"
@@ -1407,9 +1415,7 @@ const AutotradingAccordion = ({
                       disabled={!isFormValid()}
                       sx={{
                         flex: 1,
-                        background: isFormValid()
-                          ? `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`
-                          : COLORS.BORDER_STRONG,
+                        background: isFormValid() ? GRADIENT_COLORS.PRIMARY : COLORS.BORDER_STRONG,
                         color: "white !important",
                         "&:hover": {
                           background: isFormValid()

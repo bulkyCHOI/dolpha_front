@@ -192,7 +192,12 @@ function DecisionSummary({ decision, params }) {
           <Chip
             size="small"
             label="분봉 부족 — 좌표 복원 불가"
-            sx={{ height: 19, fontSize: 10.5, bgcolor: COLORS.SURFACE_ALT, color: CHART_COLORS.MUTED }}
+            sx={{
+              height: 19,
+              fontSize: 10.5,
+              bgcolor: COLORS.SURFACE_ALT,
+              color: CHART_COLORS.MUTED,
+            }}
           />
         )}
         <Typography variant="caption" sx={{ fontSize: 11.5, color: CHART_COLORS.MUTED }}>

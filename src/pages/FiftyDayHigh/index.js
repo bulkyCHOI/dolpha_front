@@ -32,7 +32,7 @@ import AutotradingAccordion from "components/AutotradingAccordion/AutotradingAcc
 import ChartContainer from "components/ChartContainer/ChartContainer";
 import StockInfoHeader from "components/StockInfoHeader/StockInfoHeader";
 import StockList from "components/StockList/StockList";
-import { COLORS, GRADIENT_COLORS, LAYOUT, alpha } from "constants/styles";
+import { COLORS, GRADIENT_COLORS, LAYOUT, alpha, onColor } from "constants/styles";
 import { formatNumber } from "utils/formatters";
 
 function FiftyDayHigh() {
@@ -335,7 +335,7 @@ function FiftyDayHigh() {
                     width: 64,
                     height: 64,
                     borderRadius: "50%",
-                    background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
+                    background: GRADIENT_COLORS.PRIMARY,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -466,7 +466,9 @@ function FiftyDayHigh() {
                 justifyContent: "center",
               }}
             >
-              <Typography color="error.main">데이터 로드 중 오류가 발생했습니다: {error}</Typography>
+              <Typography color="error.main">
+                데이터 로드 중 오류가 발생했습니다: {error}
+              </Typography>
             </Box>
           )}
 
@@ -478,7 +480,7 @@ function FiftyDayHigh() {
                   {/* 테이블 헤더 */}
                   <Box
                     sx={{
-                      background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
+                      background: GRADIENT_COLORS.PRIMARY,
                       p: 1,
                       display: "flex",
                       alignItems: "center",
@@ -573,12 +575,17 @@ function FiftyDayHigh() {
                         sx={{
                           p: 0.5,
                           borderBottom:
-                            rowIndex === stockData.length - 1 ? "none" : `1px solid ${COLORS.DIVIDER}`,
+                            rowIndex === stockData.length - 1
+                              ? "none"
+                              : `1px solid ${COLORS.DIVIDER}`,
                           cursor: "pointer",
                           transition: "all 0.2s ease",
                           backgroundColor:
                             selectedStock?.code === row.code
-                              ? `linear-gradient(135deg, ${alpha(COLORS.PRIMARY, 0.1)} 0%, ${alpha(COLORS.PRIMARY_DARK, 0.1)} 100%)`
+                              ? `linear-gradient(135deg, ${alpha(COLORS.PRIMARY, 0.1)} 0%, ${alpha(
+                                  COLORS.PRIMARY_DARK,
+                                  0.1
+                                )} 100%)`
                               : rowIndex % 2 === 0
                               ? COLORS.SURFACE_ALT
                               : COLORS.ON_ACCENT,
@@ -631,17 +638,29 @@ function FiftyDayHigh() {
                                 sx={{
                                   backgroundColor:
                                     row.min_50d_gain_percent >= 60
-                                      ? COLORS.UP // 60%이상 빨강 (52주 300% 대응)
+                                      ? COLORS.UP
                                       : row.min_50d_gain_percent >= 40
-                                      ? COLORS.WARNING // 40%이상 주황 (52주 200% 대응)
+                                      ? COLORS.WARNING
                                       : row.min_50d_gain_percent >= 20
-                                      ? "#ffeb3b" // 20%이상 노랑 (52주 100% 대응)
+                                      ? "#ffeb3b"
                                       : row.min_50d_gain_percent >= 15
-                                      ? COLORS.SUCCESS // 15%이상 녹색 (52주 75% 대응)
+                                      ? COLORS.SUCCESS
                                       : row.min_50d_gain_percent >= 10
-                                      ? COLORS.DOWN // 10%이상 파랑 (52주 50% 대응)
-                                      : COLORS.TEXT_MUTED, // 10%미만 회색
-                                  color: COLORS.ON_ACCENT,
+                                      ? COLORS.DOWN
+                                      : COLORS.TEXT_MUTED,
+                                  color: onColor(
+                                    row.min_50d_gain_percent >= 60
+                                      ? COLORS.UP
+                                      : row.min_50d_gain_percent >= 40
+                                      ? COLORS.WARNING
+                                      : row.min_50d_gain_percent >= 20
+                                      ? "#ffeb3b"
+                                      : row.min_50d_gain_percent >= 15
+                                      ? COLORS.SUCCESS
+                                      : row.min_50d_gain_percent >= 10
+                                      ? COLORS.DOWN
+                                      : COLORS.TEXT_MUTED
+                                  ),
                                   fontWeight: "bold",
                                   fontSize: { xs: "0.6rem", md: "0.7rem" },
                                   minWidth: { xs: "45px", md: "50px" },
@@ -662,20 +681,29 @@ function FiftyDayHigh() {
                                 sx={{
                                   backgroundColor:
                                     row.rsRank >= 90
-                                      ? COLORS.UP // 90 이상: 빨강
+                                      ? COLORS.UP
                                       : row.rsRank >= 80
-                                      ? COLORS.WARNING // 80 이상: 주황
+                                      ? COLORS.WARNING
                                       : row.rsRank >= 70
-                                      ? COLORS.WARNING // 70 이상: 노랑
+                                      ? COLORS.WARNING
                                       : row.rsRank >= 60
-                                      ? COLORS.SUCCESS // 60 이상: 초록
+                                      ? COLORS.SUCCESS
                                       : row.rsRank >= 50
-                                      ? COLORS.DOWN // 50 이상: 파랑
-                                      : COLORS.TEXT_MUTED, // 50 이하: 회색
-                                  color:
-                                    row.rsRank >= 70 && row.rsRank < 80
-                                      ? COLORS.ON_ACCENT_LIGHT // 노란색일 때는 검은색 텍스트
-                                      : COLORS.ON_ACCENT,
+                                      ? COLORS.DOWN
+                                      : COLORS.TEXT_MUTED,
+                                  color: onColor(
+                                    row.rsRank >= 90
+                                      ? COLORS.UP
+                                      : row.rsRank >= 80
+                                      ? COLORS.WARNING
+                                      : row.rsRank >= 70
+                                      ? COLORS.WARNING
+                                      : row.rsRank >= 60
+                                      ? COLORS.SUCCESS
+                                      : row.rsRank >= 50
+                                      ? COLORS.DOWN
+                                      : COLORS.TEXT_MUTED
+                                  ),
                                   fontWeight: "bold",
                                   fontSize: { xs: "0.6rem", md: "0.7rem" },
                                   minWidth: { xs: "30px", md: "35px" },
@@ -775,7 +803,7 @@ function FiftyDayHigh() {
                         onClick={() => navigate("/pages/authentication/sign-in")}
                         sx={{
                           background: GRADIENT_COLORS.PRIMARY,
-                          color: COLORS.ON_ACCENT,
+                          color: onColor(GRADIENT_COLORS.PRIMARY),
                           px: 4,
                           py: 1.5,
                           "&:hover": {
@@ -916,7 +944,7 @@ function FiftyDayHigh() {
                   width: 64,
                   height: 64,
                   borderRadius: "50%",
-                  background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
+                  background: GRADIENT_COLORS.PRIMARY,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",

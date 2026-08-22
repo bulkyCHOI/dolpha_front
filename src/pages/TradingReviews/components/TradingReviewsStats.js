@@ -13,7 +13,7 @@ import {
   Box,
   Chip,
   LinearProgress,
-  Skeleton
+  Skeleton,
 } from "@mui/material";
 
 // @mui icons
@@ -66,11 +66,12 @@ function TradingReviewsStats({ stats, loading }) {
     total_profit_loss = 0,
     avg_profit_loss = 0,
     win_rate = 0,
-    profitable_count = 0
+    profitable_count = 0,
   } = stats;
 
   const loss_count = total_count - profitable_count;
-  const profit_color = total_profit_loss > 0 ? "success" : total_profit_loss < 0 ? "error" : "default";
+  const profit_color =
+    total_profit_loss > 0 ? "success" : total_profit_loss < 0 ? "error" : "default";
   const win_rate_color = win_rate >= 60 ? "success" : win_rate >= 40 ? "warning" : "error";
 
   const statCards = [
@@ -80,7 +81,7 @@ function TradingReviewsStats({ stats, loading }) {
       subtitle: "총 거래 수",
       icon: <TradeIcon />,
       color: "primary",
-      format: "number"
+      format: "number",
     },
     {
       title: "청산완료",
@@ -88,7 +89,7 @@ function TradingReviewsStats({ stats, loading }) {
       subtitle: `보유중: ${holding_count}건`,
       icon: <CheckCircleIcon />,
       color: "info",
-      format: "number"
+      format: "number",
     },
     {
       title: "총 손익",
@@ -96,7 +97,7 @@ function TradingReviewsStats({ stats, loading }) {
       subtitle: `평균: ${formatNumber(avg_profit_loss)}원`,
       icon: total_profit_loss >= 0 ? <TrendingUpIcon /> : <TrendingDownIcon />,
       color: profit_color,
-      format: "currency"
+      format: "currency",
     },
     {
       title: "승률",
@@ -105,15 +106,17 @@ function TradingReviewsStats({ stats, loading }) {
       icon: <PercentIcon />,
       color: win_rate_color,
       format: "percent",
-      progress: win_rate
+      progress: win_rate,
     },
     {
       title: "수익 거래",
       value: profitable_count,
-      subtitle: `전체의 ${total_count > 0 ? ((profitable_count / total_count) * 100).toFixed(1) : 0}%`,
+      subtitle: `전체의 ${
+        total_count > 0 ? ((profitable_count / total_count) * 100).toFixed(1) : 0
+      }%`,
       icon: <TrendingUpIcon />,
       color: "success",
-      format: "number"
+      format: "number",
     },
     {
       title: "손실 거래",
@@ -121,14 +124,14 @@ function TradingReviewsStats({ stats, loading }) {
       subtitle: `전체의 ${total_count > 0 ? ((loss_count / total_count) * 100).toFixed(1) : 0}%`,
       icon: <TrendingDownIcon />,
       color: "error",
-      format: "number"
-    }
+      format: "number",
+    },
   ];
 
   const formatValue = (value, format) => {
     switch (format) {
       case "currency":
-        return `${value >= 0 ? '+' : ''}${formatNumber(value)}원`;
+        return `${value >= 0 ? "+" : ""}${formatNumber(value)}원`;
       case "percent":
         return `${formatPercent(value)}%`;
       case "number":
@@ -143,12 +146,12 @@ function TradingReviewsStats({ stats, loading }) {
         <Grid item xs={12} sm={6} md={4} lg={2} key={index}>
           <Card
             sx={{
-              height: '100%',
-              transition: 'transform 0.2s, box-shadow 0.2s',
-              '&:hover': {
-                transform: 'translateY(-2px)',
-                boxShadow: 4
-              }
+              height: "100%",
+              transition: "transform 0.2s, box-shadow 0.2s",
+              "&:hover": {
+                transform: "translateY(-2px)",
+                boxShadow: 4,
+              },
             }}
           >
             <CardContent>
@@ -156,15 +159,15 @@ function TradingReviewsStats({ stats, loading }) {
                 <Typography variant="subtitle2" color="text.secondary">
                   {stat.title}
                 </Typography>
-                <Box color={`${stat.color}.main`} sx={{ display: 'flex', alignItems: 'center' }}>
+                <Box color={`${stat.color}.main`} sx={{ display: "flex", alignItems: "center" }}>
                   {stat.icon}
                 </Box>
               </Box>
-              
+
               <Typography variant="h5" fontWeight="bold" color={`${stat.color}.main`} mb={1}>
                 {formatValue(stat.value, stat.format)}
               </Typography>
-              
+
               <Typography variant="caption" color="text.secondary">
                 {stat.subtitle}
               </Typography>
@@ -179,7 +182,7 @@ function TradingReviewsStats({ stats, loading }) {
                     sx={{
                       height: 8,
                       borderRadius: 4,
-                      backgroundColor: 'grey.200'
+                      backgroundColor: "grey.200",
                     }}
                   />
                 </Box>
@@ -197,18 +200,16 @@ function TradingReviewsStats({ stats, loading }) {
               거래 요약
             </Typography>
             <Box display="flex" flexWrap="wrap" gap={1}>
-              <Chip
-                label={`총 ${total_count}건 거래`}
-                color="primary"
-                variant="outlined"
-              />
+              <Chip label={`총 ${total_count}건 거래`} color="primary" variant="outlined" />
               <Chip
                 label={`승률 ${formatPercent(win_rate)}%`}
                 color={win_rate_color}
                 variant="outlined"
               />
               <Chip
-                label={`총 손익 ${total_profit_loss >= 0 ? '+' : ''}${formatNumber(total_profit_loss)}원`}
+                label={`총 손익 ${total_profit_loss >= 0 ? "+" : ""}${formatNumber(
+                  total_profit_loss
+                )}원`}
                 color={profit_color}
                 variant="outlined"
               />

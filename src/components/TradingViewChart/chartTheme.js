@@ -15,7 +15,6 @@ import { COLORS, alpha, resolveColor } from "constants/styles";
 
 const { bearish, bullish, flat, grey, info, success, warning } = colors;
 
-
 /**
  * 캔버스용 색 묶음을 만든다.
  *

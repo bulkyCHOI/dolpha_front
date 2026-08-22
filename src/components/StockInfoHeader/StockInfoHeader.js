@@ -6,7 +6,7 @@ import ArrowDownward from "@mui/icons-material/ArrowDownward";
 import Assessment from "@mui/icons-material/Assessment";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { COLORS, alpha } from "constants/styles";
+import { COLORS, GRADIENT_COLORS, alpha } from "constants/styles";
 
 function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinancialModal }) {
   const getChangeRate = () => {
@@ -32,7 +32,7 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
   return (
     <Box
       sx={{
-        background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
+        background: GRADIENT_COLORS.PRIMARY,
         borderRadius: { xs: 2, md: 1 },
         boxShadow: `0 2px 8px ${alpha(COLORS.PRIMARY, 0.1)}`,
         position: "relative",
@@ -42,9 +42,7 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
     >
       {/* 모바일: 간단한 카드 형태 */}
       <Box sx={{ display: { xs: "block", md: "none" } }}>
-        <Box
-          sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}
-        >
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
           <Box>
             <Typography variant="h6" color="white.main" fontWeight="bold">
               {selectedStock.name || "-"}

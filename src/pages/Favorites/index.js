@@ -40,7 +40,7 @@ import FinancialModal from "components/FinancialModal/FinancialModal";
 import AutotradingAccordion from "components/AutotradingAccordion/AutotradingAccordion";
 import ChartContainer from "components/ChartContainer/ChartContainer";
 import StockInfoHeader from "components/StockInfoHeader/StockInfoHeader";
-import { COLORS, GRADIENT_COLORS, LAYOUT, alpha } from "constants/styles";
+import { COLORS, GRADIENT_COLORS, LAYOUT, alpha, onColor } from "constants/styles";
 import { formatNumber } from "utils/formatters";
 
 function Favorites() {
@@ -297,7 +297,7 @@ function Favorites() {
                     width: 64,
                     height: 64,
                     borderRadius: "50%",
-                    background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
+                    background: GRADIENT_COLORS.PRIMARY,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -462,7 +462,9 @@ function Favorites() {
                 justifyContent: "center",
               }}
             >
-              <Typography color="error.main">데이터 로드 중 오류가 발생했습니다: {error}</Typography>
+              <Typography color="error.main">
+                데이터 로드 중 오류가 발생했습니다: {error}
+              </Typography>
             </Box>
           )}
 
@@ -472,7 +474,7 @@ function Favorites() {
               {/* 검색 결과 헤더 */}
               <Box
                 sx={{
-                  background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
+                  background: GRADIENT_COLORS.PRIMARY,
                   p: 1,
                   display: "flex",
                   alignItems: "center",
@@ -694,7 +696,7 @@ function Favorites() {
                   {/* 테이블 헤더 */}
                   <Box
                     sx={{
-                      background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
+                      background: GRADIENT_COLORS.PRIMARY,
                       p: 1,
                       display: "flex",
                       alignItems: "center",
@@ -811,13 +813,18 @@ function Favorites() {
                         sx={{
                           p: 0.5,
                           borderBottom:
-                            rowIndex === displayStocks.length - 1 ? "none" : `1px solid ${COLORS.DIVIDER}`,
+                            rowIndex === displayStocks.length - 1
+                              ? "none"
+                              : `1px solid ${COLORS.DIVIDER}`,
                           cursor: "pointer",
                           transition: "all 0.2s ease",
                           backgroundColor:
                             selectedStock?.code === (stock.code || stock.stock_code) ||
                             selectedStock?.stock_code === (stock.code || stock.stock_code)
-                              ? `linear-gradient(135deg, ${alpha(COLORS.PRIMARY, 0.1)} 0%, ${alpha(COLORS.PRIMARY_DARK, 0.1)} 100%)`
+                              ? `linear-gradient(135deg, ${alpha(COLORS.PRIMARY, 0.1)} 0%, ${alpha(
+                                  COLORS.PRIMARY_DARK,
+                                  0.1
+                                )} 100%)`
                               : rowIndex % 2 === 0
                               ? COLORS.SURFACE_ALT
                               : COLORS.ON_ACCENT,
@@ -932,8 +939,19 @@ function Favorites() {
                                       : stock.rsRank >= 50
                                       ? COLORS.DOWN
                                       : COLORS.TEXT_MUTED,
-                                  color:
-                                    stock.rsRank >= 70 && stock.rsRank < 80 ? COLORS.ON_ACCENT_LIGHT : COLORS.ON_ACCENT,
+                                  color: onColor(
+                                    stock.rsRank >= 90
+                                      ? COLORS.UP
+                                      : stock.rsRank >= 80
+                                      ? COLORS.WARNING
+                                      : stock.rsRank >= 70
+                                      ? COLORS.WARNING
+                                      : stock.rsRank >= 60
+                                      ? COLORS.SUCCESS
+                                      : stock.rsRank >= 50
+                                      ? COLORS.DOWN
+                                      : COLORS.TEXT_MUTED
+                                  ),
                                   fontWeight: "bold",
                                   fontSize: { xs: "0.6rem", md: "0.7rem" },
                                   minWidth: { xs: "25px", md: "30px" },
@@ -1019,7 +1037,7 @@ function Favorites() {
                         onClick={() => navigate("/pages/authentication/sign-in")}
                         sx={{
                           background: GRADIENT_COLORS.PRIMARY,
-                          color: COLORS.ON_ACCENT,
+                          color: onColor(GRADIENT_COLORS.PRIMARY),
                           px: 4,
                           py: 1.5,
                           "&:hover": {
@@ -1429,7 +1447,7 @@ function Favorites() {
                   width: 64,
                   height: 64,
                   borderRadius: "50%",
-                  background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
+                  background: GRADIENT_COLORS.PRIMARY,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",

@@ -158,6 +158,7 @@ export const calculateColumnWidths = (columns, data, containerWidth) => {
 export const getCustomTableStyles = (theme) => ({
   table: {
     style: {
+      backgroundColor: COLORS.SURFACE,
       width: "100%",
       tableLayout: "auto",
       borderCollapse: "separate",

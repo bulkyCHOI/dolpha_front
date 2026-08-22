@@ -109,11 +109,11 @@ export const adjustToKRXTickSize = (price) => {
  * @returns {string} 포맷된 퍼센트 문자열
  */
 export const formatPercent = (value, decimals = 2) => {
-  if (value === null || value === undefined || value === '') return '0.00';
-  
+  if (value === null || value === undefined || value === "") return "0.00";
+
   const numValue = Number(value);
-  if (isNaN(numValue)) return '0.00';
-  
+  if (isNaN(numValue)) return "0.00";
+
   return numValue.toFixed(decimals);
 };
 
@@ -123,41 +123,41 @@ export const formatPercent = (value, decimals = 2) => {
  * @param {string} format - 포맷 형식 ('date' | 'datetime' | 'time')
  * @returns {string} 포맷된 날짜 문자열
  */
-export const formatDate = (date, format = 'date') => {
-  if (!date) return '-';
-  
+export const formatDate = (date, format = "date") => {
+  if (!date) return "-";
+
   try {
     const dateObj = new Date(date);
-    if (isNaN(dateObj.getTime())) return '-';
-    
+    if (isNaN(dateObj.getTime())) return "-";
+
     const options = {
-      timeZone: 'Asia/Seoul',
+      timeZone: "Asia/Seoul",
     };
-    
+
     switch (format) {
-      case 'datetime':
-        options.year = 'numeric';
-        options.month = '2-digit';
-        options.day = '2-digit';
-        options.hour = '2-digit';
-        options.minute = '2-digit';
-        return dateObj.toLocaleDateString('ko-KR', options).replace(/\./g, '-').replace(/\s/g, ' ');
-      
-      case 'time':
-        options.hour = '2-digit';
-        options.minute = '2-digit';
-        options.second = '2-digit';
-        return dateObj.toLocaleTimeString('ko-KR', options);
-      
-      case 'date':
+      case "datetime":
+        options.year = "numeric";
+        options.month = "2-digit";
+        options.day = "2-digit";
+        options.hour = "2-digit";
+        options.minute = "2-digit";
+        return dateObj.toLocaleDateString("ko-KR", options).replace(/\./g, "-").replace(/\s/g, " ");
+
+      case "time":
+        options.hour = "2-digit";
+        options.minute = "2-digit";
+        options.second = "2-digit";
+        return dateObj.toLocaleTimeString("ko-KR", options);
+
+      case "date":
       default:
-        options.year = 'numeric';
-        options.month = '2-digit';
-        options.day = '2-digit';
-        return dateObj.toLocaleDateString('ko-KR', options).replace(/\./g, '-').replace(/\s/g, '');
+        options.year = "numeric";
+        options.month = "2-digit";
+        options.day = "2-digit";
+        return dateObj.toLocaleDateString("ko-KR", options).replace(/\./g, "-").replace(/\s/g, "");
     }
   } catch (error) {
-    return '-';
+    return "-";
   }
 };
 
@@ -172,7 +172,7 @@ export const formatCurrency = (value) => {
   const numValue = Number(value);
   if (isNaN(numValue)) return value;
 
-  return numValue.toLocaleString('ko-KR');
+  return numValue.toLocaleString("ko-KR");
 };
 
 /**
@@ -201,11 +201,11 @@ export const formatVolume = (value) => {
       maximumFractionDigits: 1,
     })}만`;
   } else {
-    return numValue.toLocaleString('ko-KR');
+    return numValue.toLocaleString("ko-KR");
   }
 };
 
 export const getTradingViewUrl = (stockCode, market) => {
-  const prefix = market === 'KOSDAQ' ? 'KOSDAQ' : 'KRX';
+  const prefix = market === "KOSDAQ" ? "KOSDAQ" : "KRX";
   return `https://www.tradingview.com/chart/?symbol=${prefix}:${stockCode}`;
 };

@@ -58,34 +58,39 @@ export const useStockData = () => {
     }
   }, []);
 
-  const fetchStockIndexData = useCallback(async (stockCode) => {
-    if (!stockCode) return [];
+  const fetchStockIndexData = useCallback(
+    async (stockCode) => {
+      if (!stockCode) return [];
 
-    try {
-      const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
-      const response = await fetch(`${apiBaseUrl}/api/find_stock_index?code=${stockCode}&limit=10`);
-      if (!response.ok) {
-        throw new Error("인덱스 데이터를 가져올 수 없습니다");
-      }
-      const result = await response.json();
-      const data = result.data || [];
-      setIndexData(data);
+      try {
+        const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
+        const response = await fetch(
+          `${apiBaseUrl}/api/find_stock_index?code=${stockCode}&limit=10`
+        );
+        if (!response.ok) {
+          throw new Error("인덱스 데이터를 가져올 수 없습니다");
+        }
+        const result = await response.json();
+        const data = result.data || [];
+        setIndexData(data);
 
-      if (data.length > 0) {
-        setSelectedIndexCode(data[0].code);
-        await fetchIndexOHLCVData(data[0].code);
-      } else {
+        if (data.length > 0) {
+          setSelectedIndexCode(data[0].code);
+          await fetchIndexOHLCVData(data[0].code);
+        } else {
+          setSelectedIndexCode("");
+          setIndexOhlcvData([]);
+        }
+
+        return data;
+      } catch (err) {
+        setIndexData([]);
         setSelectedIndexCode("");
-        setIndexOhlcvData([]);
+        return [];
       }
-
-      return data;
-    } catch (err) {
-      setIndexData([]);
-      setSelectedIndexCode("");
-      return [];
-    }
-  }, [fetchIndexOHLCVData]);
+    },
+    [fetchIndexOHLCVData]
+  );
 
   const fetchStockAnalysisData = useCallback(async (stockCode) => {
     if (!stockCode) return [];
@@ -110,15 +115,18 @@ export const useStockData = () => {
     }
   }, []);
 
-  const handleIndexChange = useCallback(async (event) => {
-    const indexCode = event.target.value;
-    setSelectedIndexCode(indexCode);
-    if (indexCode) {
-      await fetchIndexOHLCVData(indexCode);
-    } else {
-      setIndexOhlcvData([]);
-    }
-  }, [fetchIndexOHLCVData]);
+  const handleIndexChange = useCallback(
+    async (event) => {
+      const indexCode = event.target.value;
+      setSelectedIndexCode(indexCode);
+      if (indexCode) {
+        await fetchIndexOHLCVData(indexCode);
+      } else {
+        setIndexOhlcvData([]);
+      }
+    },
+    [fetchIndexOHLCVData]
+  );
 
   const handleStockClick = useCallback((stock) => {
     setSelectedStock(stock);

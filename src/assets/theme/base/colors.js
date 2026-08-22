@@ -26,8 +26,8 @@ export default {
     focus: "#475569",
     // 제목·수치 등 강조 텍스트
     strong: "#0f172a",
-    // 보조 설명
-    muted: "#94a3b8",
+    // 보조 설명. 더 밝으면 흰 배경에서 작은 글자가 읽히지 않는다
+    muted: "#7a8799",
 
     primary: "#1e293b",
     secondary: "#64748b",
@@ -65,9 +65,10 @@ export default {
     focus: "#2563eb",
   },
 
+  // 흰 배경에서 글자로도 쓰이므로 대비 3:1 을 넘기는 깊이로 잡는다
   success: {
-    main: "#22c55e",
-    focus: "#16a34a",
+    main: "#15803d",
+    focus: "#166534",
   },
 
   warning: {

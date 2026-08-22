@@ -20,6 +20,7 @@ import boxShadows from "assets/theme/base/boxShadows";
 
 // Material Kit 2 React Helper Function
 import rgba from "assets/theme/functions/rgba";
+import { cssVar } from "constants/palette";
 
 const { black, white } = colors;
 const { borderWidth, borderRadius } = borders;
@@ -33,7 +34,7 @@ export default {
       position: "relative",
       minWidth: 0,
       wordWrap: "break-word",
-      backgroundColor: white.main,
+      backgroundColor: cssVar("surface"),
       backgroundClip: "border-box",
       border: `${borderWidth[0]} solid ${rgba(black.main, 0.125)}`,
       borderRadius: borderRadius.xl,

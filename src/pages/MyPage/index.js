@@ -20,7 +20,7 @@ import TradingDefaults from "./sections/TradingDefaults";
 
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { COLORS, alpha } from "constants/styles";
+import { COLORS, GRADIENT_COLORS, alpha } from "constants/styles";
 
 function MyPage() {
   const [activeTab, setActiveTab] = useState(0);
@@ -55,7 +55,7 @@ function MyPage() {
         minHeight={{ xs: "25vh", md: "30vh" }}
         width="100%"
         sx={{
-          backgroundImage: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
+          backgroundImage: GRADIENT_COLORS.PRIMARY,
           backgroundSize: "cover",
           backgroundPosition: "top",
           display: "grid",

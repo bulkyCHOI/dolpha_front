@@ -162,9 +162,7 @@ function ThemeSurgeExitSettings({ defaults, onChange }) {
                 control={
                   <Switch
                     checked={forceExit}
-                    onChange={(e) =>
-                      onChange("theme_surge_force_exit_enabled", e.target.checked)
-                    }
+                    onChange={(e) => onChange("theme_surge_force_exit_enabled", e.target.checked)}
                   />
                 }
                 label={
@@ -235,15 +233,19 @@ function ThemeSurgeExitSettings({ defaults, onChange }) {
                   size="small"
                   type="number"
                   value={stage.sell_pct ?? 50}
-                  onChange={(e) =>
-                    updateStage(index, "sell_pct", parseFloat(e.target.value) || 0)
-                  }
+                  onChange={(e) => updateStage(index, "sell_pct", parseFloat(e.target.value) || 0)}
                   inputProps={{ min: 1, max: 100, step: 5 }}
-                  InputProps={{ endAdornment: <InputAdornment position="end">% 청산</InputAdornment> }}
+                  InputProps={{
+                    endAdornment: <InputAdornment position="end">% 청산</InputAdornment>,
+                  }}
                 />
               </Grid>
               <Grid item xs={2} sm={1}>
-                <IconButton size="small" onClick={() => removeStage(index)} disabled={stages.length <= 1}>
+                <IconButton
+                  size="small"
+                  onClick={() => removeStage(index)}
+                  disabled={stages.length <= 1}
+                >
                   <DeleteOutlineIcon fontSize="small" />
                 </IconButton>
               </Grid>
@@ -314,7 +316,9 @@ function ThemeSurgeExitSettings({ defaults, onChange }) {
                     onChange("theme_surge_trailing_start_t", parseFloat(e.target.value) || 0.1)
                   }
                   inputProps={{ min: 0.1, max: 50, step: 0.5 }}
-                  InputProps={{ endAdornment: <InputAdornment position="end">T 초과</InputAdornment> }}
+                  InputProps={{
+                    endAdornment: <InputAdornment position="end">T 초과</InputAdornment>,
+                  }}
                 />
               </Grid>
 

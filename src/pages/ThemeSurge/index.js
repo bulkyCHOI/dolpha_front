@@ -144,7 +144,10 @@ function StockCell({ name, code }) {
         {name}
       </Typography>
       {code && (
-        <Typography variant="caption" sx={{ color: COLORS.TEXT_MUTED, lineHeight: 1, fontSize: 11 }}>
+        <Typography
+          variant="caption"
+          sx={{ color: COLORS.TEXT_MUTED, lineHeight: 1, fontSize: 11 }}
+        >
           {code}
         </Typography>
       )}
@@ -232,7 +235,9 @@ ConditionMark.defaultProps = { ok: false };
  * 나머지 룩앤필(헤더 배경·줄무늬·호버)은 동일하게 유지한다.
  */
 const tableStyles = (minWidth, compact = false) => ({
-  table: { style: { width: "100%", tableLayout: "auto", minWidth } },
+  table: {
+    style: { width: "100%", tableLayout: "auto", minWidth, backgroundColor: COLORS.SURFACE },
+  },
   headRow: {
     style: {
       backgroundColor: COLORS.SURFACE_ALT,
@@ -266,7 +271,11 @@ const tableStyles = (minWidth, compact = false) => ({
   },
   cells: { style: { color: COLORS.TEXT, padding: compact ? "0px 6px" : "8px" } },
   pagination: {
-    style: { backgroundColor: COLORS.SURFACE, borderTop: `1px solid ${COLORS.SURFACE_ALT}`, fontSize: "12px" },
+    style: {
+      backgroundColor: COLORS.SURFACE,
+      borderTop: `1px solid ${COLORS.SURFACE_ALT}`,
+      fontSize: "12px",
+    },
   },
 });
 
@@ -416,7 +425,11 @@ function ThemeSurge() {
             height: 20,
             fontSize: 11,
             fontWeight: 600,
-            bgcolor: r.executed ? COLORS.TINT_SUCCESS : r.passed ? `${COLORS.TINT_WARNING}` : COLORS.SURFACE_ALT,
+            bgcolor: r.executed
+              ? COLORS.TINT_SUCCESS
+              : r.passed
+              ? `${COLORS.TINT_WARNING}`
+              : COLORS.SURFACE_ALT,
             color: r.executed ? COLORS.SUCCESS : r.passed ? COLORS.WARNING : MUTED,
           }}
         />
@@ -468,7 +481,12 @@ function ThemeSurge() {
                   <Chip
                     size="small"
                     label={`${lastSlot} 까지 수집`}
-                    sx={{ height: 20, fontSize: 11, bgcolor: COLORS.TINT_PRIMARY, color: COLORS.PRIMARY_DARK }}
+                    sx={{
+                      height: 20,
+                      fontSize: 11,
+                      bgcolor: COLORS.TINT_PRIMARY,
+                      color: COLORS.PRIMARY_DARK,
+                    }}
                   />
                 )}
                 {lastUpdated && (
@@ -527,7 +545,10 @@ function ThemeSurge() {
                   whiteSpace: "nowrap",
                   boxShadow: "none",
                   "&:hover": { background: GRADIENT_COLORS.PRIMARY_HOVER, boxShadow: "none" },
-                  "&.Mui-disabled": { background: "#e4e7ec", color: "#a0aab5 !important" },
+                  "&.Mui-disabled": {
+                    background: COLORS.SURFACE_ALT,
+                    color: `${COLORS.TEXT_MUTED} !important`,
+                  },
                 }}
               >
                 {scanning ? "스캔 중…" : "지금 스캔"}
@@ -623,7 +644,12 @@ function ThemeSurge() {
                   <Chip
                     size="small"
                     label="실시간"
-                    sx={{ height: 20, fontSize: 11, bgcolor: COLORS.TINT_SUCCESS, color: COLORS.SUCCESS }}
+                    sx={{
+                      height: 20,
+                      fontSize: 11,
+                      bgcolor: COLORS.TINT_SUCCESS,
+                      color: COLORS.SUCCESS,
+                    }}
                   />
                 }
                 sx={{ height: "100%", p: 1.75 }}

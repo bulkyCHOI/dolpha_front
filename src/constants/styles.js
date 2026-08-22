@@ -50,9 +50,46 @@ export const resolveColor = (color) => {
   return resolved || color;
 };
 
+/**
+ * 배경색에 어울리는 글자색을 고른다.
+ *
+ * 같은 강조색이라도 테마에 따라 밝기가 달라진다. 흰 글자로 고정하면
+ * 라이트의 노랑·초록 배지에서, 어두운 글자로 고정하면 라이트의 남색
+ * 배지에서 읽히지 않는다. 배경 밝기를 재서 그때그때 고른다.
+ */
+export const onColor = (background) => {
+  const value = String(resolveColor(background));
+
+  // CSS 변수 값은 hex 로 정의되어 있고, 계산된 색은 rgb()/color() 로 온다.
+  let rgb = null;
+  if (value.startsWith("#")) {
+    const digits = value.slice(1);
+    const full = digits.length === 3 ? digits.replace(/./g, (c) => c + c) : digits;
+    if (full.length >= 6) rgb = [0, 2, 4].map((i) => parseInt(full.slice(i, i + 2), 16));
+  } else {
+    const numbers = value.match(/[\d.]+/g);
+    if (numbers && numbers.length >= 3) {
+      const parts = numbers.slice(0, 3).map(Number);
+      rgb = value.startsWith("color(") ? parts.map((n) => n * 255) : parts;
+    }
+  }
+  if (!rgb) return cssVar("on-accent");
+
+  const [r, g, b] = rgb;
+  const channel = (v) => {
+    const c = v / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  };
+  const luminance = 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
+
+  // 0.25 를 넘으면 흰 글자로는 대비 3:1 을 못 넘긴다.
+  // 다크의 primary(#818cf8, 0.298)가 경계에 걸려 여유를 뒀다.
+  return luminance > 0.25 ? cssVar("on-accent-light") : "#ffffff";
+};
+
 /** 브랜드 그라데이션 (헤더 배너 · 강조 버튼) */
 export const GRADIENT_COLORS = {
-  PRIMARY: `linear-gradient(135deg, ${cssVar("primary")} 0%, ${cssVar("primary-dark")} 100%)`,
+  PRIMARY: `linear-gradient(135deg, ${cssVar("banner-from")} 0%, ${cssVar("banner-to")} 100%)`,
   PRIMARY_HOVER: `linear-gradient(135deg, ${cssVar("primary-hover")} 0%, ${cssVar(
     "primary"
   )} 100%)`,
@@ -148,4 +185,3 @@ export const SCROLLBAR_STYLES = {
     hover: cssVar("text-muted"),
   },
 };
-

@@ -21,6 +21,7 @@ import boxShadows from "assets/theme/base/boxShadows";
 // Material Kit 2 React helper functions
 import pxToRem from "assets/theme/functions/pxToRem";
 import boxShadow from "assets/theme/functions/boxShadow";
+import { cssVar } from "constants/palette";
 
 const { grey, white, black, info } = colors;
 const { borderRadius, borderWidth } = borders;
@@ -42,7 +43,7 @@ export default {
 
     rail: {
       height: pxToRem(2),
-      background: grey[200],
+      background: cssVar("divider"),
       borderRadius: borderRadius.sm,
       opacity: 1,
     },
@@ -59,7 +60,7 @@ export default {
     thumb: {
       width: pxToRem(14),
       height: pxToRem(14),
-      backgroundColor: white.main,
+      backgroundColor: cssVar("surface"),
       zIndex: 10,
       boxShadow: sliderBoxShadow.thumb,
       border: `${borderWidth[1]} solid ${info.main}`,

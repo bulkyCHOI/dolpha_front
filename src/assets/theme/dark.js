@@ -53,6 +53,13 @@ export default createTheme(baseTheme, {
     },
     error: { main: DARK_PALETTE.error, focus: DARK_PALETTE["error-dark"], contrastText: onAccent },
     divider: DARK_PALETTE.divider,
+    // MUI 기본 비활성 배경은 밝은 회색이라 어두운 화면에서 홀로 뜬다
+    action: {
+      disabled: DARK_PALETTE["text-muted"],
+      disabledBackground: DARK_PALETTE["surface-alt"],
+      hover: DARK_PALETTE["hover-bg"],
+      selected: DARK_PALETTE["selected-bg"],
+    },
   },
   components: {
     MuiPaper: {

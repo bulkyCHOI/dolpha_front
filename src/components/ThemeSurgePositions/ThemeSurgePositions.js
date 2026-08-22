@@ -74,7 +74,13 @@ function ThemeBadge({ name }) {
     <Chip
       size="small"
       label={name}
-      sx={{ height: 19, fontSize: 11, bgcolor: COLORS.TINT_PRIMARY, color: COLORS.PRIMARY_DARK, fontWeight: 600 }}
+      sx={{
+        height: 19,
+        fontSize: 11,
+        bgcolor: COLORS.TINT_PRIMARY,
+        color: COLORS.PRIMARY_DARK,
+        fontWeight: 600,
+      }}
     />
   );
 }
@@ -188,7 +194,10 @@ PositionCard.propTypes = { position: PropTypes.object.isRequired };
 function WatchingCard({ item: w }) {
   return (
     <Card
-      sx={{ ...cardSx, borderLeft: `3px solid ${w.conditions_met >= 2 ? COLORS.WARNING : "#d3dae2"}` }}
+      sx={{
+        ...cardSx,
+        borderLeft: `3px solid ${w.conditions_met >= 2 ? COLORS.WARNING : "#d3dae2"}`,
+      }}
     >
       <Box
         sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 1 }}

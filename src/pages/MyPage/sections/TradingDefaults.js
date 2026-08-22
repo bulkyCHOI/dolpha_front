@@ -30,7 +30,7 @@ import { useState, useEffect } from "react";
 
 import ThemeSurgeSettings from "./ThemeSurgeSettings";
 import { useAuth } from "contexts/AuthContext";
-import { COLORS, alpha } from "constants/styles";
+import { COLORS, GRADIENT_COLORS, alpha, onColor } from "constants/styles";
 
 function TradingDefaults() {
   const [defaults, setDefaults] = useState({
@@ -492,7 +492,7 @@ function TradingDefaults() {
                           size="small"
                           sx={{
                             background: "linear-gradient(135deg, #11998e 0%, #38ef7d 100%)",
-                            color: COLORS.ON_ACCENT,
+                            color: onColor("linear-gradient(135deg, #11998e 0%, #38ef7d 100%)"),
                             px: 2.5,
                             borderRadius: 2,
                             textTransform: "none",
@@ -594,7 +594,9 @@ function TradingDefaults() {
                       sx={
                         defaults.staged_exit_type !== "none"
                           ? {
-                              "& .MuiInputBase-root.Mui-disabled": { backgroundColor: COLORS.DIVIDER },
+                              "& .MuiInputBase-root.Mui-disabled": {
+                                backgroundColor: COLORS.DIVIDER,
+                              },
                               "& .MuiInputBase-input.Mui-disabled": {
                                 color: "rgba(0,0,0,0.45)",
                                 WebkitTextFillColor: "rgba(0,0,0,0.45)",
@@ -855,12 +857,20 @@ function TradingDefaults() {
                           {defaults.staged_exit_type === "ma" && (
                             <>
                               <Grid item xs={5}>
-                                <Typography variant="caption" color="text.secondary" fontWeight="bold">
+                                <Typography
+                                  variant="caption"
+                                  color="text.secondary"
+                                  fontWeight="bold"
+                                >
                                   MA 기간 (일)
                                 </Typography>
                               </Grid>
                               <Grid item xs={4}>
-                                <Typography variant="caption" color="text.secondary" fontWeight="bold">
+                                <Typography
+                                  variant="caption"
+                                  color="text.secondary"
+                                  fontWeight="bold"
+                                >
                                   매도 %
                                 </Typography>
                               </Grid>
@@ -869,17 +879,29 @@ function TradingDefaults() {
                           {defaults.staged_exit_type === "dead_cross" && (
                             <>
                               <Grid item xs={3}>
-                                <Typography variant="caption" color="text.secondary" fontWeight="bold">
+                                <Typography
+                                  variant="caption"
+                                  color="text.secondary"
+                                  fontWeight="bold"
+                                >
                                   단기
                                 </Typography>
                               </Grid>
                               <Grid item xs={3}>
-                                <Typography variant="caption" color="text.secondary" fontWeight="bold">
+                                <Typography
+                                  variant="caption"
+                                  color="text.secondary"
+                                  fontWeight="bold"
+                                >
                                   장기
                                 </Typography>
                               </Grid>
                               <Grid item xs={3}>
-                                <Typography variant="caption" color="text.secondary" fontWeight="bold">
+                                <Typography
+                                  variant="caption"
+                                  color="text.secondary"
+                                  fontWeight="bold"
+                                >
                                   매도 %
                                 </Typography>
                               </Grid>
@@ -888,12 +910,20 @@ function TradingDefaults() {
                           {defaults.staged_exit_type === "new_low" && (
                             <>
                               <Grid item xs={5}>
-                                <Typography variant="caption" color="text.secondary" fontWeight="bold">
+                                <Typography
+                                  variant="caption"
+                                  color="text.secondary"
+                                  fontWeight="bold"
+                                >
                                   N일
                                 </Typography>
                               </Grid>
                               <Grid item xs={4}>
-                                <Typography variant="caption" color="text.secondary" fontWeight="bold">
+                                <Typography
+                                  variant="caption"
+                                  color="text.secondary"
+                                  fontWeight="bold"
+                                >
                                   매도 %
                                 </Typography>
                               </Grid>
@@ -957,11 +987,7 @@ function TradingDefaults() {
                             >
                               <Grid container spacing={1} alignItems="center">
                                 <Grid item xs={3}>
-                                  <Typography
-                                    variant="body2"
-                                    fontWeight="medium"
-                                    sx={{ pl: 0.5 }}
-                                  >
+                                  <Typography variant="body2" fontWeight="medium" sx={{ pl: 0.5 }}>
                                     {label}
                                   </Typography>
                                 </Grid>
@@ -1118,15 +1144,17 @@ function TradingDefaults() {
                 disabled={saveLoading}
                 size="medium"
                 sx={{
-                  background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
-                  color: COLORS.ON_ACCENT,
+                  background: GRADIENT_COLORS.PRIMARY,
+                  color: onColor(GRADIENT_COLORS.PRIMARY),
                   px: 3,
                   py: 1,
                   borderRadius: 2,
                   textTransform: "none",
                   fontSize: "0.9rem",
                   fontWeight: 500,
-                  "&:hover": { background: `linear-gradient(135deg, ${COLORS.PRIMARY_HOVER} 0%, #6a4190 100%)` },
+                  "&:hover": {
+                    background: `linear-gradient(135deg, ${COLORS.PRIMARY_HOVER} 0%, #6a4190 100%)`,
+                  },
                   "&:disabled": { opacity: 0.6 },
                 }}
               >

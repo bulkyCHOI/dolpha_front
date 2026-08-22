@@ -19,19 +19,20 @@ import typography from "assets/theme/base/typography";
 
 // Material Kit 2 React Helper Functions
 import pxToRem from "assets/theme/functions/pxToRem";
+import { cssVar } from "constants/palette";
 
 const { white, text, info, secondary } = colors;
 const { size } = typography;
 
 export default {
   base: {
-    backgroundColor: white.main,
+    backgroundColor: cssVar("surface"),
     minHeight: pxToRem(40),
     color: text.main,
     padding: `${pxToRem(10)} ${pxToRem(24)}`,
 
     "&:hover": {
-      backgroundColor: white.main,
+      backgroundColor: cssVar("surface"),
     },
 
     "&:active, &:active:focus, &:active:hover": {

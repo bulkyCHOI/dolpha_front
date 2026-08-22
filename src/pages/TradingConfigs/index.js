@@ -304,7 +304,12 @@ export default function TradingConfigs() {
       sortable: true,
       cell: (row) => (
         <Box>
-          <Typography variant="body2" fontWeight="bold" color="text.primary" sx={{ lineHeight: 1.2 }}>
+          <Typography
+            variant="body2"
+            fontWeight="bold"
+            color="text.primary"
+            sx={{ lineHeight: 1.2 }}
+          >
             {row.stock_name}
           </Typography>
           <Typography variant="caption" color="text.secondary" opacity={0.7} sx={{ lineHeight: 1 }}>
@@ -1131,7 +1136,12 @@ export default function TradingConfigs() {
                       >
                         투자 대상
                       </Typography>
-                      <Typography variant="h6" fontWeight="bold" color="primary.main" sx={{ mt: 0.5 }}>
+                      <Typography
+                        variant="h6"
+                        fontWeight="bold"
+                        color="primary.main"
+                        sx={{ mt: 0.5 }}
+                      >
                         {displayedConfigs.length}개
                       </Typography>
                     </CardContent>
@@ -1147,7 +1157,12 @@ export default function TradingConfigs() {
                       >
                         투자 종목
                       </Typography>
-                      <Typography variant="h6" fontWeight="bold" color="primary.main" sx={{ mt: 0.5 }}>
+                      <Typography
+                        variant="h6"
+                        fontWeight="bold"
+                        color="primary.main"
+                        sx={{ mt: 0.5 }}
+                      >
                         {(() => {
                           const investedCount = displayedConfigs.filter((config) => {
                             const status = tradingStatus[config.stock_code];
@@ -1171,7 +1186,12 @@ export default function TradingConfigs() {
                       >
                         투자금 합계
                       </Typography>
-                      <Typography variant="h6" fontWeight="bold" color="success.main" sx={{ mt: 0.5 }}>
+                      <Typography
+                        variant="h6"
+                        fontWeight="bold"
+                        color="success.main"
+                        sx={{ mt: 0.5 }}
+                      >
                         {(() => {
                           const totalInvestment = displayedConfigs.reduce((sum, config) => {
                             const status = tradingStatus[config.stock_code];

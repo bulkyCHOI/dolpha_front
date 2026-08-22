@@ -4,7 +4,24 @@ import Chip from "@mui/material/Chip";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { formatNumber } from "utils/formatters";
-import { COLORS, alpha } from "constants/styles";
+import { COLORS, GRADIENT_COLORS, alpha, onColor } from "constants/styles";
+
+/**
+ * 값 구간을 색으로 나타낸다 (높을수록 빨강 → 낮을수록 회색).
+ * 배경과 글자색이 같은 기준을 쓰도록 한 곳에 모아 둔다.
+ */
+const bandColor = (value, thresholds) => {
+  const [high, upper, mid, low, base] = thresholds;
+  if (value >= high) return COLORS.UP;
+  if (value >= upper) return COLORS.WARNING;
+  if (value >= mid) return COLORS.WARNING;
+  if (value >= low) return COLORS.SUCCESS;
+  if (value >= base) return COLORS.DOWN;
+  return COLORS.TEXT_MUTED;
+};
+
+const RANK_BANDS = [90, 80, 70, 60, 50];
+const RISE_BANDS = [25, 20, 15, 10, 5];
 
 function StockList({
   stocks,
@@ -108,7 +125,7 @@ function StockList({
       {/* 테이블 헤더 */}
       <Box
         sx={{
-          background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
+          background: GRADIENT_COLORS.PRIMARY,
           p: 1,
           display: "flex",
           alignItems: "center",
@@ -162,12 +179,16 @@ function StockList({
               onClick={() => onStockClick(row)}
               sx={{
                 p: 0.5,
-                borderBottom: rowIndex === stocks.length - 1 ? "none" : `1px solid ${COLORS.DIVIDER}`,
+                borderBottom:
+                  rowIndex === stocks.length - 1 ? "none" : `1px solid ${COLORS.DIVIDER}`,
                 cursor: "pointer",
                 transition: "all 0.2s ease",
                 backgroundColor:
                   selectedStock?.code === row.code
-                    ? `linear-gradient(135deg, ${alpha(COLORS.PRIMARY, 0.1)} 0%, ${alpha(COLORS.PRIMARY_DARK, 0.1)} 100%)`
+                    ? `linear-gradient(135deg, ${alpha(COLORS.PRIMARY, 0.1)} 0%, ${alpha(
+                        COLORS.PRIMARY_DARK,
+                        0.1
+                      )} 100%)`
                     : disableStripes
                     ? COLORS.ON_ACCENT
                     : rowIndex % 2 === 0
@@ -205,7 +226,11 @@ function StockList({
                         >
                           {rowData[header.field] || row.name || "-"}
                         </Typography>
-                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{ fontSize: "0.7rem" }}
+                        >
                           {row.code || ""}
                         </Typography>
                       </Box>
@@ -216,22 +241,8 @@ function StockList({
                           label={Math.floor(rowData[header.field]) || "-"}
                           size="small"
                           sx={{
-                            backgroundColor:
-                              rowData[header.field] >= 90
-                                ? COLORS.UP // 90 이상: 빨강
-                                : rowData[header.field] >= 80
-                                ? COLORS.WARNING // 80 이상: 주황
-                                : rowData[header.field] >= 70
-                                ? COLORS.WARNING // 70 이상: 노랑
-                                : rowData[header.field] >= 60
-                                ? COLORS.SUCCESS // 60 이상: 초록
-                                : rowData[header.field] >= 50
-                                ? COLORS.DOWN // 50 이상: 파랑
-                                : COLORS.TEXT_MUTED, // 50 이하: 회색
-                            color:
-                              rowData[header.field] >= 70 && rowData[header.field] < 80
-                                ? COLORS.ON_ACCENT_LIGHT // 노란색일 때는 검은색 텍스트
-                                : COLORS.ON_ACCENT,
+                            backgroundColor: bandColor(rowData[header.field], RANK_BANDS),
+                            color: onColor(bandColor(rowData[header.field], RANK_BANDS)),
                             fontWeight: "bold",
                             fontSize: "0.7rem",
                             minWidth: "35px",
@@ -248,17 +259,29 @@ function StockList({
                           sx={{
                             backgroundColor:
                               rowData[header.field] >= 300
-                                ? COLORS.UP // 300%이상 빨강
+                                ? COLORS.UP
                                 : rowData[header.field] >= 200
-                                ? COLORS.WARNING // 200%이상 주황
+                                ? COLORS.WARNING
                                 : rowData[header.field] >= 100
-                                ? "#ffeb3b" // 100%이상 노랑
+                                ? "#ffeb3b"
                                 : rowData[header.field] >= 75
-                                ? COLORS.SUCCESS // 75%이상 녹색
+                                ? COLORS.SUCCESS
                                 : rowData[header.field] >= 50
-                                ? COLORS.DOWN // 50%이상 파랑
-                                : COLORS.TEXT_MUTED, // 50%미만 회색
-                            color: COLORS.ON_ACCENT,
+                                ? COLORS.DOWN
+                                : COLORS.TEXT_MUTED,
+                            color: onColor(
+                              rowData[header.field] >= 300
+                                ? COLORS.UP
+                                : rowData[header.field] >= 200
+                                ? COLORS.WARNING
+                                : rowData[header.field] >= 100
+                                ? "#ffeb3b"
+                                : rowData[header.field] >= 75
+                                ? COLORS.SUCCESS
+                                : rowData[header.field] >= 50
+                                ? COLORS.DOWN
+                                : COLORS.TEXT_MUTED
+                            ),
                             fontWeight: "bold",
                             fontSize: "0.7rem",
                             minWidth: "40px",
@@ -273,22 +296,8 @@ function StockList({
                           label={`+${(rowData[header.field] || 0).toFixed(1)}%`}
                           size="small"
                           sx={{
-                            backgroundColor:
-                              rowData[header.field] >= 25
-                                ? COLORS.UP // 25% 이상: 빨강
-                                : rowData[header.field] >= 20
-                                ? COLORS.WARNING // 20% 이상: 주황
-                                : rowData[header.field] >= 15
-                                ? COLORS.WARNING // 15% 이상: 노랑
-                                : rowData[header.field] >= 10
-                                ? COLORS.SUCCESS // 10% 이상: 초록
-                                : rowData[header.field] >= 5
-                                ? COLORS.DOWN // 5% 이상: 파랑
-                                : COLORS.TEXT_MUTED, // 5% 미만: 회색
-                            color:
-                              rowData[header.field] >= 15 && rowData[header.field] < 20
-                                ? COLORS.ON_ACCENT_LIGHT // 노란색일 때는 검은색 텍스트
-                                : COLORS.ON_ACCENT,
+                            backgroundColor: bandColor(rowData[header.field], RISE_BANDS),
+                            color: onColor(bandColor(rowData[header.field], RISE_BANDS)),
                             fontWeight: "bold",
                             fontSize: "0.7rem",
                             minWidth: "40px",

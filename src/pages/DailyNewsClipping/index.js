@@ -22,7 +22,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import Typography from "@mui/material/Typography";
 import AppHeader from "components/AppHeader";
 import routes from "routes";
-import { COLORS, alpha } from "constants/styles";
+import { COLORS, alpha, onColor } from "constants/styles";
 
 function DailyNewsClipping() {
   const theme = useTheme();
@@ -158,7 +158,7 @@ function DailyNewsClipping() {
                   size="large"
                   sx={{
                     backgroundColor: cardColor,
-                    color: COLORS.ON_ACCENT,
+                    color: onColor(cardColor),
                     minWidth: "80px",
                     fontWeight: "bold",
                     fontSize: "1rem",
@@ -204,7 +204,7 @@ function DailyNewsClipping() {
             fontSize: "1.1rem",
             "&:hover": {
               backgroundColor: cardColor,
-              color: COLORS.ON_ACCENT,
+              color: onColor(cardColor),
             },
           }}
         >

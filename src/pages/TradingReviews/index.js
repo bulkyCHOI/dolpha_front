@@ -117,7 +117,7 @@ const getFinalStatusLabel = (status) => {
 const getFinalStatusColor = (status) => {
   const colors = {
     CLOSED: "success",
-    HOLDING: "info", 
+    HOLDING: "info",
     PARTIAL: "warning",
   };
   return colors[status] || "default";
@@ -176,7 +176,12 @@ export default function TradingReviews() {
       minWidth: "150px",
       cell: (row) => (
         <Box>
-          <Typography variant="body2" fontWeight="bold" color="text.primary" sx={{ lineHeight: 1.2 }}>
+          <Typography
+            variant="body2"
+            fontWeight="bold"
+            color="text.primary"
+            sx={{ lineHeight: 1.2 }}
+          >
             {row.stock_name}
           </Typography>
           <Typography variant="caption" color="text.secondary" opacity={0.7} sx={{ lineHeight: 1 }}>
@@ -268,7 +273,11 @@ export default function TradingReviews() {
       sortable: true,
       minWidth: "130px",
       cell: (row) => (
-        <Typography variant="body2" color="info.main" sx={{ fontSize: "0.8rem", fontWeight: "bold" }}>
+        <Typography
+          variant="body2"
+          color="info.main"
+          sx={{ fontSize: "0.8rem", fontWeight: "bold" }}
+        >
           {formatCurrency(row.total_buy_amount)}원
         </Typography>
       ),
@@ -279,7 +288,11 @@ export default function TradingReviews() {
       sortable: true,
       minWidth: "130px",
       cell: (row) => (
-        <Typography variant="body2" color="warning.main" sx={{ fontSize: "0.8rem", fontWeight: "bold" }}>
+        <Typography
+          variant="body2"
+          color="warning.main"
+          sx={{ fontSize: "0.8rem", fontWeight: "bold" }}
+        >
           {formatCurrency(row.total_sell_amount)}원
         </Typography>
       ),
@@ -367,9 +380,7 @@ export default function TradingReviews() {
       cell: (row) => (
         <Box>
           <Typography variant="body2" sx={{ fontSize: "0.8rem", lineHeight: 1.2 }}>
-            <span style={{ color: COLORS.DOWN, fontWeight: "bold" }}>
-              진입 {row.entry_count}회
-            </span>
+            <span style={{ color: COLORS.DOWN, fontWeight: "bold" }}>진입 {row.entry_count}회</span>
           </Typography>
           <Typography variant="caption" sx={{ fontSize: "0.7rem", lineHeight: 1.2 }}>
             <span style={{ color: COLORS.WARNING, fontWeight: "bold" }}>
@@ -453,9 +464,12 @@ export default function TradingReviews() {
     setSnapshotsLoading(true);
     setBalanceLoading(true);
     try {
-      const saveRes = await authenticatedFetch(`${API_BASE_URL}/api/mypage/account-snapshots/save-today`, {
-        method: "POST",
-      });
+      const saveRes = await authenticatedFetch(
+        `${API_BASE_URL}/api/mypage/account-snapshots/save-today`,
+        {
+          method: "POST",
+        }
+      );
       const saveResult = await saveRes.json();
       if (saveResult.success && saveResult.balance) {
         setAccountBalance(saveResult.balance);
@@ -493,9 +507,12 @@ export default function TradingReviews() {
       setLoading(true);
       setError(null);
 
-      const response = await authenticatedFetch(`${API_BASE_URL}/api/autobot/trading-summary-data`, {
-        method: 'GET',
-      });
+      const response = await authenticatedFetch(
+        `${API_BASE_URL}/api/autobot/trading-summary-data`,
+        {
+          method: "GET",
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -528,15 +545,17 @@ export default function TradingReviews() {
     }
 
     const total_count = data.length;
-    const closed_count = data.filter(item => item.final_status === 'CLOSED').length;
-    const holding_count = data.filter(item => item.final_status === 'HOLDING').length;
-    
+    const closed_count = data.filter((item) => item.final_status === "CLOSED").length;
+    const holding_count = data.filter((item) => item.final_status === "HOLDING").length;
+
     const total_profit_loss = data.reduce((sum, item) => sum + (item.total_profit_loss || 0), 0);
     const avg_profit_loss = total_count > 0 ? total_profit_loss / total_count : 0;
-    
-    const closed_items = data.filter(item => item.final_status === 'CLOSED');
-    const profitable_count = closed_items.filter(item => (item.total_profit_loss || 0) > 0).length;
-    const win_rate = closed_count > 0 ? (profitable_count / closed_count * 100) : 0;
+
+    const closed_items = data.filter((item) => item.final_status === "CLOSED");
+    const profitable_count = closed_items.filter(
+      (item) => (item.total_profit_loss || 0) > 0
+    ).length;
+    const win_rate = closed_count > 0 ? (profitable_count / closed_count) * 100 : 0;
 
     const total_buy_amount = data.reduce((sum, item) => sum + (item.total_buy_amount || 0), 0);
     const total_sell_amount = data.reduce((sum, item) => sum + (item.total_sell_amount || 0), 0);
@@ -551,7 +570,7 @@ export default function TradingReviews() {
       profitable_count,
       total_buy_amount,
       total_sell_amount,
-      loss_count: closed_count - profitable_count
+      loss_count: closed_count - profitable_count,
     });
   };
 
@@ -621,15 +640,21 @@ export default function TradingReviews() {
     if (!state) return;
     setNoteStates((prev) => ({ ...prev, [entryId]: { ...prev[entryId], saving: true } }));
     try {
-      const res = await authenticatedFetch(`${API_BASE_URL}/api/autobot/trade-entry/${entryId}/note`, {
-        method: "PATCH",
-        body: JSON.stringify({ note: state.value }),
-      });
+      const res = await authenticatedFetch(
+        `${API_BASE_URL}/api/autobot/trade-entry/${entryId}/note`,
+        {
+          method: "PATCH",
+          body: JSON.stringify({ note: state.value }),
+        }
+      );
       if (!res.ok) throw new Error("저장 실패");
       setTradeEntries((prev) =>
         prev.map((e) => (e.id === entryId ? { ...e, note: state.value } : e))
       );
-      setNoteStates((prev) => ({ ...prev, [entryId]: { editing: false, value: state.value, saving: false } }));
+      setNoteStates((prev) => ({
+        ...prev,
+        [entryId]: { editing: false, value: state.value, saving: false },
+      }));
     } catch {
       setNoteStates((prev) => ({ ...prev, [entryId]: { ...prev[entryId], saving: false } }));
       showSnackbar("매매사유 저장에 실패했습니다.", "error");
@@ -666,7 +691,9 @@ export default function TradingReviews() {
           },
           {
             label: "평가손익",
-            value: `${accountBalance.StockRevenue >= 0 ? "+" : ""}${formatCurrency(Math.round(accountBalance.StockRevenue))}원`,
+            value: `${accountBalance.StockRevenue >= 0 ? "+" : ""}${formatCurrency(
+              Math.round(accountBalance.StockRevenue)
+            )}원`,
             color: accountBalance.StockRevenue >= 0 ? "success" : "error",
           },
           {
@@ -706,7 +733,11 @@ export default function TradingReviews() {
               {balanceItems.map(({ label, value, color }) => (
                 <Card key={label} variant="outlined" sx={{ minWidth: 120, flex: 1 }}>
                   <CardContent sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}>
-                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      sx={{ fontSize: "0.7rem" }}
+                    >
                       {label}
                     </Typography>
                     <Typography
@@ -741,7 +772,12 @@ export default function TradingReviews() {
               현재 보유종목
             </Typography>
             {!holdingLoading && (
-              <Chip label={`${codes.length}종목`} size="small" color="info" sx={{ height: 20, fontSize: "0.65rem" }} />
+              <Chip
+                label={`${codes.length}종목`}
+                size="small"
+                color="info"
+                sx={{ height: 20, fontSize: "0.65rem" }}
+              />
             )}
           </Box>
           {holdingLoading ? (
@@ -758,9 +794,9 @@ export default function TradingReviews() {
                 const plAmount = pos.profit_loss_amount;
                 const plRate = pos.profit_loss_rate;
                 const isProfit = plAmount != null ? plAmount >= 0 : null;
-                const plColor = isProfit == null ? "text.secondary" : isProfit ? COLORS.UP : COLORS.DOWN;
+                const plColor =
+                  isProfit == null ? "text.secondary" : isProfit ? COLORS.UP : COLORS.DOWN;
                 const isAtr = pos.trading_mode === "atr" || pos.trading_mode === "turtle";
-
 
                 return (
                   <Card
@@ -770,13 +806,19 @@ export default function TradingReviews() {
                       minWidth: 220,
                       flex: "0 1 240px",
                       borderLeft: "3px solid",
-                      borderLeftColor: isProfit == null ? "grey.400" : isProfit ? "error.main" : "info.main",
+                      borderLeftColor:
+                        isProfit == null ? "grey.400" : isProfit ? "error.main" : "info.main",
                     }}
                   >
                     <CardContent sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}>
                       {/* 종목명 + 종목코드 */}
                       <Box display="flex" alignItems="baseline" gap={0.8} mb={0.3}>
-                        <Typography variant="body2" fontWeight="bold" color="text.primary" sx={{ lineHeight: 1.3 }}>
+                        <Typography
+                          variant="body2"
+                          fontWeight="bold"
+                          color="text.primary"
+                          sx={{ lineHeight: 1.3 }}
+                        >
                           {stockName}
                         </Typography>
                         <Typography variant="caption" color="text.secondary" sx={{ flexShrink: 0 }}>
@@ -786,18 +828,32 @@ export default function TradingReviews() {
 
                       {/* 현재가 + 손익 */}
                       {pos.current_price != null && (
-                        <Box display="flex" alignItems="center" justifyContent="space-between" mb={0.6}>
+                        <Box
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="space-between"
+                          mb={0.6}
+                        >
                           <Typography variant="body2" fontWeight="bold" color="text.primary">
                             {formatCurrency(pos.current_price)}원
                           </Typography>
                           {plAmount != null && (
                             <Box textAlign="right">
-                              <Typography variant="caption" fontWeight="bold" sx={{ color: plColor, display: "block", lineHeight: 1.2 }}>
-                                {plAmount >= 0 ? "+" : ""}{formatCurrency(plAmount)}원
+                              <Typography
+                                variant="caption"
+                                fontWeight="bold"
+                                sx={{ color: plColor, display: "block", lineHeight: 1.2 }}
+                              >
+                                {plAmount >= 0 ? "+" : ""}
+                                {formatCurrency(plAmount)}원
                               </Typography>
                               {plRate != null && (
-                                <Typography variant="caption" sx={{ color: plColor, display: "block", lineHeight: 1.2 }}>
-                                  ({plRate >= 0 ? "+" : ""}{plRate.toFixed(2)}%)
+                                <Typography
+                                  variant="caption"
+                                  sx={{ color: plColor, display: "block", lineHeight: 1.2 }}
+                                >
+                                  ({plRate >= 0 ? "+" : ""}
+                                  {plRate.toFixed(2)}%)
                                 </Typography>
                               )}
                             </Box>
@@ -809,21 +865,33 @@ export default function TradingReviews() {
 
                       {/* 기본 정보 */}
                       <Box display="flex" justifyContent="space-between">
-                        <Typography variant="caption" color="text.secondary">평단가</Typography>
-                        <Typography variant="caption" fontWeight="bold">{formatCurrency(pos.avg_price)}원</Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          평단가
+                        </Typography>
+                        <Typography variant="caption" fontWeight="bold">
+                          {formatCurrency(pos.avg_price)}원
+                        </Typography>
                       </Box>
                       <Box display="flex" justifyContent="space-between">
-                        <Typography variant="caption" color="text.secondary">수량</Typography>
-                        <Typography variant="caption" fontWeight="bold">{pos.total_quantity}주</Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          수량
+                        </Typography>
+                        <Typography variant="caption" fontWeight="bold">
+                          {pos.total_quantity}주
+                        </Typography>
                       </Box>
                       <Box display="flex" justifyContent="space-between">
-                        <Typography variant="caption" color="text.secondary">보유금액</Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          보유금액
+                        </Typography>
                         <Typography variant="caption" fontWeight="bold">
                           {formatCurrency(Math.round(pos.holding_amount))}원
                         </Typography>
                       </Box>
                       <Box display="flex" justifyContent="space-between">
-                        <Typography variant="caption" color="text.secondary">진입</Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          진입
+                        </Typography>
                         <Typography variant="caption" fontWeight="bold">
                           {pos.actual_entries}/{pos.total_possible_entries}차
                         </Typography>
@@ -844,8 +912,14 @@ export default function TradingReviews() {
                       )}
                       {pos.trailing_stop_price != null && (
                         <Box display="flex" justifyContent="space-between">
-                          <Typography variant="caption" color="text.secondary">Trailing Stop</Typography>
-                          <Typography variant="caption" fontWeight="bold" sx={{ color: COLORS.WARNING }}>
+                          <Typography variant="caption" color="text.secondary">
+                            Trailing Stop
+                          </Typography>
+                          <Typography
+                            variant="caption"
+                            fontWeight="bold"
+                            sx={{ color: COLORS.WARNING }}
+                          >
                             {formatCurrency(pos.trailing_stop_price)}원
                           </Typography>
                         </Box>
@@ -855,7 +929,11 @@ export default function TradingReviews() {
                       {(pos.entry_slots || []).some((s) => s.price != null) && (
                         <>
                           <Divider sx={{ my: 0.6 }} />
-                          <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 0.3 }}>
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            sx={{ display: "block", mb: 0.3 }}
+                          >
                             분할 매수가
                           </Typography>
                           {(pos.entry_slots || []).map((slot, idx) => {
@@ -863,12 +941,16 @@ export default function TradingReviews() {
                             return (
                               <Box key={idx} display="flex" justifyContent="space-between">
                                 <Typography variant="caption" color="text.secondary">
-                                  {slot.label}{slot.weight != null ? ` (${slot.weight}%)` : ""}
+                                  {slot.label}
+                                  {slot.weight != null ? ` (${slot.weight}%)` : ""}
                                 </Typography>
                                 <Typography
                                   variant="caption"
                                   fontWeight={slot.is_done ? "bold" : "regular"}
-                                  sx={{ color: slot.is_done ? "success.main" : "text.secondary", textDecoration: slot.is_done ? "line-through" : "none" }}
+                                  sx={{
+                                    color: slot.is_done ? "success.main" : "text.secondary",
+                                    textDecoration: slot.is_done ? "line-through" : "none",
+                                  }}
                                 >
                                   {formatCurrency(slot.price)}원{slot.is_done ? " ✓" : ""}
                                 </Typography>
@@ -882,7 +964,11 @@ export default function TradingReviews() {
                       {pos.staged_exit_info && (
                         <>
                           <Divider sx={{ my: 0.6 }} />
-                          <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 0.3 }}>
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            sx={{ display: "block", mb: 0.3 }}
+                          >
                             분할 매도 ({pos.staged_exit_info.type_label})
                           </Typography>
                           {pos.staged_exit_info.stages.map((stage) => (
@@ -893,7 +979,10 @@ export default function TradingReviews() {
                               <Typography
                                 variant="caption"
                                 fontWeight={stage.is_done ? "bold" : "regular"}
-                                sx={{ color: stage.is_done ? "text.secondary" : "warning.main", textDecoration: stage.is_done ? "line-through" : "none" }}
+                                sx={{
+                                  color: stage.is_done ? "text.secondary" : "warning.main",
+                                  textDecoration: stage.is_done ? "line-through" : "none",
+                                }}
                               >
                                 {stage.sell_pct}%{stage.is_done ? " ✓" : ""}
                               </Typography>
@@ -911,7 +1000,6 @@ export default function TradingReviews() {
       </Card>
     );
   };
-
 
   return (
     <>
@@ -957,10 +1045,19 @@ export default function TradingReviews() {
                   {/* 전체 거래 */}
                   <Card sx={{ flex: 1, minWidth: "120px", minHeight: "80px" }}>
                     <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
-                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ fontSize: "0.7rem" }}
+                      >
                         전체 거래
                       </Typography>
-                      <Typography variant="h6" fontWeight="bold" color="primary.main" sx={{ mt: 0.5 }}>
+                      <Typography
+                        variant="h6"
+                        fontWeight="bold"
+                        color="primary.main"
+                        sx={{ mt: 0.5 }}
+                      >
                         {stats.total_count}건
                       </Typography>
                     </CardContent>
@@ -969,10 +1066,19 @@ export default function TradingReviews() {
                   {/* 청산완료 */}
                   <Card sx={{ flex: 1, minWidth: "120px", minHeight: "80px" }}>
                     <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
-                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ fontSize: "0.7rem" }}
+                      >
                         청산완료
                       </Typography>
-                      <Typography variant="h6" fontWeight="bold" color="success.main" sx={{ mt: 0.5 }}>
+                      <Typography
+                        variant="h6"
+                        fontWeight="bold"
+                        color="success.main"
+                        sx={{ mt: 0.5 }}
+                      >
                         {stats.closed_count}건
                       </Typography>
                     </CardContent>
@@ -981,7 +1087,11 @@ export default function TradingReviews() {
                   {/* 보유중 */}
                   <Card sx={{ flex: 1, minWidth: "120px", minHeight: "80px" }}>
                     <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
-                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ fontSize: "0.7rem" }}
+                      >
                         보유중
                       </Typography>
                       <Typography variant="h6" fontWeight="bold" color="info.main" sx={{ mt: 0.5 }}>
@@ -993,7 +1103,11 @@ export default function TradingReviews() {
                   {/* 총 손익 */}
                   <Card sx={{ flex: 1, minWidth: "150px", minHeight: "80px" }}>
                     <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
-                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ fontSize: "0.7rem" }}
+                      >
                         총 손익
                       </Typography>
                       <Typography
@@ -1009,7 +1123,6 @@ export default function TradingReviews() {
                       </Typography>
                     </CardContent>
                   </Card>
-
                 </Box>
               </Box>
             </Box>
@@ -1091,7 +1204,8 @@ export default function TradingReviews() {
                     {selectedReview.stock_name}
                   </Typography>
                   <Typography variant="caption" color="text.secondary" opacity={0.7}>
-                    {selectedReview.stock_code} · {getTradingModeLabel(selectedReview.trading_mode)} ·{" "}
+                    {selectedReview.stock_code} · {getTradingModeLabel(selectedReview.trading_mode)}{" "}
+                    ·{" "}
                     <Chip
                       label={getFinalStatusLabel(selectedReview.final_status)}
                       color={getFinalStatusColor(selectedReview.final_status)}
@@ -1203,9 +1317,7 @@ export default function TradingReviews() {
                           fontWeight="bold"
                           sx={{
                             color:
-                              selectedReview.total_profit_loss >= 0
-                                ? "success.main"
-                                : "error.main",
+                              selectedReview.total_profit_loss >= 0 ? "success.main" : "error.main",
                           }}
                         >
                           {selectedReview.total_profit_loss >= 0 ? "+" : ""}
@@ -1280,7 +1392,12 @@ export default function TradingReviews() {
                   {selectedReview.memo && (
                     <>
                       <Divider sx={{ mb: 2 }} />
-                      <Typography variant="subtitle2" fontWeight="bold" color="text.secondary" mb={1}>
+                      <Typography
+                        variant="subtitle2"
+                        fontWeight="bold"
+                        color="text.secondary"
+                        mb={1}
+                      >
                         메모
                       </Typography>
                       <Box
@@ -1452,30 +1569,33 @@ export default function TradingReviews() {
                                       {formatCurrency(entry.filled_amount)}원
                                     </Typography>
                                   </Box>
-                                  {entry.profit_loss !== null && entry.profit_loss !== undefined && (
-                                    <Box>
-                                      <Typography variant="caption" color="text.secondary">
-                                        손익
-                                      </Typography>
-                                      <Typography
-                                        variant="body2"
-                                        fontWeight="bold"
-                                        sx={{
-                                          color:
-                                            entry.profit_loss >= 0 ? "success.main" : "error.main",
-                                        }}
-                                      >
-                                        {entry.profit_loss >= 0 ? "+" : ""}
-                                        {formatCurrency(entry.profit_loss)}원
-                                        {entry.profit_loss_percent !== null && (
-                                          <span style={{ marginLeft: 4, fontWeight: "normal" }}>
-                                            ({entry.profit_loss_percent >= 0 ? "+" : ""}
-                                            {formatPercent(entry.profit_loss_percent)})
-                                          </span>
-                                        )}
-                                      </Typography>
-                                    </Box>
-                                  )}
+                                  {entry.profit_loss !== null &&
+                                    entry.profit_loss !== undefined && (
+                                      <Box>
+                                        <Typography variant="caption" color="text.secondary">
+                                          손익
+                                        </Typography>
+                                        <Typography
+                                          variant="body2"
+                                          fontWeight="bold"
+                                          sx={{
+                                            color:
+                                              entry.profit_loss >= 0
+                                                ? "success.main"
+                                                : "error.main",
+                                          }}
+                                        >
+                                          {entry.profit_loss >= 0 ? "+" : ""}
+                                          {formatCurrency(entry.profit_loss)}원
+                                          {entry.profit_loss_percent !== null && (
+                                            <span style={{ marginLeft: 4, fontWeight: "normal" }}>
+                                              ({entry.profit_loss_percent >= 0 ? "+" : ""}
+                                              {formatPercent(entry.profit_loss_percent)})
+                                            </span>
+                                          )}
+                                        </Typography>
+                                      </Box>
+                                    )}
                                   {entry.stop_price && (
                                     <Box>
                                       <Typography variant="caption" color="text.secondary">
@@ -1493,11 +1613,27 @@ export default function TradingReviews() {
                                   const ns = noteStates[entry.id];
                                   const isEditing = ns?.editing;
                                   const isSaving = ns?.saving;
-                                  const currentNote = isEditing ? ns.value : (entry.note || "");
+                                  const currentNote = isEditing ? ns.value : entry.note || "";
                                   return (
-                                    <Box sx={{ mt: 1, pt: 1, borderTop: "1px solid", borderColor: "grey.100" }}>
-                                      <Box display="flex" alignItems="center" justifyContent="space-between" mb={0.5}>
-                                        <Typography variant="caption" color="text.secondary" fontWeight="bold">
+                                    <Box
+                                      sx={{
+                                        mt: 1,
+                                        pt: 1,
+                                        borderTop: "1px solid",
+                                        borderColor: "grey.100",
+                                      }}
+                                    >
+                                      <Box
+                                        display="flex"
+                                        alignItems="center"
+                                        justifyContent="space-between"
+                                        mb={0.5}
+                                      >
+                                        <Typography
+                                          variant="caption"
+                                          color="text.secondary"
+                                          fontWeight="bold"
+                                        >
                                           매매사유
                                         </Typography>
                                         {!isEditing ? (
@@ -1507,7 +1643,9 @@ export default function TradingReviews() {
                                             sx={{ p: 0.3 }}
                                             title="편집"
                                           >
-                                            <EditIcon sx={{ fontSize: 14, color: "text.secondary" }} />
+                                            <EditIcon
+                                              sx={{ fontSize: 14, color: "text.secondary" }}
+                                            />
                                           </IconButton>
                                         ) : (
                                           <IconButton
@@ -1517,7 +1655,9 @@ export default function TradingReviews() {
                                             sx={{ p: 0.3 }}
                                             title="저장"
                                           >
-                                            <CheckIcon sx={{ fontSize: 14, color: "success.main" }} />
+                                            <CheckIcon
+                                              sx={{ fontSize: 14, color: "success.main" }}
+                                            />
                                           </IconButton>
                                         )}
                                       </Box>
@@ -1533,11 +1673,15 @@ export default function TradingReviews() {
                                           onChange={(e) =>
                                             setNoteStates((prev) => ({
                                               ...prev,
-                                              [entry.id]: { ...prev[entry.id], value: e.target.value },
+                                              [entry.id]: {
+                                                ...prev[entry.id],
+                                                value: e.target.value,
+                                              },
                                             }))
                                           }
                                           onKeyDown={(e) => {
-                                            if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) saveNote(entry.id);
+                                            if (e.key === "Enter" && (e.ctrlKey || e.metaKey))
+                                              saveNote(entry.id);
                                           }}
                                           disabled={isSaving}
                                           sx={{ "& .MuiInputBase-input": { fontSize: "0.8rem" } }}
@@ -1547,7 +1691,11 @@ export default function TradingReviews() {
                                         <Typography
                                           variant="caption"
                                           color={currentNote ? "text" : "text.secondary"}
-                                          sx={{ display: "block", cursor: "pointer", minHeight: 20 }}
+                                          sx={{
+                                            display: "block",
+                                            cursor: "pointer",
+                                            minHeight: 20,
+                                          }}
                                           onClick={() => startEditNote(entry)}
                                         >
                                           {currentNote || "클릭하여 사유를 입력하세요"}

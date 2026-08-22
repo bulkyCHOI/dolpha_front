@@ -22,6 +22,7 @@ import boxShadows from "assets/theme/base/boxShadows";
 // import rgba from "assets/theme/functions/rgba";
 import pxToRem from "assets/theme/functions/pxToRem";
 import linearGradient from "assets/theme/functions/linearGradient";
+import { cssVar } from "constants/palette";
 
 const { white, gradients, grey, transparent } = colors;
 const { borderWidth } = borders;
@@ -68,7 +69,7 @@ export default {
     },
 
     thumb: {
-      backgroundColor: white.main,
+      backgroundColor: cssVar("surface"),
       boxShadow: md,
       border: `${borderWidth[1]} solid ${grey[400]}`,
     },

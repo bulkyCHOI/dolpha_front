@@ -58,8 +58,7 @@ function TabPanel({ children, value, index }) {
 // ─────────────────────────────────────────────
 function SummaryCard({ title, done, total, records, latestDate, extra }) {
   const progress = total ? (done / total) * 100 : 0;
-  const color =
-    progress >= 95 ? "success" : progress >= 70 ? "warning" : "error";
+  const color = progress >= 95 ? "success" : progress >= 70 ? "warning" : "error";
 
   return (
     <Card elevation={2} sx={{ height: "100%" }}>
@@ -130,8 +129,10 @@ function AnalysisGapCard({ gap }) {
 // ─────────────────────────────────────────────
 function cellColor(ratio) {
   if (ratio === undefined || ratio === null) return { bg: COLORS.DIVIDER, text: COLORS.TEXT_MUTED };
-  if (ratio >= 95) return { bg: COLORS.TINT_SUCCESS, text: COLORS.SUCCESS, border: COLORS.TINT_SUCCESS };
-  if (ratio >= 70) return { bg: `${COLORS.TINT_WARNING}`, text: COLORS.WARNING, border: COLORS.TINT_WARNING };
+  if (ratio >= 95)
+    return { bg: COLORS.TINT_SUCCESS, text: COLORS.SUCCESS, border: COLORS.TINT_SUCCESS };
+  if (ratio >= 70)
+    return { bg: `${COLORS.TINT_WARNING}`, text: COLORS.WARNING, border: COLORS.TINT_WARNING };
   return { bg: COLORS.TINT_UP, text: COLORS.UP, border: COLORS.TINT_UP };
 }
 
@@ -141,14 +142,22 @@ function GridCell({ dateKey, step }) {
 
   const tooltipContent = data ? (
     <Box sx={{ p: 0.5 }}>
-      <Box fontWeight="bold" mb={0.5}>{dateKey} — {step.label}</Box>
-      <Box>완료율: <strong>{data.ratio}%</strong></Box>
-      <Box>수집: {fmt(data.count)} / {fmt(step.total)}</Box>
+      <Box fontWeight="bold" mb={0.5}>
+        {dateKey} — {step.label}
+      </Box>
+      <Box>
+        완료율: <strong>{data.ratio}%</strong>
+      </Box>
+      <Box>
+        수집: {fmt(data.count)} / {fmt(step.total)}
+      </Box>
       <Box>미수집: {fmt(data.missing)}</Box>
     </Box>
   ) : (
     <Box sx={{ p: 0.5 }}>
-      <Box fontWeight="bold" mb={0.5}>{dateKey} — {step.label}</Box>
+      <Box fontWeight="bold" mb={0.5}>
+        {dateKey} — {step.label}
+      </Box>
       <Box>데이터 없음</Box>
     </Box>
   );
@@ -181,7 +190,9 @@ function GridCell({ dateKey, step }) {
             {data.ratio}%
           </Typography>
         ) : (
-          <Typography variant="caption" sx={{ color: COLORS.TEXT_MUTED }}>—</Typography>
+          <Typography variant="caption" sx={{ color: COLORS.TEXT_MUTED }}>
+            —
+          </Typography>
         )}
       </Box>
     </Tooltip>
@@ -189,7 +200,7 @@ function GridCell({ dateKey, step }) {
 }
 
 const LABEL_W = 140; // 스텝 레이블 고정 너비(px)
-const CELL_W  = 68;  // 날짜 셀 고정 너비(px)
+const CELL_W = 68; // 날짜 셀 고정 너비(px)
 
 function PipelineGrid({ grid }) {
   if (!grid || !grid.dates || grid.dates.length === 0)
@@ -201,16 +212,38 @@ function PipelineGrid({ grid }) {
     <Box>
       {/* 범례 */}
       <Box display="flex" gap={2} mb={2} alignItems="center">
-        <Typography variant="caption" color="text.secondary">완료율 범례:</Typography>
+        <Typography variant="caption" color="text.secondary">
+          완료율 범례:
+        </Typography>
         {[
-          { label: "≥ 95%", bg: COLORS.TINT_SUCCESS, border: COLORS.TINT_SUCCESS, text: COLORS.SUCCESS },
-          { label: "≥ 70%", bg: `${COLORS.TINT_WARNING}`, border: COLORS.TINT_WARNING, text: COLORS.WARNING },
+          {
+            label: "≥ 95%",
+            bg: COLORS.TINT_SUCCESS,
+            border: COLORS.TINT_SUCCESS,
+            text: COLORS.SUCCESS,
+          },
+          {
+            label: "≥ 70%",
+            bg: `${COLORS.TINT_WARNING}`,
+            border: COLORS.TINT_WARNING,
+            text: COLORS.WARNING,
+          },
           { label: "< 70%", bg: COLORS.TINT_UP, border: COLORS.TINT_UP, text: COLORS.UP },
-          { label: "없음",  bg: COLORS.DIVIDER, border: COLORS.BORDER, text: COLORS.TEXT_MUTED    },
+          { label: "없음", bg: COLORS.DIVIDER, border: COLORS.BORDER, text: COLORS.TEXT_MUTED },
         ].map(({ label, bg, border, text }) => (
           <Box key={label} display="flex" alignItems="center" gap={0.5}>
-            <Box sx={{ width: 14, height: 14, bgcolor: bg, border: `1px solid ${border}`, borderRadius: 0.5 }} />
-            <Typography variant="caption" sx={{ color: text }}>{label}</Typography>
+            <Box
+              sx={{
+                width: 14,
+                height: 14,
+                bgcolor: bg,
+                border: `1px solid ${border}`,
+                borderRadius: 0.5,
+              }}
+            />
+            <Typography variant="caption" sx={{ color: text }}>
+              {label}
+            </Typography>
           </Box>
         ))}
       </Box>
@@ -218,7 +251,6 @@ function PipelineGrid({ grid }) {
       {/* 격자 본체 */}
       <Box sx={{ overflowX: "auto" }}>
         <Box sx={{ display: "inline-block", minWidth: LABEL_W + CELL_W * dates.length }}>
-
           {/* ── 헤더 행 ── */}
           <Box
             sx={{
@@ -329,7 +361,6 @@ function PipelineGrid({ grid }) {
               ))}
             </Box>
           ))}
-
         </Box>
       </Box>
     </Box>
@@ -370,9 +401,7 @@ function LogViewer({ source, autoRefresh }) {
   const fetchLogs = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch(
-        `${apiBase}/api/data-status/logs?source=${source}&lines=200`
-      );
+      const res = await fetch(`${apiBase}/api/data-status/logs?source=${source}&lines=200`);
       if (!res.ok) throw new Error("로그 조회 실패");
       const data = await res.json();
       setLines(data.lines || []);
@@ -401,7 +430,11 @@ function LogViewer({ source, autoRefresh }) {
 
   return (
     <>
-      {error && <Alert severity="error" sx={{ mb: 1 }}>{error}</Alert>}
+      {error && (
+        <Alert severity="error" sx={{ mb: 1 }}>
+          {error}
+        </Alert>
+      )}
       {loading && lines.length === 0 && <CircularProgress size={20} />}
       <Box
         ref={logBoxRef}
@@ -425,7 +458,10 @@ function LogViewer({ source, autoRefresh }) {
             const color =
               line.includes("오류") || line.includes("Error") || line.includes("실패")
                 ? "#f48771"
-                : line.includes("완료") || line.includes("success") || line.includes("매수") || line.includes("매도")
+                : line.includes("완료") ||
+                  line.includes("success") ||
+                  line.includes("매수") ||
+                  line.includes("매도")
                 ? "#4ec9b0"
                 : line.includes("[자동매매]")
                 ? "#dcdcaa"
@@ -460,12 +496,32 @@ const ONE_WEEK_AGO = toLocalDateStr(new Date(Date.now() - 7 * 86400000));
 
 // 일간 전체 파이프라인에서 실행되는 단계 목록 (표시용)
 const PIPELINE_STEPS = [
-  { key: "index_list",        icon: "1", label: "인덱스 목록 수집",      desc: "getAndSave_index_list" },
-  { key: "stock_description", icon: "2", label: "주식 설명 수집",        desc: "getAndSave_stock_description" },
-  { key: "index_data",        icon: "3", label: "인덱스 OHLCV 수집",    desc: "getAndSave_index_data" },
-  { key: "stock_data",        icon: "4", label: "주식 OHLCV 수집",      desc: "getAndSave_stock_data (KIS API 우선)" },
-  { key: "stock_analysis",    icon: "5", label: "주식 기술적 분석 계산", desc: "calculate_stock_analysis" },
-  { key: "dart_data",         icon: "6", label: "DART 재무제표 수집",    desc: "getAndSave_stock_dartData (약 1시간, 선택)" },
+  { key: "index_list", icon: "1", label: "인덱스 목록 수집", desc: "getAndSave_index_list" },
+  {
+    key: "stock_description",
+    icon: "2",
+    label: "주식 설명 수집",
+    desc: "getAndSave_stock_description",
+  },
+  { key: "index_data", icon: "3", label: "인덱스 OHLCV 수집", desc: "getAndSave_index_data" },
+  {
+    key: "stock_data",
+    icon: "4",
+    label: "주식 OHLCV 수집",
+    desc: "getAndSave_stock_data (KIS API 우선)",
+  },
+  {
+    key: "stock_analysis",
+    icon: "5",
+    label: "주식 기술적 분석 계산",
+    desc: "calculate_stock_analysis",
+  },
+  {
+    key: "dart_data",
+    icon: "6",
+    label: "DART 재무제표 수집",
+    desc: "getAndSave_stock_dartData (약 1시간, 선택)",
+  },
 ];
 
 function DailyPipelinePanel({ processes, onTriggerDone }) {
@@ -518,14 +574,23 @@ function DailyPipelinePanel({ processes, onTriggerDone }) {
       {/* ── 헤더 ── */}
       <AccordionSummary
         expandIcon={<span style={{ fontSize: 20 }}>▼</span>}
-        sx={{ bgcolor: "primary.main", borderRadius: expanded ? "10px 10px 0 0" : "10px", px: 3, py: 1 }}
+        sx={{
+          bgcolor: "primary.main",
+          borderRadius: expanded ? "10px 10px 0 0" : "10px",
+          px: 3,
+          py: 1,
+        }}
       >
         <Box display="flex" alignItems="center" gap={2} width="100%">
           <Typography variant="h6" fontWeight="bold" color="white.main">
             ⚡ 일간 전체 파이프라인
           </Typography>
           {isRunning && (
-            <Chip label="실행 중" size="small" sx={{ bgcolor: COLORS.SUCCESS, color: COLORS.ON_ACCENT }} />
+            <Chip
+              label="실행 중"
+              size="small"
+              sx={{ bgcolor: COLORS.SUCCESS, color: COLORS.ON_ACCENT }}
+            />
           )}
           <Typography variant="body2" color="white.main" sx={{ opacity: 0.85, ml: "auto", mr: 2 }}>
             수집 → 가공 전 과정을 순서대로 한번에 실행
@@ -544,9 +609,13 @@ function DailyPipelinePanel({ processes, onTriggerDone }) {
                 <Box display="flex" alignItems="center" gap={1.5} py={0.75}>
                   <Box
                     sx={{
-                      width: 24, height: 24, borderRadius: "50%",
+                      width: 24,
+                      height: 24,
+                      borderRadius: "50%",
                       bgcolor: isSkipped ? COLORS.BORDER_STRONG : "primary.main",
-                      display: "flex", alignItems: "center", justifyContent: "center",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
                       flexShrink: 0,
                     }}
                   >
@@ -562,7 +631,11 @@ function DailyPipelinePanel({ processes, onTriggerDone }) {
                     >
                       {step.label}
                       {isSkipped && (
-                        <Chip label="건너뜀" size="small" sx={{ ml: 1, height: 18, fontSize: "0.65rem" }} />
+                        <Chip
+                          label="건너뜀"
+                          size="small"
+                          sx={{ ml: 1, height: 18, fontSize: "0.65rem" }}
+                        />
                       )}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
@@ -571,7 +644,11 @@ function DailyPipelinePanel({ processes, onTriggerDone }) {
                   </Box>
                 </Box>
                 {idx < PIPELINE_STEPS.length - 1 && (
-                  <Box ml={1.5} pl={2.5} sx={{ borderLeft: `2px dashed ${COLORS.BORDER}`, height: 8 }} />
+                  <Box
+                    ml={1.5}
+                    pl={2.5}
+                    sx={{ borderLeft: `2px dashed ${COLORS.BORDER}`, height: 8 }}
+                  />
                 )}
               </Box>
             );
@@ -583,7 +660,9 @@ function DailyPipelinePanel({ processes, onTriggerDone }) {
         {/* 날짜 선택 */}
         <Box display="flex" alignItems="flex-end" gap={2} mb={2} flexWrap="wrap">
           <Box minWidth={150}>
-            <Typography variant="caption" color="text.secondary">시작일</Typography>
+            <Typography variant="caption" color="text.secondary">
+              시작일
+            </Typography>
             <DatePicker
               value={startDate}
               options={{ dateFormat: "Y-m-d", maxDate: endDate, allowInput: true }}
@@ -592,10 +671,17 @@ function DailyPipelinePanel({ processes, onTriggerDone }) {
             />
           </Box>
           <Box minWidth={150}>
-            <Typography variant="caption" color="text.secondary">종료일</Typography>
+            <Typography variant="caption" color="text.secondary">
+              종료일
+            </Typography>
             <DatePicker
               value={endDate}
-              options={{ dateFormat: "Y-m-d", minDate: startDate, maxDate: TODAY, allowInput: true }}
+              options={{
+                dateFormat: "Y-m-d",
+                minDate: startDate,
+                maxDate: TODAY,
+                allowInput: true,
+              }}
               onChange={([d]) => d && setEndDate(toLocalDateStr(d))}
               input={{ placeholder: "종료일 선택", size: "small" }}
             />
@@ -603,7 +689,13 @@ function DailyPipelinePanel({ processes, onTriggerDone }) {
         </Box>
 
         {/* 옵션 + 실행 버튼 */}
-        <Box display="flex" alignItems="center" justifyContent="space-between" flexWrap="wrap" gap={2}>
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          flexWrap="wrap"
+          gap={2}
+        >
           <FormControlLabel
             control={
               <Switch
@@ -726,15 +818,25 @@ function CollectionPanel({ config, processes, onTriggerDone }) {
   };
 
   return (
-    <Box sx={{ py: 1.5, borderBottom: `1px solid ${COLORS.DIVIDER}`, "&:last-child": { borderBottom: "none" } }}>
-      <Box display="flex" alignItems="flex-start" justifyContent="space-between" flexWrap="wrap" gap={2}>
+    <Box
+      sx={{
+        py: 1.5,
+        borderBottom: `1px solid ${COLORS.DIVIDER}`,
+        "&:last-child": { borderBottom: "none" },
+      }}
+    >
+      <Box
+        display="flex"
+        alignItems="flex-start"
+        justifyContent="space-between"
+        flexWrap="wrap"
+        gap={2}
+      >
         {/* 좌측: 아이콘 + 설명 */}
         <Box flex={1} minWidth={180}>
           <Typography variant="body1" fontWeight="bold">
             {config.icon} {config.label}
-            {isRunning && (
-              <Chip label="실행 중" color="success" size="small" sx={{ ml: 1 }} />
-            )}
+            {isRunning && <Chip label="실행 중" color="success" size="small" sx={{ ml: 1 }} />}
           </Typography>
           <Typography variant="caption" color="text.secondary">
             {config.description}
@@ -746,7 +848,9 @@ function CollectionPanel({ config, processes, onTriggerDone }) {
           {config.needsDate && (
             <>
               <Box minWidth={140}>
-                <Typography variant="caption" color="text.secondary">시작일</Typography>
+                <Typography variant="caption" color="text.secondary">
+                  시작일
+                </Typography>
                 <DatePicker
                   value={startDate}
                   options={{ dateFormat: "Y-m-d", maxDate: endDate, allowInput: true }}
@@ -755,10 +859,17 @@ function CollectionPanel({ config, processes, onTriggerDone }) {
                 />
               </Box>
               <Box minWidth={140}>
-                <Typography variant="caption" color="text.secondary">종료일</Typography>
+                <Typography variant="caption" color="text.secondary">
+                  종료일
+                </Typography>
                 <DatePicker
                   value={endDate}
-                  options={{ dateFormat: "Y-m-d", minDate: startDate, maxDate: TODAY, allowInput: true }}
+                  options={{
+                    dateFormat: "Y-m-d",
+                    minDate: startDate,
+                    maxDate: TODAY,
+                    allowInput: true,
+                  }}
                   onChange={([d]) => d && setEndDate(toLocalDateStr(d))}
                   input={{ placeholder: "종료일 선택", size: "small" }}
                 />
@@ -798,10 +909,7 @@ function CollectionTab({ processes, onLogSourceChange }) {
   return (
     <Box>
       {/* ── 일간 전체 파이프라인 ── */}
-      <DailyPipelinePanel
-        processes={processes}
-        onTriggerDone={(src) => onLogSourceChange(src)}
-      />
+      <DailyPipelinePanel processes={processes} onTriggerDone={(src) => onLogSourceChange(src)} />
 
       {/* ── 개별 단계 실행 (아코디언) ── */}
       <Accordion
@@ -888,9 +996,7 @@ function DataManagement() {
   const fetchGaps = useCallback(async () => {
     setGapsLoading(true);
     try {
-      const res = await fetch(
-        `${apiBase}/api/data-status/pipeline-grid?days=${gapDays}`
-      );
+      const res = await fetch(`${apiBase}/api/data-status/pipeline-grid?days=${gapDays}`);
       setPipelineGrid(await res.json());
     } catch (e) {
       console.error(e);
@@ -1012,21 +1118,22 @@ function DataManagement() {
                             </Typography>
                             <Typography variant="body2" color="text.secondary" mt={0.5}>
                               OHLCV 미수집:{" "}
-                              <strong>
-                                {fmt(summary.total_companies - summary.ohlcv_done)}
-                              </strong>종목
+                              <strong>{fmt(summary.total_companies - summary.ohlcv_done)}</strong>
+                              종목
                             </Typography>
                             <Typography variant="body2" color="text.secondary" mt={0.5}>
                               분석 미계산:{" "}
                               <strong>
                                 {fmt(summary.total_companies - summary.analysis_done)}
-                              </strong>종목
+                              </strong>
+                              종목
                             </Typography>
                             <Typography variant="body2" color="text.secondary" mt={0.5}>
                               재무제표 미수집:{" "}
                               <strong>
                                 {fmt(summary.total_companies - summary.financial_done)}
-                              </strong>종목
+                              </strong>
+                              종목
                             </Typography>
                           </CardContent>
                         </Card>
@@ -1069,7 +1176,7 @@ function DataManagement() {
                   processes={processes}
                   onLogSourceChange={(src) => {
                     setLogSource(src);
-                    setTab(2);  // 로그 탭으로 자동 이동
+                    setTab(2); // 로그 탭으로 자동 이동
                     setAutoRefresh(true);
                   }}
                 />

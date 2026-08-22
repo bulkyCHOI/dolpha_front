@@ -67,7 +67,8 @@ export const LEGEND_ITEMS = [
 export const decisionStatus = (decision) => {
   if (!decision) return { label: "—", color: CHART_COLORS.MUTED, bg: COLORS.SURFACE_ALT };
   if (decision.executed) return { label: "진입", color: COLORS.SUCCESS, bg: COLORS.TINT_SUCCESS };
-  if (decision.passed) return { label: "충족", color: COLORS.WARNING, bg: `${COLORS.TINT_WARNING}` };
+  if (decision.passed)
+    return { label: "충족", color: COLORS.WARNING, bg: `${COLORS.TINT_WARNING}` };
   return { label: "대기", color: CHART_COLORS.MUTED, bg: COLORS.SURFACE_ALT };
 };
 

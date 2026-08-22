@@ -195,9 +195,7 @@ function analyzeVolumeTrend(ohlcvData, tContractions) {
     return count > 0 ? total / count : 0;
   });
 
-  const isDecreasing = tVolumeAverages.every(
-    (vol, i) => i === 0 || vol < tVolumeAverages[i - 1]
-  );
+  const isDecreasing = tVolumeAverages.every((vol, i) => i === 0 || vol < tVolumeAverages[i - 1]);
 
   return { isDecreasing, tVolumeAverages };
 }

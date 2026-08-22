@@ -24,6 +24,13 @@ export const LIGHT_PALETTE = {
   primary: primary.main,
   "primary-hover": primary.focus,
   "primary-dark": colors.gradients.primary.state,
+  /**
+   * 배너·네비게이션의 넓은 그라데이션.
+   * primary 를 그대로 쓰면 다크에서 면적이 넓어 화면이 발광하듯 뜬다.
+   */
+  "banner-from": colors.gradients.primary.main,
+  "banner-to": colors.gradients.primary.state,
+
   "hover-bg": rgba(primary.main, 0.08),
   "selected-bg": rgba(primary.main, 0.12),
 
@@ -91,6 +98,10 @@ export const DARK_PALETTE = {
   primary: "#818cf8",
   "primary-hover": "#a5b4fc",
   "primary-dark": "#6366f1",
+  // 다크에서는 한 단계 깊게 — 흰 글자 대비를 확보하고 눈부심을 줄인다
+  "banner-from": "#3730a3",
+  "banner-to": "#4c1d95",
+
   "hover-bg": "rgba(129, 140, 248, 0.12)",
   "selected-bg": "rgba(129, 140, 248, 0.2)",
 

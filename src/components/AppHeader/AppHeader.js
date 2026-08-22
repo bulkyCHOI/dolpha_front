@@ -482,7 +482,7 @@ function AppHeader({ brand, routes, sticky }) {
           color: palette.white.main,
           borderRadius: borders.borderRadius.xl,
           boxShadow: boxShadows.md,
-          backgroundImage: `linear-gradient(310deg, ${palette.gradients.primary.main}, ${palette.gradients.primary.state})`,
+          backgroundImage: `linear-gradient(310deg, var(--dolpha-banner-from), var(--dolpha-banner-to))`,
           backdropFilter: "saturate(200%) blur(30px)",
         })}
       >
@@ -503,12 +503,7 @@ function AppHeader({ brand, routes, sticky }) {
               {brand}
             </Typography>
           </Box>
-          <Box
-            color="inherit"
-            display={{ xs: "none", lg: "flex" }}
-            ml="auto"
-            mr={0}
-          >
+          <Box color="inherit" display={{ xs: "none", lg: "flex" }} ml="auto" mr={0}>
             {renderNavbarItems}
           </Box>
           <Tooltip title={mode === "dark" ? "라이트 모드로" : "다크 모드로"}>

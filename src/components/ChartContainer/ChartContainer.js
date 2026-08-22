@@ -524,7 +524,10 @@ const ChartContainer = ({
             >
               위치 이동
             </MenuItem>
-            <MenuItem onClick={() => handleDeleteLine(menuState.lineId)} sx={{ color: COLORS.ERROR }}>
+            <MenuItem
+              onClick={() => handleDeleteLine(menuState.lineId)}
+              sx={{ color: COLORS.ERROR }}
+            >
               삭제
             </MenuItem>
           </Menu>

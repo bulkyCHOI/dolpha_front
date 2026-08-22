@@ -19,6 +19,7 @@ import colors from "assets/theme/base/colors";
 // Material Kit 2 React helper functions
 import pxToRem from "assets/theme/functions/pxToRem";
 import boxShadow from "assets/theme/functions/boxShadow";
+import { cssVar } from "constants/palette";
 
 const { white } = colors;
 
@@ -36,7 +37,7 @@ export default {
       transition: "all 200ms linear",
 
       "&.Mui-active": {
-        background: white.main,
+        background: cssVar("surface"),
         fill: white.main,
         stroke: white.main,
         borderColor: white.main,
@@ -44,7 +45,7 @@ export default {
       },
 
       "&.Mui-completed": {
-        background: white.main,
+        background: cssVar("surface"),
         fill: white.main,
         stroke: white.main,
         borderColor: white.main,

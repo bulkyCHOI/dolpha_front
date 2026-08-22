@@ -32,7 +32,7 @@ import AutotradingAccordion from "components/AutotradingAccordion/AutotradingAcc
 import ChartContainer from "components/ChartContainer/ChartContainer";
 import StockInfoHeader from "components/StockInfoHeader/StockInfoHeader";
 import StockList from "components/StockList/StockList";
-import { COLORS, GRADIENT_COLORS, alpha } from "constants/styles";
+import { COLORS, GRADIENT_COLORS, alpha, onColor } from "constants/styles";
 import { formatNumber } from "utils/formatters";
 
 const PERIODS = [
@@ -315,7 +315,7 @@ function TopRising() {
                     width: 64,
                     height: 64,
                     borderRadius: "50%",
-                    background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
+                    background: GRADIENT_COLORS.PRIMARY,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -475,7 +475,9 @@ function TopRising() {
                 justifyContent: "center",
               }}
             >
-              <Typography color="error.main">데이터 로드 중 오류가 발생했습니다: {error}</Typography>
+              <Typography color="error.main">
+                데이터 로드 중 오류가 발생했습니다: {error}
+              </Typography>
             </Box>
           )}
 
@@ -487,7 +489,7 @@ function TopRising() {
                   {/* 테이블 헤더 */}
                   <Box
                     sx={{
-                      background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
+                      background: GRADIENT_COLORS.PRIMARY,
                       p: 1,
                       display: "flex",
                       alignItems: "center",
@@ -582,12 +584,17 @@ function TopRising() {
                         sx={{
                           p: 0.5,
                           borderBottom:
-                            rowIndex === stockData.length - 1 ? "none" : `1px solid ${COLORS.DIVIDER}`,
+                            rowIndex === stockData.length - 1
+                              ? "none"
+                              : `1px solid ${COLORS.DIVIDER}`,
                           cursor: "pointer",
                           transition: "all 0.2s ease",
                           backgroundColor:
                             selectedStock?.code === row.code
-                              ? `linear-gradient(135deg, ${alpha(COLORS.PRIMARY, 0.1)} 0%, ${alpha(COLORS.PRIMARY_DARK, 0.1)} 100%)`
+                              ? `linear-gradient(135deg, ${alpha(COLORS.PRIMARY, 0.1)} 0%, ${alpha(
+                                  COLORS.PRIMARY_DARK,
+                                  0.1
+                                )} 100%)`
                               : rowIndex % 2 === 0
                               ? COLORS.SURFACE_ALT
                               : COLORS.ON_ACCENT,
@@ -640,20 +647,29 @@ function TopRising() {
                                 sx={{
                                   backgroundColor:
                                     (row.change || 0) * 100 >= 25
-                                      ? COLORS.UP // 25% 이상: 빨강
+                                      ? COLORS.UP
                                       : (row.change || 0) * 100 >= 20
-                                      ? COLORS.WARNING // 20% 이상: 주황
+                                      ? COLORS.WARNING
                                       : (row.change || 0) * 100 >= 15
-                                      ? COLORS.WARNING // 15% 이상: 노랑
+                                      ? COLORS.WARNING
                                       : (row.change || 0) * 100 >= 10
-                                      ? COLORS.SUCCESS // 10% 이상: 초록
+                                      ? COLORS.SUCCESS
                                       : (row.change || 0) * 100 >= 5
-                                      ? COLORS.DOWN // 5% 이상: 파랑
-                                      : COLORS.TEXT_MUTED, // 5% 미만: 회색
-                                  color:
-                                    (row.change || 0) * 100 >= 15 && (row.change || 0) * 100 < 20
-                                      ? COLORS.ON_ACCENT_LIGHT // 노란색일 때는 검은색 텍스트
-                                      : COLORS.ON_ACCENT,
+                                      ? COLORS.DOWN
+                                      : COLORS.TEXT_MUTED,
+                                  color: onColor(
+                                    (row.change || 0) * 100 >= 25
+                                      ? COLORS.UP
+                                      : (row.change || 0) * 100 >= 20
+                                      ? COLORS.WARNING
+                                      : (row.change || 0) * 100 >= 15
+                                      ? COLORS.WARNING
+                                      : (row.change || 0) * 100 >= 10
+                                      ? COLORS.SUCCESS
+                                      : (row.change || 0) * 100 >= 5
+                                      ? COLORS.DOWN
+                                      : COLORS.TEXT_MUTED
+                                  ),
                                   fontWeight: "bold",
                                   fontSize: { xs: "0.55rem", md: "0.65rem" },
                                   minWidth: { xs: "45px", md: "40px" },
@@ -674,20 +690,29 @@ function TopRising() {
                                 sx={{
                                   backgroundColor:
                                     row.rsRank >= 90
-                                      ? COLORS.UP // 90 이상: 빨강
+                                      ? COLORS.UP
                                       : row.rsRank >= 80
-                                      ? COLORS.WARNING // 80 이상: 주황
+                                      ? COLORS.WARNING
                                       : row.rsRank >= 70
-                                      ? COLORS.WARNING // 70 이상: 노랑
+                                      ? COLORS.WARNING
                                       : row.rsRank >= 60
-                                      ? COLORS.SUCCESS // 60 이상: 초록
+                                      ? COLORS.SUCCESS
                                       : row.rsRank >= 50
-                                      ? COLORS.DOWN // 50 이상: 파랑
-                                      : COLORS.TEXT_MUTED, // 50 이하: 회색
-                                  color:
-                                    row.rsRank >= 70 && row.rsRank < 80
-                                      ? COLORS.ON_ACCENT_LIGHT // 노란색일 때는 검은색 텍스트
-                                      : COLORS.ON_ACCENT,
+                                      ? COLORS.DOWN
+                                      : COLORS.TEXT_MUTED,
+                                  color: onColor(
+                                    row.rsRank >= 90
+                                      ? COLORS.UP
+                                      : row.rsRank >= 80
+                                      ? COLORS.WARNING
+                                      : row.rsRank >= 70
+                                      ? COLORS.WARNING
+                                      : row.rsRank >= 60
+                                      ? COLORS.SUCCESS
+                                      : row.rsRank >= 50
+                                      ? COLORS.DOWN
+                                      : COLORS.TEXT_MUTED
+                                  ),
                                   fontWeight: "bold",
                                   fontSize: { xs: "0.55rem", md: "0.65rem" },
                                   minWidth: { xs: "35px", md: "30px" },
@@ -785,7 +810,7 @@ function TopRising() {
                         onClick={() => navigate("/pages/authentication/sign-in")}
                         sx={{
                           background: GRADIENT_COLORS.PRIMARY,
-                          color: COLORS.ON_ACCENT,
+                          color: onColor(GRADIENT_COLORS.PRIMARY),
                           px: 4,
                           py: 1.5,
                           "&:hover": {
@@ -961,7 +986,7 @@ function TopRising() {
                   width: 64,
                   height: 64,
                   borderRadius: "50%",
-                  background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
+                  background: GRADIENT_COLORS.PRIMARY,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",

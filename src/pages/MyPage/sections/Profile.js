@@ -12,7 +12,7 @@ import Typography from "@mui/material/Typography";
 
 import { useState, useEffect } from "react";
 import { useAuth } from "contexts/AuthContext";
-import { COLORS, alpha } from "constants/styles";
+import { COLORS, GRADIENT_COLORS, alpha, onColor } from "constants/styles";
 
 function Profile() {
   const [userInfo, setUserInfo] = useState({
@@ -82,8 +82,10 @@ function Profile() {
           <Card
             sx={{
               p: { xs: 2, md: 3 },
-              background:
-                `linear-gradient(135deg, ${alpha(COLORS.PRIMARY, 0.08)} 0%, ${alpha(COLORS.PRIMARY_DARK, 0.08)} 100%)`,
+              background: `linear-gradient(135deg, ${alpha(COLORS.PRIMARY, 0.08)} 0%, ${alpha(
+                COLORS.PRIMARY_DARK,
+                0.08
+              )} 100%)`,
               border: `1px solid ${alpha(COLORS.PRIMARY, 0.1)}`,
               borderRadius: 3,
             }}
@@ -181,8 +183,8 @@ function Profile() {
                 variant="contained"
                 onClick={handleSave}
                 sx={{
-                  background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
-                  color: COLORS.ON_ACCENT,
+                  background: GRADIENT_COLORS.PRIMARY,
+                  color: onColor(GRADIENT_COLORS.PRIMARY),
                   px: 4,
                   py: 1.5,
                   borderRadius: 2,

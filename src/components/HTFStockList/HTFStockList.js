@@ -4,7 +4,7 @@ import Chip from "@mui/material/Chip";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { formatNumber } from "utils/formatters";
-import { COLORS, alpha } from "constants/styles";
+import { COLORS, GRADIENT_COLORS, alpha, onColor } from "constants/styles";
 
 function HTFStockList({
   stocks,
@@ -92,7 +92,7 @@ function HTFStockList({
       {/* 테이블 헤더 */}
       <Box
         sx={{
-          background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
+          background: GRADIENT_COLORS.PRIMARY,
           p: 1,
           display: "flex",
           alignItems: "center",
@@ -189,12 +189,16 @@ function HTFStockList({
               onClick={() => onStockClick(stock)}
               sx={{
                 p: 0.5,
-                borderBottom: rowIndex === stocks.length - 1 ? "none" : `1px solid ${COLORS.DIVIDER}`,
+                borderBottom:
+                  rowIndex === stocks.length - 1 ? "none" : `1px solid ${COLORS.DIVIDER}`,
                 cursor: "pointer",
                 transition: "all 0.2s ease",
                 backgroundColor:
                   selectedStock?.code === stock.code
-                    ? `linear-gradient(135deg, ${alpha(COLORS.PRIMARY, 0.1)} 0%, ${alpha(COLORS.PRIMARY_DARK, 0.1)} 100%)`
+                    ? `linear-gradient(135deg, ${alpha(COLORS.PRIMARY, 0.1)} 0%, ${alpha(
+                        COLORS.PRIMARY_DARK,
+                        0.1
+                      )} 100%)`
                     : rowIndex % 2 === 0
                     ? COLORS.SURFACE_ALT
                     : COLORS.ON_ACCENT,
@@ -249,7 +253,7 @@ function HTFStockList({
                       size="small"
                       sx={{
                         backgroundColor: getGainColor(stock.htf_8week_gain || 0),
-                        color: COLORS.ON_ACCENT,
+                        color: onColor(getGainColor(stock.htf_8week_gain || 0)),
                         fontWeight: "bold",
                         fontSize: { xs: "0.6rem", md: "0.7rem" },
                         minWidth: { xs: "35px", md: "40px" },
@@ -271,7 +275,7 @@ function HTFStockList({
                       size="small"
                       sx={{
                         backgroundColor: getPullbackColor(stock.htf_max_pullback || 0),
-                        color: stock.htf_max_pullback <= 20 ? COLORS.ON_ACCENT : COLORS.ON_ACCENT_LIGHT,
+                        color: onColor(getPullbackColor(stock.htf_max_pullback || 0)),
                         fontWeight: "bold",
                         fontSize: { xs: "0.6rem", md: "0.7rem" },
                         minWidth: { xs: "35px", md: "40px" },
@@ -310,7 +314,7 @@ function HTFStockList({
                       size="small"
                       sx={{
                         backgroundColor: statusChip.color,
-                        color: COLORS.ON_ACCENT,
+                        color: onColor(statusChip.color),
                         fontWeight: "bold",
                         fontSize: { xs: "0.6rem", md: "0.7rem" },
                         minWidth: { xs: "30px", md: "35px" },

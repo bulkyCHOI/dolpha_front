@@ -201,7 +201,13 @@ function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
         <>
           <Grid container spacing={1.5}>
             <Grid item xs={12} lg={9}>
-              <Box sx={{ border: `1px solid ${COLORS.SURFACE_ALT}`, borderRadius: 1.5, overflow: "hidden" }}>
+              <Box
+                sx={{
+                  border: `1px solid ${COLORS.SURFACE_ALT}`,
+                  borderRadius: 1.5,
+                  overflow: "hidden",
+                }}
+              >
                 <EntryDecisionChart
                   bars={chart.bars}
                   decision={selectedDecision}

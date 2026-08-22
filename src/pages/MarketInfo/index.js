@@ -8,7 +8,6 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Box from "@mui/material/Box";
 
-
 // Enhanced components
 import FullWidthContainer from "components/FullWidthContainer";
 
@@ -23,7 +22,8 @@ function MarketInfo() {
     // 주식 히트맵 위젯 로드 함수
     const loadStockHeatmap = () => {
       const stockHeatmapScript = document.createElement("script");
-      stockHeatmapScript.src = "https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js";
+      stockHeatmapScript.src =
+        "https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js";
       stockHeatmapScript.type = "text/javascript";
       stockHeatmapScript.async = true;
       stockHeatmapScript.innerHTML = JSON.stringify({
@@ -40,7 +40,7 @@ function MarketInfo() {
         isZoomEnabled: true,
         hasSymbolTooltip: true,
         width: "100%",
-        height: "500"
+        height: "500",
       });
 
       const stockContainer = document.getElementById("tradingview_stock_heatmap");
@@ -52,7 +52,8 @@ function MarketInfo() {
     // 암호화폐 히트맵 위젯 로드 함수
     const loadCryptoHeatmap = () => {
       const cryptoHeatmapScript = document.createElement("script");
-      cryptoHeatmapScript.src = "https://s3.tradingview.com/external-embedding/embed-widget-crypto-coins-heatmap.js";
+      cryptoHeatmapScript.src =
+        "https://s3.tradingview.com/external-embedding/embed-widget-crypto-coins-heatmap.js";
       cryptoHeatmapScript.type = "text/javascript";
       cryptoHeatmapScript.async = true;
       cryptoHeatmapScript.innerHTML = JSON.stringify({
@@ -67,7 +68,7 @@ function MarketInfo() {
         isZoomEnabled: true,
         hasSymbolTooltip: true,
         width: "100%",
-        height: "500"
+        height: "500",
       });
 
       const cryptoContainer = document.getElementById("tradingview_crypto_heatmap");

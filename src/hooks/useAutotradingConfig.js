@@ -12,42 +12,45 @@ export const useAutotradingConfig = (authenticatedFetch, showSnackbar, strategyT
   const cacheRef = useRef({ data: null, timestamp: 0 });
 
   // 자동매매 목록 가져오기 (1분 캐시 적용)
-  const fetchAutotradingList = useCallback(async ({ force = false } = {}) => {
-    const now = Date.now();
-    if (!force && cacheRef.current.data && now - cacheRef.current.timestamp < CACHE_TTL_MS) {
-      setAutotradingList(cacheRef.current.data);
-      return;
-    }
-
-    try {
-      const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
-      const response = await authenticatedFetch(
-        `${apiBaseUrl}/api/mypage/trading-configs?strategy_type=${strategyType}`
-      );
-
-      if (response.ok) {
-        const configs = await response.json();
-
-        const configsWithFlag = configs.map((config) => ({
-          ...config,
-          is_from_summary: false,
-        }));
-
-        cacheRef.current = { data: configsWithFlag, timestamp: Date.now() };
-        setAutotradingList(configsWithFlag);
-
-        if (autotradingList.length === 0) {
-          showSnackbar(`${configsWithFlag.length}개의 자동매매 설정을 불러왔습니다.`, "success");
-        }
-      } else {
-        setAutotradingList([]);
-        showSnackbar("자동매매 목록 조회에 실패했습니다.", "error");
+  const fetchAutotradingList = useCallback(
+    async ({ force = false } = {}) => {
+      const now = Date.now();
+      if (!force && cacheRef.current.data && now - cacheRef.current.timestamp < CACHE_TTL_MS) {
+        setAutotradingList(cacheRef.current.data);
+        return;
       }
-    } catch (error) {
-      setAutotradingList([]);
-      showSnackbar(`1차 데이터 로딩 오류: ${error.message}`, "error");
-    }
-  }, [authenticatedFetch, showSnackbar, strategyType]);
+
+      try {
+        const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
+        const response = await authenticatedFetch(
+          `${apiBaseUrl}/api/mypage/trading-configs?strategy_type=${strategyType}`
+        );
+
+        if (response.ok) {
+          const configs = await response.json();
+
+          const configsWithFlag = configs.map((config) => ({
+            ...config,
+            is_from_summary: false,
+          }));
+
+          cacheRef.current = { data: configsWithFlag, timestamp: Date.now() };
+          setAutotradingList(configsWithFlag);
+
+          if (autotradingList.length === 0) {
+            showSnackbar(`${configsWithFlag.length}개의 자동매매 설정을 불러왔습니다.`, "success");
+          }
+        } else {
+          setAutotradingList([]);
+          showSnackbar("자동매매 목록 조회에 실패했습니다.", "error");
+        }
+      } catch (error) {
+        setAutotradingList([]);
+        showSnackbar(`1차 데이터 로딩 오류: ${error.message}`, "error");
+      }
+    },
+    [authenticatedFetch, showSnackbar, strategyType]
+  );
 
   // 통합된 주식 목록 생성 (기존 주식 + 자동매매 설정된 주식)
   const getUnifiedStockList = (stockData) => {

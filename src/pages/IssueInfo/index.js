@@ -415,7 +415,11 @@ function IssueInfo() {
                               <Typography variant="h6" fontWeight="bold" color="text.primary">
                                 {index.name}
                               </Typography>
-                              <Typography variant="caption" color="text.secondary" sx={{ opacity: 0.7 }}>
+                              <Typography
+                                variant="caption"
+                                color="text.secondary"
+                                sx={{ opacity: 0.7 }}
+                              >
                                 {index.code}
                               </Typography>
                             </Box>
@@ -459,18 +463,34 @@ function IssueInfo() {
                           <Box>
                             <Grid container spacing={1}>
                               <Grid item xs={6}>
-                                <Typography variant="caption" color="text.secondary" sx={{ opacity: 0.7 }}>
+                                <Typography
+                                  variant="caption"
+                                  color="text.secondary"
+                                  sx={{ opacity: 0.7 }}
+                                >
                                   시가총액
                                 </Typography>
-                                <Typography variant="body2" fontWeight="medium" color="text.primary">
+                                <Typography
+                                  variant="body2"
+                                  fontWeight="medium"
+                                  color="text.primary"
+                                >
                                   {index.marketCap}
                                 </Typography>
                               </Grid>
                               <Grid item xs={6}>
-                                <Typography variant="caption" color="text.secondary" sx={{ opacity: 0.7 }}>
+                                <Typography
+                                  variant="caption"
+                                  color="text.secondary"
+                                  sx={{ opacity: 0.7 }}
+                                >
                                   거래대금
                                 </Typography>
-                                <Typography variant="body2" fontWeight="medium" color="text.primary">
+                                <Typography
+                                  variant="body2"
+                                  fontWeight="medium"
+                                  color="text.primary"
+                                >
                                   {index.volume}
                                 </Typography>
                               </Grid>
@@ -517,7 +537,12 @@ function IssueInfo() {
                       alignItems="flex-start"
                       mb={1}
                     >
-                      <Typography variant="h6" fontWeight="medium" sx={{ flex: 1 }} color="text.primary">
+                      <Typography
+                        variant="h6"
+                        fontWeight="medium"
+                        sx={{ flex: 1 }}
+                        color="text.primary"
+                      >
                         {news.title}
                       </Typography>
                       <Chip
@@ -528,7 +553,12 @@ function IssueInfo() {
                       />
                     </Box>
 
-                    <Typography variant="body2" color="text.secondary" mb={1.5} sx={{ opacity: 0.8 }}>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      mb={1.5}
+                      sx={{ opacity: 0.8 }}
+                    >
                       {news.content}
                     </Typography>
 
@@ -596,7 +626,12 @@ function IssueInfo() {
                       {event.event}
                     </Typography>
 
-                    <Typography variant="body2" color="text.secondary" mb={1.5} sx={{ opacity: 0.8 }}>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      mb={1.5}
+                      sx={{ opacity: 0.8 }}
+                    >
                       {event.description}
                     </Typography>
 

@@ -32,7 +32,7 @@ import AutotradingAccordion from "components/AutotradingAccordion/AutotradingAcc
 import ChartContainer from "components/ChartContainer/ChartContainer";
 import StockInfoHeader from "components/StockInfoHeader/StockInfoHeader";
 import HTFStockList from "components/HTFStockList/HTFStockList";
-import { COLORS, GRADIENT_COLORS, LAYOUT } from "constants/styles";
+import { COLORS, GRADIENT_COLORS, LAYOUT, onColor } from "constants/styles";
 import { formatNumber } from "utils/formatters";
 
 function HTF() {
@@ -300,7 +300,7 @@ function HTF() {
                   width: 64,
                   height: 64,
                   borderRadius: "50%",
-                  background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
+                  background: GRADIENT_COLORS.PRIMARY,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -589,7 +589,7 @@ function HTF() {
                           width: 64,
                           height: 64,
                           borderRadius: "50%",
-                          background: `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`,
+                          background: GRADIENT_COLORS.PRIMARY,
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
@@ -810,7 +810,7 @@ function HTF() {
                               onClick={() => navigate("/pages/authentication/sign-in")}
                               sx={{
                                 background: GRADIENT_COLORS.PRIMARY,
-                                color: COLORS.ON_ACCENT,
+                                color: onColor(GRADIENT_COLORS.PRIMARY),
                                 px: 4,
                                 py: 1.5,
                                 "&:hover": {

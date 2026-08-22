@@ -24,7 +24,7 @@ import Typography from "@mui/material/Typography";
 import { adjustToKRXTickSize, getKRXTickSize } from "utils/formatters";
 import { useTradingForm } from "hooks/useTradingForm";
 import { useAuth } from "contexts/AuthContext";
-import { COLORS, alpha } from "constants/styles";
+import { COLORS, GRADIENT_COLORS, alpha } from "constants/styles";
 
 /**
  * 자동매매 설정 상세보기/수정 모달 컴포넌트
@@ -116,8 +116,10 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
         sx={{
           p: 3,
           pb: 1,
-          background:
-            `linear-gradient(135deg, ${alpha(COLORS.PRIMARY, 0.08)} 0%, ${alpha(COLORS.PRIMARY_DARK, 0.08)} 100%)`,
+          background: `linear-gradient(135deg, ${alpha(COLORS.PRIMARY, 0.08)} 0%, ${alpha(
+            COLORS.PRIMARY_DARK,
+            0.08
+          )} 100%)`,
           border: `1px solid ${alpha(COLORS.PRIMARY, 0.1)}`,
           borderBottom: "none",
           display: "flex",
@@ -517,7 +519,8 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                 <Typography
                   variant="body2"
                   sx={{
-                    color: Math.abs(tradingForm.positionSum - 100) >= 0.01 ? COLORS.UP : COLORS.SUCCESS,
+                    color:
+                      Math.abs(tradingForm.positionSum - 100) >= 0.01 ? COLORS.UP : COLORS.SUCCESS,
                     fontWeight: "bold",
                   }}
                 >
@@ -578,9 +581,7 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
           onClick={handleSave}
           disabled={!tradingForm.isFormValid() || loading}
           sx={{
-            background: tradingForm.isFormValid()
-              ? `linear-gradient(135deg, ${COLORS.PRIMARY} 0%, ${COLORS.PRIMARY_DARK} 100%)`
-              : COLORS.BORDER_STRONG,
+            background: tradingForm.isFormValid() ? GRADIENT_COLORS.PRIMARY : COLORS.BORDER_STRONG,
             color: COLORS.ON_ACCENT,
             px: 3,
             py: 1,
@@ -593,7 +594,9 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                 ? `linear-gradient(135deg, ${COLORS.PRIMARY_HOVER} 0%, #6a4190 100%)`
                 : COLORS.BORDER_STRONG,
               transform: tradingForm.isFormValid() ? "translateY(-1px)" : "none",
-              boxShadow: tradingForm.isFormValid() ? `0 6px 20px ${alpha(COLORS.PRIMARY, 0.3)}` : "none",
+              boxShadow: tradingForm.isFormValid()
+                ? `0 6px 20px ${alpha(COLORS.PRIMARY, 0.3)}`
+                : "none",
             },
             "&:disabled": {
               background: `${COLORS.BORDER_STRONG} !important`,
