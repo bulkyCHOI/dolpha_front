@@ -117,7 +117,7 @@ const getStrategyTypeColor = (strategyType) => {
     weekly_high: COLORS.WARNING, // 딥 오렌지 - 장기 전략 (52주 신고가)
     fifty_day_high: COLORS.WARNING, // 밝은 오렌지 - 중기 전략 (50일 신고가)
     daily_top50: COLORS.WARNING, // 엠버(황금색) - 단기 전략 (일일 Top50)
-    theme_surge: "#7b1fa2", // 퍼플 - 급등테마주 전략
+    theme_surge: COLORS.STRATEGY_THEME_SURGE, // 급등테마주 전략
   };
   return colors[strategyType] || COLORS.TEXT_MUTED;
 };
@@ -144,7 +144,7 @@ const getTradingModeColor = (tradingMode) => {
 // 배경색에 따른 텍스트 색상 결정 함수
 const getTextColor = (backgroundColor) => {
   // MTT(다크레드)와 Turtle(네이비)만 흰색, 나머지는 검은색
-  const darkColors = [COLORS.UP, COLORS.DOWN, "#7b1fa2"]; // MTT, Turtle/ATR, 급등테마주
+  const darkColors = [COLORS.UP, COLORS.DOWN, COLORS.STRATEGY_THEME_SURGE]; // MTT, Turtle/ATR, 급등테마주
   return darkColors.includes(backgroundColor) ? COLORS.ON_ACCENT : COLORS.ON_ACCENT_LIGHT;
 };
 
@@ -1351,9 +1351,9 @@ export default function TradingConfigs() {
                   borderColor: "divider",
                   "& .MuiTab-root": { fontWeight: "bold", textTransform: "none" },
                   "& .MuiTabs-indicator": {
-                    backgroundColor: activeTab === 1 ? "#7b1fa2" : COLORS.UP,
+                    backgroundColor: activeTab === 1 ? COLORS.STRATEGY_THEME_SURGE : COLORS.UP,
                   },
-                  "& .Mui-selected": { color: activeTab === 1 ? "#7b1fa2" : COLORS.UP },
+                  "& .Mui-selected": { color: activeTab === 1 ? COLORS.STRATEGY_THEME_SURGE : COLORS.UP },
                 }}
               >
                 <Tab label={`일반 전략 (${generalConfigs.length})`} />
@@ -1380,7 +1380,7 @@ export default function TradingConfigs() {
                   </IconButton>
 
                   <Box textAlign="center" sx={{ minWidth: 200 }}>
-                    <Typography variant="h6" fontWeight="bold" sx={{ color: "#7b1fa2" }}>
+                    <Typography variant="h6" fontWeight="bold" sx={{ color: COLORS.STRATEGY_THEME_SURGE }}>
                       {formatKstDateLabel(selectedThemeDate)}
                     </Typography>
                     <Typography variant="caption" color="text.secondary" opacity={0.7}>

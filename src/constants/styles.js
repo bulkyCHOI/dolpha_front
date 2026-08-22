@@ -10,13 +10,13 @@
  * 오히려 뜻이 흐려진다. 각자 쓰이는 파일에 이름 붙은 상수로 둔다.
  * 다만 다크 테마에서는 각각 따로 손봐야 하므로 여기 적어둔다.
  *
- *   ThemeTimeline        급등 강도 히트맵 스케일 (연속 색상 램프)
- *   ThemeRateLineChart   산업군 계열 구분색 (범주형 팔레트)
- *   ThemeEntryChart      진입 판정 구간/마커 색
  *   TradingViewChart     차트 지표 색 (chartTheme.js 가 토큰을 참조)
- *   DataManagement       로그 뷰어 구문 강조 테마
- *   TradingConfigs       전략별 식별색 (MTT · Turtle · 급등테마주)
- *   GoogleLoginButton    Google 브랜드 색 (임의로 바꾸면 안 됨)
+ *   ThemeEntryChart      진입 판정 구간/마커 색 (토큰 참조)
+ *   DataManagement       로그 뷰어 — 배경이 항상 어두워 테마와 무관하게 고정
+ *   GoogleLoginButton    Google 브랜드 색 — 가이드라인상 고정
+ *
+ * 히트맵(HEAT) · 계열 구분색(SERIES) · 전략색(STRATEGY_*) 은 아래 COLORS 에
+ * 테마별로 정의돼 있다. 라이트는 진해지는 방향, 다크는 밝아지는 방향이다.
  */
 import colors from "assets/theme/base/colors";
 import { cssVar } from "constants/palette";
@@ -156,6 +156,41 @@ export const COLORS = {
   TINT_SUCCESS: cssVar("tint-success"),
   TINT_WARNING: cssVar("tint-warning"),
   TINT_ERROR: cssVar("tint-error"),
+
+  /**
+   * 급등 강도 히트맵 램프. 인덱스가 클수록 강한 상승.
+   * 라이트는 진해지는 방향, 다크는 밝아지는 방향으로 정의돼 있다.
+   */
+  HEAT: {
+    UP: [
+      cssVar("heat-up-1"),
+      cssVar("heat-up-2"),
+      cssVar("heat-up-3"),
+      cssVar("heat-up-4"),
+      cssVar("heat-up-5"),
+      cssVar("heat-up-6"),
+    ],
+    ZERO: cssVar("heat-zero"),
+    DOWN: [
+      cssVar("heat-down-1"),
+      cssVar("heat-down-2"),
+      cssVar("heat-down-3"),
+      cssVar("heat-down-4"),
+    ],
+  },
+
+  /** 산업군 계열 구분색 (범주형) */
+  SERIES: [
+    cssVar("series-1"),
+    cssVar("series-2"),
+    cssVar("series-3"),
+    cssVar("series-4"),
+    cssVar("series-5"),
+    cssVar("series-6"),
+  ],
+
+  /** 전략 식별색 */
+  STRATEGY_THEME_SURGE: cssVar("strategy-theme-surge"),
 
   RS_RANK: {
     HIGH: cssVar("rank-high"),

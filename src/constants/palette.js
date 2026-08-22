@@ -80,6 +80,34 @@ export const LIGHT_PALETTE = {
   // 노랑·주황처럼 밝은 배경 위 글자. 두 테마 모두 어두워야 읽힌다.
   "on-accent-light": "#0f172a",
 
+  /**
+   * 급등 강도 히트맵 램프 (급등테마주 타임라인).
+   * 라이트에서는 흰 배경 위라 강할수록 진해지고, 다크에서는 어두운 배경 위라
+   * 강할수록 밝아진다. 방향이 반대이므로 두 팔레트를 따로 정의한다.
+   */
+  "heat-up-6": "#8e0000",
+  "heat-up-5": "#b71c1c",
+  "heat-up-4": bullish.main,
+  "heat-up-3": "#f4776e",
+  "heat-up-2": "#ffab9e",
+  "heat-up-1": "#ffdad4",
+  "heat-zero": "#e3e7ec",
+  "heat-down-1": "#cfe3f7",
+  "heat-down-2": "#93c2ef",
+  "heat-down-3": "#4a95dd",
+  "heat-down-4": bearish.main,
+
+  /** 산업군 계열 구분색 (범주형). 서로 구분되기만 하면 된다. */
+  "series-1": "#6a1b9a",
+  "series-2": "#00838f",
+  "series-3": "#c2185b",
+  "series-4": "#5d4037",
+  "series-5": "#455a64",
+  "series-6": "#9e9d24",
+
+  /** 전략 식별색 — 급등테마주 (MTT·터틀은 up·down 을 쓴다) */
+  "strategy-theme-surge": "#7b1fa2",
+
   // 등급 배지
   "rank-high": success.main,
   "rank-medium": warning.main,
@@ -140,6 +168,28 @@ export const DARK_PALETTE = {
 
   "on-accent": "#0f172a",
   "on-accent-light": "#0f172a",
+
+  // 어두운 배경 위에서는 강할수록 밝아지는 방향으로 뒤집는다
+  "heat-up-6": "#ff6b6b",
+  "heat-up-5": "#e14b4b",
+  "heat-up-4": "#c23a3a",
+  "heat-up-3": "#9a3132",
+  "heat-up-2": "#6d2828",
+  "heat-up-1": "#472122",
+  "heat-zero": "#243244",
+  "heat-down-1": "#1f3a5c",
+  "heat-down-2": "#26527f",
+  "heat-down-3": "#2f6fae",
+  "heat-down-4": "#60a5fa",
+
+  "series-1": "#c084fc",
+  "series-2": "#2dd4bf",
+  "series-3": "#f472b6",
+  "series-4": "#d6a77a",
+  "series-5": "#94a3b8",
+  "series-6": "#d4d152",
+
+  "strategy-theme-surge": "#c084fc",
 
   "rank-high": "#4ade80",
   "rank-medium": "#fbbf24",

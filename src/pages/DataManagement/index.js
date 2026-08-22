@@ -49,6 +49,23 @@ const apiBase = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
 const fmt = (n) => (n ?? 0).toLocaleString("ko-KR");
 const pct = (a, b) => (b ? ((a / b) * 100).toFixed(1) : "0.0");
 
+/**
+ * 실시간 로그 뷰어 색.
+ *
+ * 터미널 출력을 그대로 보여주는 영역이라 배경이 항상 어둡다.
+ * 그래서 글자색도 테마를 따라가면 안 된다 — 다크 테마의 흐린 회색을
+ * 쓰면 어두운 배경 위에서 읽히지 않는다. 두 테마에서 같은 값을 쓴다.
+ */
+const LOG_COLORS = {
+  background: "#1e1e1e",
+  text: "#d4d4d4",
+  muted: "#8a8a8a",
+  error: "#f48771",
+  success: "#4ec9b0",
+  trading: "#dcdcaa",
+  collect: "#9cdcfe",
+};
+
 function TabPanel({ children, value, index }) {
   return value === index ? <Box pt={2}>{children}</Box> : null;
 }
@@ -439,8 +456,8 @@ function LogViewer({ source, autoRefresh }) {
       <Box
         ref={logBoxRef}
         sx={{
-          bgcolor: "#1e1e1e",
-          color: COLORS.BORDER_STRONG,
+          bgcolor: LOG_COLORS.background,
+          color: LOG_COLORS.text,
           fontFamily: "monospace",
           fontSize: "0.75rem",
           p: 2,
@@ -452,22 +469,22 @@ function LogViewer({ source, autoRefresh }) {
         }}
       >
         {lines.length === 0 ? (
-          <span style={{ color: COLORS.TEXT_MUTED }}>로그가 없습니다.</span>
+          <span style={{ color: LOG_COLORS.muted }}>로그가 없습니다.</span>
         ) : (
           lines.map((line, i) => {
             const color =
               line.includes("오류") || line.includes("Error") || line.includes("실패")
-                ? "#f48771"
+                ? LOG_COLORS.error
                 : line.includes("완료") ||
                   line.includes("success") ||
                   line.includes("매수") ||
                   line.includes("매도")
-                ? "#4ec9b0"
+                ? LOG_COLORS.success
                 : line.includes("[자동매매]")
-                ? "#dcdcaa"
+                ? LOG_COLORS.trading
                 : line.includes("[데이터수집]")
-                ? "#9cdcfe"
-                : COLORS.BORDER_STRONG;
+                ? LOG_COLORS.collect
+                : LOG_COLORS.text;
             return (
               <div key={i} style={{ color }}>
                 {line}

@@ -21,17 +21,17 @@ const GRID_MINUTES = 30; // 세로 그리드 간격
  */
 const heatColor = (rate) => {
   if (rate === null || rate === undefined) return COLORS.SURFACE_ALT; // 미수집 슬롯
-  if (rate >= 8) return "#8e0000";
-  if (rate >= 6) return "#b71c1c";
-  if (rate >= 4) return COLORS.UP;
-  if (rate >= 2.5) return "#f4776e";
-  if (rate >= 1) return "#ffab9e";
-  if (rate > 0) return "#ffdad4";
-  if (rate === 0) return "#e3e7ec";
-  if (rate > -1) return "#cfe3f7";
-  if (rate > -2.5) return "#93c2ef";
-  if (rate > -4) return "#4a95dd";
-  return COLORS.DOWN;
+  if (rate >= 8) return COLORS.HEAT.UP[5];
+  if (rate >= 6) return COLORS.HEAT.UP[4];
+  if (rate >= 4) return COLORS.HEAT.UP[3];
+  if (rate >= 2.5) return COLORS.HEAT.UP[2];
+  if (rate >= 1) return COLORS.HEAT.UP[1];
+  if (rate > 0) return COLORS.HEAT.UP[0];
+  if (rate === 0) return COLORS.HEAT.ZERO;
+  if (rate > -1) return COLORS.HEAT.DOWN[0];
+  if (rate > -2.5) return COLORS.HEAT.DOWN[1];
+  if (rate > -4) return COLORS.HEAT.DOWN[2];
+  return COLORS.HEAT.DOWN[3];
 };
 
 const LEGEND_STOPS = [-3, -1, 0, 1, 2.5, 4, 6, 8];
@@ -274,7 +274,7 @@ function ThemeRow({ theme, slots, baseMinute, signalIndex, nowMinute }) {
                       width: 7,
                       height: 7,
                       borderRadius: "50%",
-                      bgcolor: signals.some((s) => s.executed) ? COLORS.SUCCESS : "#263238",
+                      bgcolor: signals.some((s) => s.executed) ? COLORS.SUCCESS : COLORS.TEXT,
                       boxShadow: `0 0 0 1.5px ${COLORS.SURFACE}`,
                     }}
                   />
@@ -357,7 +357,7 @@ export function TimelineLegend() {
         </Typography>
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
-        <Box sx={{ width: 7, height: 7, borderRadius: "50%", bgcolor: "#263238" }} />
+        <Box sx={{ width: 7, height: 7, borderRadius: "50%", bgcolor: COLORS.TEXT }} />
         <Typography variant="caption" sx={{ fontSize: 11, color: COLORS.TEXT_SECONDARY }}>
           진입 판정
         </Typography>

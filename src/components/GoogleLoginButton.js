@@ -5,6 +5,10 @@ import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import { COLORS } from "constants/styles";
 
+/** Google 브랜드 색 (테마와 무관하게 고정) */
+const GOOGLE_BLUE = "#4285f4";
+const GOOGLE_BLUE_HOVER = "#3367d6";
+
 const GoogleLoginButton = ({ onSuccess, onError, disabled = false }) => {
   const handleGoogleLogin = async () => {
     try {
@@ -55,10 +59,11 @@ const GoogleLoginButton = ({ onSuccess, onError, disabled = false }) => {
         startIcon={<Google />}
         sx={{
           py: 1.5,
-          borderColor: "#4285f4",
-          color: "#4285f4",
+          // Google 브랜드 색. 로그인 버튼 가이드라인상 임의로 바꾸지 않는다.
+          borderColor: GOOGLE_BLUE,
+          color: GOOGLE_BLUE,
           "&:hover": {
-            borderColor: "#3367d6",
+            borderColor: GOOGLE_BLUE_HOVER,
             backgroundColor: "rgba(66, 133, 244, 0.04)",
           },
           "&:disabled": {

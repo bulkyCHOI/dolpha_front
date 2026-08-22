@@ -19,12 +19,7 @@ const SERIES_COLORS = [
   COLORS.DOWN,
   COLORS.SUCCESS,
   COLORS.WARNING,
-  "#6a1b9a",
-  "#00838f",
-  "#c2185b",
-  "#5d4037",
-  "#455a64",
-  "#9e9d24",
+  ...COLORS.SERIES,
 ];
 
 const minuteOf = (slot) => Number(slot.slice(0, 2)) * 60 + Number(slot.slice(3));
