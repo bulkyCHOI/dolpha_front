@@ -412,7 +412,7 @@ function TradingDefaults() {
                     item
                     xs={12}
                     md={9}
-                    sx={{ pr: { md: 3 }, borderRight: { md: "1px solid rgba(0,0,0,0.10)" } }}
+                    sx={{ pr: { md: 3 }, borderRight: { md: `1px solid ${COLORS.BORDER}` } }}
                   >
                     <Typography variant="h6" fontWeight="bold" mb={1.5}>
                       계좌 설정
@@ -598,10 +598,10 @@ function TradingDefaults() {
                                 backgroundColor: COLORS.DIVIDER,
                               },
                               "& .MuiInputBase-input.Mui-disabled": {
-                                color: "rgba(0,0,0,0.45)",
-                                WebkitTextFillColor: "rgba(0,0,0,0.45)",
+                                color: COLORS.TEXT_MUTED,
+                                WebkitTextFillColor: COLORS.TEXT_MUTED,
                               },
-                              "& .MuiInputLabel-root.Mui-disabled": { color: "rgba(0,0,0,0.4)" },
+                              "& .MuiInputLabel-root.Mui-disabled": { color: COLORS.TEXT_MUTED },
                             }
                           : {}
                       }
@@ -725,10 +725,10 @@ function TradingDefaults() {
                         sx={{
                           "& .MuiInputBase-root.Mui-disabled": { backgroundColor: COLORS.DIVIDER },
                           "& .MuiInputBase-input.Mui-disabled": {
-                            color: "rgba(0,0,0,0.45)",
-                            WebkitTextFillColor: "rgba(0,0,0,0.45)",
+                            color: COLORS.TEXT_MUTED,
+                            WebkitTextFillColor: COLORS.TEXT_MUTED,
                           },
-                          "& .MuiInputLabel-root.Mui-disabled": { color: "rgba(0,0,0,0.4)" },
+                          "& .MuiInputLabel-root.Mui-disabled": { color: COLORS.TEXT_MUTED },
                         }}
                       />
                     </Grid>

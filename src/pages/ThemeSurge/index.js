@@ -266,7 +266,7 @@ const tableStyles = (minWidth, compact = false) => ({
       lineHeight: compact ? 1.1 : "inherit",
       fontSize: "13px",
       "&:not(:last-of-type)": { borderBottomColor: COLORS.SURFACE_ALT },
-      "&:hover": { backgroundColor: `${COLORS.HOVER_BG} !important` },
+      "&:hover": { backgroundColor: `${COLORS.ROW_HOVER} !important` },
     },
   },
   cells: { style: { color: COLORS.TEXT, padding: compact ? "0px 6px" : "8px" } },
@@ -684,7 +684,7 @@ function ThemeSurge() {
             </Grid>
           </Grid>
 
-          {/* ── 5. 진입 조건 판정 (차트 + 표) ────────── */}
+          {/* ── 5. 진입/청산 조건 판정 (차트 + 표) ───── */}
           {/*
             섹션을 조건부로 숨기지 않는다. 로그인이 풀렸거나 판정 이력이 없으면
             차트가 통째로 사라져 "왜 안 보이는지" 알 수 없었다.
@@ -692,8 +692,8 @@ function ThemeSurge() {
           */}
           <Box sx={{ mt: 2 }}>
             <SectionCard
-              title="진입 조건 판정"
-              subtitle="종목 탭에서 판정 시점을 고르면, 그때 전고점·눌림목이 1분봉 어디로 잡혔는지 차트에 그려집니다. 3조건이 모두 ✓ 여야 매수합니다"
+              title="진입/청산 조건 판정"
+              subtitle="종목 탭에서 판정 시점을 고르면, 그때 전고점·눌림목이 1분봉 어디로 잡혔는지 차트에 그려집니다. 3조건이 모두 ✓ 여야 매수하며, 청산은 아래 표에서 확인할 수 있습니다"
               action={
                 timeline.signals.length > 0 && (
                   <Button

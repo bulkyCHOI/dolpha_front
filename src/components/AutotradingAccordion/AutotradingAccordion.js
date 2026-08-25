@@ -518,7 +518,7 @@ const AutotradingAccordion = ({
             sx={{
               textAlign: "center",
               py: 4,
-              bgcolor: "grey.50",
+              bgcolor: COLORS.SURFACE_ALT,
               borderRadius: 2,
             }}
           >

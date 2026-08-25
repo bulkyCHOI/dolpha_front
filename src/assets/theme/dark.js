@@ -14,7 +14,8 @@ import { DARK_PALETTE, cssVar } from "constants/palette";
  * 반면 styleOverrides 는 그대로 CSS 로 나가므로 변수를 써도 된다.
  */
 const surface = cssVar("surface");
-const surfaceAlt = cssVar("surface-alt");
+const surfaceOverlay = cssVar("surface-overlay");
+const overlayBorder = cssVar("overlay-border");
 const text = cssVar("text");
 const border = cssVar("border");
 const onAccent = DARK_PALETTE["on-accent"];
@@ -72,17 +73,76 @@ export default createTheme(baseTheme, {
         root: { backgroundColor: surface, color: text, border: `1px solid ${border}` },
       },
     },
-    MuiMenu: { styleOverrides: { paper: { backgroundColor: surfaceAlt, color: text } } },
-    MuiPopover: { styleOverrides: { paper: { backgroundColor: surfaceAlt, color: text } } },
+    // 떠 있는 패널은 본문 표면보다 밝고 테두리가 있어야 "메뉴"로 읽힌다.
+    MuiMenu: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: surfaceOverlay,
+          color: text,
+          border: `1px solid ${overlayBorder}`,
+        },
+      },
+    },
+    MuiPopover: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: surfaceOverlay,
+          color: text,
+          border: `1px solid ${overlayBorder}`,
+        },
+      },
+    },
     MuiTableCell: { styleOverrides: { root: { borderColor: border, color: text } } },
     MuiDivider: { styleOverrides: { root: { borderColor: border } } },
+    // MK 기본 스타일이 .MuiOutlinedInput-input 에 밝은 회색 글자색을 고정해
+    // 두어, InputBase 의 색보다 나중에 적용되며 다크에서 입력값이 묻힌다.
+    // 입력 글자는 표면과 최대 대비가 나야 하므로 흰색 계열(text)로 고정한다.
     MuiOutlinedInput: {
       styleOverrides: {
         root: { color: text },
         notchedOutline: { borderColor: border },
+        input: {
+          color: `${text} !important`,
+          "&::placeholder": { color: cssVar("text-muted"), opacity: 1 },
+        },
+        multiline: { color: `${text} !important` },
+      },
+    },
+    MuiInput: {
+      styleOverrides: {
+        input: { color: `${text} !important` },
+      },
+    },
+    MuiFilledInput: {
+      styleOverrides: {
+        root: { backgroundColor: cssVar("surface-alt"), color: text },
+        input: { color: `${text} !important` },
       },
     },
     MuiInputLabel: { styleOverrides: { root: { color: cssVar("text-secondary") } } },
+    // MK 기본값은 라벨 글자를 남색(dark.main)으로 고정해, 다크에서 라디오·체크박스
+    // 옆 글자가 배경과 같은 색이 되어 사라진다.
+    MuiFormControlLabel: {
+      styleOverrides: {
+        label: { color: `${text} !important` },
+      },
+    },
+    MuiFormHelperText: { styleOverrides: { root: { color: cssVar("text-secondary") } } },
+    // 체크 안 된 동그라미·네모의 테두리가 밝은 회색이라 흰 점처럼 보인다.
+    MuiRadio: {
+      styleOverrides: {
+        root: {
+          "& .MuiSvgIcon-root": { borderColor: overlayBorder },
+        },
+      },
+    },
+    MuiCheckbox: {
+      styleOverrides: {
+        root: {
+          "& .MuiSvgIcon-root": { borderColor: overlayBorder },
+        },
+      },
+    },
     MuiSelect: {
       styleOverrides: {
         icon: { color: cssVar("text-secondary") },
@@ -90,7 +150,31 @@ export default createTheme(baseTheme, {
       },
     },
     // MK 기본 스타일이 입력 글자색을 고정해 두어, 다크에서 선택 값이 묻힌다.
-    MuiInputBase: { styleOverrides: { root: { color: text }, input: { color: text } } },
+    MuiInputBase: {
+      styleOverrides: {
+        root: { color: text },
+        input: {
+          color: text,
+          // 기본 placeholder 는 opacity 0.42 라 어두운 입력칸에서 거의 안 보인다.
+          "&::placeholder": { color: cssVar("text-muted"), opacity: 1 },
+        },
+      },
+    },
+    // MK autocomplete 는 입력·옵션 글자색을 라이트 기준으로 고정한다.
+    MuiAutocomplete: {
+      styleOverrides: {
+        input: { color: `${text} !important` },
+        option: {
+          color: text,
+          "&:hover, &.Mui-focused": {
+            backgroundColor: `${cssVar("hover-bg")} !important`,
+            color: `${text} !important`,
+          },
+        },
+        paper: { backgroundColor: surfaceOverlay, color: text },
+        noOptions: { color: cssVar("text-secondary") },
+      },
+    },
     MuiMenuItem: {
       styleOverrides: {
         root: {
@@ -111,7 +195,7 @@ export default createTheme(baseTheme, {
     },
     MuiTooltip: {
       styleOverrides: {
-        tooltip: { backgroundColor: DARK_PALETTE["surface-alt"], color: DARK_PALETTE.text },
+        tooltip: { backgroundColor: DARK_PALETTE["surface-overlay"], color: DARK_PALETTE.text },
       },
     },
   },

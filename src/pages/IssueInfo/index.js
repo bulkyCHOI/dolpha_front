@@ -59,7 +59,7 @@ function IssueInfo() {
       <Box
         sx={{
           p: 1.5,
-          border: "1px solid rgba(0,0,0,0.08)",
+          border: `1px solid ${COLORS.BORDER}`,
           borderRadius: 2,
           backgroundColor: COLORS.SURFACE_ALT,
           boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
@@ -376,7 +376,7 @@ function IssueInfo() {
               sx={{
                 mb: 3,
                 boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
-                border: "1px solid rgba(0,0,0,0.06)",
+                border: `1px solid ${COLORS.BORDER}`,
               }}
             >
               <CardContent sx={{ p: 3 }}>
@@ -394,7 +394,7 @@ function IssueInfo() {
                         variant="outlined"
                         sx={{
                           height: "100%",
-                          border: "1px solid rgba(0,0,0,0.08)",
+                          border: `1px solid ${COLORS.BORDER}`,
                           boxShadow: "0 1px 6px rgba(0,0,0,0.04)",
                           "&:hover": {
                             boxShadow: "0 4px 12px rgba(0,0,0,0.12)",
@@ -518,7 +518,7 @@ function IssueInfo() {
               sx={{
                 height: "100%",
                 boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
-                border: "1px solid rgba(0,0,0,0.06)",
+                border: `1px solid ${COLORS.BORDER}`,
               }}
             >
               <CardContent sx={{ p: 3 }}>
@@ -568,7 +568,7 @@ function IssueInfo() {
                         size="small"
                         variant="outlined"
                         sx={{
-                          borderColor: "rgba(0,0,0,0.12)",
+                          borderColor: COLORS.BORDER,
                           color: "text.secondary",
                         }}
                       />
@@ -592,7 +592,7 @@ function IssueInfo() {
               sx={{
                 height: "100%",
                 boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
-                border: "1px solid rgba(0,0,0,0.06)",
+                border: `1px solid ${COLORS.BORDER}`,
               }}
             >
               <CardContent sx={{ p: 3 }}>
@@ -641,7 +641,7 @@ function IssueInfo() {
                         size="small"
                         variant="outlined"
                         sx={{
-                          borderColor: "rgba(0,0,0,0.12)",
+                          borderColor: COLORS.BORDER,
                           color: "text.secondary",
                         }}
                       />

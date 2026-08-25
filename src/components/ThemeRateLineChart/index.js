@@ -288,8 +288,11 @@ function ThemeRateLineChart({ slots, themes, loading }) {
               top: PADDING.top,
               left: xOf(hoverMinute) > PADDING.left + plotWidth / 2 ? 12 : "auto",
               right: xOf(hoverMinute) > PADDING.left + plotWidth / 2 ? "auto" : 12,
-              bgcolor: "rgba(33,37,41,0.92)",
-              color: COLORS.SURFACE,
+              // 테마와 무관하게 어두운 색을 쓰면 다크에서 배경과 붙어버린다
+              bgcolor: COLORS.SURFACE_OVERLAY,
+              border: `1px solid ${COLORS.OVERLAY_BORDER}`,
+              boxShadow: 3,
+              color: COLORS.TEXT,
               borderRadius: 1,
               px: 1.25,
               py: 1,

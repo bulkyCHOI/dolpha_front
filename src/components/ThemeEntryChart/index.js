@@ -13,7 +13,7 @@ import Typography from "@mui/material/Typography";
 import { useThemeEntryChart } from "hooks/useThemeEntryChart";
 import EntryDecisionChart from "./EntryDecisionChart";
 import DecisionList from "./DecisionList";
-import DecisionSummary, { ChartLegend } from "./DecisionSummary";
+import DecisionSummary, { ChartLegend, ExitSummary } from "./DecisionSummary";
 import { CHART_COLORS, decisionStatus } from "./constants";
 import { COLORS } from "constants/styles";
 
@@ -103,7 +103,8 @@ StockTabLabel.propTypes = { stock: PropTypes.object.isRequired };
 function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
   const stocks = useMemo(() => groupByStock(signals), [signals]);
   const [selectedCode, setSelectedCode] = useState("");
-  const [selectedId, setSelectedId] = useState(null);
+  // 진입 판정과 청산 체결이 한 목록에 섞이므로 종류까지 함께 들고 있어야 한다
+  const [selected, setSelected] = useState(null);
   const [onlyMeaningful, setOnlyMeaningful] = useState(true);
 
   useEffect(() => {
@@ -118,18 +119,29 @@ function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
 
   const { chart, loading, error } = useThemeEntryChart(date, selectedCode, authFetch);
   const decisions = chart.decisions;
+  const exits = chart.exits;
 
   useEffect(() => {
     if (decisions.length === 0) {
-      setSelectedId(null);
+      setSelected(null);
       return;
     }
-    if (!decisions.some((decision) => decision.id === selectedId)) {
-      setSelectedId(defaultDecision(decisions).id);
+    const stillThere =
+      selected &&
+      (selected.kind === "exit"
+        ? exits.some((exit) => exit.id === selected.id)
+        : decisions.some((decision) => decision.id === selected.id));
+    if (!stillThere) {
+      setSelected({ kind: "decision", id: defaultDecision(decisions).id });
     }
-  }, [decisions, selectedId]);
+  }, [decisions, exits, selected]);
 
-  const selectedDecision = decisions.find((decision) => decision.id === selectedId) ?? null;
+  const selectedDecision =
+    selected?.kind === "decision"
+      ? decisions.find((decision) => decision.id === selected.id) ?? null
+      : null;
+  const selectedExit =
+    selected?.kind === "exit" ? exits.find((exit) => exit.id === selected.id) ?? null : null;
 
   // 하루 100건이 넘는 판정 중 대부분은 0/3 대기라 목록을 채우기만 한다.
   // 조건이 하나라도 걸린 판정만 추려 볼 수 있게 한다.
@@ -137,7 +149,17 @@ function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
     () => decisions.filter((decision) => decision.conditions_met > 0 || decision.passed),
     [decisions]
   );
-  const listDecisions = onlyMeaningful && meaningful.length > 0 ? meaningful : decisions;
+
+  // 진입 판정과 청산 체결을 한 줄기 시간순으로 합친다 — 하루의 흐름이 그대로 읽힌다.
+  // 청산은 몇 건 안 되고 결말에 해당하므로 '조건 근접만' 필터와 무관하게 항상 남긴다.
+  const listItems = useMemo(() => {
+    const shown = onlyMeaningful && meaningful.length > 0 ? meaningful : decisions;
+    const merged = [
+      ...shown.map((decision) => ({ ...decision, kind: "decision" })),
+      ...exits.map((exit) => ({ ...exit, kind: "exit" })),
+    ];
+    return merged.sort((a, b) => (a.chart_time ?? 0) - (b.chart_time ?? 0));
+  }, [onlyMeaningful, meaningful, decisions, exits]);
 
   if (!isAuthenticated) {
     return (
@@ -211,6 +233,8 @@ function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
                 <EntryDecisionChart
                   bars={chart.bars}
                   decision={selectedDecision}
+                  exits={exits}
+                  selectedExit={selectedExit}
                   height={CHART_HEIGHT}
                 />
               </Box>
@@ -226,7 +250,8 @@ function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
                 }}
               >
                 <Typography variant="caption" sx={{ fontSize: 11, color: CHART_COLORS.MUTED }}>
-                  판정 {listDecisions.length}건 · 눌러서 시점 이동
+                  판정 {listItems.length - exits.length}건
+                  {exits.length > 0 ? ` · 청산 ${exits.length}건` : ""} · 눌러서 시점 이동
                 </Typography>
                 {meaningful.length > 0 && meaningful.length < decisions.length && (
                   <Chip
@@ -249,9 +274,9 @@ function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
                 )}
               </Box>
               <DecisionList
-                decisions={listDecisions}
-                selectedId={selectedId}
-                onSelect={(decision) => setSelectedId(decision.id)}
+                items={listItems}
+                selected={selected}
+                onSelect={(item) => setSelected({ kind: item.kind, id: item.id })}
                 maxHeight={CHART_HEIGHT - 26}
               />
             </Grid>
@@ -262,7 +287,11 @@ function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
           </Box>
 
           <Divider sx={{ my: 1.5 }} />
-          <DecisionSummary decision={selectedDecision} params={chart.params} />
+          {selectedExit ? (
+            <ExitSummary exit={selectedExit} />
+          ) : (
+            <DecisionSummary decision={selectedDecision} params={chart.params} />
+          )}
         </>
       )}
     </Box>

@@ -3,6 +3,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 /** 선을 잡았다고 인정하는 세로 거리(px) */
 const GRAB_TOLERANCE = 6;
 
+/** 이 속성이 붙은 요소 위에서는 드래그를 시작하지 않는다. */
+export const OVERLAY_ATTRIBUTE = "data-chart-overlay";
+
 /**
  * 차트 위의 수평선을 마우스로 끌어 옮길 수 있게 한다.
  *
@@ -81,6 +84,8 @@ export default function usePriceLineDrag({
   const handleMouseDown = useCallback(
     (event) => {
       if (disabled || cleanupRef.current) return;
+      // 선 위에 얹은 DOM 오버레이(라벨 칩 등)를 누른 것이면 드래그로 보지 않는다.
+      if (event.target?.closest?.(`[${OVERLAY_ATTRIBUTE}]`)) return;
 
       const container = event.currentTarget;
       const bounds = container?.getBoundingClientRect();

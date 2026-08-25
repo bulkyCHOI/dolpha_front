@@ -56,7 +56,7 @@ import StockChartModal from "components/StockChartModal";
 
 // 매매동향 모달
 import InvestorFlowModal from "components/InvestorFlowModal";
-import { COLORS } from "constants/styles";
+import { COLORS, onColor } from "constants/styles";
 
 // Remove the old styled component - now using EnhancedDataTable
 
@@ -1093,6 +1093,9 @@ export default function TradingConfigs() {
   );
   const displayedConfigs = activeTab === 1 ? themeSurgeConfigsOfDate : generalConfigs;
 
+  // 선택 탭을 채우는 강조색 (탭별 전략색)
+  const activeTabColor = activeTab === 1 ? COLORS.STRATEGY_THEME_SURGE : COLORS.PRIMARY;
+
   const themeDateIndex = themeSurgeDates.indexOf(selectedThemeDate);
   const hasPrevThemeDate = themeDateIndex > 0;
   const hasNextThemeDate = themeDateIndex >= 0 && themeDateIndex < themeSurgeDates.length - 1;
@@ -1350,10 +1353,15 @@ export default function TradingConfigs() {
                   borderBottom: 1,
                   borderColor: "divider",
                   "& .MuiTab-root": { fontWeight: "bold", textTransform: "none" },
-                  "& .MuiTabs-indicator": {
-                    backgroundColor: activeTab === 1 ? COLORS.STRATEGY_THEME_SURGE : COLORS.UP,
+                  // 시세 의미색(UP=상승 적색)을 탭 강조에 쓰면 뜻이 어긋나고,
+                  // 다크에서 밝은 적색 면 위 글자가 읽히지 않는다.
+                  // 선택 탭은 강조색 면으로 채우고, 그 위 글자색은 onColor 로 고른다.
+                  // 밑줄 인디케이터는 채운 면과 중복이라 감춘다.
+                  "& .MuiTabs-indicator": { display: "none" },
+                  "& .Mui-selected": {
+                    backgroundColor: `${activeTabColor} !important`,
+                    color: `${onColor(activeTabColor)} !important`,
                   },
-                  "& .Mui-selected": { color: activeTab === 1 ? COLORS.STRATEGY_THEME_SURGE : COLORS.UP },
                 }}
               >
                 <Tab label={`일반 전략 (${generalConfigs.length})`} />

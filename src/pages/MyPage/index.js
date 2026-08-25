@@ -17,6 +17,7 @@ import routes from "routes";
 // MyPage sections
 import Profile from "./sections/Profile";
 import TradingDefaults from "./sections/TradingDefaults";
+import ScreenerFilterSettings from "./sections/ScreenerFilterSettings";
 
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
@@ -43,6 +44,8 @@ function MyPage() {
         return <Profile />;
       case 1:
         return <TradingDefaults />;
+      case 2:
+        return <ScreenerFilterSettings />;
       default:
         return <Profile />;
     }
@@ -93,7 +96,7 @@ function MyPage() {
                 lineHeight: 1.3,
               }}
             >
-              프로필 및 자동매매 설정 관리
+              프로필 · 자동매매 · 종목 필터 설정 관리
             </Typography>
           </Grid>
         </Container>
@@ -104,7 +107,8 @@ function MyPage() {
           mx: { xs: 2, sm: 3, lg: 4 },
           mt: { xs: -4, md: -6 },
           mb: 2,
-          backgroundColor: ({ palette: { white }, functions: { rgba } }) => rgba(white.main, 0.95),
+          // 흰색으로 고정하면 다크에서 본문 카드만 흰 판으로 남는다.
+          backgroundColor: COLORS.SURFACE,
           backdropFilter: "saturate(200%) blur(30px)",
           boxShadow: ({ boxShadows: { xxl } }) => xxl,
           borderRadius: 3,
@@ -147,6 +151,7 @@ function MyPage() {
                 >
                   <Tab label="프로필" />
                   <Tab label="자동매매 기본설정" />
+                  <Tab label="종목 필터" />
                 </Tabs>
               </Box>
               <Box>{renderTabContent()}</Box>

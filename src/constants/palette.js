@@ -33,6 +33,8 @@ export const LIGHT_PALETTE = {
 
   "hover-bg": rgba(primary.main, 0.08),
   "selected-bg": rgba(primary.main, 0.12),
+  /** 표 행 마우스오버. 줄무늬 배경 위에 얹혀도 과하게 튀지 않아야 한다. */
+  "row-hover": rgba(primary.main, 0.1),
 
   // 텍스트
   text: colors.text.primary,
@@ -43,6 +45,9 @@ export const LIGHT_PALETTE = {
   surface: colors.background.surface,
   "surface-alt": grey[100],
   "surface-sunken": colors.background.sunken,
+  /** 본문 위에 뜨는 패널(드롭다운·메뉴). 본문 표면과 구분돼야 메뉴로 읽힌다. */
+  "surface-overlay": colors.background.surface,
+  "overlay-border": grey[300],
   border: grey[300],
   "border-strong": grey[400],
   divider: grey[200],
@@ -132,14 +137,20 @@ export const DARK_PALETTE = {
 
   "hover-bg": "rgba(129, 140, 248, 0.12)",
   "selected-bg": "rgba(129, 140, 248, 0.2)",
+  // 흰색 계열로 밝히면 행 전체가 종이처럼 떠 버린다. 색조를 유지한 채 살짝만 밝힌다.
+  "row-hover": "rgba(129, 140, 248, 0.14)",
 
-  text: "#e2e8f0",
-  "text-secondary": "#94a3b8",
-  "text-muted": "#8b98ac",
+  text: "#e8eef7",
+  // 회색이 어두우면 본문 옆 보조 텍스트가 배경에 묻힌다 (대비 7:1 이상 확보)
+  "text-secondary": "#c0cbdb",
+  "text-muted": "#a4b2c5",
 
   surface: "#1e293b",
   "surface-alt": "#243244",
   "surface-sunken": "#0f172a",
+  // 본문 표면(#1e293b)보다 한 단계 밝게 — 그래야 떠 있는 패널로 읽힌다
+  "surface-overlay": "#2c3a4f",
+  "overlay-border": "#4a5a72",
   border: "#334155",
   "border-strong": "#475569",
   divider: "#293548",

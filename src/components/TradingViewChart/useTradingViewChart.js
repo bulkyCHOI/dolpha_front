@@ -78,9 +78,13 @@ export default function useTradingViewChart({
     const container = containerRef.current;
     if (!container) return undefined;
 
+    // layout·grid 는 통째로 덮으면 테마 배경/글자색까지 날아가므로 한 겹 병합한다.
+    const base = baseChartOptions({ intraday });
     const chart = createChart(container, {
-      ...baseChartOptions({ intraday }),
+      ...base,
       ...chartOptions,
+      layout: { ...base.layout, ...chartOptions?.layout },
+      grid: { ...base.grid, ...chartOptions?.grid },
       width: container.clientWidth || 1,
       height: container.clientHeight || 1,
     });

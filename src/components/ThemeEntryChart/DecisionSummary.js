@@ -6,7 +6,15 @@ import Grid from "@mui/material/Grid";
 import Tooltip from "@mui/material/Tooltip";
 
 import Typography from "@mui/material/Typography";
-import { CHART_COLORS, LEGEND_ITEMS, decisionStatus, pct, ratio, won } from "./constants";
+import {
+  CHART_COLORS,
+  LEGEND_ITEMS,
+  decisionStatus,
+  exitStatus,
+  pct,
+  ratio,
+  won,
+} from "./constants";
 import { COLORS } from "constants/styles";
 
 const OK_ICON = "✓";
@@ -21,8 +29,8 @@ function ConditionCard({ label, ok, color, metrics }) {
         borderRadius: 1.5,
         height: "100%",
         border: "1px solid",
-        borderColor: ok ? `${color}55` : "#e6eaef",
-        bgcolor: ok ? `${color}0f` : "#fafbfc",
+        borderColor: ok ? `${color}55` : COLORS.BORDER,
+        bgcolor: ok ? `${color}0f` : COLORS.SURFACE_ALT,
       }}
     >
       <Box sx={{ display: "flex", alignItems: "center", gap: 0.6, mb: 0.75 }}>
@@ -59,7 +67,7 @@ function ConditionCard({ label, ok, color, metrics }) {
           >
             {value}
             {criterion && (
-              <Box component="span" sx={{ color: "#aab4bf", fontWeight: 400, ml: 0.5 }}>
+              <Box component="span" sx={{ color: COLORS.TEXT_MUTED, fontWeight: 400, ml: 0.5 }}>
                 / {criterion}
               </Box>
             )}
@@ -110,6 +118,89 @@ export function ChartLegend() {
     </Box>
   );
 }
+
+/**
+ * 선택된 청산 체결의 요약.
+ *
+ * 진입은 '왜 샀는가'를 3조건으로 따지지만, 청산은 판정 이력이 없고 체결 결과만
+ * 남으므로 '무엇이 걸려서 언제 얼마에 팔았고 얼마를 벌었나'를 보여준다.
+ */
+export function ExitSummary({ exit }) {
+  if (!exit) return null;
+
+  const status = exitStatus(exit);
+  const rate = exit.profit_loss_rate;
+  const rateColor = rate == null ? CHART_COLORS.MUTED : rate >= 0 ? COLORS.UP : COLORS.DOWN;
+
+  const metrics = [
+    { name: "체결가", value: `${won(exit.exit_price)}원` },
+    { name: "수량", value: `${won(exit.quantity)}주` },
+    {
+      name: "손익",
+      value:
+        exit.profit_loss == null
+          ? "—"
+          : `${exit.profit_loss >= 0 ? "+" : ""}${won(exit.profit_loss)}원`,
+    },
+  ];
+
+  return (
+    <Box>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap", mb: 1 }}>
+        <Typography variant="button" sx={{ fontSize: 13, fontWeight: 700 }}>
+          {exit.exited_at} {exit.exit_type_label}
+        </Typography>
+        <Chip
+          size="small"
+          label={status.label}
+          sx={{
+            height: 19,
+            fontSize: 11,
+            fontWeight: 700,
+            bgcolor: status.bg,
+            color: status.color,
+          }}
+        />
+        <Typography variant="caption" sx={{ fontSize: 11.5, color: CHART_COLORS.MUTED }}>
+          {exit.reason}
+        </Typography>
+      </Box>
+
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "baseline",
+          gap: 2,
+          flexWrap: "wrap",
+          p: 1.25,
+          borderRadius: 1.5,
+          border: `1px solid ${COLORS.BORDER}`,
+          bgcolor: COLORS.SURFACE_ALT,
+        }}
+      >
+        <Typography variant="h5" fontWeight="bold" sx={{ color: rateColor, lineHeight: 1.1 }}>
+          {rate == null ? "—" : `${rate >= 0 ? "+" : ""}${rate.toFixed(2)}%`}
+        </Typography>
+        {metrics.map(({ name, value }) => (
+          <Box key={name} sx={{ display: "flex", alignItems: "baseline", gap: 0.6 }}>
+            <Typography variant="caption" sx={{ fontSize: 11, color: CHART_COLORS.MUTED }}>
+              {name}
+            </Typography>
+            <Typography
+              variant="button"
+              sx={{ fontSize: 12.5, fontWeight: 700, fontVariantNumeric: "tabular-nums" }}
+            >
+              {value}
+            </Typography>
+          </Box>
+        ))}
+      </Box>
+    </Box>
+  );
+}
+
+ExitSummary.propTypes = { exit: PropTypes.object };
+ExitSummary.defaultProps = { exit: null };
 
 /**
  * 선택된 판정의 수치 요약.
@@ -184,7 +275,12 @@ function DecisionSummary({ decision, params }) {
             <Chip
               size="small"
               label="좌표 추정"
-              sx={{ height: 19, fontSize: 10.5, bgcolor: `#fff3e0`, color: COLORS.WARNING }}
+              sx={{
+                height: 19,
+                fontSize: 10.5,
+                bgcolor: COLORS.TINT_WARNING,
+                color: COLORS.WARNING,
+              }}
             />
           </Tooltip>
         )}

@@ -47,7 +47,8 @@ export default function FlowTable({ columns, data, minWidth }) {
               minHeight: ROW_MIN_HEIGHT,
               fontSize: "13px",
               "&:nth-of-type(odd)": { backgroundColor: COLORS.SURFACE_ALT },
-              "&:hover": { backgroundColor: `${COLORS.TINT_DOWN} !important` },
+              // hover 는 시세 의미색이 아니라 전용 토큰을 쓴다.
+              "&:hover": { backgroundColor: `${COLORS.HOVER_BG} !important` },
             },
           },
           cells: {

@@ -14,6 +14,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
 import AppHeaderDropdown from "components/AppHeader/AppHeaderDropdown";
+import { COLORS } from "constants/styles";
 
 function AppHeaderMobile({ routes, open }) {
   const [collapse, setCollapse] = useState("");
@@ -65,14 +66,14 @@ function AppHeaderMobile({ routes, open }) {
                         fontWeight="regular"
                         py={0.625}
                         px={2}
-                        sx={({ palette: { grey, dark }, borders: { borderRadius } }) => ({
+                        sx={({ borders: { borderRadius } }) => ({
                           borderRadius: borderRadius.md,
                           cursor: "pointer",
                           transition: "all 300ms linear",
 
+                          // 밝은 회색으로 채우면 다크에서 흰 덩어리로 튄다
                           "&:hover": {
-                            backgroundColor: grey[200],
-                            color: dark.main,
+                            backgroundColor: COLORS.HOVER_BG,
                           },
                         })}
                       >
@@ -89,7 +90,7 @@ function AppHeaderMobile({ routes, open }) {
                     href={item.href ? item.href : ""}
                     target={item.href ? "_blank" : ""}
                     rel={item.href ? "noreferrer" : "noreferrer"}
-                    sx={({ palette: { grey, dark }, borders: { borderRadius } }) => ({
+                    sx={({ borders: { borderRadius } }) => ({
                       borderRadius: borderRadius.md,
                       cursor: "pointer",
                       transition: "all 300ms linear",
@@ -97,12 +98,7 @@ function AppHeaderMobile({ routes, open }) {
                       px: 1.625,
 
                       "&:hover": {
-                        backgroundColor: grey[200],
-                        color: dark.main,
-
-                        "& *": {
-                          color: dark.main,
-                        },
+                        backgroundColor: COLORS.HOVER_BG,
                       },
                     })}
                   >

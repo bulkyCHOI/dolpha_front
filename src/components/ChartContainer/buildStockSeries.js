@@ -14,7 +14,7 @@ import {
   UP_COLOR,
   fadedUpColor,
 } from "components/TradingViewChart/chartTheme";
-import { COLORS } from "constants/styles";
+import { COLORS, alpha, resolveColor } from "constants/styles";
 
 /** pane 인덱스 정의 — 위에서 아래 순서 */
 export const PANE = {
@@ -146,8 +146,9 @@ export function buildHtfZones(chartType, selectedStock) {
     {
       from,
       to,
-      fill: "rgba(34, 197, 94, 0.10)",
-      stroke: "rgba(34, 197, 94, 0.45)",
+      // 캔버스는 CSS 변수를 못 읽으므로 토큰을 실제 색으로 해석해 쓴다.
+      fill: alpha(resolveColor(COLORS.SUCCESS), 0.1),
+      stroke: alpha(resolveColor(COLORS.SUCCESS), 0.45),
       label: "HTF 상승구간",
       labelColor: MARKER_COLORS.htfStart,
     },
@@ -212,7 +213,8 @@ export function buildPriceLines(horizontalLines, entryPoint) {
     lineWidth: 2,
     lineStyle: 2, // Dashed
     axisLabelVisible: true,
-    title: line.label ?? "",
+    // 라벨은 선 왼쪽 끝의 칩(DOM)이 담당한다. title을 켜면 같은 자리에 겹친다.
+    title: "",
   }));
 
   const entryPrice = Number(entryPoint);

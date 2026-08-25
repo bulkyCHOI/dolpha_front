@@ -23,7 +23,9 @@ import TradingViewChart, {
   OhlcLegend,
   VcpPrimitive,
   ZonePrimitive,
+  OVERLAY_ATTRIBUTE,
   usePriceLineDrag,
+  usePriceLineLabels,
   useSeriesHover,
 } from "components/TradingViewChart";
 import InflectionPointToggle from "components/InflectionPointToggle";
@@ -146,6 +148,10 @@ const ChartContainer = ({
   const vcpRef = useRef(null);
   if (!vcpRef.current) vcpRef.current = new VcpPrimitive();
 
+  // 수평선 라벨을 선 왼쪽 끝에 얹기 위한 y 좌표
+  const { primitive: lineLabelPrimitive, positions: lineLabelPositions } =
+    usePriceLineLabels(horizontalLines);
+
   const {
     showInflectionPoints,
     inflectionAnalysisResult,
@@ -181,11 +187,12 @@ const ChartContainer = ({
     if (candleIndex >= 0) {
       withVisibility[candleIndex] = {
         ...withVisibility[candleIndex],
-        primitives: [htfZonesRef.current, vcpRef.current],
+        primitives: [htfZonesRef.current, vcpRef.current, lineLabelPrimitive],
       };
     }
     return compactPanes(withVisibility, PANE_STRETCH);
   }, [
+    lineLabelPrimitive,
     mode,
     hiddenSeriesIds,
     ohlcvData,
@@ -348,6 +355,38 @@ const ChartContainer = ({
     </Box>
   );
 
+  // 수평선 칩 — 차트 위, 해당 선의 왼쪽 끝에 얹는다.
+  const lineChips = lineLabelPositions.map(({ id, y }) => {
+    const line = horizontalLines.find((item) => item.id === id);
+    if (!line) return null;
+
+    return (
+      <Box
+        key={id}
+        {...{ [OVERLAY_ATTRIBUTE]: "" }}
+        sx={{ position: "absolute", left: 4, top: y, transform: "translateY(-50%)", zIndex: 9 }}
+      >
+        <Chip
+          size="small"
+          label={`${line.label ? `${line.label} · ` : ""}${new Intl.NumberFormat("ko-KR").format(
+            line.value
+          )}`}
+          onClick={(event) => setMenuState({ anchorEl: event.currentTarget, lineId: line.id })}
+          onDelete={() => handleDeleteLine(line.id)}
+          sx={{
+            height: 22,
+            border: `1px solid ${line.color}`,
+            borderLeft: `4px solid ${line.color}`,
+            fontWeight: 600,
+            // 캔들 위에 얹히므로 배경을 깔아야 읽힌다.
+            backgroundColor:
+              movingLineId === line.id ? alpha(COLORS.WARNING, 0.9) : alpha(COLORS.SURFACE, 0.92),
+          }}
+        />
+      </Box>
+    );
+  });
+
   const drawingHint = (isDrawingMode || movingLineId) && (
     <Box
       sx={{
@@ -372,7 +411,7 @@ const ChartContainer = ({
     <Box sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
       {hasData ? (
         <>
-          {/* 범례 + 수평선 목록 — 항상 존재하는 한 줄이라 차트가 밀리지 않는다 */}
+          {/* 도구 + 범례 — 항상 존재하는 한 줄이라 차트가 밀리지 않는다 */}
           <Box
             sx={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 1, minHeight: 32 }}
           >
@@ -390,27 +429,6 @@ const ChartContainer = ({
                 )
               }
             />
-
-            {horizontalLines.map((line) => (
-              <Chip
-                key={line.id}
-                size="small"
-                label={`${line.label ? `${line.label} · ` : ""}${new Intl.NumberFormat(
-                  "ko-KR"
-                ).format(line.value)}`}
-                onClick={(event) =>
-                  setMenuState({ anchorEl: event.currentTarget, lineId: line.id })
-                }
-                onDelete={() => handleDeleteLine(line.id)}
-                sx={{
-                  height: 22,
-                  borderLeft: `4px solid ${line.color}`,
-                  fontWeight: 600,
-                  backgroundColor:
-                    movingLineId === line.id ? alpha(COLORS.WARNING, 0.15) : undefined,
-                }}
-              />
-            ))}
           </Box>
 
           {/* 캔들 · 거래량 · RS · ATR · MTT (pane 통합) */}
@@ -425,7 +443,7 @@ const ChartContainer = ({
               onCrosshairMove={handleCrosshairMove}
               onMouseDown={handleMouseDown}
               chartOptions={{
-                leftPriceScale: { visible: true, borderColor: COLORS.BORDER },
+                leftPriceScale: { visible: false, borderColor: COLORS.BORDER },
                 // 자석 모드(1)는 커서를 OHLC 값에 붙여서, 선을 끌 때 값이 튄다.
                 crosshair: { mode: isDrawingMode || movingLineId || draggingId != null ? 0 : 1 },
               }}
@@ -435,6 +453,7 @@ const ChartContainer = ({
               overlay={
                 <>
                   <OhlcLegend bar={readout?.bar} change={readout?.change} />
+                  {lineChips}
                   {drawingHint}
                 </>
               }

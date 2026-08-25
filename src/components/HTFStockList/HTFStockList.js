@@ -201,7 +201,7 @@ function HTFStockList({
                       )} 100%)`
                     : rowIndex % 2 === 0
                     ? COLORS.SURFACE_ALT
-                    : COLORS.ON_ACCENT,
+                    : COLORS.SURFACE,
                 "&:hover": {
                   backgroundColor: alpha(COLORS.PRIMARY, 0.08),
                   transform: "translateX(4px)",

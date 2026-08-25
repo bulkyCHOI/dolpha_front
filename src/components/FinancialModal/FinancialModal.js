@@ -121,7 +121,7 @@ const FinancialModal = ({
               <TableContainer component={Paper} sx={{ boxShadow: 1, mb: 2, overflowX: "auto" }}>
                 <Table size="small" sx={{ minWidth: isMobile ? 500 : 700 }}>
                   <TableHead>
-                    <TableRow sx={{ bgcolor: "grey.50", display: "flex", width: "100%" }}>
+                    <TableRow sx={{ bgcolor: COLORS.SURFACE_ALT, display: "flex", width: "100%" }}>
                       <TableCell
                         sx={{
                           fontWeight: "bold",
@@ -172,7 +172,7 @@ const FinancialModal = ({
                       <TableRow
                         key={accountName}
                         sx={{
-                          "&:nth-of-type(odd)": { bgcolor: "grey.25" },
+                          "&:nth-of-type(odd)": { bgcolor: COLORS.SURFACE_ALT },
                           display: "flex",
                           width: "100%",
                         }}
@@ -250,7 +250,7 @@ const FinancialModal = ({
               <TableContainer component={Paper} sx={{ boxShadow: 1, overflowX: "auto" }}>
                 <Table size="small" sx={{ minWidth: isMobile ? 500 : 700 }}>
                   <TableHead>
-                    <TableRow sx={{ bgcolor: "grey.50", display: "flex", width: "100%" }}>
+                    <TableRow sx={{ bgcolor: COLORS.SURFACE_ALT, display: "flex", width: "100%" }}>
                       <TableCell
                         sx={{
                           fontWeight: "bold",
@@ -300,7 +300,7 @@ const FinancialModal = ({
                       <TableRow
                         key={accountName}
                         sx={{
-                          "&:nth-of-type(odd)": { bgcolor: "grey.25" },
+                          "&:nth-of-type(odd)": { bgcolor: COLORS.SURFACE_ALT },
                           display: "flex",
                           width: "100%",
                         }}
@@ -397,7 +397,12 @@ const FinancialModal = ({
       </DialogContent>
 
       <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button onClick={onClose} variant="contained" color="primary">
+        <Button
+          onClick={onClose}
+          variant="contained"
+          color="primary"
+          sx={{ color: "primary.contrastText" }}
+        >
           닫기
         </Button>
       </DialogActions>

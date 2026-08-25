@@ -11,6 +11,7 @@ import { COLORS, alpha, resolveColor } from "constants/styles";
 const MINUTE = 60;
 const LEAD_MINUTES = 4; // 탐색 구간 시작 앞쪽 여백
 const TRAIL_MINUTES = 12; // 판정 시점 뒤쪽 여백
+const EXIT_LEAD_MINUTES = 40; // 청산 시점 앞쪽 여백 (어떤 흐름 끝에 청산됐는지 보이게)
 const FALLBACK_BARS = 90; // 판정 좌표가 없을 때 보여줄 최근 봉 수
 
 const upVolume = () => alpha(resolveColor(COLORS.UP), 0.45);
@@ -28,8 +29,8 @@ function snapToBar(bars, time) {
   return matched ?? bars[0].time;
 }
 
-/** 선택된 판정의 마커 목록. */
-function buildMarkers(bars, decision) {
+/** 선택된 판정 + 당일 청산 체결의 마커 목록. */
+function buildMarkers(bars, decision, exits) {
   const geometry = decision?.geometry;
   const markers = [];
 
@@ -69,38 +70,72 @@ function buildMarkers(bars, decision) {
     });
   }
 
+  // 청산은 선택과 무관하게 항상 보여준다 — 하루의 결말이라 늘 궁금한 정보다
+  exits.forEach((exit) => {
+    markers.push({
+      time: snapToBar(bars, exit.chart_time),
+      position: "aboveBar",
+      shape: "arrowDown",
+      color: CHART_COLORS.EXIT,
+      text: `${exit.exited_at} ${exit.is_partial ? "분할청산" : "청산"}`,
+    });
+  });
+
   // 같은 봉에 마커가 겹치면 lightweight-charts가 세로로 쌓아 준다
   return markers.filter((m) => m.time != null).sort((a, b) => a.time - b.time);
 }
 
-/** 선택된 판정의 음영 구간과 세로선. */
-function buildShapes(decision) {
-  const geometry = decision?.geometry;
-  if (!geometry) return { zones: [], verticals: [] };
-
+/** 선택된 판정의 음영 구간과 세로선 + 청산 시점 세로선. */
+function buildShapes(bars, decision, exits) {
   const zones = [];
-  if (geometry.rise_zone) {
-    zones.push({ ...geometry.rise_zone, ...ZONE_STYLE.RISE });
-  }
-  if (geometry.pullback_zone) {
-    zones.push({ ...geometry.pullback_zone, ...ZONE_STYLE.PULLBACK });
+  const verticals = [];
+  const geometry = decision?.geometry;
+
+  if (geometry) {
+    if (geometry.rise_zone) {
+      zones.push({ ...geometry.rise_zone, ...ZONE_STYLE.RISE });
+    }
+    if (geometry.pullback_zone) {
+      zones.push({ ...geometry.pullback_zone, ...ZONE_STYLE.PULLBACK });
+    }
+    if (geometry.decision_bar) {
+      verticals.push({
+        time: geometry.decision_bar,
+        color: CHART_COLORS.DECISION,
+        label: `${decision.time} 판정`,
+      });
+    }
   }
 
-  const verticals = geometry.decision_bar
-    ? [
-        {
-          time: geometry.decision_bar,
-          color: CHART_COLORS.DECISION,
-          label: `${decision.time} 판정`,
-        },
-      ]
-    : [];
+  exits.forEach((exit) => {
+    // 거래가 없던 분은 봉 자체가 없다. 그대로 넘기면 timeToCoordinate 가 null 을
+    // 돌려줘 선이 조용히 사라지므로, 실재하는 봉으로 스냅해서 그린다.
+    const time = snapToBar(bars, exit.chart_time);
+    if (time == null) return;
+    verticals.push({
+      time,
+      color: CHART_COLORS.EXIT,
+      label: `${exit.exited_at} ${exit.is_partial ? "분할청산" : "청산"}`,
+    });
+  });
 
   return { zones, verticals };
 }
 
-/** 선택된 판정의 기준 가격선. */
-function buildPriceLines(decision) {
+/** 선택된 판정의 기준 가격선 + 선택된 청산의 체결가선. */
+function buildPriceLines(decision, selectedExit) {
+  if (selectedExit) {
+    return [
+      {
+        price: selectedExit.exit_price,
+        color: CHART_COLORS.EXIT,
+        lineWidth: 2,
+        lineStyle: LineStyle.Solid,
+        title: selectedExit.is_partial ? "분할청산가" : "청산가",
+      },
+    ];
+  }
+
   const geometry = decision?.geometry;
   const prevHigh = geometry?.swing_high?.price ?? decision?.prev_high;
   const lines = [];
@@ -148,12 +183,20 @@ function buildPriceLines(decision) {
   return lines;
 }
 
-/** 판정 구간이 한눈에 들어오도록 보이는 시간 범위를 정한다. */
-function focusRange(bars, decision) {
+/** 선택된 시점이 한눈에 들어오도록 보이는 시간 범위를 정한다. */
+function focusRange(bars, decision, selectedExit) {
   if (bars.length === 0) return null;
-  const geometry = decision?.geometry;
   const last = bars[bars.length - 1].time;
 
+  // 청산을 골랐으면 체결 시점 앞뒤를 균형 있게 — 청산은 시작 구간이 따로 없다
+  if (selectedExit?.chart_time != null) {
+    return {
+      from: selectedExit.chart_time - EXIT_LEAD_MINUTES * MINUTE,
+      to: selectedExit.chart_time + TRAIL_MINUTES * MINUTE,
+    };
+  }
+
+  const geometry = decision?.geometry;
   if (!geometry) {
     const head = bars[Math.max(0, bars.length - FALLBACK_BARS)].time;
     return { from: head, to: last + TRAIL_MINUTES * MINUTE };
@@ -169,7 +212,7 @@ function focusRange(bars, decision) {
  * 진입 판정 1분봉 차트.
  * 전고점·눌림 구간·돌파 기준선을 선택된 판정 기준으로 그린다.
  */
-function EntryDecisionChart({ bars, decision, height }) {
+function EntryDecisionChart({ bars, decision, exits, selectedExit, height }) {
   // primitive는 차트 수명 동안 같은 인스턴스를 유지해야 한다.
   const zonesRef = useRef(null);
   if (!zonesRef.current) zonesRef.current = new ZonePrimitive();
@@ -179,7 +222,7 @@ function EntryDecisionChart({ bars, decision, height }) {
   const series = useMemo(() => {
     const decisionBar = decision?.geometry?.decision_bar;
 
-    const { zones, verticals } = buildShapes(decision);
+    const { zones, verticals } = buildShapes(bars, decision, exits);
     zonesRef.current.setShapes(zones, verticals);
 
     return [
@@ -201,8 +244,8 @@ function EntryDecisionChart({ bars, decision, height }) {
           priceFormat: { type: "price", precision: 0, minMove: 1 },
         },
         primitives: [zonesRef.current],
-        markers: buildMarkers(bars, decision),
-        priceLines: buildPriceLines(decision).map((options) => ({
+        markers: buildMarkers(bars, decision, exits),
+        priceLines: buildPriceLines(decision, selectedExit).map((options) => ({
           axisLabelVisible: true,
           ...options,
         })),
@@ -230,7 +273,7 @@ function EntryDecisionChart({ bars, decision, height }) {
         priceScaleOptions: { scaleMargins: { top: 0.82, bottom: 0 } },
       },
     ];
-  }, [bars, decision]);
+  }, [bars, decision, exits, selectedExit]);
 
   const handleCrosshairMove = (param, chart, seriesMap) => {
     const candleSeries = seriesMap?.get("candle");
@@ -246,11 +289,11 @@ function EntryDecisionChart({ bars, decision, height }) {
     });
   };
 
-  // 호버 전 기본값은 '지금 보고 있는 판정'의 봉 — 화면 밖 마지막 봉을 띄우면 혼란스럽다
-  const decisionBar = decision?.geometry?.decision_bar;
+  // 호버 전 기본값은 '지금 보고 있는 시점'의 봉 — 화면 밖 마지막 봉을 띄우면 혼란스럽다
+  const focusBar = selectedExit?.chart_time ?? decision?.geometry?.decision_bar;
   const readout =
     hoverBar ??
-    bars.find((bar) => bar.time === decisionBar) ??
+    bars.find((bar) => bar.time === focusBar) ??
     (bars.length ? bars[bars.length - 1] : null);
   const readoutColor =
     readout && readout.close >= readout.open ? CHART_COLORS.UP : CHART_COLORS.DOWN;
@@ -264,6 +307,7 @@ function EntryDecisionChart({ bars, decision, height }) {
         zIndex: 2,
         fontSize: 11.5,
         background: alpha(COLORS.SURFACE, 0.88),
+        color: COLORS.TEXT,
         padding: "2px 6px",
         borderRadius: 4,
         pointerEvents: "none",
@@ -289,13 +333,17 @@ function EntryDecisionChart({ bars, decision, height }) {
       panes={[{ stretch: 1 }]}
       height={height}
       intraday
-      // 판정이 바뀔 때마다 해당 구간으로 화면을 다시 맞춘다
-      fitContentKey={`${decision?.time ?? "none"}-${bars.length}`}
-      initialVisibleRange={focusRange(bars, decision)}
+      // 선택이 바뀔 때마다 해당 구간으로 화면을 다시 맞춘다
+      fitContentKey={`${selectedExit ? `exit-${selectedExit.id}` : decision?.time ?? "none"}-${
+        bars.length
+      }`}
+      initialVisibleRange={focusRange(bars, decision, selectedExit)}
       onCrosshairMove={handleCrosshairMove}
       overlay={readoutOverlay}
       chartOptions={{
-        layout: { background: { color: COLORS.SURFACE }, textColor: COLORS.TEXT, fontSize: 11 },
+        // 배경·글자색은 공용 테마(baseChartOptions)가 테마별 실제 색으로 준다.
+        // 여기서 CSS 변수를 그대로 넘기면 캔버스가 해석하지 못해 흰 배경이 된다.
+        layout: { fontSize: 11 },
         grid: {
           vertLines: { color: CHART_COLORS.GRID },
           horzLines: { color: CHART_COLORS.GRID },
@@ -312,9 +360,17 @@ function EntryDecisionChart({ bars, decision, height }) {
 EntryDecisionChart.propTypes = {
   bars: PropTypes.array,
   decision: PropTypes.object,
+  exits: PropTypes.array,
+  selectedExit: PropTypes.object,
   height: PropTypes.number,
 };
 
-EntryDecisionChart.defaultProps = { bars: [], decision: null, height: 380 };
+EntryDecisionChart.defaultProps = {
+  bars: [],
+  decision: null,
+  exits: [],
+  selectedExit: null,
+  height: 380,
+};
 
 export default EntryDecisionChart;

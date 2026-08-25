@@ -1403,7 +1403,7 @@ export default function TradingReviews() {
                       <Box
                         sx={{
                           p: 2,
-                          bgcolor: "grey.50",
+                          bgcolor: COLORS.SURFACE_ALT,
                           borderRadius: 1.5,
                           border: "1px solid",
                           borderColor: "grey.200",
@@ -1620,7 +1620,7 @@ export default function TradingReviews() {
                                         mt: 1,
                                         pt: 1,
                                         borderTop: "1px solid",
-                                        borderColor: "grey.100",
+                                        borderColor: COLORS.BORDER,
                                       }}
                                     >
                                       <Box

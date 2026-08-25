@@ -84,9 +84,30 @@ import dialogContent from "assets/theme/components/dialog/dialogContent";
 import dialogContentText from "assets/theme/components/dialog/dialogContentText";
 import dialogActions from "assets/theme/components/dialog/dialogActions";
 
+/** 강조색 위 글자색 (constants/palette.js 의 on-accent 계열과 같은 값) */
+const ON_ACCENT = "#ffffff";
+const ON_ACCENT_DARK = "#0f172a";
+
 export default createTheme({
   breakpoints: { ...breakpoints },
-  palette: { ...colors },
+  /*
+   * contrastText 를 직접 정한다.
+   *
+   * 비워 두면 MUI 가 기본 임계값(3.0)으로 계산해 강조색 위 글자를 전부
+   * 흰색으로 넣는다. 밝은 주황(#f59e0b) 위 흰 글자는 대비 2.15 로 읽히지
+   * 않는다. 밝기를 재서 흰 글자와 어두운 글자를 갈라 준다.
+   * (다크 테마는 assets/theme/dark.js 가 같은 일을 한다.)
+   */
+  palette: {
+    ...colors,
+    primary: { ...colors.primary, contrastText: ON_ACCENT },
+    secondary: { ...colors.secondary, contrastText: ON_ACCENT },
+    info: { ...colors.info, contrastText: ON_ACCENT },
+    success: { ...colors.success, contrastText: ON_ACCENT },
+    // 밝은 주황 위에는 어두운 글자여야 읽힌다.
+    warning: { ...colors.warning, contrastText: ON_ACCENT_DARK },
+    error: { ...colors.error, contrastText: ON_ACCENT },
+  },
   typography: { ...typography },
   boxShadows: { ...boxShadows },
   borders: { ...borders },

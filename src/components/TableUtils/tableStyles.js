@@ -213,13 +213,27 @@ export const getCustomTableStyles = (theme) => ({
         backgroundColor: COLORS.SURFACE_ALT,
       },
       "&:hover": {
-        backgroundColor: `${COLORS.TINT_DOWN} !important`,
+        backgroundColor: `${COLORS.ROW_HOVER} !important`,
         cursor: "pointer",
       },
 
       [theme.breakpoints.down("lg")]: {
         minHeight: "55px",
       },
+    },
+    /**
+     * highlightOnHover · striped 는 라이브러리 테마 값(#EEEEEE · #FAFAFA)을
+     * style 뒤에 덧붙인다. 덮지 않으면 다크에서 행이 흰 판으로 뜬다.
+     */
+    highlightOnHoverStyle: {
+      backgroundColor: COLORS.ROW_HOVER,
+      color: COLORS.TEXT,
+      borderBottomColor: COLORS.BORDER,
+      outlineColor: COLORS.SURFACE,
+    },
+    stripedStyle: {
+      backgroundColor: COLORS.SURFACE_ALT,
+      color: COLORS.TEXT,
     },
   },
   cells: {

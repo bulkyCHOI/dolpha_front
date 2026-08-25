@@ -14,7 +14,7 @@
  * timeScale.timeToCoordinate / series.priceToCoordinate 로 바뀌었다.
  */
 
-import { COLORS } from "constants/styles";
+import { COLORS, onColor, resolveColor } from "constants/styles";
 
 const LABEL_FONT = "600 11px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
 const LABEL_PADDING = 4;
@@ -69,7 +69,9 @@ class VcpRenderer {
       const lowY = toY(t.swingLow?.low);
       if (highX === null || highY === null || lowX === null || lowY === null) return;
 
-      const color = DEPTH_COLORS[Math.min((t.tNumber ?? 1) - 1, DEPTH_COLORS.length - 1)];
+      const color = resolveColor(
+        DEPTH_COLORS[Math.min((t.tNumber ?? 1) - 1, DEPTH_COLORS.length - 1)]
+      );
       const midX = (highX + lowX) / 2;
 
       if (settings.showConnectionLines) {
@@ -100,12 +102,12 @@ class VcpRenderer {
       if (settings.showPercentageLabels) {
         const midY = (highY + lowY) / 2;
         const depth = typeof t.depth === "number" ? t.depth.toFixed(1) : "-";
-        this._drawLabel(ctx, `${t.label} (${depth}%)`, midX, midY, COLORS.SURFACE, color);
+        this._drawLabel(ctx, `${t.label} (${depth}%)`, midX, midY, color);
 
         // 수축하지 않는(=VCP 조건에 어긋나는) 구간 경고
         if (t.isContracting === false) {
           ctx.globalAlpha = 0.85;
-          ctx.fillStyle = WARN_COLOR;
+          ctx.fillStyle = resolveColor(WARN_COLOR);
           ctx.font = "bold 13px sans-serif";
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
@@ -147,7 +149,7 @@ class VcpRenderer {
 
     connect(
       swings.filter((s) => s.type === "peak"),
-      PEAK_LINE_COLOR,
+      resolveColor(PEAK_LINE_COLOR),
       "high"
     );
     connect(
@@ -176,12 +178,15 @@ class VcpRenderer {
 
     if (settings.showPercentageLabels) {
       const price = new Intl.NumberFormat("ko-KR").format(Math.round(pivotPoint.price));
-      this._drawLabel(ctx, `Pivot ${price}`, width - 55, y - 14, COLORS.SURFACE, PIVOT_LABEL_COLOR);
+      this._drawLabel(ctx, `Pivot ${price}`, width - 55, y - 14, PIVOT_LABEL_COLOR);
     }
   }
 
-  /** 캔들 위에서도 읽히도록 색 배경 박스를 깔고 텍스트를 그린다. */
-  _drawLabel(ctx, text, x, y, textColor, backgroundColor) {
+  /**
+   * 캔들 위에서도 읽히도록 색 배경 박스를 깔고 텍스트를 그린다.
+   * 글자색은 배경 밝기에 맞춰 고른다 (붉은 T1 → 흰색, 노란 T2·T3 → 어두운색).
+   */
+  _drawLabel(ctx, text, x, y, backgroundColor) {
     ctx.globalAlpha = 1;
     ctx.font = LABEL_FONT;
     ctx.textAlign = "center";
@@ -194,7 +199,7 @@ class VcpRenderer {
     ctx.fillStyle = backgroundColor;
     ctx.fillRect(x - boxWidth / 2, y - boxHeight / 2, boxWidth, boxHeight);
 
-    ctx.fillStyle = textColor;
+    ctx.fillStyle = resolveColor(onColor(backgroundColor));
     ctx.fillText(text, x, y);
   }
 }

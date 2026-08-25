@@ -112,6 +112,7 @@ export const COLORS = {
   PRIMARY_DARK: cssVar("primary-dark"),
   PRIMARY_BLUE: cssVar("primary"), // 기존 이름 유지 (사용처 다수)
   HOVER_BG: cssVar("hover-bg"),
+  ROW_HOVER: cssVar("row-hover"),
   SELECTED_BG: cssVar("selected-bg"),
 
   // 텍스트
@@ -123,6 +124,8 @@ export const COLORS = {
   SURFACE: cssVar("surface"),
   SURFACE_ALT: cssVar("surface-alt"),
   SURFACE_SUNKEN: cssVar("surface-sunken"),
+  SURFACE_OVERLAY: cssVar("surface-overlay"),
+  OVERLAY_BORDER: cssVar("overlay-border"),
   BORDER: cssVar("border"),
   BORDER_STRONG: cssVar("border-strong"),
   DIVIDER: cssVar("divider"),

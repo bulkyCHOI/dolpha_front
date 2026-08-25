@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
 
+import { useThemeMode } from "contexts/ThemeModeContext";
+
 // @mui material components
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
@@ -18,6 +20,13 @@ import AppFooter from "components/AppFooter";
 import routes from "routes";
 
 function MarketInfo() {
+  const { mode } = useThemeMode();
+  // TradingView 임베드 위젯은 스스로 테마를 따라오지 못한다.
+  // 앱 테마와 같은 색을 쓰도록 넘기고, 테마가 바뀌면 위젯을 새로 만든다.
+  const isDark = mode === "dark";
+  const widgetTheme = isDark ? "dark" : "light";
+  const toolbarBg = isDark ? "#1b2027" : "#f1f3f6";
+
   useEffect(() => {
     // 주식 히트맵 위젯 로드 함수
     const loadStockHeatmap = () => {
@@ -34,7 +43,7 @@ function MarketInfo() {
         blockColor: "change",
         locale: "ko",
         symbolUrl: "",
-        colorTheme: "light",
+        colorTheme: widgetTheme,
         hasTopBar: false,
         isDataSetEnabled: false,
         isZoomEnabled: true,
@@ -62,7 +71,7 @@ function MarketInfo() {
         blockColor: "change",
         locale: "ko",
         symbolUrl: "",
-        colorTheme: "light",
+        colorTheme: widgetTheme,
         hasTopBar: false,
         isDataSetEnabled: false,
         isZoomEnabled: true,
@@ -90,10 +99,10 @@ function MarketInfo() {
       symbol: "SPREADEX:SPX",
       interval: "D",
       timezone: "Asia/Seoul",
-      theme: "light",
+      theme: widgetTheme,
       style: "1",
       locale: "ko",
-      toolbar_bg: "#f1f3f6",
+      toolbar_bg: toolbarBg,
       enable_publishing: false,
       allow_symbol_change: true,
       container_id: "tradingview_sp500",
@@ -123,10 +132,10 @@ function MarketInfo() {
         symbol: symbol,
         interval: "D",
         timezone: "Asia/Seoul",
-        theme: "light",
+        theme: widgetTheme,
         style: "1",
         locale: "ko",
-        toolbar_bg: "#f1f3f6",
+        toolbar_bg: toolbarBg,
         enable_publishing: false,
         allow_symbol_change: true,
         container_id: containerId,
@@ -167,7 +176,7 @@ function MarketInfo() {
         }
       });
     };
-  }, []);
+  }, [widgetTheme, toolbarBg]);
 
   return (
     <>

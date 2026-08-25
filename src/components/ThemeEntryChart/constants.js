@@ -19,32 +19,40 @@ const canvasColors = (map) =>
 
 export const CHART_COLORS = canvasColors({
   UP: COLORS.UP,
-  DOWN: "#3b82f6",
+  DOWN: COLORS.DOWN,
   PREV_HIGH: COLORS.UP,
   BREAKOUT: COLORS.WARNING,
   PULLBACK: COLORS.DOWN,
-  DECISION: "#616161",
+  DECISION: COLORS.TEXT_MUTED,
   PASSED: COLORS.WARNING,
   EXECUTED: COLORS.SUCCESS,
+  EXIT: COLORS.INFO_DARK,
   MUTED: COLORS.TEXT_SECONDARY,
   GRID: COLORS.DIVIDER,
-  BORDER: "#d9dee5",
+  BORDER: COLORS.BORDER,
+});
+
+/**
+ * 구간 음영.
+ *
+ * 캔버스에 들어가므로 실제 색이어야 하고, 테마에 따라 값이 달라지므로
+ * 모듈 로드 시점이 아니라 접근 시점(스프레드 시점)에 계산한다.
+ */
+const zoneStyle = (token, label, fillOpacity, strokeOpacity) => ({
+  get fill() {
+    return alpha(resolveColor(token), fillOpacity);
+  },
+  get stroke() {
+    return alpha(resolveColor(token), strokeOpacity);
+  },
+  label,
+  labelColor: token,
 });
 
 export const ZONE_STYLE = {
-  PULLBACK: {
-    fill: "rgba(21, 101, 192, 0.10)",
-    stroke: "rgba(21, 101, 192, 0.40)",
-    label: "눌림 구간",
-    labelColor: COLORS.DOWN,
-  },
-  RISE: {
-    fill: alpha(resolveColor(COLORS.UP), 0.07),
-    stroke: alpha(resolveColor(COLORS.UP), 0.3),
-    // 차트 안 라벨은 구간 폭에 들어가야 그려지므로 짧게 쓴다 (범례에는 전체 이름)
-    label: "상승 구간",
-    labelColor: COLORS.UP,
-  },
+  PULLBACK: zoneStyle(COLORS.DOWN, "눌림 구간", 0.1, 0.4),
+  // 차트 안 라벨은 구간 폭에 들어가야 그려지므로 짧게 쓴다 (범례에는 전체 이름)
+  RISE: zoneStyle(COLORS.UP, "상승 구간", 0.07, 0.3),
 };
 
 /** 3단 진입 조건 정의 — 리스트·요약·범례가 모두 이 순서를 따른다. */
@@ -61,6 +69,7 @@ export const LEGEND_ITEMS = [
   { label: "눌림 구간", color: ZONE_STYLE.PULLBACK.stroke, kind: "zone" },
   { label: "직전 상승 구간", color: ZONE_STYLE.RISE.stroke, kind: "zone" },
   { label: "판정 시점", color: CHART_COLORS.DECISION, kind: "vertical" },
+  { label: "청산 체결", color: CHART_COLORS.EXIT, kind: "line" },
 ];
 
 /** 판정 결과 → 표시 텍스트/색 */
@@ -70,6 +79,16 @@ export const decisionStatus = (decision) => {
   if (decision.passed)
     return { label: "충족", color: COLORS.WARNING, bg: `${COLORS.TINT_WARNING}` };
   return { label: "대기", color: CHART_COLORS.MUTED, bg: COLORS.SURFACE_ALT };
+};
+
+/** 청산 유형 → 표시 텍스트/색. 부분청산과 전량청산을 구분해 보여준다. */
+export const exitStatus = (exit) => {
+  if (!exit) return { label: "—", color: CHART_COLORS.MUTED, bg: COLORS.SURFACE_ALT };
+  return {
+    label: exit.is_partial ? "분할청산" : "청산",
+    color: COLORS.INFO_DARK,
+    bg: COLORS.TINT_PRIMARY,
+  };
 };
 
 export const won = (value) =>

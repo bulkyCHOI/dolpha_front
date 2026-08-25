@@ -9,6 +9,7 @@ const EMPTY = {
   theme_name: "",
   bars: [],
   decisions: [],
+  exits: [],
   params: {},
 };
 

@@ -16,14 +16,12 @@ Coded by www.creative-tim.com
 // Material Kit 2 React base styles
 import typography from "assets/theme/base/typography";
 import borders from "assets/theme/base/borders";
-import colors from "assets/theme/base/colors";
 
 // Material Kit 2 React helper functions
 import pxToRem from "assets/theme/functions/pxToRem";
 
 const { size, fontWeightRegular } = typography;
 const { borderRadius } = borders;
-const { dark } = colors;
 
 export default {
   styleOverrides: {
@@ -42,7 +40,8 @@ export default {
       lineHeight: "inherit",
       padding: pxToRem(4),
       borderRadius: borderRadius.lg,
-      color: `${dark.main} !important`,
+      // 테마를 따라야 한다. 고정하면 다크에서 탭 글자가 배경에 묻힌다.
+      color: `var(--dolpha-text) !important`,
       opacity: "1 !important",
 
       "& .material-icons, .material-icons-round": {

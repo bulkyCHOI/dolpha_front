@@ -127,7 +127,7 @@ function AppHeader({ brand, routes, sticky }) {
                       variant="button"
                       fontWeight="bold"
                       textTransform="capitalize"
-                      color="dark"
+                      color={COLORS.TEXT}
                       py={1}
                       px={0.5}
                       mt={index !== 0 ? 2 : 0}
@@ -145,19 +145,19 @@ function AppHeader({ brand, routes, sticky }) {
                         minWidth="11.25rem"
                         display="block"
                         variant="button"
-                        color="dark"
+                        color={COLORS.TEXT}
                         textTransform="capitalize"
                         fontWeight="regular"
                         py={0.625}
                         px={2}
-                        sx={({ palette: { grey, dark }, borders: { borderRadius } }) => ({
+                        sx={({ borders: { borderRadius } }) => ({
                           borderRadius: borderRadius.md,
                           cursor: "pointer",
                           transition: "all 300ms linear",
 
                           "&:hover": {
-                            backgroundColor: grey[200],
-                            color: dark.main,
+                            backgroundColor: COLORS.HOVER_BG,
+                            color: COLORS.TEXT,
                           },
                         })}
                       >
@@ -210,21 +210,21 @@ function AppHeader({ brand, routes, sticky }) {
             variant="button"
             textTransform="capitalize"
             minWidth={item.description ? "14rem" : "12rem"}
-            color="dark"
+            color={COLORS.TEXT}
             fontWeight={item.description ? "bold" : "regular"}
             py={item.description ? 1 : 0.625}
             px={2}
-            sx={({ palette: { grey, dark }, borders: { borderRadius } }) => ({
+            sx={({ borders: { borderRadius } }) => ({
               borderRadius: borderRadius.md,
               cursor: "pointer",
               transition: "all 300ms linear",
 
               "&:hover": {
-                backgroundColor: grey[200],
-                color: dark.main,
+                backgroundColor: COLORS.HOVER_BG,
+                color: COLORS.TEXT,
 
                 "& *": {
-                  color: dark.main,
+                  color: COLORS.TEXT,
                 },
               },
             })}
@@ -247,7 +247,7 @@ function AppHeader({ brand, routes, sticky }) {
                 <Typography
                   display="block"
                   variant="button"
-                  color="dark"
+                  color={COLORS.TEXT}
                   fontWeight="regular"
                   sx={{ transition: "all 300ms linear" }}
                 >
@@ -304,11 +304,12 @@ function AppHeader({ brand, routes, sticky }) {
           {...TransitionProps}
           sx={{
             transformOrigin: "left top",
-            background: ({ palette: { white } }) => white.main,
+            // 드롭다운 패널. 본문 표면과 같은 색이면 다크에서 메뉴 경계가 사라진다.
+            background: COLORS.SURFACE_OVERLAY,
           }}
         >
           <Box>
-            <Typography variant="h1" color="white">
+            <Typography variant="h1" sx={{ color: COLORS.SURFACE_OVERLAY }}>
               <Icon ref={setArrowRef} sx={{ mt: -3 }}>
                 arrow_drop_up
               </Icon>
@@ -319,6 +320,7 @@ function AppHeader({ brand, routes, sticky }) {
               sx={({ borders, boxShadows }) => ({
                 borderRadius: borders.borderRadius.lg,
                 boxShadow: boxShadows.lg,
+                border: `1px solid ${COLORS.OVERLAY_BORDER}`,
               })}
             >
               {renderRoutes}
@@ -361,21 +363,21 @@ function AppHeader({ brand, routes, sticky }) {
                     variant="button"
                     textTransform="capitalize"
                     minWidth={item.description ? "14rem" : "12rem"}
-                    color="dark"
+                    color={COLORS.TEXT}
                     fontWeight={item.description ? "bold" : "regular"}
                     py={item.description ? 1 : 0.625}
                     px={2}
-                    sx={({ palette: { grey, dark }, borders: { borderRadius } }) => ({
+                    sx={({ borders: { borderRadius } }) => ({
                       borderRadius: borderRadius.md,
                       cursor: "pointer",
                       transition: "all 300ms linear",
 
                       "&:hover": {
-                        backgroundColor: grey[200],
-                        color: dark.main,
+                        backgroundColor: COLORS.HOVER_BG,
+                        color: COLORS.TEXT,
 
                         "& *": {
-                          color: dark.main,
+                          color: COLORS.TEXT,
                         },
                       },
                     })}
@@ -386,7 +388,7 @@ function AppHeader({ brand, routes, sticky }) {
                         <Typography
                           display="block"
                           variant="button"
-                          color="dark"
+                          color={COLORS.TEXT}
                           fontWeight="regular"
                           sx={{ transition: "all 300ms linear" }}
                         >
@@ -437,7 +439,8 @@ function AppHeader({ brand, routes, sticky }) {
           {...TransitionProps}
           sx={{
             transformOrigin: "left top",
-            background: ({ palette: { white } }) => white.main,
+            // 드롭다운 패널. 본문 표면과 같은 색이면 다크에서 메뉴 경계가 사라진다.
+            background: COLORS.SURFACE_OVERLAY,
           }}
         >
           <Box ml={2.5} mt={-2.5}>
@@ -448,6 +451,7 @@ function AppHeader({ brand, routes, sticky }) {
               sx={({ borders, boxShadows }) => ({
                 borderRadius: borders.borderRadius.lg,
                 boxShadow: boxShadows.lg,
+                border: `1px solid ${COLORS.OVERLAY_BORDER}`,
               })}
             >
               {renderNestedRoutes}

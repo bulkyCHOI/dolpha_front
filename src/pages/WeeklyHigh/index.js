@@ -32,6 +32,8 @@ import AutotradingAccordion from "components/AutotradingAccordion/AutotradingAcc
 import ChartContainer from "components/ChartContainer/ChartContainer";
 import StockInfoHeader from "components/StockInfoHeader/StockInfoHeader";
 import StockList from "components/StockList/StockList";
+import FinancialFilter from "components/FinancialFilter/FinancialFilter";
+import useFinancialFilter from "hooks/useFinancialFilter";
 import { COLORS, GRADIENT_COLORS, LAYOUT, alpha, onColor } from "constants/styles";
 import { formatNumber } from "utils/formatters";
 
@@ -74,6 +76,16 @@ function WeeklyHigh() {
     handleIndexChange,
     setSelectedStock,
   } = useWeeklyHighData();
+
+  // 재무 조건 필터 (매출증가율 / 영업이익증가율 / 영업이익률)
+  const {
+    filters: financialFilters,
+    setFilter: setFinancialFilter,
+    resetFilters: resetFinancialFilters,
+    filteredStocks,
+    isActive: isFinancialFilterActive,
+    hasDefaults: hasFinancialFilterDefaults,
+  } = useFinancialFilter(stockData);
 
   const tradingForm = useTradingForm(
     selectedStock,
@@ -415,6 +427,17 @@ function WeeklyHigh() {
             overflow: "hidden",
           }}
         >
+          {/* 재무 필터 */}
+          <FinancialFilter
+            filters={financialFilters}
+            onChange={setFinancialFilter}
+            onReset={resetFinancialFilters}
+            isActive={isFinancialFilterActive}
+            hasDefaults={hasFinancialFilterDefaults}
+            filteredCount={filteredStocks.length}
+            totalCount={stockData.length}
+          />
+
           {/* 탭 헤더 */}
           <Box sx={{ flexShrink: 0, borderBottom: `1px solid ${COLORS.BORDER}` }}>
             <Tabs
@@ -568,14 +591,14 @@ function WeeklyHigh() {
                       },
                     }}
                   >
-                    {stockData.map((row, rowIndex) => (
+                    {filteredStocks.map((row, rowIndex) => (
                       <Box
                         key={row.code || rowIndex}
                         onClick={() => handleStockClick(row)}
                         sx={{
                           p: 0.5,
                           borderBottom:
-                            rowIndex === stockData.length - 1
+                            rowIndex === filteredStocks.length - 1
                               ? "none"
                               : `1px solid ${COLORS.DIVIDER}`,
                           cursor: "pointer",
@@ -878,7 +901,7 @@ function WeeklyHigh() {
         </Box>
         <Box sx={{ flex: 1, overflow: "auto" }}>
           <StockList
-            stocks={stockData}
+            stocks={filteredStocks}
             loading={loading}
             error={error}
             selectedStock={selectedStock}

@@ -27,7 +27,8 @@ export default {
     // 제목·수치 등 강조 텍스트
     strong: "#0f172a",
     // 보조 설명. 더 밝으면 흰 배경에서 작은 글자가 읽히지 않는다
-    muted: "#7a8799",
+    // 흰 배경 위 대비 4.5 확보(3.65 → 4.55). 원래 #7a8799.
+    muted: "#6b7787",
 
     primary: "#1e293b",
     secondary: "#64748b",
@@ -51,7 +52,8 @@ export default {
 
   // 프로젝트 전반에서 이미 사실상의 브랜드 컬러로 쓰이던 인디고
   primary: {
-    main: "#667eea",
+    // 흰 글자 대비 4.5 (WCAG AA) 를 넘기기 위해 12% 어둡게. 원래 #667eea 는 3.66.
+    main: "#5a6fce",
     focus: "#5a6fd8",
   },
 
@@ -61,7 +63,8 @@ export default {
   },
 
   info: {
-    main: "#3b82f6",
+    // 흰 글자 대비 4.5 확보. 원래 #3b82f6 은 3.68.
+    main: "#3472d8",
     focus: "#2563eb",
   },
 
@@ -77,7 +80,8 @@ export default {
   },
 
   error: {
-    main: "#ef4444",
+    // 흰 글자 대비 4.5 확보. 원래 #ef4444 는 3.76.
+    main: "#d23c3c",
     focus: "#dc2626",
   },
 
@@ -96,13 +100,15 @@ export default {
    * 차트 색상(components/TradingViewChart/chartTheme.js)과 같은 값을 쓴다.
    */
   bullish: {
-    main: "#ef4444",
+    // 흰 글자 대비 4.5 확보(3.76 → 4.72). 원래 #ef4444.
+    main: "#d23c3c",
     focus: "#dc2626",
     faded: "rgba(239, 68, 68, 0.12)",
   },
 
   bearish: {
-    main: "#3b82f6",
+    // 흰 글자 대비 4.5 확보(3.68 → 4.62). 원래 #3b82f6.
+    main: "#3472d8",
     focus: "#2563eb",
     faded: "rgba(59, 130, 246, 0.12)",
   },
@@ -128,7 +134,8 @@ export default {
 
   gradients: {
     primary: {
-      main: "#667eea",
+      // 배너 그라데이션. 흰 글자를 얹으므로 primary 와 같은 값으로 맞춘다.
+      main: "#5a6fce",
       state: "#764ba2",
     },
 

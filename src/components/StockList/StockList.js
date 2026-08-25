@@ -190,10 +190,10 @@ function StockList({
                         0.1
                       )} 100%)`
                     : disableStripes
-                    ? COLORS.ON_ACCENT
+                    ? COLORS.SURFACE
                     : rowIndex % 2 === 0
                     ? COLORS.SURFACE_ALT
-                    : COLORS.ON_ACCENT,
+                    : COLORS.SURFACE,
                 "&:hover": {
                   backgroundColor: alpha(COLORS.PRIMARY, 0.08),
                   transform: "translateX(4px)",

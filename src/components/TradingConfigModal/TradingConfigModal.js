@@ -157,9 +157,9 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
           <IconButton
             onClick={onClose}
             sx={{
-              color: "rgba(0, 0, 0, 0.54)",
+              color: COLORS.TEXT_SECONDARY,
               "&:hover": {
-                backgroundColor: "rgba(0, 0, 0, 0.04)",
+                backgroundColor: COLORS.SURFACE_ALT,
               },
             }}
           >
@@ -191,9 +191,9 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
               sx={{
                 p: 2,
                 mb: 3,
-                border: "1px solid rgba(0, 0, 0, 0.12)",
+                border: `1px solid ${COLORS.BORDER}`,
                 borderRadius: 2,
-                backgroundColor: "rgba(0, 0, 0, 0.02)",
+                backgroundColor: COLORS.SURFACE_ALT,
               }}
             >
               <Typography variant="h6" fontWeight="bold" mb={2}>
@@ -235,9 +235,9 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
               sx={{
                 p: 2,
                 mb: 3,
-                border: "1px solid rgba(0, 0, 0, 0.12)",
+                border: `1px solid ${COLORS.BORDER}`,
                 borderRadius: 2,
-                backgroundColor: "rgba(0, 0, 0, 0.02)",
+                backgroundColor: COLORS.SURFACE_ALT,
               }}
             >
               <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
@@ -356,9 +356,9 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
               sx={{
                 p: 2,
                 mb: 3,
-                border: "1px solid rgba(0, 0, 0, 0.12)",
+                border: `1px solid ${COLORS.BORDER}`,
                 borderRadius: 2,
-                backgroundColor: "rgba(0, 0, 0, 0.02)",
+                backgroundColor: COLORS.SURFACE_ALT,
               }}
             >
               <Typography variant="h6" fontWeight="bold" mb={2}>
@@ -570,7 +570,7 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
             fontSize: "0.9rem",
             "&:hover": {
               borderColor: "#999",
-              backgroundColor: "rgba(0, 0, 0, 0.04)",
+              backgroundColor: COLORS.SURFACE_ALT,
             },
           }}
         >
