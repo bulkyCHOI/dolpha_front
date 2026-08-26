@@ -29,6 +29,7 @@ import Typography from "@mui/material/Typography";
 import { useState, useEffect } from "react";
 
 import ThemeSurgeSettings from "./ThemeSurgeSettings";
+import AccountSettings from "./AccountSettings";
 import { useAuth } from "contexts/AuthContext";
 import { COLORS, GRADIENT_COLORS, alpha, onColor } from "constants/styles";
 
@@ -105,15 +106,6 @@ function TradingDefaults() {
   const [saveLoading, setSaveLoading] = useState(false);
   const [message, setMessage] = useState(null);
 
-  // 계좌 설정 state
-  const [accountSettings, setAccountSettings] = useState({
-    kis_mode: "VIRTUAL",
-    real_account_no: "",
-    virtual_account_no: "",
-    current_account_no: "",
-  });
-  const [accountSaveLoading, setAccountSaveLoading] = useState(false);
-  const [accountMessage, setAccountMessage] = useState(null);
   const [expandedSections, setExpandedSections] = useState({
     strategy: true,
     risk: true,
@@ -162,54 +154,7 @@ function TradingDefaults() {
 
   useEffect(() => {
     loadDefaults();
-    loadAccountSettings();
   }, []);
-
-  const loadAccountSettings = async () => {
-    try {
-      const baseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
-      const response = await authenticatedFetch(`${baseUrl}/api/mypage/account-settings`);
-      if (response.ok) {
-        const result = await response.json();
-        if (result.success) setAccountSettings(result.data);
-      }
-    } catch (error) {
-      console.warn("계좌 설정 로드 실패:", error.message);
-    }
-  };
-
-  const handleAccountModeSave = async () => {
-    setAccountSaveLoading(true);
-    setAccountMessage(null);
-    try {
-      const baseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
-      const response = await authenticatedFetch(`${baseUrl}/api/mypage/account-settings`, {
-        method: "POST",
-        body: JSON.stringify({ kis_mode: accountSettings.kis_mode }),
-      });
-      const result = await response.json();
-      if (result.success) {
-        const newMode = result.kis_mode;
-        const currentNo =
-          newMode === "REAL" ? accountSettings.real_account_no : accountSettings.virtual_account_no;
-        setAccountSettings((prev) => ({
-          ...prev,
-          kis_mode: newMode,
-          current_account_no: currentNo,
-        }));
-        setAccountMessage({
-          type: result.warning ? "warning" : "success",
-          text: result.warning || `${newMode === "REAL" ? "실계좌" : "가상계좌"}로 변경되었습니다.`,
-        });
-      } else {
-        setAccountMessage({ type: "error", text: result.error || "변경 실패" });
-      }
-    } catch (error) {
-      setAccountMessage({ type: "error", text: `저장 실패: ${error.message}` });
-    } finally {
-      setAccountSaveLoading(false);
-    }
-  };
 
   const loadDefaults = async () => {
     setLoading(true);
@@ -402,146 +347,40 @@ function TradingDefaults() {
             </Box>
           </Grid>
 
-          {/* ── Row 1: 계좌 설정 + 매매모드 (하나의 카드) ── */}
+          {/* ── Row 1: 계좌 설정 (사용자 KIS 계좌 등록 + 전략별 계좌 지정) ── */}
           <Grid item xs={12}>
             <Card sx={{ borderRadius: 2 }}>
               <Box p={2}>
-                <Grid container spacing={0} alignItems="stretch">
-                  {/* 계좌 설정 */}
-                  <Grid
-                    item
-                    xs={12}
-                    md={9}
-                    sx={{ pr: { md: 3 }, borderRight: { md: `1px solid ${COLORS.BORDER}` } }}
-                  >
-                    <Typography variant="h6" fontWeight="bold" mb={1.5}>
-                      계좌 설정
-                    </Typography>
-                    <Grid container spacing={2} alignItems="center">
-                      <Grid item xs={12} sm="auto">
-                        <Typography variant="body2" fontWeight="medium" mb={0.5}>
-                          거래 계좌
-                        </Typography>
-                        <ToggleButtonGroup
-                          value={accountSettings.kis_mode}
-                          exclusive
-                          onChange={(_, val) => {
-                            if (val) {
-                              const newNo =
-                                val === "REAL"
-                                  ? accountSettings.real_account_no
-                                  : accountSettings.virtual_account_no;
-                              setAccountSettings((prev) => ({
-                                ...prev,
-                                kis_mode: val,
-                                current_account_no: newNo,
-                              }));
-                            }
-                          }}
-                          size="small"
-                        >
-                          <ToggleButton
-                            value="VIRTUAL"
-                            sx={{ px: 2.5, textTransform: "none", fontWeight: 600 }}
-                          >
-                            가상계좌
-                          </ToggleButton>
-                          <ToggleButton
-                            value="REAL"
-                            sx={{ px: 2.5, textTransform: "none", fontWeight: 600 }}
-                          >
-                            실계좌
-                          </ToggleButton>
-                        </ToggleButtonGroup>
-                      </Grid>
-                      <Grid item xs={12} sm="auto">
-                        <Typography variant="body2" fontWeight="medium" mb={0.5}>
-                          계좌번호
-                        </Typography>
-                        <Box display="flex" alignItems="center" gap={1}>
-                          <Typography
-                            variant="body1"
-                            fontWeight="bold"
-                            sx={{ fontFamily: "monospace", letterSpacing: 1 }}
-                          >
-                            {accountSettings.current_account_no || "—"}
-                          </Typography>
-                          <Chip
-                            label={accountSettings.kis_mode === "REAL" ? "실계좌" : "가상계좌"}
-                            size="small"
-                            color={accountSettings.kis_mode === "REAL" ? "error" : "info"}
-                            sx={{ fontWeight: 600, fontSize: "0.7rem" }}
-                          />
-                        </Box>
-                        <Typography
-                          variant="caption"
-                          color="text.secondary"
-                          opacity={0.6}
-                          display="block"
-                          mt={0.3}
-                        >
-                          실계좌: {accountSettings.real_account_no || "—"} &nbsp;|&nbsp; 가상계좌:{" "}
-                          {accountSettings.virtual_account_no || "—"}
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={12} sm="auto" sx={{ ml: { sm: "auto" } }}>
-                        <Button
-                          variant="contained"
-                          onClick={handleAccountModeSave}
-                          disabled={accountSaveLoading}
-                          size="small"
-                          sx={{
-                            background: "linear-gradient(135deg, #11998e 0%, #38ef7d 100%)",
-                            color: onColor("linear-gradient(135deg, #11998e 0%, #38ef7d 100%)"),
-                            px: 2.5,
-                            borderRadius: 2,
-                            textTransform: "none",
-                            fontWeight: 600,
-                            "&:hover": {
-                              background: "linear-gradient(135deg, #0d8a7e 0%, #2fd16d 100%)",
-                            },
-                            "&:disabled": { opacity: 0.6 },
-                          }}
-                        >
-                          {accountSaveLoading ? (
-                            <CircularProgress size={14} sx={{ color: COLORS.ON_ACCENT }} />
-                          ) : (
-                            "적용"
-                          )}
-                        </Button>
-                      </Grid>
-                    </Grid>
-                    {accountMessage && (
-                      <Alert severity={accountMessage.type} sx={{ mt: 1.5, borderRadius: 1.5 }}>
-                        {accountMessage.text}
-                      </Alert>
-                    )}
-                  </Grid>
+                <AccountSettings />
+              </Box>
+            </Card>
+          </Grid>
 
-                  {/* 매매모드 선택 */}
-                  <Grid item xs={12} md={3} sx={{ pl: { md: 3 }, pt: { xs: 2, md: 0 } }}>
-                    <Typography variant="h6" fontWeight="bold" mb={1.5}>
-                      매매모드
-                    </Typography>
-                    <FormControl component="fieldset">
-                      <RadioGroup
-                        value={defaults.trading_mode}
-                        onChange={(e) => handleInputChange("trading_mode", e.target.value)}
-                      >
-                        <FormControlLabel
-                          value="manual"
-                          control={<Radio size="small" />}
-                          label="Manual"
-                        />
-                        <FormControlLabel
-                          value="turtle"
-                          control={<Radio size="small" />}
-                          label="Turtle (ATR)"
-                        />
-                      </RadioGroup>
-                    </FormControl>
-                  </Grid>
-                </Grid>
+          {/* ── Row 1-b: 매매모드 ── */}
+          <Grid item xs={12}>
+            <Card sx={{ borderRadius: 2 }}>
+              <Box p={2}>
+                <Typography variant="h6" fontWeight="bold" mb={1.5}>
+                  매매모드
+                </Typography>
+                <FormControl component="fieldset">
+                  <RadioGroup
+                    row
+                    value={defaults.trading_mode}
+                    onChange={(e) => handleInputChange("trading_mode", e.target.value)}
+                  >
+                    <FormControlLabel
+                      value="manual"
+                      control={<Radio size="small" />}
+                      label="Manual"
+                    />
+                    <FormControlLabel
+                      value="turtle"
+                      control={<Radio size="small" />}
+                      label="Turtle (ATR)"
+                    />
+                  </RadioGroup>
+                </FormControl>
               </Box>
             </Card>
           </Grid>
