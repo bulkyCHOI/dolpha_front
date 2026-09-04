@@ -138,9 +138,9 @@ export const LIGHT_PALETTE = {
  * 시세 색(up/down)은 어두운 배경에서 대비가 떨어지므로 한 단계 밝게 잡는다.
  */
 export const DARK_PALETTE = {
-  primary: "#818cf8",
-  "primary-hover": "#a5b4fc",
-  "primary-dark": "#6366f1",
+  primary: "#6b97e4",
+  "primary-hover": "#8fb3ec",
+  "primary-dark": "#4d7cc4",
   // 다크에서는 한 단계 깊게 — 흰 글자 대비를 확보하고 눈부심을 줄인다
   "banner-from": "#3730a3",
   "banner-to": "#4c1d95",

@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 
-import { DOWN_COLOR, UP_COLOR } from "./chartTheme";
+
 import { COLORS, alpha } from "constants/styles";
 
 function formatNumber(value) {
@@ -56,8 +56,8 @@ function OhlcLegend({ bar, change, intraday }) {
   if (!bar) return null;
 
   const isUp = bar.close >= bar.open;
-  const valueColor = isUp ? UP_COLOR : DOWN_COLOR;
-  const changeColor = change ? (change.diff >= 0 ? UP_COLOR : DOWN_COLOR) : COLORS.TEXT_SECONDARY;
+  const valueColor = isUp ? COLORS.UP : COLORS.DOWN;
+  const changeColor = change ? (change.diff >= 0 ? COLORS.UP : COLORS.DOWN) : COLORS.TEXT_SECONDARY;
 
   const renderItem = (label, value) => (
     <span style={labelStyle}>
