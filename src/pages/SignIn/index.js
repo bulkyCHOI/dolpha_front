@@ -12,6 +12,7 @@ import Button from "@mui/material/Button";
 
 // Custom components
 import GoogleLoginButton from "components/GoogleLoginButton";
+import { COLORS } from "constants/styles";
 
 function SignIn() {
   const handleLoginSuccess = () => {
@@ -27,7 +28,7 @@ function SignIn() {
     <Box
       sx={{
         minHeight: "100vh",
-        background: "linear-gradient(195deg, #42A5F5, #478ED1)",
+        backgroundColor: COLORS.CHARTBOOK.GROUND,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -38,7 +39,7 @@ function SignIn() {
       <Box position="absolute" top={0} left={0} right={0} zIndex={3} p={2}>
         <Container maxWidth="lg">
           <Box display="flex" justifyContent="space-between" alignItems="center">
-            <Typography variant="h6" color="white.main" fontWeight="bold">
+            <Typography variant="h6" color={COLORS.CHARTBOOK.INK} fontWeight="bold">
               Dolpha
             </Typography>
             <Box display="flex" gap={2}>
@@ -46,8 +47,8 @@ function SignIn() {
                 component="a"
                 href="/"
                 variant="button"
-                color="white.main"
-                sx={{ textDecoration: "none", opacity: 0.8, "&:hover": { opacity: 1 } }}
+                color={COLORS.CHARTBOOK.INK}
+                sx={{ textDecoration: "none", opacity: 0.7, "&:hover": { opacity: 1 } }}
               >
                 홈
               </Typography>
@@ -60,53 +61,29 @@ function SignIn() {
       <Container maxWidth="sm" sx={{ px: 2 }}>
         <Grid container justifyContent="center">
           <Grid item xs={12} sm={10} md={8} lg={6}>
-            <Card
+            <Box
               sx={{
-                boxShadow: "0 20px 27px 0 rgba(0, 0, 0, 0.05)",
-                borderRadius: "15px",
+                border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+                borderRadius: "2px",
                 overflow: "visible",
               }}
             >
               {/* Card Header */}
               <Box
-                mx={2}
-                mt={-3}
                 p={3}
-                mb={1}
                 textAlign="center"
-                sx={({ palette, functions, borders, boxShadows }) => ({
-                  background: functions.linearGradient(
-                    palette.gradients.info.main,
-                    palette.gradients.info.state
-                  ),
-                  borderRadius: borders.borderRadius.lg,
-                  boxShadow: boxShadows.colored.info,
-                })}
+                sx={{
+                  borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+                  backgroundColor: COLORS.CHARTBOOK.GROUND,
+                }}
               >
-                <Typography variant="h4" fontWeight="medium" color="white.main" mt={1}>
+                <Typography variant="h4" fontWeight="bold" color={COLORS.CHARTBOOK.INK} mt={1}>
                   로그인
                 </Typography>
-                <Grid container spacing={3} justifyContent="center" sx={{ mt: 1, mb: 2 }}>
-                  <Grid item xs={2}>
-                    <Typography component="span" variant="body1" color="white.main">
-                      <Box component="i" className="fab fa-facebook" sx={{ fontSize: "1.5rem" }} />
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={2}>
-                    <Typography component="span" variant="body1" color="white.main">
-                      <Box component="i" className="fab fa-github" sx={{ fontSize: "1.5rem" }} />
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={2}>
-                    <Typography component="span" variant="body1" color="white.main">
-                      <Box component="i" className="fab fa-google" sx={{ fontSize: "1.5rem" }} />
-                    </Typography>
-                  </Grid>
-                </Grid>
               </Box>
 
               {/* Card Body */}
-              <Box pt={4} pb={3} px={3}>
+              <Box pt={4} pb={3} px={3} sx={{ backgroundColor: COLORS.CHARTBOOK.GROUND }}>
                 <Box component="form">
                   {/* Google Login Button */}
                   <Box mt={2} mb={3}>
@@ -129,7 +106,7 @@ function SignIn() {
 
                   {/* Disabled Login Button */}
                   <Box mt={4} mb={1}>
-                    <Button variant="gradient" color="secondary" fullWidth disabled>
+                    <Button variant="contained" fullWidth disabled sx={{ backgroundColor: COLORS.CHARTBOOK.GRID }}>
                       간편 로그인을 이용해주세요
                     </Button>
                   </Box>
@@ -141,18 +118,8 @@ function SignIn() {
                       <Typography
                         component="span"
                         variant="button"
-                        fontWeight="medium"
-                        sx={({ palette, functions }) => ({
-                          cursor: "pointer",
-                          // MK의 textGradient 대체 — 글자에 그라데이션을 입힌다
-                          backgroundImage: functions.linearGradient(
-                            palette.gradients.info.main,
-                            palette.gradients.info.state
-                          ),
-                          backgroundClip: "text",
-                          WebkitBackgroundClip: "text",
-                          WebkitTextFillColor: "transparent",
-                        })}
+                        fontWeight="bold"
+                        sx={{ cursor: "pointer", color: COLORS.CHARTBOOK.INK }}
                       >
                         Google로 간편가입
                       </Typography>
@@ -160,7 +127,7 @@ function SignIn() {
                   </Box>
                 </Box>
               </Box>
-            </Card>
+            </Box>
           </Grid>
         </Grid>
       </Container>
@@ -168,7 +135,7 @@ function SignIn() {
       {/* Footer */}
       <Box position="absolute" bottom={0} left={0} right={0} py={2} textAlign="center" zIndex={3}>
         <Container maxWidth="lg">
-          <Typography variant="body2" color="white.main" sx={{ opacity: 0.8 }}>
+          <Typography variant="body2" color={COLORS.CHARTBOOK.INK} sx={{ opacity: 0.7 }}>
             © {new Date().getFullYear()} Dolpha. All rights reserved.
           </Typography>
         </Container>

@@ -2,7 +2,7 @@ import React, { useMemo, useRef, useState, useEffect, useCallback } from "react"
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { COLORS } from "constants/styles";
+import { COLORS, alpha, resolveColor } from "constants/styles";
 
 const MIN_PLOT_HEIGHT = 260;
 const PADDING = { top: 16, right: 16, bottom: 28, left: 46 };
@@ -11,16 +11,11 @@ const CLOSE_MINUTE = 15 * 60 + 30; // 15:30
 const TICK_MINUTES = 60;
 const TARGET_RATE_TICKS = 6; // 세로축 라벨 목표 개수
 const TICK_STEP_CANDIDATES = [1, 2, 5, 10, 20, 50, 100];
-const MUTED = COLORS.TEXT_SECONDARY;
+const MONO_STACK = "'Fragment Mono', 'Monaco', monospace";
+const MUTED = COLORS.CHARTBOOK.INK;
 
 /** 시리즈 색상 — 명도/색상이 충분히 구분되는 순서로 배치 */
-const SERIES_COLORS = [
-  COLORS.UP,
-  COLORS.DOWN,
-  COLORS.SUCCESS,
-  COLORS.WARNING,
-  ...COLORS.SERIES,
-];
+const SERIES_COLORS = [COLORS.UP, COLORS.DOWN, COLORS.SUCCESS, COLORS.WARNING, ...COLORS.SERIES];
 
 const minuteOf = (slot) => Number(slot.slice(0, 2)) * 60 + Number(slot.slice(3));
 
@@ -169,7 +164,7 @@ function ThemeRateLineChart({ slots, themes, loading }) {
       >
         {(loading || isEmpty) && (
           <Box sx={{ position: "absolute", inset: 0, display: "grid", placeItems: "center" }}>
-            <Typography variant="body2" sx={{ color: MUTED, fontSize: 13 }}>
+            <Typography variant="body2" sx={{ color: COLORS.CHARTBOOK.INK, fontSize: 13 }}>
               {loading ? "불러오는 중…" : "표시할 등락률 데이터가 없습니다."}
             </Typography>
           </Box>
@@ -191,7 +186,7 @@ function ThemeRateLineChart({ slots, themes, loading }) {
                   x2={PADDING.left + plotWidth}
                   y1={yOf(rate)}
                   y2={yOf(rate)}
-                  stroke="rgba(120,134,150,0.28)"
+                  stroke={alpha(COLORS.CHARTBOOK.GRID, 0.4)}
                   strokeDasharray="3 4"
                 />
                 <text
@@ -199,7 +194,8 @@ function ThemeRateLineChart({ slots, themes, loading }) {
                   y={yOf(rate) + 3.5}
                   textAnchor="end"
                   fontSize="10"
-                  fill={MUTED}
+                  fill={resolveColor(COLORS.CHARTBOOK.INK)}
+                  fontFamily={MONO_STACK}
                 >
                   {`${rate > 0 ? "+" : ""}${rate}%`}
                 </text>
@@ -213,7 +209,7 @@ function ThemeRateLineChart({ slots, themes, loading }) {
                 x2={PADDING.left + plotWidth}
                 y1={yOf(0)}
                 y2={yOf(0)}
-                stroke="rgba(120,134,150,0.55)"
+                stroke={alpha(COLORS.CHARTBOOK.GRID, 0.6)}
                 strokeDasharray="4 3"
               />
             )}
@@ -226,7 +222,7 @@ function ThemeRateLineChart({ slots, themes, loading }) {
                   x2={xOf(minute)}
                   y1={PADDING.top}
                   y2={PADDING.top + plotHeight}
-                  stroke="rgba(120,134,150,0.24)"
+                  stroke={alpha(COLORS.CHARTBOOK.GRID, 0.3)}
                   strokeDasharray="3 4"
                 />
                 <text
@@ -234,7 +230,8 @@ function ThemeRateLineChart({ slots, themes, loading }) {
                   y={chartHeight - 8}
                   textAnchor="middle"
                   fontSize="10"
-                  fill={MUTED}
+                  fill={resolveColor(COLORS.CHARTBOOK.INK)}
+                  fontFamily={MONO_STACK}
                 >
                   {formatMinute(minute)}
                 </text>
@@ -262,7 +259,8 @@ function ThemeRateLineChart({ slots, themes, loading }) {
                   x2={xOf(hoverMinute)}
                   y1={PADDING.top}
                   y2={PADDING.top + plotHeight}
-                  stroke="rgba(76,81,191,0.5)"
+                  stroke={COLORS.CHARTBOOK.PANEL_BLUE}
+                  opacity="0.5"
                 />
                 {hoverRows.map((row) => (
                   <circle
@@ -271,7 +269,7 @@ function ThemeRateLineChart({ slots, themes, loading }) {
                     cy={yOf(row.rate)}
                     r="3"
                     fill={row.color}
-                    stroke={COLORS.SURFACE}
+                    stroke={resolveColor(COLORS.CHARTBOOK.GROUND)}
                     strokeWidth="1.2"
                   />
                 ))}
@@ -288,12 +286,11 @@ function ThemeRateLineChart({ slots, themes, loading }) {
               top: PADDING.top,
               left: xOf(hoverMinute) > PADDING.left + plotWidth / 2 ? 12 : "auto",
               right: xOf(hoverMinute) > PADDING.left + plotWidth / 2 ? "auto" : 12,
-              // 테마와 무관하게 어두운 색을 쓰면 다크에서 배경과 붙어버린다
-              bgcolor: COLORS.SURFACE_OVERLAY,
-              border: `1px solid ${COLORS.OVERLAY_BORDER}`,
-              boxShadow: 3,
-              color: COLORS.TEXT,
-              borderRadius: 1,
+              bgcolor: COLORS.CHARTBOOK.GROUND,
+              border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+              boxShadow: "none",
+              color: COLORS.CHARTBOOK.INK,
+              borderRadius: 0,
               px: 1.25,
               py: 1,
               pointerEvents: "none",
@@ -301,11 +298,11 @@ function ThemeRateLineChart({ slots, themes, loading }) {
               zIndex: 2,
             }}
           >
-            <Box sx={{ fontSize: 11.5, fontWeight: 700, mb: 0.5 }}>{formatMinute(hoverMinute)}</Box>
+            <Box sx={{ fontSize: 11.5, fontWeight: 700, mb: 0.5, fontFamily: MONO_STACK, fontVariantNumeric: "tabular-nums" }}>{formatMinute(hoverMinute)}</Box>
             {hoverRows.slice(0, 10).map((row) => (
               <Box
                 key={row.name}
-                sx={{ display: "flex", alignItems: "center", gap: 0.75, fontSize: 11 }}
+                sx={{ display: "flex", alignItems: "center", gap: 0.75, fontSize: 11, fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}
               >
                 <Box
                   sx={{
@@ -326,7 +323,7 @@ function ThemeRateLineChart({ slots, themes, loading }) {
                 >
                   {row.name}
                 </Box>
-                <Box sx={{ fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>
+                <Box sx={{ fontWeight: 700, fontVariantNumeric: "tabular-nums", fontFamily: MONO_STACK }}>
                   {signed(row.rate)}
                 </Box>
               </Box>
@@ -349,16 +346,17 @@ function ThemeRateLineChart({ slots, themes, loading }) {
                 gap: 0.6,
                 px: 0.9,
                 py: 0.35,
-                borderRadius: 1,
-                border: `1px solid ${COLORS.BORDER}`,
+                borderRadius: 0,
+                border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
                 cursor: "pointer",
                 opacity: hidden ? 0.4 : 1,
                 userSelect: "none",
-                "&:hover": { bgcolor: COLORS.HOVER_BG },
+                bgcolor: "transparent",
+                "&:hover": { bgcolor: alpha(COLORS.CHARTBOOK.INK, 0.06) },
               }}
             >
-              <Box sx={{ width: 10, height: 2.5, borderRadius: 1, bgcolor: s.color }} />
-              <Typography variant="caption" sx={{ fontSize: 11.5, color: COLORS.TEXT }}>
+              <Box sx={{ width: 10, height: 2.5, borderRadius: 0, bgcolor: s.color }} />
+              <Typography variant="caption" sx={{ fontSize: 11.5, color: COLORS.CHARTBOOK.INK, fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}>
                 {s.name}
               </Typography>
             </Box>

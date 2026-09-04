@@ -40,8 +40,21 @@ import FinancialModal from "components/FinancialModal/FinancialModal";
 import AutotradingAccordion from "components/AutotradingAccordion/AutotradingAccordion";
 import ChartContainer from "components/ChartContainer/ChartContainer";
 import StockInfoHeader from "components/StockInfoHeader/StockInfoHeader";
-import { COLORS, GRADIENT_COLORS, LAYOUT, alpha, onColor } from "constants/styles";
+import ChartbookHeader from "components/ChartbookHeader/ChartbookHeader";
+import { COLORS, LAYOUT, Z_INDEX, alpha } from "constants/styles";
 import { formatNumber } from "utils/formatters";
+
+// Chartbook: 수치·티커·기계 출력 폰트
+const MONO_STACK = "'Fragment Mono', 'Monaco', monospace";
+
+// RS 순위 강도색 (배지는 이 색을 채움이 아니라 테두리·글자로만 쓴다)
+const rsBandColor = (rank) => {
+  if (rank >= 90) return COLORS.UP;
+  if (rank >= 70) return COLORS.WARNING;
+  if (rank >= 60) return COLORS.SUCCESS;
+  if (rank >= 50) return COLORS.DOWN;
+  return COLORS.TEXT_MUTED;
+};
 
 function Favorites() {
   const [activeTab, setActiveTab] = useState(0);
@@ -249,13 +262,13 @@ function Favorites() {
       >
         <Box
           sx={{
-            backgroundColor: COLORS.SURFACE,
+            backgroundColor: COLORS.CHARTBOOK.GROUND,
             borderRadius: 2,
-            boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
             height: "100%",
             display: "flex",
             flexDirection: "column",
             overflow: "hidden",
+            border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
           }}
         >
           <Box
@@ -297,14 +310,15 @@ function Favorites() {
                     width: 64,
                     height: 64,
                     borderRadius: "50%",
-                    background: GRADIENT_COLORS.PRIMARY,
+                    backgroundColor: COLORS.CHARTBOOK.GROUND,
+                    border: `2px solid ${COLORS.CHARTBOOK.PANEL_BLUE}`,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     mb: 2,
                   }}
                 >
-                  <Typography variant="h4" color="white.main">
+                  <Typography variant="h4" sx={{ color: COLORS.CHARTBOOK.PANEL_BLUE }}>
                     ⭐
                   </Typography>
                 </Box>
@@ -366,17 +380,17 @@ function Favorites() {
       >
         <Box
           sx={{
-            backgroundColor: COLORS.SURFACE,
+            backgroundColor: COLORS.CHARTBOOK.GROUND,
             borderRadius: 2,
-            boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
             height: "100%",
             display: "flex",
             flexDirection: "column",
             overflow: "hidden",
+            border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
           }}
         >
           {/* 검색창 - 탭 위쪽으로 이동 */}
-          <Box sx={{ p: 2, borderBottom: `1px solid ${COLORS.DIVIDER}`, flexShrink: 0 }}>
+          <Box sx={{ p: 2, borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}`, flexShrink: 0 }}>
             <TextField
               fullWidth
               size="small"
@@ -387,7 +401,7 @@ function Favorites() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SearchIcon sx={{ color: COLORS.PRIMARY }} />
+                    <SearchIcon sx={{ color: COLORS.CHARTBOOK.INK }} />
                   </InputAdornment>
                 ),
                 endAdornment: searchQuery && (
@@ -402,7 +416,7 @@ function Favorites() {
                 "& .MuiOutlinedInput-root": {
                   borderRadius: 2,
                   "&.Mui-focused fieldset": {
-                    borderColor: COLORS.PRIMARY,
+                    borderColor: COLORS.CHARTBOOK.PANEL_BLUE,
                   },
                 },
               }}
@@ -411,7 +425,7 @@ function Favorites() {
 
           {/* 검색 결과가 없을 때만 탭 표시 */}
           {!searchQuery.trim() && (
-            <Box sx={{ flexShrink: 0, borderBottom: `1px solid ${COLORS.BORDER}` }}>
+            <Box sx={{ flexShrink: 0, borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}` }}>
               <Tabs
                 value={activeTab}
                 onChange={handleTabChange}
@@ -419,8 +433,8 @@ function Favorites() {
                 sx={{
                   minHeight: { xs: "44px", md: "48px" },
                   "& .MuiTabs-indicator": {
-                    backgroundColor: COLORS.PRIMARY,
-                    height: "3px",
+                    backgroundColor: COLORS.CHARTBOOK.INK,
+                    height: "1px",
                   },
                   "& .MuiTab-root": {
                     fontWeight: "bold",
@@ -429,7 +443,7 @@ function Favorites() {
                     minWidth: "auto",
                     padding: { xs: "8px 12px", md: "12px 16px" },
                     "&.Mui-selected": {
-                      color: COLORS.PRIMARY,
+                      color: COLORS.CHARTBOOK.INK,
                     },
                   },
                 }}
@@ -474,11 +488,11 @@ function Favorites() {
               {/* 검색 결과 헤더 */}
               <Box
                 sx={{
-                  background: GRADIENT_COLORS.PRIMARY,
+                  backgroundColor: COLORS.CHARTBOOK.GROUND,
+                  borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}`,
                   p: 1,
                   display: "flex",
                   alignItems: "center",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
                   flexShrink: 0,
                 }}
               >
@@ -486,10 +500,7 @@ function Favorites() {
                   <Grid item xs={1}>
                     <Typography
                       variant="subtitle2"
-                      color="white.main"
-                      fontWeight="bold"
-                      textAlign="center"
-                      sx={{ fontSize: { xs: "0.7rem", md: "0.875rem" } }}
+                      sx={{ color: COLORS.CHARTBOOK.INK, fontWeight: "bold", textAlign: "center", fontSize: { xs: "0.7rem", md: "0.875rem" } }}
                     >
                       ⭐
                     </Typography>
@@ -497,9 +508,7 @@ function Favorites() {
                   <Grid item xs={4}>
                     <Typography
                       variant="subtitle2"
-                      color="white.main"
-                      fontWeight="bold"
-                      sx={{ fontSize: { xs: "0.7rem", md: "0.875rem" } }}
+                      sx={{ color: COLORS.CHARTBOOK.INK, fontWeight: "bold", fontSize: { xs: "0.7rem", md: "0.875rem" } }}
                     >
                       종목명
                     </Typography>
@@ -507,10 +516,7 @@ function Favorites() {
                   <Grid item xs={3}>
                     <Typography
                       variant="subtitle2"
-                      color="white.main"
-                      fontWeight="bold"
-                      textAlign="center"
-                      sx={{ fontSize: { xs: "0.7rem", md: "0.875rem" } }}
+                      sx={{ color: COLORS.CHARTBOOK.INK, fontWeight: "bold", textAlign: "center", fontSize: { xs: "0.7rem", md: "0.875rem" } }}
                     >
                       현재가
                     </Typography>
@@ -518,10 +524,7 @@ function Favorites() {
                   <Grid item xs={2}>
                     <Typography
                       variant="subtitle2"
-                      color="white.main"
-                      fontWeight="bold"
-                      textAlign="center"
-                      sx={{ fontSize: { xs: "0.7rem", md: "0.875rem" } }}
+                      sx={{ color: COLORS.CHARTBOOK.INK, fontWeight: "bold", textAlign: "center", fontSize: { xs: "0.7rem", md: "0.875rem" } }}
                     >
                       RS
                     </Typography>
@@ -529,10 +532,7 @@ function Favorites() {
                   <Grid item xs={2}>
                     <Typography
                       variant="subtitle2"
-                      color="white.main"
-                      fontWeight="bold"
-                      textAlign="center"
-                      sx={{ fontSize: { xs: "0.7rem", md: "0.875rem" } }}
+                      sx={{ color: COLORS.CHARTBOOK.INK, fontWeight: "bold", textAlign: "center", fontSize: { xs: "0.7rem", md: "0.875rem" } }}
                     >
                       변화율
                     </Typography>
@@ -553,17 +553,20 @@ function Favorites() {
                     onClick={() => handleStockClick(stock)}
                     sx={{
                       p: 1,
-                      borderBottom: `1px solid ${COLORS.DIVIDER}`,
+                      borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}`,
                       cursor: "pointer",
                       backgroundColor:
                         selectedStock?.code === stock.code ||
                         selectedStock?.stock_code === stock.code
-                          ? COLORS.TINT_PRIMARY
-                          : index % 2 === 0
-                          ? COLORS.SURFACE_ALT
-                          : COLORS.ON_ACCENT,
+                          ? COLORS.CHARTBOOK.SELECTED_BG
+                          : COLORS.CHARTBOOK.GROUND,
+                      color:
+                        selectedStock?.code === stock.code ||
+                        selectedStock?.stock_code === stock.code
+                          ? COLORS.CHARTBOOK.SELECTED_INK
+                          : COLORS.CHARTBOOK.INK,
                       "&:hover": {
-                        backgroundColor: COLORS.TINT_PRIMARY,
+                        backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.06),
                       },
                       transition: "background-color 0.2s ease",
                     }}
@@ -578,7 +581,7 @@ function Favorites() {
                           }}
                           sx={{
                             p: 0.5,
-                            color: stock.is_favorite ? COLORS.UP : COLORS.BORDER,
+                            color: stock.is_favorite ? COLORS.UP : COLORS.CHARTBOOK.SECONDARY,
                             "&:hover": {
                               color: COLORS.UP,
                             },
@@ -696,11 +699,11 @@ function Favorites() {
                   {/* 테이블 헤더 */}
                   <Box
                     sx={{
-                      background: GRADIENT_COLORS.PRIMARY,
+                      backgroundColor: COLORS.CHARTBOOK.GROUND,
+                      borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}`,
                       p: 1,
                       display: "flex",
                       alignItems: "center",
-                      boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
                       flexShrink: 0,
                     }}
                   >
@@ -708,10 +711,7 @@ function Favorites() {
                       <Grid item xs={1}>
                         <Typography
                           variant="subtitle2"
-                          color="white.main"
-                          fontWeight="bold"
-                          textAlign="center"
-                          sx={{ fontSize: { xs: "0.7rem", md: "0.875rem" } }}
+                          sx={{ color: COLORS.CHARTBOOK.INK, fontWeight: "bold", textAlign: "center", fontSize: { xs: "0.7rem", md: "0.875rem" } }}
                         >
                           ⭐
                         </Typography>
@@ -719,9 +719,7 @@ function Favorites() {
                       <Grid item xs={4}>
                         <Typography
                           variant="subtitle2"
-                          color="white.main"
-                          fontWeight="bold"
-                          sx={{ fontSize: { xs: "0.7rem", md: "0.875rem" } }}
+                          sx={{ color: COLORS.CHARTBOOK.INK, fontWeight: "bold", fontSize: { xs: "0.7rem", md: "0.875rem" } }}
                         >
                           종목명
                         </Typography>
@@ -729,10 +727,7 @@ function Favorites() {
                       <Grid item xs={3}>
                         <Typography
                           variant="subtitle2"
-                          color="white.main"
-                          fontWeight="bold"
-                          textAlign="center"
-                          sx={{ fontSize: { xs: "0.7rem", md: "0.875rem" } }}
+                          sx={{ color: COLORS.CHARTBOOK.INK, fontWeight: "bold", textAlign: "center", fontSize: { xs: "0.7rem", md: "0.875rem" } }}
                         >
                           현재가
                         </Typography>
@@ -740,10 +735,7 @@ function Favorites() {
                       <Grid item xs={2}>
                         <Typography
                           variant="subtitle2"
-                          color="white.main"
-                          fontWeight="bold"
-                          textAlign="center"
-                          sx={{ fontSize: { xs: "0.7rem", md: "0.875rem" } }}
+                          sx={{ color: COLORS.CHARTBOOK.INK, fontWeight: "bold", textAlign: "center", fontSize: { xs: "0.7rem", md: "0.875rem" } }}
                         >
                           RS
                         </Typography>
@@ -751,10 +743,7 @@ function Favorites() {
                       <Grid item xs={2}>
                         <Typography
                           variant="subtitle2"
-                          color="white.main"
-                          fontWeight="bold"
-                          textAlign="center"
-                          sx={{ fontSize: { xs: "0.65rem", md: "0.8rem" } }}
+                          sx={{ color: COLORS.CHARTBOOK.INK, fontWeight: "bold", textAlign: "center", fontSize: { xs: "0.65rem", md: "0.8rem" } }}
                         >
                           변동률
                         </Typography>
@@ -767,19 +756,20 @@ function Favorites() {
                     sx={{
                       flex: 1,
                       overflow: "auto",
-                      backgroundColor: COLORS.SURFACE,
+                      backgroundColor: COLORS.CHARTBOOK.GROUND,
                       "&::-webkit-scrollbar": {
                         width: "8px",
                       },
                       "&::-webkit-scrollbar-track": {
-                        background: COLORS.DIVIDER,
+                        background: COLORS.CHARTBOOK.GRID,
                         borderRadius: "4px",
                       },
                       "&::-webkit-scrollbar-thumb": {
-                        background: COLORS.BORDER_STRONG,
+                        background: COLORS.CHARTBOOK.INK,
                         borderRadius: "4px",
+                        opacity: 0.3,
                         "&:hover": {
-                          background: COLORS.TEXT_MUTED,
+                          opacity: 0.5,
                         },
                       },
                     }}
@@ -815,30 +805,22 @@ function Favorites() {
                           borderBottom:
                             rowIndex === displayStocks.length - 1
                               ? "none"
-                              : `1px solid ${COLORS.DIVIDER}`,
+                              : `1px solid ${COLORS.CHARTBOOK.GRID}`,
                           cursor: "pointer",
-                          transition: "all 0.2s ease",
+                          transition: "background-color 0.2s ease",
                           backgroundColor:
                             selectedStock?.code === (stock.code || stock.stock_code) ||
                             selectedStock?.stock_code === (stock.code || stock.stock_code)
-                              ? `linear-gradient(135deg, ${alpha(COLORS.PRIMARY, 0.1)} 0%, ${alpha(
-                                  COLORS.PRIMARY_DARK,
-                                  0.1
-                                )} 100%)`
-                              : rowIndex % 2 === 0
-                              ? COLORS.SURFACE_ALT
-                              : COLORS.ON_ACCENT,
+                              ? COLORS.CHARTBOOK.SELECTED_BG
+                              : COLORS.CHARTBOOK.GROUND,
+                          color:
+                            selectedStock?.code === (stock.code || stock.stock_code) ||
+                            selectedStock?.stock_code === (stock.code || stock.stock_code)
+                              ? COLORS.CHARTBOOK.SELECTED_INK
+                              : COLORS.CHARTBOOK.INK,
                           "&:hover": {
-                            backgroundColor: alpha(COLORS.PRIMARY, 0.08),
-                            transform: "translateX(4px)",
-                            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                            borderLeft: `3px solid ${COLORS.PRIMARY}`,
+                            backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.06),
                           },
-                          ...((selectedStock?.code === (stock.code || stock.stock_code) ||
-                            selectedStock?.stock_code === (stock.code || stock.stock_code)) && {
-                            borderLeft: `3px solid ${COLORS.PRIMARY}`,
-                            boxShadow: `0 2px 12px ${alpha(COLORS.PRIMARY, 0.2)}`,
-                          }),
                         }}
                       >
                         <Grid container spacing={0} alignItems="center">
@@ -913,6 +895,8 @@ function Favorites() {
                                 fontWeight="bold"
                                 sx={{
                                   fontSize: { xs: "0.7rem", md: "0.8rem" },
+                                  fontFamily: MONO_STACK,
+                                  fontVariantNumeric: "tabular-nums",
                                 }}
                               >
                                 {stock.current_price
@@ -927,35 +911,14 @@ function Favorites() {
                                 label={Math.floor(stock.rsRank) || "-"}
                                 size="small"
                                 sx={{
-                                  backgroundColor:
-                                    stock.rsRank >= 90
-                                      ? COLORS.UP
-                                      : stock.rsRank >= 80
-                                      ? COLORS.WARNING
-                                      : stock.rsRank >= 70
-                                      ? COLORS.WARNING
-                                      : stock.rsRank >= 60
-                                      ? COLORS.SUCCESS
-                                      : stock.rsRank >= 50
-                                      ? COLORS.DOWN
-                                      : COLORS.TEXT_MUTED,
-                                  color: onColor(
-                                    stock.rsRank >= 90
-                                      ? COLORS.UP
-                                      : stock.rsRank >= 80
-                                      ? COLORS.WARNING
-                                      : stock.rsRank >= 70
-                                      ? COLORS.WARNING
-                                      : stock.rsRank >= 60
-                                      ? COLORS.SUCCESS
-                                      : stock.rsRank >= 50
-                                      ? COLORS.DOWN
-                                      : COLORS.TEXT_MUTED
-                                  ),
-                                  fontWeight: "bold",
-                                  fontSize: { xs: "0.6rem", md: "0.7rem" },
-                                  minWidth: { xs: "25px", md: "30px" },
-                                  height: { xs: "18px", md: "20px" },
+                                  backgroundColor: "transparent",
+                                  color: rsBandColor(stock.rsRank),
+                                  border: `1px solid ${rsBandColor(stock.rsRank)}`,
+                                  borderRadius: "2px",
+                                  fontFamily: MONO_STACK,
+                                  fontWeight: 500,
+                                  fontSize: "0.7rem",
+                                  height: "20px",
                                 }}
                               />
                             </Box>
@@ -974,6 +937,8 @@ function Favorites() {
                                       : stock.change_percent < 0
                                       ? COLORS.DOWN
                                       : "inherit",
+                                  fontFamily: MONO_STACK,
+                                  fontVariantNumeric: "tabular-nums",
                                 }}
                               >
                                 {stock.change_percent
@@ -1036,12 +1001,13 @@ function Favorites() {
                         color="primary"
                         onClick={() => navigate("/pages/authentication/sign-in")}
                         sx={{
-                          background: GRADIENT_COLORS.PRIMARY,
-                          color: onColor(GRADIENT_COLORS.PRIMARY),
+                          backgroundColor: COLORS.CHARTBOOK.PANEL_BLUE,
+                          color: COLORS.CHARTBOOK.INK,
                           px: 4,
                           py: 1.5,
                           "&:hover": {
-                            background: GRADIENT_COLORS.PRIMARY_HOVER,
+                            backgroundColor: COLORS.CHARTBOOK.PANEL_BLUE,
+                            opacity: 0.9,
                           },
                         }}
                       >
@@ -1080,16 +1046,16 @@ function Favorites() {
     <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
       <Box
         sx={{
-          backgroundColor: COLORS.SURFACE,
+          backgroundColor: COLORS.CHARTBOOK.GROUND,
           borderRadius: 2,
-          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
           height: "100%",
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
+          border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
         }}
       >
-        <Box sx={{ px: 2, py: 1.5, borderBottom: `1px solid ${COLORS.BORDER}` }}>
+        <Box sx={{ px: 2, py: 1.5, borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}` }}>
           <Typography variant="h6" fontWeight="bold">
             즐겨찾기
           </Typography>
@@ -1107,7 +1073,7 @@ function Favorites() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SearchIcon sx={{ color: COLORS.PRIMARY }} />
+                    <SearchIcon sx={{ color: COLORS.CHARTBOOK.INK }} />
                   </InputAdornment>
                 ),
                 endAdornment: searchQuery && (
@@ -1122,7 +1088,7 @@ function Favorites() {
                 "& .MuiOutlinedInput-root": {
                   borderRadius: 2,
                   "&.Mui-focused fieldset": {
-                    borderColor: COLORS.PRIMARY,
+                    borderColor: COLORS.CHARTBOOK.PANEL_BLUE,
                   },
                 },
               }}
@@ -1138,16 +1104,18 @@ function Favorites() {
                   onClick={() => handleStockClick(stock)}
                   sx={{
                     p: 1.5,
-                    borderBottom: `1px solid ${COLORS.DIVIDER}`,
+                    borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}`,
                     cursor: "pointer",
                     backgroundColor:
                       selectedStock?.code === stock.code || selectedStock?.stock_code === stock.code
-                        ? COLORS.TINT_PRIMARY
-                        : index % 2 === 0
-                        ? COLORS.SURFACE_ALT
-                        : COLORS.ON_ACCENT,
+                        ? COLORS.CHARTBOOK.SELECTED_BG
+                        : COLORS.CHARTBOOK.GROUND,
+                    color:
+                      selectedStock?.code === stock.code || selectedStock?.stock_code === stock.code
+                        ? COLORS.CHARTBOOK.SELECTED_INK
+                        : COLORS.CHARTBOOK.INK,
                     "&:hover": {
-                      backgroundColor: COLORS.TINT_PRIMARY,
+                      backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.06),
                     },
                     transition: "background-color 0.2s ease",
                   }}
@@ -1162,7 +1130,7 @@ function Favorites() {
                         }}
                         sx={{
                           p: 0.5,
-                          color: stock.is_favorite ? COLORS.UP : COLORS.BORDER,
+                          color: stock.is_favorite ? COLORS.UP : COLORS.CHARTBOOK.SECONDARY,
                           "&:hover": {
                             color: COLORS.UP,
                           },
@@ -1291,17 +1259,20 @@ function Favorites() {
                     onClick={() => handleStockClick(stock)}
                     sx={{
                       p: 1.5,
-                      borderBottom: `1px solid ${COLORS.DIVIDER}`,
+                      borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}`,
                       cursor: "pointer",
                       backgroundColor:
                         selectedStock?.code === stock.stock_code ||
                         selectedStock?.stock_code === stock.stock_code
-                          ? COLORS.TINT_PRIMARY
-                          : index % 2 === 0
-                          ? COLORS.SURFACE_ALT
-                          : COLORS.ON_ACCENT,
+                          ? COLORS.CHARTBOOK.SELECTED_BG
+                          : COLORS.CHARTBOOK.GROUND,
+                      color:
+                        selectedStock?.code === stock.stock_code ||
+                        selectedStock?.stock_code === stock.stock_code
+                          ? COLORS.CHARTBOOK.SELECTED_INK
+                          : COLORS.CHARTBOOK.INK,
                       "&:hover": {
-                        backgroundColor: COLORS.TINT_PRIMARY,
+                        backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.06),
                       },
                       transition: "background-color 0.2s ease",
                     }}
@@ -1403,13 +1374,13 @@ function Favorites() {
     <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
       <Box
         sx={{
-          backgroundColor: COLORS.SURFACE,
+          backgroundColor: COLORS.CHARTBOOK.GROUND,
           borderRadius: 2,
-          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
           height: "100%",
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
+          border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
         }}
       >
         <Box
@@ -1447,14 +1418,15 @@ function Favorites() {
                   width: 64,
                   height: 64,
                   borderRadius: "50%",
-                  background: GRADIENT_COLORS.PRIMARY,
+                  backgroundColor: COLORS.CHARTBOOK.GROUND,
+                  border: `2px solid ${COLORS.CHARTBOOK.PANEL_BLUE}`,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   mb: 2,
                 }}
               >
-                <Typography variant="h4" color="white.main">
+                <Typography variant="h4" sx={{ color: COLORS.CHARTBOOK.PANEL_BLUE }}>
                   ⭐
                 </Typography>
               </Box>
@@ -1509,16 +1481,16 @@ function Favorites() {
     <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
       <Box
         sx={{
-          backgroundColor: COLORS.SURFACE,
+          backgroundColor: COLORS.CHARTBOOK.GROUND,
           borderRadius: 2,
-          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
           height: "100%",
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
+          border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
         }}
       >
-        <Box sx={{ px: 2, py: 1.5, borderBottom: `1px solid ${COLORS.BORDER}` }}>
+        <Box sx={{ px: 2, py: 1.5, borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}` }}>
           <Typography variant="h6" fontWeight="bold">
             자동매매 설정
           </Typography>
@@ -1571,6 +1543,12 @@ function Favorites() {
   return (
     <>
       <AppHeader routes={routes} sticky />
+      <Box sx={{ height: "80px", flexShrink: 0, backgroundColor: COLORS.CHARTBOOK.GROUND }} />
+      <ChartbookHeader
+        strategyName="즐겨찾기"
+        date={new Date().toLocaleDateString("ko-KR")}
+        candidateCount={displayStocks.length}
+      />
 
       {/* 모바일 레이아웃 */}
       {isMobile ? (
@@ -1578,7 +1556,7 @@ function Favorites() {
           sx={{
             height: "100vh",
             width: "100%",
-            backgroundColor: COLORS.SURFACE_ALT,
+            backgroundColor: COLORS.CHARTBOOK.GROUND,
             display: "flex",
             flexDirection: "column",
             overflow: "hidden",
@@ -1593,7 +1571,13 @@ function Favorites() {
           </Box>
 
           <Paper
-            sx={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 1000 }}
+            sx={{
+              position: "fixed",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              zIndex: Z_INDEX.PAGE_BOTTOM_BAR,
+            }}
             elevation={3}
           >
             <BottomNavigation
@@ -1656,7 +1640,7 @@ function Favorites() {
           sx={{
             height: "100vh",
             width: "100%",
-            backgroundColor: COLORS.SURFACE_ALT,
+            backgroundColor: COLORS.CHARTBOOK.GROUND,
             display: "flex",
             flexDirection: "column",
             overflow: "hidden",

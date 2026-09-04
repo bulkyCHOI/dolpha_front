@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "contexts/AuthContext";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { COLORS, GRADIENT_COLORS } from "constants/styles";
+import { COLORS } from "constants/styles";
 
 const ProtectedRoute = ({ children }) => {
   const { user, isAuthenticated, loading } = useAuth();
@@ -23,12 +23,12 @@ const ProtectedRoute = ({ children }) => {
         minHeight="100vh"
         width="100%"
         sx={{
-          backgroundImage: GRADIENT_COLORS.PRIMARY,
+          backgroundColor: COLORS.CHARTBOOK.GROUND,
           display: "grid",
           placeItems: "center",
         }}
       >
-        <Typography variant="h4" color="white.main">
+        <Typography variant="h4" color={COLORS.CHARTBOOK.INK}>
           로그인 상태 확인 중...
         </Typography>
       </Box>
@@ -42,12 +42,12 @@ const ProtectedRoute = ({ children }) => {
         minHeight="100vh"
         width="100%"
         sx={{
-          backgroundImage: GRADIENT_COLORS.PRIMARY,
+          backgroundColor: COLORS.CHARTBOOK.GROUND,
           display: "grid",
           placeItems: "center",
         }}
       >
-        <Typography variant="h4" color="white.main">
+        <Typography variant="h4" color={COLORS.CHARTBOOK.INK}>
           로그인이 필요합니다. 리다이렉트 중...
         </Typography>
       </Box>

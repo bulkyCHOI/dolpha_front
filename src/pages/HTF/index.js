@@ -32,8 +32,21 @@ import AutotradingAccordion from "components/AutotradingAccordion/AutotradingAcc
 import ChartContainer from "components/ChartContainer/ChartContainer";
 import StockInfoHeader from "components/StockInfoHeader/StockInfoHeader";
 import HTFStockList from "components/HTFStockList/HTFStockList";
-import { COLORS, GRADIENT_COLORS, LAYOUT, onColor } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 import { formatNumber } from "utils/formatters";
+import ChartbookHeader from "components/ChartbookHeader/ChartbookHeader";
+
+// Chartbook: 수치·티커·기계 출력 폰트
+const MONO_STACK = "'Fragment Mono', 'Monaco', monospace";
+
+// RS 순위 강도색 (배지는 이 색을 채움이 아니라 테두리·글자로만 쓴다)
+const rsBandColor = (rank) => {
+  if (rank >= 90) return COLORS.UP;
+  if (rank >= 70) return COLORS.WARNING;
+  if (rank >= 60) return COLORS.SUCCESS;
+  if (rank >= 50) return COLORS.DOWN;
+  return COLORS.TEXT_MUTED;
+};
 
 function HTF() {
   const [activeTab, setActiveTab] = useState(0);
@@ -215,16 +228,15 @@ function HTF() {
     <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
       <Box
         sx={{
-          backgroundColor: COLORS.SURFACE,
+          backgroundColor: COLORS.CHARTBOOK.GROUND,
           borderRadius: 2,
-          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
           height: "100%",
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
         }}
       >
-        <Box sx={{ px: 2, py: 1.5, borderBottom: `1px solid ${COLORS.BORDER}` }}>
+        <Box sx={{ px: 2, py: 1.5, borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}` }}>
           <Typography variant="h6" fontWeight="bold">
             HTF 패턴 종목
           </Typography>
@@ -256,9 +268,8 @@ function HTF() {
     <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
       <Box
         sx={{
-          backgroundColor: COLORS.SURFACE,
+          backgroundColor: COLORS.CHARTBOOK.GROUND,
           borderRadius: 2,
-          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
           height: "100%",
           display: "flex",
           flexDirection: "column",
@@ -300,14 +311,14 @@ function HTF() {
                   width: 64,
                   height: 64,
                   borderRadius: "50%",
-                  background: GRADIENT_COLORS.PRIMARY,
+                  backgroundColor: COLORS.CHARTBOOK.INK,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   mb: 2,
                 }}
               >
-                <Typography variant="h4" color="white.main">
+                <Typography variant="h4" color={COLORS.CHARTBOOK.GROUND}>
                   🚀
                 </Typography>
               </Box>
@@ -362,16 +373,15 @@ function HTF() {
     <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
       <Box
         sx={{
-          backgroundColor: COLORS.SURFACE,
+          backgroundColor: COLORS.CHARTBOOK.GROUND,
           borderRadius: 2,
-          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
           height: "100%",
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
         }}
       >
-        <Box sx={{ px: 2, py: 1.5, borderBottom: `1px solid ${COLORS.BORDER}` }}>
+        <Box sx={{ px: 2, py: 1.5, borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}` }}>
           <Typography variant="h6" fontWeight="bold">
             HTF 자동매매 설정
           </Typography>
@@ -424,6 +434,16 @@ function HTF() {
   return (
     <>
       <AppHeader routes={routes} sticky />
+      <Box sx={{ height: "80px", flexShrink: 0, backgroundColor: COLORS.CHARTBOOK.GROUND }} />
+      <ChartbookHeader
+        strategyName="HTF 패턴"
+        date={new Date().toLocaleDateString("ko-KR", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        })}
+        candidateCount={stockData.length}
+      />
 
       {/* 모바일 레이아웃 */}
       {isMobile ? (
@@ -431,14 +451,12 @@ function HTF() {
           sx={{
             height: "100vh",
             width: "100%",
-            backgroundColor: COLORS.SURFACE_ALT,
+            backgroundColor: COLORS.CHARTBOOK.GROUND,
             display: "flex",
             flexDirection: "column",
             overflow: "hidden",
           }}
         >
-          <Box sx={{ height: "80px", flexShrink: 0 }} />
-
           <Box sx={{ flex: 1, p: 1 }}>
             {mobileTab === 0 && renderMobileStockTab()}
             {mobileTab === 1 && renderMobileChartTab()}
@@ -509,19 +527,17 @@ function HTF() {
           sx={{
             height: "100vh",
             width: "100%",
-            backgroundColor: COLORS.SURFACE_ALT,
+            backgroundColor: COLORS.CHARTBOOK.GROUND,
             display: "flex",
             flexDirection: "column",
             overflow: "hidden",
           }}
         >
-          <Box sx={{ height: "80px", flexShrink: 0 }} />
-
           <Grid
             container
             spacing={0.5}
             sx={{
-              height: "calc(100vh - 80px)",
+              height: "100%",
               p: { xs: 0.5, sm: 0.5 },
               flexDirection: { xs: "column", md: "row" },
             }}
@@ -541,9 +557,8 @@ function HTF() {
             >
               <Box
                 sx={{
-                  backgroundColor: COLORS.SURFACE,
+                  backgroundColor: COLORS.CHARTBOOK.GROUND,
                   borderRadius: 2,
-                  boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
                   height: "100%",
                   display: "flex",
                   flexDirection: "column",
@@ -589,14 +604,14 @@ function HTF() {
                           width: 64,
                           height: 64,
                           borderRadius: "50%",
-                          background: GRADIENT_COLORS.PRIMARY,
+                          backgroundColor: COLORS.CHARTBOOK.INK,
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
                           mb: 2,
                         }}
                       >
-                        <Typography variant="h4" color="white.main">
+                        <Typography variant="h4" color={COLORS.CHARTBOOK.GROUND}>
                           🚀
                         </Typography>
                       </Box>
@@ -658,9 +673,8 @@ function HTF() {
             >
               <Box
                 sx={{
-                  backgroundColor: COLORS.SURFACE,
+                  backgroundColor: COLORS.CHARTBOOK.GROUND,
                   borderRadius: 2,
-                  boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
                   height: "100%",
                   display: "flex",
                   flexDirection: "column",
@@ -668,7 +682,7 @@ function HTF() {
                 }}
               >
                 {/* 탭 헤더 */}
-                <Box sx={{ flexShrink: 0, borderBottom: `1px solid ${COLORS.BORDER}` }}>
+                <Box sx={{ flexShrink: 0, borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}` }}>
                   <Tabs
                     value={activeTab}
                     onChange={handleTabChange}
@@ -676,8 +690,8 @@ function HTF() {
                     sx={{
                       minHeight: { xs: "44px", md: "48px" },
                       "& .MuiTabs-indicator": {
-                        backgroundColor: COLORS.PRIMARY,
-                        height: "3px",
+                        backgroundColor: COLORS.CHARTBOOK.INK,
+                        height: "2px",
                       },
                       "& .MuiTab-root": {
                         fontWeight: "bold",
@@ -686,7 +700,7 @@ function HTF() {
                         minWidth: "auto",
                         padding: { xs: "8px 12px", md: "12px 16px" },
                         "&.Mui-selected": {
-                          color: COLORS.PRIMARY,
+                          color: COLORS.CHARTBOOK.INK,
                         },
                       },
                     }}
@@ -733,7 +747,7 @@ function HTF() {
                           sx={{
                             flex: 1,
                             overflow: "auto",
-                            backgroundColor: COLORS.SURFACE,
+                            backgroundColor: COLORS.CHARTBOOK.GROUND,
                             "&::-webkit-scrollbar": {
                               width: "8px",
                             },
@@ -809,12 +823,13 @@ function HTF() {
                               color="primary"
                               onClick={() => navigate("/pages/authentication/sign-in")}
                               sx={{
-                                background: GRADIENT_COLORS.PRIMARY,
-                                color: onColor(GRADIENT_COLORS.PRIMARY),
+                                backgroundColor: COLORS.CHARTBOOK.INK,
+                                color: COLORS.CHARTBOOK.GROUND,
                                 px: 4,
                                 py: 1.5,
                                 "&:hover": {
-                                  background: GRADIENT_COLORS.PRIMARY_HOVER,
+                                  backgroundColor: COLORS.CHARTBOOK.INK,
+                                  opacity: 0.8,
                                 },
                               }}
                             >

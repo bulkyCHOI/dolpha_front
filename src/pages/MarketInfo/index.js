@@ -12,12 +12,14 @@ import Box from "@mui/material/Box";
 
 // Enhanced components
 import FullWidthContainer from "components/FullWidthContainer";
+import ChartbookHeader from "components/ChartbookHeader/ChartbookHeader";
 
 import AppHeader from "components/AppHeader";
 import AppFooter from "components/AppFooter";
 
 // Routes
 import routes from "routes";
+import { COLORS } from "constants/styles";
 
 function MarketInfo() {
   const { mode } = useThemeMode();
@@ -181,8 +183,10 @@ function MarketInfo() {
   return (
     <>
       <AppHeader routes={routes} sticky />
+      <Box sx={{ height: "80px", flexShrink: 0, backgroundColor: COLORS.CHARTBOOK.GROUND }} />
+      <ChartbookHeader strategyName="시장 정보" date={new Date().toLocaleDateString("ko-KR")} />
 
-      <Box component="section" py={12}>
+      <Box component="section" py={12} sx={{ backgroundColor: COLORS.CHARTBOOK.GROUND }}>
         <FullWidthContainer>
           {/* 히트맵 섹션 */}
           <Grid container spacing={1} sx={{ mb: 2 }}>
@@ -196,7 +200,13 @@ function MarketInfo() {
           <Grid container spacing={1} sx={{ mb: 4 }}>
             {/* 주식 히트맵 */}
             <Grid item xs={12} md={6}>
-              <Card sx={{ height: "100%", boxShadow: 3 }}>
+              <Card
+                sx={{
+                  height: "100%",
+                  border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+                  backgroundColor: COLORS.CHARTBOOK.GROUND,
+                }}
+              >
                 <CardContent>
                   <Typography
                     variant="h5"
@@ -214,7 +224,13 @@ function MarketInfo() {
 
             {/* 비트코인/암호화폐 히트맵 */}
             <Grid item xs={12} md={6}>
-              <Card sx={{ height: "100%", boxShadow: 3 }}>
+              <Card
+                sx={{
+                  height: "100%",
+                  border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+                  backgroundColor: COLORS.CHARTBOOK.GROUND,
+                }}
+              >
                 <CardContent>
                   <Typography
                     variant="h5"
@@ -242,7 +258,13 @@ function MarketInfo() {
           <Grid container spacing={1}>
             {/* S&P 500 */}
             <Grid item xs={12} md={6}>
-              <Card sx={{ height: "100%", boxShadow: 3 }}>
+              <Card
+                sx={{
+                  height: "100%",
+                  border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+                  backgroundColor: COLORS.CHARTBOOK.GROUND,
+                }}
+              >
                 <CardContent>
                   <Typography
                     variant="h5"
@@ -260,7 +282,13 @@ function MarketInfo() {
 
             {/* NASDAQ */}
             <Grid item xs={12} md={6}>
-              <Card sx={{ height: "100%", boxShadow: 3 }}>
+              <Card
+                sx={{
+                  height: "100%",
+                  border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+                  backgroundColor: COLORS.CHARTBOOK.GROUND,
+                }}
+              >
                 <CardContent>
                   <Typography
                     variant="h5"
@@ -278,7 +306,13 @@ function MarketInfo() {
 
             {/* 다우 산업 */}
             <Grid item xs={12} md={6}>
-              <Card sx={{ height: "100%", boxShadow: 3 }}>
+              <Card
+                sx={{
+                  height: "100%",
+                  border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+                  backgroundColor: COLORS.CHARTBOOK.GROUND,
+                }}
+              >
                 <CardContent>
                   <Typography
                     variant="h5"
@@ -296,7 +330,13 @@ function MarketInfo() {
 
             {/* KOSPI */}
             <Grid item xs={12} md={6}>
-              <Card sx={{ height: "100%", boxShadow: 3 }}>
+              <Card
+                sx={{
+                  height: "100%",
+                  border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+                  backgroundColor: COLORS.CHARTBOOK.GROUND,
+                }}
+              >
                 <CardContent>
                   <Typography
                     variant="h5"
@@ -314,7 +354,13 @@ function MarketInfo() {
 
             {/* DAX */}
             {/* <Grid item xs={12} md={6}>
-              <Card sx={{ height: "100%", boxShadow: 3 }}>
+              <Card
+                sx={{
+                  height: "100%",
+                  border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+                  backgroundColor: COLORS.CHARTBOOK.GROUND,
+                }}
+              >
                 <CardContent>
                   <Typography
                     variant="h5"
@@ -332,7 +378,13 @@ function MarketInfo() {
 
             {/* FTSE 100 */}
             {/* <Grid item xs={12} md={6}>
-              <Card sx={{ height: "100%", boxShadow: 3 }}>
+              <Card
+                sx={{
+                  height: "100%",
+                  border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+                  backgroundColor: COLORS.CHARTBOOK.GROUND,
+                }}
+              >
                 <CardContent>
                   <Typography
                     variant="h5"

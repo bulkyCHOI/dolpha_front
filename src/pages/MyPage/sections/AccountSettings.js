@@ -36,7 +36,7 @@ import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 
 import { useAuth } from "contexts/AuthContext";
-import { COLORS, onColor } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 
 const BASE_URL = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
@@ -249,13 +249,13 @@ function AccountSettings() {
           startIcon={<AddIcon fontSize="small" />}
           onClick={openCreateDialog}
           sx={{
-            background: "linear-gradient(135deg, #11998e 0%, #38ef7d 100%)",
-            color: onColor("linear-gradient(135deg, #11998e 0%, #38ef7d 100%)"),
+            backgroundColor: COLORS.CHARTBOOK.INK,
+            color: COLORS.CHARTBOOK.GROUND,
             px: 2,
-            borderRadius: 2,
+            borderRadius: "2px",
             textTransform: "none",
             fontWeight: 600,
-            "&:hover": { background: "linear-gradient(135deg, #0d8a7e 0%, #2fd16d 100%)" },
+            "&:hover": { backgroundColor: COLORS.CHARTBOOK.INK, opacity: 0.8 },
           }}
         >
           계좌 추가
@@ -284,8 +284,8 @@ function AccountSettings() {
             <Grid item xs={12} sm={6} key={account.id}>
               <Box
                 sx={{
-                  border: `1px solid ${COLORS.BORDER}`,
-                  borderRadius: 2,
+                  border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+                  borderRadius: "2px",
                   p: 1.5,
                   display: "flex",
                   alignItems: "center",
@@ -490,14 +490,14 @@ function AccountSettings() {
             onClick={handleSubmit}
             disabled={saving}
             sx={{
-              background: "linear-gradient(135deg, #11998e 0%, #38ef7d 100%)",
-              color: onColor("linear-gradient(135deg, #11998e 0%, #38ef7d 100%)"),
+              backgroundColor: COLORS.CHARTBOOK.INK,
+              color: COLORS.CHARTBOOK.GROUND,
               textTransform: "none",
               fontWeight: 600,
-              "&:hover": { background: "linear-gradient(135deg, #0d8a7e 0%, #2fd16d 100%)" },
+              "&:hover": { backgroundColor: COLORS.CHARTBOOK.INK, opacity: 0.8 },
             }}
           >
-            {saving ? <CircularProgress size={16} sx={{ color: COLORS.ON_ACCENT }} /> : "저장"}
+            {saving ? <CircularProgress size={16} sx={{ color: COLORS.CHARTBOOK.GROUND }} /> : "저장"}
           </Button>
         </DialogActions>
       </Dialog>

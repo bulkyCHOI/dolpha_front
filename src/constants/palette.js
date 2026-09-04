@@ -118,6 +118,16 @@ export const LIGHT_PALETTE = {
   "rank-medium": warning.main,
   "rank-low": error.main,
   "rank-default": flat.main,
+
+  // Chartbook 월드 (기술 chartbook 미학)
+  "chartbook-ground": "#f4f1ea",
+  "chartbook-ink": "#141414",
+  "chartbook-grid": "#d8d3c6",
+  "chartbook-rs-red": "#8a1c1c",
+  "chartbook-panel-blue": "#1f4e79",
+  "chartbook-secondary": "#9aa39a",
+  "chartbook-selected-bg": "#141414",
+  "chartbook-selected-ink": "#f4f1ea",
 };
 
 /**
@@ -206,6 +216,16 @@ export const DARK_PALETTE = {
   "rank-medium": "#fbbf24",
   "rank-low": "#f87171",
   "rank-default": "#64748b",
+
+  // Chartbook 월드 (기술 chartbook 미학) — 다크 모드
+  "chartbook-ground": "#2a2520",
+  "chartbook-ink": "#f5f1ec",
+  "chartbook-grid": "#4c4438",
+  "chartbook-rs-red": "#e07070",
+  "chartbook-panel-blue": "#6b97e4",
+  "chartbook-secondary": "#b8bfb8",
+  "chartbook-selected-bg": "#3d3630",
+  "chartbook-selected-ink": "#f5f1ec",
 };
 
 // 키가 어긋나면 다크에서 해당 색만 조용히 라이트로 남는다. 개발 중에 잡는다.

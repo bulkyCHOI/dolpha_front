@@ -37,8 +37,8 @@ export default {
   body: {
     // MKBox가 모든 요소에 강제하던 본문 색을 여기서 한 번만 정의한다.
     // 고정 값이 아니라 변수를 써야 다크에서도 따라온다.
-    color: cssVar("text"),
-    backgroundColor: cssVar("surface-sunken"),
+    color: cssVar("chartbook-ink"),
+    backgroundColor: cssVar("chartbook-ground"),
   },
   "a, a:link, a:visited": {
     textDecoration: "none !important",

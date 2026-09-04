@@ -74,7 +74,7 @@ function OhlcLegend({ bar, change, intraday }) {
         left: 8,
         zIndex: 2,
         fontSize: "12px",
-        background: alpha(COLORS.SURFACE, 0.85),
+        background: alpha(COLORS.CHARTBOOK.GROUND, 0.85),
         padding: "2px 6px",
         borderRadius: 4,
         pointerEvents: "none",

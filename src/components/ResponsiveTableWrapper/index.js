@@ -9,18 +9,21 @@ import { COLORS } from "constants/styles";
 const TableContainer = styled(Box)(({ theme }) => ({
   width: "100%",
   overflowX: "auto",
+  backgroundColor: COLORS.CHARTBOOK.GROUND,
+  borderTop: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+  borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}`,
 
   // 테이블 스크롤 영역 스타일링
   "&::-webkit-scrollbar": {
     height: "8px",
   },
   "&::-webkit-scrollbar-track": {
-    backgroundColor: COLORS.DIVIDER,
-    borderRadius: "4px",
+    backgroundColor: COLORS.CHARTBOOK.GRID,
+    borderRadius: "0px",
   },
   "&::-webkit-scrollbar-thumb": {
-    backgroundColor: COLORS.BORDER_STRONG,
-    borderRadius: "4px",
+    backgroundColor: COLORS.CHARTBOOK.INK,
+    borderRadius: "0px",
     "&:hover": {
       backgroundColor: COLORS.TEXT_MUTED,
     },

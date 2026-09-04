@@ -1,7 +1,7 @@
 import React from "react";
 import ToggleButton from "@mui/material/ToggleButton";
 import Tooltip from "@mui/material/Tooltip";
-import { COLORS, alpha, onColor } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 
 const InflectionPointToggle = ({
   showInflectionPoints = false,
@@ -19,23 +19,24 @@ const InflectionPointToggle = ({
         disabled={disabled}
         color="primary"
         sx={{
-          border: `1px solid ${COLORS.DOWN}`,
-          color: showInflectionPoints ? COLORS.ON_ACCENT : COLORS.DOWN,
-          backgroundColor: showInflectionPoints ? COLORS.DOWN : "transparent",
+          border: `1px solid ${showInflectionPoints ? COLORS.CHARTBOOK.INK : COLORS.CHARTBOOK.GRID}`,
+          color: showInflectionPoints ? COLORS.CHARTBOOK.INK : COLORS.CHARTBOOK.GRID,
+          backgroundColor: "transparent",
           "&:hover": {
-            backgroundColor: showInflectionPoints ? COLORS.DOWN : alpha(COLORS.DOWN, 0.1),
+            backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.06),
           },
           "&.Mui-selected": {
-            backgroundColor: COLORS.DOWN,
-            color: onColor(COLORS.DOWN),
+            backgroundColor: "transparent",
+            color: COLORS.CHARTBOOK.INK,
+            borderColor: COLORS.CHARTBOOK.INK,
             "&:hover": {
-              backgroundColor: COLORS.DOWN,
+              backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.06),
             },
           },
           "&.Mui-disabled": {
-            color: COLORS.BORDER_STRONG,
+            color: COLORS.CHARTBOOK.GRID,
             backgroundColor: "transparent",
-            border: `1px solid ${COLORS.BORDER}`,
+            border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
           },
         }}
       >

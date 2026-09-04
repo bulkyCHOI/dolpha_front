@@ -19,7 +19,7 @@ import { ExpandMore, Refresh, Delete, Save } from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { adjustToKRXTickSize, getKRXTickSize } from "utils/formatters";
-import { COLORS, GRADIENT_COLORS, alpha } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 
 /**
  * 자동매매 아코디언 컴포넌트
@@ -134,7 +134,7 @@ const AutotradingAccordion = ({
               </Box>
             </AccordionSummary>
 
-            <AccordionDetails sx={{ backgroundColor: COLORS.SURFACE, position: "relative" }}>
+            <AccordionDetails sx={{ backgroundColor: COLORS.CHARTBOOK.GROUND, position: "relative" }}>
               {/* 우측 상단 컨트롤 영역 - 신규이므로 초기화 버튼만 */}
               <Box
                 sx={{
@@ -157,11 +157,11 @@ const AutotradingAccordion = ({
                       showSnackbar("설정이 초기화되었습니다.", "info");
                     }}
                     sx={{
-                      color: COLORS.PRIMARY,
+                      color: COLORS.CHARTBOOK.INK,
                       minWidth: { xs: "48px", md: "32px" },
                       minHeight: { xs: "48px", md: "32px" },
                       "&:hover": {
-                        backgroundColor: alpha(COLORS.PRIMARY, 0.1),
+                        backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.1),
                       },
                     }}
                   >
@@ -181,9 +181,9 @@ const AutotradingAccordion = ({
                         margin: "0 16px 0 0",
                       },
                       "& .MuiRadio-root": {
-                        color: COLORS.PRIMARY,
+                        color: COLORS.CHARTBOOK.INK,
                         "&.Mui-checked": {
-                          color: COLORS.PRIMARY,
+                          color: COLORS.CHARTBOOK.INK,
                         },
                       },
                     }}
@@ -229,11 +229,11 @@ const AutotradingAccordion = ({
                       width: "100%",
                       "& .MuiOutlinedInput-root": {
                         "&.Mui-focused fieldset": {
-                          borderColor: COLORS.PRIMARY,
+                          borderColor: COLORS.CHARTBOOK.INK,
                         },
                       },
                       "& .MuiInputLabel-root.Mui-focused": {
-                        color: COLORS.PRIMARY,
+                        color: COLORS.CHARTBOOK.INK,
                       },
                     }}
                   />
@@ -249,11 +249,11 @@ const AutotradingAccordion = ({
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       "&.Mui-focused fieldset": {
-                        borderColor: COLORS.PRIMARY,
+                        borderColor: COLORS.CHARTBOOK.INK,
                       },
                     },
                     "& .MuiInputLabel-root.Mui-focused": {
-                      color: COLORS.PRIMARY,
+                      color: COLORS.CHARTBOOK.INK,
                     },
                   }}
                 />
@@ -268,11 +268,11 @@ const AutotradingAccordion = ({
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       "&.Mui-focused fieldset": {
-                        borderColor: COLORS.PRIMARY,
+                        borderColor: COLORS.CHARTBOOK.INK,
                       },
                     },
                     "& .MuiInputLabel-root.Mui-focused": {
-                      color: COLORS.PRIMARY,
+                      color: COLORS.CHARTBOOK.INK,
                     },
                   }}
                 />
@@ -287,11 +287,11 @@ const AutotradingAccordion = ({
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       "&.Mui-focused fieldset": {
-                        borderColor: COLORS.PRIMARY,
+                        borderColor: COLORS.CHARTBOOK.INK,
                       },
                     },
                     "& .MuiInputLabel-root.Mui-focused": {
-                      color: COLORS.PRIMARY,
+                      color: COLORS.CHARTBOOK.INK,
                     },
                   }}
                 />
@@ -307,11 +307,11 @@ const AutotradingAccordion = ({
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       "&.Mui-focused fieldset": {
-                        borderColor: COLORS.PRIMARY,
+                        borderColor: COLORS.CHARTBOOK.INK,
                       },
                     },
                     "& .MuiInputLabel-root.Mui-focused": {
-                      color: COLORS.PRIMARY,
+                      color: COLORS.CHARTBOOK.INK,
                     },
                   }}
                 />
@@ -348,11 +348,11 @@ const AutotradingAccordion = ({
                           minWidth: "auto",
                           fontSize: "0.75rem",
                           padding: "4px 8px",
-                          borderColor: COLORS.PRIMARY,
-                          color: COLORS.PRIMARY,
+                          borderColor: COLORS.CHARTBOOK.INK,
+                          color: COLORS.CHARTBOOK.INK,
                           "&:hover": {
                             borderColor: COLORS.PRIMARY_HOVER,
-                            backgroundColor: alpha(COLORS.PRIMARY, 0.04),
+                            backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.04),
                           },
                         }}
                       >
@@ -398,11 +398,11 @@ const AutotradingAccordion = ({
                           width: "100%",
                           "& .MuiOutlinedInput-root": {
                             "&.Mui-focused fieldset": {
-                              borderColor: COLORS.PRIMARY,
+                              borderColor: COLORS.CHARTBOOK.INK,
                             },
                           },
                           "& .MuiInputLabel-root.Mui-focused": {
-                            color: COLORS.PRIMARY,
+                            color: COLORS.CHARTBOOK.INK,
                           },
                         }}
                       />
@@ -418,11 +418,11 @@ const AutotradingAccordion = ({
                           width: "100%",
                           "& .MuiOutlinedInput-root": {
                             "&.Mui-focused fieldset": {
-                              borderColor: COLORS.PRIMARY,
+                              borderColor: COLORS.CHARTBOOK.INK,
                             },
                           },
                           "& .MuiInputLabel-root.Mui-focused": {
-                            color: COLORS.PRIMARY,
+                            color: COLORS.CHARTBOOK.INK,
                           },
                         }}
                       />
@@ -446,11 +446,11 @@ const AutotradingAccordion = ({
                               width: "100%",
                               "& .MuiOutlinedInput-root": {
                                 "&.Mui-focused fieldset": {
-                                  borderColor: COLORS.PRIMARY,
+                                  borderColor: COLORS.CHARTBOOK.INK,
                                 },
                               },
                               "& .MuiInputLabel-root.Mui-focused": {
-                                color: COLORS.PRIMARY,
+                                color: COLORS.CHARTBOOK.INK,
                               },
                             }}
                           />
@@ -466,11 +466,11 @@ const AutotradingAccordion = ({
                               width: "100%",
                               "& .MuiOutlinedInput-root": {
                                 "&.Mui-focused fieldset": {
-                                  borderColor: COLORS.PRIMARY,
+                                  borderColor: COLORS.CHARTBOOK.INK,
                                 },
                               },
                               "& .MuiInputLabel-root.Mui-focused": {
-                                color: COLORS.PRIMARY,
+                                color: COLORS.CHARTBOOK.INK,
                               },
                             }}
                           />
@@ -488,11 +488,11 @@ const AutotradingAccordion = ({
                     disabled={!isFormValid()}
                     sx={{
                       flex: 1,
-                      background: isFormValid() ? GRADIENT_COLORS.PRIMARY : COLORS.BORDER_STRONG,
+                      background: isFormValid() ? COLORS.CHARTBOOK.PANEL_BLUE : COLORS.BORDER_STRONG,
                       color: "white !important",
                       "&:hover": {
                         background: isFormValid()
-                          ? `linear-gradient(135deg, ${COLORS.PRIMARY_HOVER} 0%, #6a4190 100%)`
+                          ? alpha(COLORS.CHARTBOOK.PANEL_BLUE, 0.85)
                           : COLORS.BORDER_STRONG,
                         color: "white !important",
                       },
@@ -518,7 +518,7 @@ const AutotradingAccordion = ({
             sx={{
               textAlign: "center",
               py: 4,
-              bgcolor: COLORS.SURFACE_ALT,
+              bgcolor: COLORS.CHARTBOOK.GROUND,
               borderRadius: 2,
             }}
           >
@@ -571,7 +571,7 @@ const AutotradingAccordion = ({
                   </Box>
                 </AccordionSummary>
 
-                <AccordionDetails sx={{ backgroundColor: COLORS.SURFACE, position: "relative" }}>
+                <AccordionDetails sx={{ backgroundColor: COLORS.CHARTBOOK.GROUND, position: "relative" }}>
                   {/* 우측 상단 컨트롤 영역 - 신규이므로 초기화 버튼만 */}
                   <Box
                     sx={{
@@ -593,9 +593,9 @@ const AutotradingAccordion = ({
                           showSnackbar("설정이 초기화되었습니다.", "info");
                         }}
                         sx={{
-                          color: COLORS.PRIMARY,
+                          color: COLORS.CHARTBOOK.INK,
                           "&:hover": {
-                            backgroundColor: alpha(COLORS.PRIMARY, 0.1),
+                            backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.1),
                           },
                         }}
                       >
@@ -615,9 +615,9 @@ const AutotradingAccordion = ({
                             margin: "0 16px 0 0",
                           },
                           "& .MuiRadio-root": {
-                            color: COLORS.PRIMARY,
+                            color: COLORS.CHARTBOOK.INK,
                             "&.Mui-checked": {
-                              color: COLORS.PRIMARY,
+                              color: COLORS.CHARTBOOK.INK,
                             },
                           },
                         }}
@@ -655,11 +655,11 @@ const AutotradingAccordion = ({
                           width: "100%",
                           "& .MuiOutlinedInput-root": {
                             "&.Mui-focused fieldset": {
-                              borderColor: COLORS.PRIMARY,
+                              borderColor: COLORS.CHARTBOOK.INK,
                             },
                           },
                           "& .MuiInputLabel-root.Mui-focused": {
-                            color: COLORS.PRIMARY,
+                            color: COLORS.CHARTBOOK.INK,
                           },
                         }}
                       />
@@ -675,11 +675,11 @@ const AutotradingAccordion = ({
                       sx={{
                         "& .MuiOutlinedInput-root": {
                           "&.Mui-focused fieldset": {
-                            borderColor: COLORS.PRIMARY,
+                            borderColor: COLORS.CHARTBOOK.INK,
                           },
                         },
                         "& .MuiInputLabel-root.Mui-focused": {
-                          color: COLORS.PRIMARY,
+                          color: COLORS.CHARTBOOK.INK,
                         },
                       }}
                     />
@@ -694,11 +694,11 @@ const AutotradingAccordion = ({
                       sx={{
                         "& .MuiOutlinedInput-root": {
                           "&.Mui-focused fieldset": {
-                            borderColor: COLORS.PRIMARY,
+                            borderColor: COLORS.CHARTBOOK.INK,
                           },
                         },
                         "& .MuiInputLabel-root.Mui-focused": {
-                          color: COLORS.PRIMARY,
+                          color: COLORS.CHARTBOOK.INK,
                         },
                       }}
                     />
@@ -713,11 +713,11 @@ const AutotradingAccordion = ({
                       sx={{
                         "& .MuiOutlinedInput-root": {
                           "&.Mui-focused fieldset": {
-                            borderColor: COLORS.PRIMARY,
+                            borderColor: COLORS.CHARTBOOK.INK,
                           },
                         },
                         "& .MuiInputLabel-root.Mui-focused": {
-                          color: COLORS.PRIMARY,
+                          color: COLORS.CHARTBOOK.INK,
                         },
                       }}
                     />
@@ -733,11 +733,11 @@ const AutotradingAccordion = ({
                       sx={{
                         "& .MuiOutlinedInput-root": {
                           "&.Mui-focused fieldset": {
-                            borderColor: COLORS.PRIMARY,
+                            borderColor: COLORS.CHARTBOOK.INK,
                           },
                         },
                         "& .MuiInputLabel-root.Mui-focused": {
-                          color: COLORS.PRIMARY,
+                          color: COLORS.CHARTBOOK.INK,
                         },
                       }}
                     />
@@ -775,11 +775,11 @@ const AutotradingAccordion = ({
                               minWidth: "auto",
                               fontSize: "0.75rem",
                               padding: "4px 8px",
-                              borderColor: COLORS.PRIMARY,
-                              color: COLORS.PRIMARY,
+                              borderColor: COLORS.CHARTBOOK.INK,
+                              color: COLORS.CHARTBOOK.INK,
                               "&:hover": {
                                 borderColor: COLORS.PRIMARY_HOVER,
-                                backgroundColor: alpha(COLORS.PRIMARY, 0.04),
+                                backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.04),
                               },
                             }}
                           >
@@ -825,11 +825,11 @@ const AutotradingAccordion = ({
                               width: "100%",
                               "& .MuiOutlinedInput-root": {
                                 "&.Mui-focused fieldset": {
-                                  borderColor: COLORS.PRIMARY,
+                                  borderColor: COLORS.CHARTBOOK.INK,
                                 },
                               },
                               "& .MuiInputLabel-root.Mui-focused": {
-                                color: COLORS.PRIMARY,
+                                color: COLORS.CHARTBOOK.INK,
                               },
                             }}
                           />
@@ -845,11 +845,11 @@ const AutotradingAccordion = ({
                               width: "100%",
                               "& .MuiOutlinedInput-root": {
                                 "&.Mui-focused fieldset": {
-                                  borderColor: COLORS.PRIMARY,
+                                  borderColor: COLORS.CHARTBOOK.INK,
                                 },
                               },
                               "& .MuiInputLabel-root.Mui-focused": {
-                                color: COLORS.PRIMARY,
+                                color: COLORS.CHARTBOOK.INK,
                               },
                             }}
                           />
@@ -874,11 +874,11 @@ const AutotradingAccordion = ({
                                   width: "100%",
                                   "& .MuiOutlinedInput-root": {
                                     "&.Mui-focused fieldset": {
-                                      borderColor: COLORS.PRIMARY,
+                                      borderColor: COLORS.CHARTBOOK.INK,
                                     },
                                   },
                                   "& .MuiInputLabel-root.Mui-focused": {
-                                    color: COLORS.PRIMARY,
+                                    color: COLORS.CHARTBOOK.INK,
                                   },
                                 }}
                               />
@@ -894,11 +894,11 @@ const AutotradingAccordion = ({
                                   width: "100%",
                                   "& .MuiOutlinedInput-root": {
                                     "&.Mui-focused fieldset": {
-                                      borderColor: COLORS.PRIMARY,
+                                      borderColor: COLORS.CHARTBOOK.INK,
                                     },
                                   },
                                   "& .MuiInputLabel-root.Mui-focused": {
-                                    color: COLORS.PRIMARY,
+                                    color: COLORS.CHARTBOOK.INK,
                                   },
                                 }}
                               />
@@ -917,12 +917,12 @@ const AutotradingAccordion = ({
                         sx={{
                           flex: 1,
                           background: isFormValid()
-                            ? GRADIENT_COLORS.PRIMARY
+                            ? COLORS.CHARTBOOK.PANEL_BLUE
                             : COLORS.BORDER_STRONG,
                           color: "white !important",
                           "&:hover": {
                             background: isFormValid()
-                              ? `linear-gradient(135deg, ${COLORS.PRIMARY_HOVER} 0%, #6a4190 100%)`
+                              ? alpha(COLORS.CHARTBOOK.PANEL_BLUE, 0.85)
                               : COLORS.BORDER_STRONG,
                             color: "white !important",
                           },
@@ -957,7 +957,7 @@ const AutotradingAccordion = ({
                 expandIcon={<ExpandMore />}
                 sx={{
                   backgroundColor: (() => {
-                    if (!stockConfig.hasConfig) return COLORS.SURFACE_ALT;
+                    if (!stockConfig.hasConfig) return COLORS.CHARTBOOK.GROUND;
                     if (stockConfig.is_active) return alpha(COLORS.SUCCESS, 0.1);
                     return "rgba(158, 158, 158, 0.1)";
                   })(),
@@ -985,12 +985,14 @@ const AutotradingAccordion = ({
                     <Chip
                       label={stockConfig.is_active ? "활성" : "비활성"}
                       size="small"
-                      color={stockConfig.is_active ? "success" : "default"}
                       sx={{
                         fontSize: "0.7rem",
                         height: "20px",
-                        backgroundColor: !stockConfig.is_active ? COLORS.TEXT_MUTED : undefined,
-                        color: !stockConfig.is_active ? COLORS.ON_ACCENT : undefined,
+                        backgroundColor: "transparent",
+                        border: `1px solid ${stockConfig.is_active ? COLORS.SUCCESS : COLORS.TEXT_MUTED}`,
+                        color: stockConfig.is_active ? COLORS.SUCCESS : COLORS.TEXT_MUTED,
+                        fontFamily: "'Fragment Mono', 'Monaco', monospace",
+                        fontWeight: 500,
                       }}
                     />
                   ) : (
@@ -1041,7 +1043,7 @@ const AutotradingAccordion = ({
                 </Box>
               </AccordionSummary>
 
-              <AccordionDetails sx={{ backgroundColor: COLORS.SURFACE, position: "relative" }}>
+              <AccordionDetails sx={{ backgroundColor: COLORS.CHARTBOOK.GROUND, position: "relative" }}>
                 {/* 우측 상단 컨트롤 영역 */}
                 {(stockConfig.trading_mode || stockConfig.stop_loss || stockConfig.take_profit) && (
                   <Box
@@ -1092,9 +1094,9 @@ const AutotradingAccordion = ({
                           }
                         }}
                         sx={{
-                          color: COLORS.PRIMARY,
+                          color: COLORS.CHARTBOOK.INK,
                           "&:hover": {
-                            backgroundColor: alpha(COLORS.PRIMARY, 0.1),
+                            backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.1),
                           },
                         }}
                       >
@@ -1115,9 +1117,9 @@ const AutotradingAccordion = ({
                           margin: "0 16px 0 0",
                         },
                         "& .MuiRadio-root": {
-                          color: COLORS.PRIMARY,
+                          color: COLORS.CHARTBOOK.INK,
                           "&.Mui-checked": {
-                            color: COLORS.PRIMARY,
+                            color: COLORS.CHARTBOOK.INK,
                           },
                         },
                       }}
@@ -1155,11 +1157,11 @@ const AutotradingAccordion = ({
                         width: "100%",
                         "& .MuiOutlinedInput-root": {
                           "&.Mui-focused fieldset": {
-                            borderColor: COLORS.PRIMARY,
+                            borderColor: COLORS.CHARTBOOK.INK,
                           },
                         },
                         "& .MuiInputLabel-root.Mui-focused": {
-                          color: COLORS.PRIMARY,
+                          color: COLORS.CHARTBOOK.INK,
                         },
                       }}
                     />
@@ -1175,11 +1177,11 @@ const AutotradingAccordion = ({
                     sx={{
                       "& .MuiOutlinedInput-root": {
                         "&.Mui-focused fieldset": {
-                          borderColor: COLORS.PRIMARY,
+                          borderColor: COLORS.CHARTBOOK.INK,
                         },
                       },
                       "& .MuiInputLabel-root.Mui-focused": {
-                        color: COLORS.PRIMARY,
+                        color: COLORS.CHARTBOOK.INK,
                       },
                     }}
                   />
@@ -1194,11 +1196,11 @@ const AutotradingAccordion = ({
                     sx={{
                       "& .MuiOutlinedInput-root": {
                         "&.Mui-focused fieldset": {
-                          borderColor: COLORS.PRIMARY,
+                          borderColor: COLORS.CHARTBOOK.INK,
                         },
                       },
                       "& .MuiInputLabel-root.Mui-focused": {
-                        color: COLORS.PRIMARY,
+                        color: COLORS.CHARTBOOK.INK,
                       },
                     }}
                   />
@@ -1213,11 +1215,11 @@ const AutotradingAccordion = ({
                     sx={{
                       "& .MuiOutlinedInput-root": {
                         "&.Mui-focused fieldset": {
-                          borderColor: COLORS.PRIMARY,
+                          borderColor: COLORS.CHARTBOOK.INK,
                         },
                       },
                       "& .MuiInputLabel-root.Mui-focused": {
-                        color: COLORS.PRIMARY,
+                        color: COLORS.CHARTBOOK.INK,
                       },
                     }}
                   />
@@ -1233,11 +1235,11 @@ const AutotradingAccordion = ({
                     sx={{
                       "& .MuiOutlinedInput-root": {
                         "&.Mui-focused fieldset": {
-                          borderColor: COLORS.PRIMARY,
+                          borderColor: COLORS.CHARTBOOK.INK,
                         },
                       },
                       "& .MuiInputLabel-root.Mui-focused": {
-                        color: COLORS.PRIMARY,
+                        color: COLORS.CHARTBOOK.INK,
                       },
                     }}
                   />
@@ -1274,11 +1276,11 @@ const AutotradingAccordion = ({
                             minWidth: "auto",
                             fontSize: "0.75rem",
                             padding: "4px 8px",
-                            borderColor: COLORS.PRIMARY,
-                            color: COLORS.PRIMARY,
+                            borderColor: COLORS.CHARTBOOK.INK,
+                            color: COLORS.CHARTBOOK.INK,
                             "&:hover": {
                               borderColor: COLORS.PRIMARY_HOVER,
-                              backgroundColor: alpha(COLORS.PRIMARY, 0.04),
+                              backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.04),
                             },
                           }}
                         >
@@ -1324,11 +1326,11 @@ const AutotradingAccordion = ({
                             width: "100%",
                             "& .MuiOutlinedInput-root": {
                               "&.Mui-focused fieldset": {
-                                borderColor: COLORS.PRIMARY,
+                                borderColor: COLORS.CHARTBOOK.INK,
                               },
                             },
                             "& .MuiInputLabel-root.Mui-focused": {
-                              color: COLORS.PRIMARY,
+                              color: COLORS.CHARTBOOK.INK,
                             },
                           }}
                         />
@@ -1344,11 +1346,11 @@ const AutotradingAccordion = ({
                             width: "100%",
                             "& .MuiOutlinedInput-root": {
                               "&.Mui-focused fieldset": {
-                                borderColor: COLORS.PRIMARY,
+                                borderColor: COLORS.CHARTBOOK.INK,
                               },
                             },
                             "& .MuiInputLabel-root.Mui-focused": {
-                              color: COLORS.PRIMARY,
+                              color: COLORS.CHARTBOOK.INK,
                             },
                           }}
                         />
@@ -1373,11 +1375,11 @@ const AutotradingAccordion = ({
                                 width: "100%",
                                 "& .MuiOutlinedInput-root": {
                                   "&.Mui-focused fieldset": {
-                                    borderColor: COLORS.PRIMARY,
+                                    borderColor: COLORS.CHARTBOOK.INK,
                                   },
                                 },
                                 "& .MuiInputLabel-root.Mui-focused": {
-                                  color: COLORS.PRIMARY,
+                                  color: COLORS.CHARTBOOK.INK,
                                 },
                               }}
                             />
@@ -1393,11 +1395,11 @@ const AutotradingAccordion = ({
                                 width: "100%",
                                 "& .MuiOutlinedInput-root": {
                                   "&.Mui-focused fieldset": {
-                                    borderColor: COLORS.PRIMARY,
+                                    borderColor: COLORS.CHARTBOOK.INK,
                                   },
                                 },
                                 "& .MuiInputLabel-root.Mui-focused": {
-                                  color: COLORS.PRIMARY,
+                                  color: COLORS.CHARTBOOK.INK,
                                 },
                               }}
                             />
@@ -1415,11 +1417,11 @@ const AutotradingAccordion = ({
                       disabled={!isFormValid()}
                       sx={{
                         flex: 1,
-                        background: isFormValid() ? GRADIENT_COLORS.PRIMARY : COLORS.BORDER_STRONG,
+                        background: isFormValid() ? COLORS.CHARTBOOK.PANEL_BLUE : COLORS.BORDER_STRONG,
                         color: "white !important",
                         "&:hover": {
                           background: isFormValid()
-                            ? `linear-gradient(135deg, ${COLORS.PRIMARY_HOVER} 0%, #6a4190 100%)`
+                            ? alpha(COLORS.CHARTBOOK.PANEL_BLUE, 0.85)
                             : COLORS.BORDER_STRONG,
                           color: "white !important",
                         },

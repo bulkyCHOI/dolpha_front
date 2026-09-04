@@ -6,7 +6,9 @@ import ButtonBase from "@mui/material/ButtonBase";
 
 import Typography from "@mui/material/Typography";
 import { CHART_COLORS, CONDITIONS, decisionStatus, exitStatus } from "./constants";
-import { COLORS } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
+
+const MONO_STACK = "'Fragment Mono', 'Monaco', monospace";
 
 /** 3조건 충족 여부를 점 3개로 압축 표시한다. */
 function ConditionDots({ decision }) {
@@ -20,7 +22,7 @@ function ConditionDots({ decision }) {
             width: 8,
             height: 8,
             borderRadius: "50%",
-            bgcolor: decision[key] ? color : "#dfe4ea",
+            bgcolor: decision[key] ? color : COLORS.CHARTBOOK.GRID,
           }}
         />
       ))}
@@ -52,14 +54,14 @@ function Row({ selected, accent, onClick, left, right }) {
         gap: 1,
         px: 1.25,
         py: 0.9,
-        borderRadius: 1,
+        borderRadius: 0,
         textAlign: "left",
         border: "1px solid",
-        borderColor: selected ? COLORS.PRIMARY : "transparent",
-        // 청산 행은 좌측 색 띠로 진입 판정과 한눈에 구분한다
-        borderLeft: accent ? `3px solid ${accent}` : "1px solid transparent",
-        bgcolor: selected ? COLORS.TINT_PRIMARY : "transparent",
-        "&:hover": { bgcolor: selected ? COLORS.TINT_PRIMARY : COLORS.ROW_HOVER },
+        borderColor: selected ? COLORS.CHARTBOOK.PANEL_BLUE : COLORS.CHARTBOOK.GRID,
+        // 청산 행은 상단 색 띠로 진입 판정과 한눈에 구분한다
+        borderTop: accent ? `2px solid ${accent}` : "1px solid",
+        bgcolor: selected ? alpha(COLORS.CHARTBOOK.INK, 0.06) : "transparent",
+        "&:hover": { bgcolor: selected ? alpha(COLORS.CHARTBOOK.INK, 0.06) : alpha(COLORS.CHARTBOOK.INK, 0.06) },
       }}
     >
       {left}
@@ -89,7 +91,7 @@ function DecisionRow({ decision, selected, onSelect }) {
         <Box sx={{ display: "flex", alignItems: "center", gap: 1, minWidth: 0 }}>
           <Typography
             variant="button"
-            sx={{ fontSize: 12, fontWeight: 700, fontVariantNumeric: "tabular-nums" }}
+            sx={{ fontSize: 12, fontWeight: 700, fontVariantNumeric: "tabular-nums", fontFamily: MONO_STACK }}
           >
             {decision.time}
           </Typography>
@@ -98,7 +100,7 @@ function DecisionRow({ decision, selected, onSelect }) {
       }
       right={
         <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, flexShrink: 0 }}>
-          <Typography variant="caption" sx={{ fontSize: 11, color: CHART_COLORS.MUTED }}>
+          <Typography variant="caption" sx={{ fontSize: 11, color: COLORS.CHARTBOOK.INK, fontFamily: MONO_STACK }}>
             {decision.conditions_met}/3
           </Typography>
           <Chip
@@ -108,8 +110,11 @@ function DecisionRow({ decision, selected, onSelect }) {
               height: 18,
               fontSize: 10.5,
               fontWeight: 700,
-              bgcolor: status.bg,
+              backgroundColor: status.bg,
               color: status.color,
+              border: status.border,
+              borderRadius: "2px",
+              fontFamily: MONO_STACK,
             }}
           />
         </Box>
@@ -139,13 +144,13 @@ function ExitRow({ exit, selected, onSelect }) {
         <Box sx={{ display: "flex", alignItems: "center", gap: 1, minWidth: 0 }}>
           <Typography
             variant="button"
-            sx={{ fontSize: 12, fontWeight: 700, fontVariantNumeric: "tabular-nums" }}
+            sx={{ fontSize: 12, fontWeight: 700, fontVariantNumeric: "tabular-nums", fontFamily: MONO_STACK }}
           >
             {exit.exited_at}
           </Typography>
           <Typography
             variant="caption"
-            sx={{ fontSize: 11, fontWeight: 700, color: rateColor, whiteSpace: "nowrap" }}
+            sx={{ fontSize: 11, fontWeight: 700, color: rateColor, whiteSpace: "nowrap", fontFamily: MONO_STACK }}
           >
             {rate == null ? "—" : `${rate >= 0 ? "+" : ""}${rate.toFixed(2)}%`}
           </Typography>
@@ -159,8 +164,11 @@ function ExitRow({ exit, selected, onSelect }) {
             height: 18,
             fontSize: 10.5,
             fontWeight: 700,
-            bgcolor: status.bg,
+            backgroundColor: status.bg,
             color: status.color,
+            border: status.border,
+            borderRadius: "2px",
+            fontFamily: MONO_STACK,
             flexShrink: 0,
           }}
         />
@@ -183,7 +191,7 @@ function DecisionList({ items, selected, onSelect, maxHeight }) {
   if (items.length === 0) {
     return (
       <Box sx={{ py: 4, textAlign: "center" }}>
-        <Typography variant="caption" sx={{ color: CHART_COLORS.MUTED }}>
+        <Typography variant="caption" sx={{ color: COLORS.CHARTBOOK.INK }}>
           판정·청산 이력이 없습니다.
         </Typography>
       </Box>

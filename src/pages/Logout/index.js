@@ -41,7 +41,7 @@ function Logout() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: COLORS.SURFACE_ALT,
+        backgroundColor: COLORS.CHARTBOOK.GROUND,
       }}
     >
       <Box
@@ -54,11 +54,11 @@ function Logout() {
           textAlign: "center",
         }}
       >
-        <CircularProgress size={60} sx={{ color: COLORS.PRIMARY }} />
-        <Typography variant="h4" color="text.secondary">
+        <CircularProgress size={60} sx={{ color: COLORS.CHARTBOOK.INK }} />
+        <Typography variant="h4" color={COLORS.CHARTBOOK.INK}>
           로그아웃 중...
         </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ opacity: 0.7 }}>
+        <Typography variant="body1" color={COLORS.TEXT_SECONDARY} sx={{ opacity: 0.7 }}>
           잠시 후 홈페이지로 이동합니다.
         </Typography>
       </Box>

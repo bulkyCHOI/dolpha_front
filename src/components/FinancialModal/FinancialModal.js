@@ -21,7 +21,7 @@ import { Close } from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { formatFinancialAmount } from "utils/formatters";
-import { COLORS } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 
 /**
  * 재무제표 모달 컴포넌트
@@ -47,8 +47,9 @@ const FinancialModal = ({
       fullScreen={isSmallMobile}
       PaperProps={{
         sx: {
-          borderRadius: isSmallMobile ? 0 : 2,
-          bgcolor: "background.paper",
+          borderRadius: 0,
+          bgcolor: COLORS.CHARTBOOK.GROUND,
+          border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
           m: isSmallMobile ? 0 : 2,
           maxHeight: isSmallMobile ? "100vh" : "90vh",
         },
@@ -114,14 +115,14 @@ const FinancialModal = ({
               <Typography
                 variant={isMobile ? "subtitle1" : "h6"}
                 fontWeight="bold"
-                sx={{ mb: 2, color: "info" }}
+                sx={{ mb: 2, color: COLORS.CHARTBOOK.INK }}
               >
                 손익계산서
               </Typography>
-              <TableContainer component={Paper} sx={{ boxShadow: 1, mb: 2, overflowX: "auto" }}>
+              <TableContainer component={Paper} sx={{ backgroundColor: COLORS.CHARTBOOK.GROUND, border: `1px solid ${COLORS.CHARTBOOK.GRID}`, mb: 2, overflowX: "auto" }}>
                 <Table size="small" sx={{ minWidth: isMobile ? 500 : 700 }}>
                   <TableHead>
-                    <TableRow sx={{ bgcolor: COLORS.SURFACE_ALT, display: "flex", width: "100%" }}>
+                    <TableRow sx={{ bgcolor: COLORS.CHARTBOOK.GROUND, border: `1px solid ${COLORS.CHARTBOOK.GRID}`, display: "flex", width: "100%" }}>
                       <TableCell
                         sx={{
                           fontWeight: "bold",
@@ -172,7 +173,7 @@ const FinancialModal = ({
                       <TableRow
                         key={accountName}
                         sx={{
-                          "&:nth-of-type(odd)": { bgcolor: COLORS.SURFACE_ALT },
+                          "&:nth-of-type(odd)": { bgcolor: alpha(COLORS.CHARTBOOK.INK, 0.02) },
                           display: "flex",
                           width: "100%",
                         }}
@@ -243,14 +244,14 @@ const FinancialModal = ({
               <Typography
                 variant={isMobile ? "subtitle1" : "h6"}
                 fontWeight="bold"
-                sx={{ mb: 2, color: "info" }}
+                sx={{ mb: 2, color: COLORS.CHARTBOOK.INK }}
               >
                 재무상태표
               </Typography>
-              <TableContainer component={Paper} sx={{ boxShadow: 1, overflowX: "auto" }}>
+              <TableContainer component={Paper} sx={{ backgroundColor: COLORS.CHARTBOOK.GROUND, border: `1px solid ${COLORS.CHARTBOOK.GRID}`, overflowX: "auto" }}>
                 <Table size="small" sx={{ minWidth: isMobile ? 500 : 700 }}>
                   <TableHead>
-                    <TableRow sx={{ bgcolor: COLORS.SURFACE_ALT, display: "flex", width: "100%" }}>
+                    <TableRow sx={{ bgcolor: COLORS.CHARTBOOK.GROUND, border: `1px solid ${COLORS.CHARTBOOK.GRID}`, display: "flex", width: "100%" }}>
                       <TableCell
                         sx={{
                           fontWeight: "bold",
@@ -300,7 +301,7 @@ const FinancialModal = ({
                       <TableRow
                         key={accountName}
                         sx={{
-                          "&:nth-of-type(odd)": { bgcolor: COLORS.SURFACE_ALT },
+                          "&:nth-of-type(odd)": { bgcolor: alpha(COLORS.CHARTBOOK.INK, 0.02) },
                           display: "flex",
                           width: "100%",
                         }}
@@ -385,10 +386,10 @@ const FinancialModal = ({
           </Box>
         )}
 
-        <Box sx={{ mt: 2, p: 1, bgcolor: "info.main", borderRadius: 1 }}>
+        <Box sx={{ mt: 2, p: 1, bgcolor: alpha(COLORS.CHARTBOOK.PANEL_BLUE, 0.08), border: `1px solid ${COLORS.CHARTBOOK.GRID}`, borderRadius: 0 }}>
           <Typography
             variant="caption"
-            color="white.main"
+            color={COLORS.CHARTBOOK.INK}
             sx={{ fontSize: isMobile ? "0.65rem" : "inherit" }}
           >
             * 금액 단위: 원 (조/억/만 단위로 표시)

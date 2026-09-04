@@ -5,6 +5,12 @@ import { BrowserRouter } from "react-router-dom";
 import App from "App";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 
+// Chartbook fonts
+import "@fontsource/archivo/400.css";
+import "@fontsource/archivo/600.css";
+import "@fontsource/archivo/700.css";
+import "@fontsource/fragment-mono/400.css";
+
 const container = document.getElementById("root");
 
 // Create a root.

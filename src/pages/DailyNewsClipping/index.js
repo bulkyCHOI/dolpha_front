@@ -21,6 +21,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 import Typography from "@mui/material/Typography";
 import AppHeader from "components/AppHeader";
+import ChartbookHeader from "components/ChartbookHeader/ChartbookHeader";
 import routes from "routes";
 import { COLORS, alpha, onColor } from "constants/styles";
 
@@ -124,12 +125,12 @@ function DailyNewsClipping() {
         height: "100%",
         minHeight: "600px",
         width: "100%",
-        border: `2px solid ${cardColor}`,
-        borderRadius: 2,
+        border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+        backgroundColor: COLORS.CHARTBOOK.GROUND,
+        borderRadius: 0,
         "&:hover": {
-          transform: "translateY(-2px)",
-          transition: "transform 0.2s ease-in-out",
-          boxShadow: theme.shadows[8],
+          backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.06),
+          transition: "background-color 0.12s ease",
         },
       }}
     >
@@ -157,11 +158,13 @@ function DailyNewsClipping() {
                   label={issue.time}
                   size="large"
                   sx={{
-                    backgroundColor: cardColor,
-                    color: onColor(cardColor),
+                    backgroundColor: "transparent",
+                    color: COLORS.CHARTBOOK.INK,
+                    border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
                     minWidth: "80px",
                     fontWeight: "bold",
                     fontSize: "1rem",
+                    borderRadius: "2px",
                   }}
                 />
                 <Box flex={1}>
@@ -217,12 +220,18 @@ function DailyNewsClipping() {
   return (
     <>
       <AppHeader routes={routes} sticky />
+      <Box sx={{ height: "80px", flexShrink: 0, backgroundColor: COLORS.CHARTBOOK.GROUND }} />
+      <ChartbookHeader
+        strategyName="일간뉴스클리핑"
+        date={new Date().toLocaleDateString("ko-KR")}
+        candidateCount={afterMarketIssues.length + preMarketIssues.length}
+      />
 
       <Box
         minHeight="100vh"
         width="100%"
         sx={{
-          backgroundColor: COLORS.SURFACE,
+          backgroundColor: COLORS.CHARTBOOK.GROUND,
           display: "flex",
           flexDirection: "column",
         }}
@@ -244,10 +253,12 @@ function DailyNewsClipping() {
                     icon={<AccessTimeIcon />}
                     label={`마지막 업데이트: ${lastUpdated.toLocaleString("ko-KR")}`}
                     sx={{
-                      backgroundColor: alpha(COLORS.PRIMARY, 0.1),
-                      color: alpha(COLORS.PRIMARY, 1),
-                      borderColor: alpha(COLORS.PRIMARY, 0.3),
+                      backgroundColor: "transparent",
+                      color: COLORS.CHARTBOOK.INK,
+                      borderColor: COLORS.CHARTBOOK.GRID,
                       fontSize: "0.85rem",
+                      border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+                      borderRadius: "2px",
                     }}
                     variant="outlined"
                   />
@@ -255,15 +266,15 @@ function DailyNewsClipping() {
                     onClick={handleRefresh}
                     disabled={loading}
                     sx={{
-                      color: alpha(COLORS.PRIMARY, 1),
-                      backgroundColor: alpha(COLORS.PRIMARY, 0.1),
+                      color: COLORS.CHARTBOOK.INK,
+                      backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.06),
                       "&:hover": {
-                        backgroundColor: alpha(COLORS.PRIMARY, 0.2),
+                        backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.12),
                       },
                     }}
                   >
                     {loading ? (
-                      <CircularProgress size={24} sx={{ color: alpha(COLORS.PRIMARY, 1) }} />
+                      <CircularProgress size={24} sx={{ color: COLORS.CHARTBOOK.INK }} />
                     ) : (
                       <RefreshIcon />
                     )}
@@ -297,10 +308,10 @@ function DailyNewsClipping() {
                 <Alert
                   severity="info"
                   sx={{
-                    backgroundColor: alpha(COLORS.DOWN, 0.1),
-                    border: `1px solid ${alpha(COLORS.DOWN, 0.2)}`,
+                    backgroundColor: COLORS.CHARTBOOK.GROUND,
+                    border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
                     "& .MuiAlert-icon": {
-                      color: theme.palette.info.main,
+                      color: COLORS.CHARTBOOK.INK,
                     },
                   }}
                 >

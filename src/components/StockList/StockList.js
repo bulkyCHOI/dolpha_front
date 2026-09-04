@@ -4,7 +4,7 @@ import Chip from "@mui/material/Chip";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { formatNumber } from "utils/formatters";
-import { COLORS, GRADIENT_COLORS, alpha, onColor } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 
 /**
  * 값 구간을 색으로 나타낸다 (높을수록 빨강 → 낮을수록 회색).
@@ -125,11 +125,11 @@ function StockList({
       {/* 테이블 헤더 */}
       <Box
         sx={{
-          background: GRADIENT_COLORS.PRIMARY,
+          backgroundColor: COLORS.CHARTBOOK.GROUND,
           p: 1,
           display: "flex",
           alignItems: "center",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+          borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}`,
           flexShrink: 0,
         }}
       >
@@ -138,8 +138,13 @@ function StockList({
             <Grid key={header.field} item xs={header.width || 12 / columnHeaders.length}>
               <Typography
                 variant="subtitle2"
-                color="white.main"
-                fontWeight="bold"
+                sx={{
+                  color: COLORS.CHARTBOOK.INK,
+                  fontWeight: 700,
+                  fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif",
+                  fontSize: "0.75rem",
+                  letterSpacing: "0.02em",
+                }}
                 textAlign={index === 0 ? "left" : "center"}
               >
                 {header.label}
@@ -154,7 +159,7 @@ function StockList({
         sx={{
           flex: 1,
           overflow: "auto",
-          backgroundColor: COLORS.SURFACE,
+          backgroundColor: COLORS.CHARTBOOK.GROUND,
           "&::-webkit-scrollbar": {
             width: "8px",
           },
@@ -180,30 +185,20 @@ function StockList({
               sx={{
                 p: 0.5,
                 borderBottom:
-                  rowIndex === stocks.length - 1 ? "none" : `1px solid ${COLORS.DIVIDER}`,
+                  rowIndex === stocks.length - 1 ? "none" : `1px solid ${COLORS.CHARTBOOK.GRID}`,
                 cursor: "pointer",
-                transition: "all 0.2s ease",
+                transition: "background-color 0.12s ease",
+                color: selectedStock?.code === row.code ? COLORS.CHARTBOOK.SELECTED_INK : "inherit",
                 backgroundColor:
                   selectedStock?.code === row.code
-                    ? `linear-gradient(135deg, ${alpha(COLORS.PRIMARY, 0.1)} 0%, ${alpha(
-                        COLORS.PRIMARY_DARK,
-                        0.1
-                      )} 100%)`
-                    : disableStripes
-                    ? COLORS.SURFACE
-                    : rowIndex % 2 === 0
-                    ? COLORS.SURFACE_ALT
-                    : COLORS.SURFACE,
+                    ? COLORS.CHARTBOOK.SELECTED_BG
+                    : COLORS.CHARTBOOK.GROUND,
                 "&:hover": {
-                  backgroundColor: alpha(COLORS.PRIMARY, 0.08),
-                  transform: "translateX(4px)",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                  borderLeft: `3px solid ${COLORS.PRIMARY}`,
+                  backgroundColor:
+                    selectedStock?.code === row.code
+                      ? COLORS.CHARTBOOK.SELECTED_BG
+                      : alpha(COLORS.CHARTBOOK.INK, 0.06),
                 },
-                ...(selectedStock?.code === row.code && {
-                  borderLeft: `3px solid ${COLORS.PRIMARY}`,
-                  boxShadow: `0 2px 12px ${alpha(COLORS.PRIMARY, 0.2)}`,
-                }),
               }}
             >
               <Grid container spacing={0} alignItems="center">
@@ -215,8 +210,11 @@ function StockList({
                         <Typography
                           variant="body2"
                           fontWeight={selectedStock?.code === row.code ? "bold" : "medium"}
-                          color={selectedStock?.code === row.code ? "info" : "text"}
                           sx={{
+                            color:
+                              selectedStock?.code === row.code
+                                ? COLORS.CHARTBOOK.SELECTED_INK
+                                : COLORS.CHARTBOOK.INK,
                             fontSize: "0.8rem",
                             lineHeight: 1.1,
                             overflow: "hidden",
@@ -228,8 +226,15 @@ function StockList({
                         </Typography>
                         <Typography
                           variant="caption"
-                          color="text.secondary"
-                          sx={{ fontSize: "0.7rem" }}
+                          sx={{
+                            fontSize: "0.7rem",
+                            fontFamily: "'Fragment Mono', 'Monaco', monospace",
+                            color:
+                              selectedStock?.code === row.code
+                                ? COLORS.CHARTBOOK.SELECTED_INK
+                                : COLORS.TEXT_SECONDARY,
+                            opacity: selectedStock?.code === row.code ? 0.8 : 1,
+                          }}
                         >
                           {row.code || ""}
                         </Typography>
@@ -241,9 +246,12 @@ function StockList({
                           label={Math.floor(rowData[header.field]) || "-"}
                           size="small"
                           sx={{
-                            backgroundColor: bandColor(rowData[header.field], RANK_BANDS),
-                            color: onColor(bandColor(rowData[header.field], RANK_BANDS)),
-                            fontWeight: "bold",
+                            backgroundColor: "transparent",
+                            color: bandColor(rowData[header.field], RANK_BANDS),
+                            border: `1px solid ${bandColor(rowData[header.field], RANK_BANDS)}`,
+                            borderRadius: "2px",
+                            fontFamily: "'Fragment Mono', 'Monaco', monospace",
+                            fontWeight: 500,
                             fontSize: "0.7rem",
                             minWidth: "35px",
                             height: "20px",
@@ -257,32 +265,12 @@ function StockList({
                           label={`${rowData[header.field] || 0}%`}
                           size="small"
                           sx={{
-                            backgroundColor:
-                              rowData[header.field] >= 300
-                                ? COLORS.UP
-                                : rowData[header.field] >= 200
-                                ? COLORS.WARNING
-                                : rowData[header.field] >= 100
-                                ? "#ffeb3b"
-                                : rowData[header.field] >= 75
-                                ? COLORS.SUCCESS
-                                : rowData[header.field] >= 50
-                                ? COLORS.DOWN
-                                : COLORS.TEXT_MUTED,
-                            color: onColor(
-                              rowData[header.field] >= 300
-                                ? COLORS.UP
-                                : rowData[header.field] >= 200
-                                ? COLORS.WARNING
-                                : rowData[header.field] >= 100
-                                ? "#ffeb3b"
-                                : rowData[header.field] >= 75
-                                ? COLORS.SUCCESS
-                                : rowData[header.field] >= 50
-                                ? COLORS.DOWN
-                                : COLORS.TEXT_MUTED
-                            ),
-                            fontWeight: "bold",
+                            backgroundColor: "transparent",
+                            color: bandColor(rowData[header.field], [300, 200, 100, 75, 50]),
+                            border: `1px solid ${bandColor(rowData[header.field], [300, 200, 100, 75, 50])}`,
+                            borderRadius: "2px",
+                            fontFamily: "'Fragment Mono', 'Monaco', monospace",
+                            fontWeight: 500,
                             fontSize: "0.7rem",
                             minWidth: "40px",
                             height: "20px",
@@ -296,9 +284,12 @@ function StockList({
                           label={`+${(rowData[header.field] || 0).toFixed(1)}%`}
                           size="small"
                           sx={{
-                            backgroundColor: bandColor(rowData[header.field], RISE_BANDS),
-                            color: onColor(bandColor(rowData[header.field], RISE_BANDS)),
-                            fontWeight: "bold",
+                            backgroundColor: "transparent",
+                            color: bandColor(rowData[header.field], RISE_BANDS),
+                            border: `1px solid ${bandColor(rowData[header.field], RISE_BANDS)}`,
+                            borderRadius: "2px",
+                            fontFamily: "'Fragment Mono', 'Monaco', monospace",
+                            fontWeight: 500,
                             fontSize: "0.7rem",
                             minWidth: "40px",
                             height: "20px",

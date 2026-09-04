@@ -10,6 +10,7 @@ import Typography from "@mui/material/Typography";
 
 import AppHeader from "components/AppHeader";
 import AppFooter from "components/AppFooter";
+import ChartbookHeader from "components/ChartbookHeader/ChartbookHeader";
 
 // Routes
 import routes from "routes";
@@ -21,7 +22,7 @@ import ScreenerFilterSettings from "./sections/ScreenerFilterSettings";
 
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { COLORS, GRADIENT_COLORS, alpha } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 
 function MyPage() {
   const [activeTab, setActiveTab] = useState(0);
@@ -54,97 +55,45 @@ function MyPage() {
   return (
     <>
       <AppHeader routes={routes} sticky />
+      <Box sx={{ height: "80px", flexShrink: 0, backgroundColor: COLORS.CHARTBOOK.GROUND }} />
+      <ChartbookHeader
+        strategyName="마이페이지"
+        date={new Date().toLocaleDateString("ko-KR")}
+      />
       <Box
-        minHeight={{ xs: "25vh", md: "30vh" }}
-        width="100%"
         sx={{
-          backgroundImage: GRADIENT_COLORS.PRIMARY,
-          backgroundSize: "cover",
-          backgroundPosition: "top",
-          display: "grid",
-          placeItems: "center",
-          pt: { xs: 8, md: 2 },
-          pb: { xs: 1, md: 2 },
-        }}
-      >
-        <Container>
-          <Grid container item xs={12} lg={6} justifyContent="center" mx="auto">
-            <Typography
-              variant="h2"
-              color="white.main"
-              mb={0.5}
-              sx={({ breakpoints, typography: { size } }) => ({
-                fontWeight: 700,
-                textAlign: "center",
-                [breakpoints.down("md")]: {
-                  fontSize: size["xl"],
-                },
-                [breakpoints.down("sm")]: {
-                  fontSize: size["lg"],
-                },
-              })}
-            >
-              마이페이지
-            </Typography>
-            <Typography
-              variant="body2"
-              color="white.main"
-              textAlign="center"
-              sx={{
-                fontSize: { xs: "0.85rem", md: "0.95rem" },
-                opacity: 0.85,
-                lineHeight: 1.3,
-              }}
-            >
-              프로필 · 자동매매 · 종목 필터 설정 관리
-            </Typography>
-          </Grid>
-        </Container>
-      </Box>
-      <Card
-        sx={{
-          p: { xs: 2, sm: 3, md: 4 },
-          mx: { xs: 2, sm: 3, lg: 4 },
-          mt: { xs: -4, md: -6 },
-          mb: 2,
-          // 흰색으로 고정하면 다크에서 본문 카드만 흰 판으로 남는다.
-          backgroundColor: COLORS.SURFACE,
-          backdropFilter: "saturate(200%) blur(30px)",
-          boxShadow: ({ boxShadows: { xxl } }) => xxl,
-          borderRadius: 3,
+          backgroundColor: COLORS.CHARTBOOK.GROUND,
+          p: { xs: 2, sm: 3, lg: 4 },
         }}
       >
         <Container maxWidth="lg">
           <Grid container spacing={{ xs: 2, md: 4 }} justifyContent="center">
             <Grid item xs={12}>
-              <Box mb={{ xs: 3, md: 4 }}>
+              <Box mb={{ xs: 3, md: 4 }} sx={{ borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}` }}>
                 <Tabs
                   value={activeTab}
                   onChange={handleTabChange}
-                  centered
                   variant="fullWidth"
                   sx={{
                     "& .MuiTabs-indicator": {
-                      backgroundColor: COLORS.PRIMARY,
-                      height: 3,
-                      borderRadius: "4px 4px 0 0",
+                      backgroundColor: COLORS.CHARTBOOK.INK,
+                      height: 2,
                     },
                     "& .MuiTab-root": {
                       color: COLORS.TEXT_SECONDARY,
                       fontWeight: 500,
-                      fontSize: { xs: "0.95rem", md: "1.1rem" },
-                      minWidth: { xs: "auto", md: 180 },
-                      padding: { xs: "12px 20px", md: "16px 32px" },
+                      fontSize: { xs: "0.95rem", md: "1rem" },
+                      minWidth: { xs: "auto", md: "auto" },
+                      padding: { xs: "12px 20px", md: "12px 24px" },
                       textTransform: "none",
-                      borderRadius: "8px 8px 0 0",
-                      transition: "all 0.3s ease",
+                      transition: "all 0.2s ease",
                       "&.Mui-selected": {
-                        color: COLORS.PRIMARY,
+                        color: COLORS.CHARTBOOK.INK,
                         fontWeight: 600,
-                        backgroundColor: alpha(COLORS.PRIMARY, 0.08),
+                        backgroundColor: "transparent",
                       },
                       "&:hover": {
-                        backgroundColor: alpha(COLORS.PRIMARY, 0.04),
+                        backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.06),
                       },
                     },
                   }}
@@ -158,10 +107,8 @@ function MyPage() {
             </Grid>
           </Grid>
         </Container>
-      </Card>
-      <Box pt={2} px={1} mt={2}>
-        <AppFooter />
       </Box>
+      <AppFooter />
     </>
   );
 }

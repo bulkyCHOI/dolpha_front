@@ -11,18 +11,21 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { Link as RouterLink } from "react-router-dom";
 
 import Typography from "@mui/material/Typography";
-import { COLORS } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 
+const MONO_STACK = "'Fragment Mono', 'Monaco', monospace";
 const RISE = COLORS.UP;
 const FALL = COLORS.DOWN;
-const MUTED = COLORS.TEXT_SECONDARY;
+const MUTED = COLORS.CHARTBOOK.INK;
 const OK = COLORS.SUCCESS;
 
 const cardSx = {
   p: 2,
-  borderRadius: 2,
+  borderRadius: 0,
   height: "100%",
-  boxShadow: "0 1px 3px rgba(16,24,40,0.06), 0 1px 2px rgba(16,24,40,0.04)",
+  boxShadow: "none",
+  backgroundColor: COLORS.CHARTBOOK.GROUND,
+  border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
 };
 
 const won = (v) => (v ?? 0).toLocaleString("ko-KR");
@@ -45,13 +48,13 @@ function ConditionDots({ pullback, breakout, foreign }) {
               width: 8,
               height: 8,
               borderRadius: "50%",
-              bgcolor: ok ? OK : "#d3dae2",
+              bgcolor: ok ? OK : COLORS.CHARTBOOK.GRID,
               flexShrink: 0,
             }}
           />
           <Typography
             variant="caption"
-            sx={{ fontSize: 11, color: ok ? OK : MUTED, fontWeight: ok ? 700 : 400 }}
+            sx={{ fontSize: 11, color: ok ? OK : MUTED, fontWeight: ok ? 700 : 400, fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}
           >
             {label}
           </Typography>
@@ -77,9 +80,12 @@ function ThemeBadge({ name }) {
       sx={{
         height: 19,
         fontSize: 11,
-        bgcolor: COLORS.TINT_PRIMARY,
-        color: COLORS.PRIMARY_DARK,
+        backgroundColor: "transparent",
+        border: `1px solid ${COLORS.CHARTBOOK.PANEL_BLUE}`,
+        color: COLORS.CHARTBOOK.PANEL_BLUE,
         fontWeight: 600,
+        borderRadius: "2px",
+        fontFamily: MONO_STACK,
       }}
     />
   );
@@ -102,7 +108,7 @@ function PositionCard({ position: p }) {
             </Typography>
             <ThemeBadge name={p.theme_name} />
           </Box>
-          <Typography variant="caption" sx={{ color: COLORS.TEXT_MUTED, fontSize: 11 }}>
+          <Typography variant="caption" sx={{ color: COLORS.CHARTBOOK.INK, fontSize: 11, fontFamily: MONO_STACK }}>
             {p.stock_code} · {p.entry_count}/{p.max_entries}차 진입
             {p.entered_at ? ` · ${p.entered_at}` : ""}
           </Typography>
@@ -111,49 +117,49 @@ function PositionCard({ position: p }) {
           <Typography
             variant="h5"
             fontWeight="bold"
-            sx={{ color: plColor(p.profit_loss_rate), lineHeight: 1.1 }}
+            sx={{ color: plColor(p.profit_loss_rate), lineHeight: 1.1, fontFamily: MONO_STACK, fontVariantNumeric: "tabular-nums" }}
           >
             {signedPct(p.profit_loss_rate)}
           </Typography>
-          <Typography variant="caption" sx={{ color: plColor(p.profit_loss_rate), fontSize: 11 }}>
+          <Typography variant="caption" sx={{ color: plColor(p.profit_loss_rate), fontSize: 11, fontFamily: MONO_STACK, fontVariantNumeric: "tabular-nums" }}>
             {p.profit_loss_amount >= 0 ? "+" : ""}
             {won(p.profit_loss_amount)}원
           </Typography>
         </Box>
       </Box>
 
-      <Divider sx={{ my: 1.25 }} />
+      <Divider sx={{ my: 1.25, borderColor: COLORS.CHARTBOOK.GRID }} />
 
       <Grid container spacing={1}>
         <Grid item xs={6}>
-          <Typography variant="caption" sx={{ color: MUTED, fontSize: 11, display: "block" }}>
+          <Typography variant="caption" sx={{ color: MUTED, fontSize: 11, display: "block", fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}>
             평단 → 현재가
           </Typography>
-          <Typography variant="button" sx={{ fontSize: 13 }}>
+          <Typography variant="button" sx={{ fontSize: 13, fontFamily: MONO_STACK, fontVariantNumeric: "tabular-nums" }}>
             {won(p.avg_price)} → <strong>{won(p.current_price)}</strong>
           </Typography>
         </Grid>
         <Grid item xs={6}>
-          <Typography variant="caption" sx={{ color: MUTED, fontSize: 11, display: "block" }}>
+          <Typography variant="caption" sx={{ color: MUTED, fontSize: 11, display: "block", fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}>
             수량
           </Typography>
-          <Typography variant="button" sx={{ fontSize: 13 }}>
+          <Typography variant="button" sx={{ fontSize: 13, fontFamily: MONO_STACK, fontVariantNumeric: "tabular-nums" }}>
             {won(p.quantity)}주
           </Typography>
         </Grid>
         <Grid item xs={6}>
-          <Typography variant="caption" sx={{ color: MUTED, fontSize: 11, display: "block" }}>
+          <Typography variant="caption" sx={{ color: MUTED, fontSize: 11, display: "block", fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}>
             손절가
           </Typography>
-          <Typography variant="button" sx={{ fontSize: 13, color: FALL }}>
+          <Typography variant="button" sx={{ fontSize: 13, color: FALL, fontFamily: MONO_STACK, fontVariantNumeric: "tabular-nums" }}>
             {p.stop_price ? won(p.stop_price) : "—"}
           </Typography>
         </Grid>
         <Grid item xs={6}>
-          <Typography variant="caption" sx={{ color: MUTED, fontSize: 11, display: "block" }}>
+          <Typography variant="caption" sx={{ color: MUTED, fontSize: 11, display: "block", fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}>
             목표가
           </Typography>
-          <Typography variant="button" sx={{ fontSize: 13, color: RISE }}>
+          <Typography variant="button" sx={{ fontSize: 13, color: RISE, fontFamily: MONO_STACK, fontVariantNumeric: "tabular-nums" }}>
             {p.target_price ? won(p.target_price) : "—"}
           </Typography>
         </Grid>
@@ -177,7 +183,7 @@ function PositionCard({ position: p }) {
           gap: 0.4,
           mt: 1,
           fontSize: 11,
-          color: COLORS.PRIMARY,
+          color: COLORS.CHARTBOOK.PANEL_BLUE,
           textDecoration: "none",
           "&:hover": { textDecoration: "underline" },
         }}
@@ -196,7 +202,8 @@ function WatchingCard({ item: w }) {
     <Card
       sx={{
         ...cardSx,
-        borderLeft: `3px solid ${w.conditions_met >= 2 ? COLORS.WARNING : "#d3dae2"}`,
+        borderLeft: "none",
+        borderTop: `2px solid ${w.conditions_met >= 2 ? COLORS.WARNING : COLORS.CHARTBOOK.GRID}`,
       }}
     >
       <Box
@@ -209,7 +216,7 @@ function WatchingCard({ item: w }) {
             </Typography>
             <ThemeBadge name={w.theme_name} />
           </Box>
-          <Typography variant="caption" sx={{ color: COLORS.TEXT_MUTED, fontSize: 11 }}>
+          <Typography variant="caption" sx={{ color: COLORS.CHARTBOOK.INK, fontSize: 11, fontFamily: MONO_STACK }}>
             {w.stock_code}
             {w.checked_at ? ` · ${w.checked_at} 판정` : ""}
           </Typography>
@@ -221,8 +228,11 @@ function WatchingCard({ item: w }) {
             height: 20,
             fontSize: 11,
             fontWeight: 700,
-            bgcolor: w.conditions_met >= 2 ? `${COLORS.TINT_WARNING}` : COLORS.SURFACE_ALT,
+            backgroundColor: "transparent",
+            border: `1px solid ${w.conditions_met >= 2 ? COLORS.WARNING : COLORS.CHARTBOOK.GRID}`,
             color: w.conditions_met >= 2 ? COLORS.WARNING : MUTED,
+            borderRadius: "2px",
+            fontFamily: MONO_STACK,
           }}
         />
       </Box>
@@ -237,7 +247,7 @@ function WatchingCard({ item: w }) {
 
       <Typography
         variant="caption"
-        sx={{ display: "block", mt: 1, color: MUTED, fontSize: 11, lineHeight: 1.5 }}
+        sx={{ display: "block", mt: 1, color: COLORS.CHARTBOOK.INK, fontSize: 11, lineHeight: 1.5 }}
       >
         {w.last_reason}
       </Typography>
@@ -254,7 +264,7 @@ WatchingCard.propTypes = { item: PropTypes.object.isRequired };
 function ThemeSurgePositions({ positions, watching, summary, loading, error, isAuthenticated }) {
   if (!isAuthenticated) {
     return (
-      <Alert severity="info" sx={{ mb: 2 }}>
+      <Alert severity="info" sx={{ mb: 2, backgroundColor: COLORS.CHARTBOOK.GROUND, border: `1px solid ${COLORS.CHARTBOOK.GRID}` }}>
         로그인하면 내 급등테마주 보유 포지션과 진입 대기 종목이 여기에 표시됩니다.
       </Alert>
     );
@@ -265,7 +275,7 @@ function ThemeSurgePositions({ positions, watching, summary, loading, error, isA
       <Grid container spacing={2} sx={{ mb: 2 }}>
         {[0, 1, 2].map((i) => (
           <Grid item xs={12} md={4} key={i}>
-            <Skeleton variant="rounded" height={150} />
+            <Skeleton variant="rounded" height={150} sx={{ backgroundColor: COLORS.CHARTBOOK.GRID }} />
           </Grid>
         ))}
       </Grid>
@@ -274,7 +284,7 @@ function ThemeSurgePositions({ positions, watching, summary, loading, error, isA
 
   if (error) {
     return (
-      <Alert severity="error" sx={{ mb: 2 }}>
+      <Alert severity="error" sx={{ mb: 2, backgroundColor: COLORS.CHARTBOOK.GROUND, border: `1px solid ${COLORS.CHARTBOOK.GRID}` }}>
         {error}
       </Alert>
     );
@@ -288,7 +298,7 @@ function ThemeSurgePositions({ positions, watching, summary, loading, error, isA
         <Typography variant="body2" sx={{ color: MUTED }}>
           현재 급등테마주 전략으로 추적 중인 종목이 없습니다.
         </Typography>
-        <Typography variant="caption" sx={{ color: COLORS.TEXT_MUTED }}>
+        <Typography variant="caption" sx={{ color: COLORS.CHARTBOOK.INK, fontSize: 12 }}>
           마이페이지에서 급등테마주 자동매매를 켜면 장중 급등 테마의 주도주가 자동으로 등록됩니다.
         </Typography>
       </Card>
@@ -300,15 +310,15 @@ function ThemeSurgePositions({ positions, watching, summary, loading, error, isA
       {positions.length > 0 && (
         <>
           <Box sx={{ display: "flex", alignItems: "baseline", gap: 1, mb: 1 }}>
-            <Typography variant="h6" fontWeight="bold" sx={{ fontSize: 15 }}>
+            <Typography variant="h6" fontWeight="bold" sx={{ fontSize: 15, fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}>
               보유 포지션
             </Typography>
-            <Typography variant="caption" sx={{ color: MUTED }}>
+            <Typography variant="caption" sx={{ color: MUTED, fontFamily: MONO_STACK }}>
               {summary.position_count}종목
             </Typography>
             <Typography
               variant="button"
-              sx={{ fontSize: 13, fontWeight: 700, color: plColor(summary.total_profit_rate) }}
+              sx={{ fontSize: 13, fontWeight: 700, color: plColor(summary.total_profit_rate), fontFamily: MONO_STACK, fontVariantNumeric: "tabular-nums" }}
             >
               {signedPct(summary.total_profit_rate)} ({summary.total_profit_loss >= 0 ? "+" : ""}
               {won(summary.total_profit_loss)}원)
@@ -327,10 +337,10 @@ function ThemeSurgePositions({ positions, watching, summary, loading, error, isA
       {watching.length > 0 && (
         <>
           <Box sx={{ display: "flex", alignItems: "baseline", gap: 1, mb: 1 }}>
-            <Typography variant="h6" fontWeight="bold" sx={{ fontSize: 15 }}>
+            <Typography variant="h6" fontWeight="bold" sx={{ fontSize: 15, fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}>
               진입 대기
             </Typography>
-            <Typography variant="caption" sx={{ color: MUTED }}>
+            <Typography variant="caption" sx={{ color: MUTED, fontSize: 12 }}>
               {summary.watching_count}종목 · 눌림목 → 전고점 돌파 → 외국인 매수세 3조건이 모두
               갖춰지면 매수합니다
             </Typography>

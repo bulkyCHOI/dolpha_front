@@ -24,7 +24,7 @@ import Typography from "@mui/material/Typography";
 import { adjustToKRXTickSize, getKRXTickSize } from "utils/formatters";
 import { useTradingForm } from "hooks/useTradingForm";
 import { useAuth } from "contexts/AuthContext";
-import { COLORS, GRADIENT_COLORS, alpha } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 
 /**
  * 자동매매 설정 상세보기/수정 모달 컴포넌트
@@ -107,7 +107,10 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
       fullWidth
       PaperProps={{
         sx: {
-          borderRadius: 3,
+          borderRadius: 0,
+          bgcolor: COLORS.CHARTBOOK.GROUND,
+          border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+          boxShadow: "none",
           maxHeight: "90vh",
         },
       }}
@@ -116,12 +119,7 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
         sx={{
           p: 3,
           pb: 1,
-          background: `linear-gradient(135deg, ${alpha(COLORS.PRIMARY, 0.08)} 0%, ${alpha(
-            COLORS.PRIMARY_DARK,
-            0.08
-          )} 100%)`,
-          border: `1px solid ${alpha(COLORS.PRIMARY, 0.1)}`,
-          borderBottom: "none",
+          borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}`,
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
@@ -142,27 +140,24 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
             <Box display="flex" alignItems="center" gap={0.5}>
               <Chip
                 label={isActive ? "활성" : "비활성"}
-                color={isActive ? "success" : "default"}
                 size="small"
-                sx={{ fontWeight: "bold", fontSize: "0.75rem" }}
+                sx={{
+                  fontWeight: "bold",
+                  fontSize: "0.75rem",
+                  backgroundColor: "transparent",
+                  color: isActive ? COLORS.SUCCESS : COLORS.TEXT_MUTED,
+                  border: `1px solid ${isActive ? COLORS.SUCCESS : COLORS.TEXT_MUTED}`,
+                  borderRadius: "2px",
+                }}
               />
               <Switch
                 checked={isActive}
                 onChange={(e) => setIsActive(e.target.checked)}
-                color="success"
                 size="small"
               />
             </Box>
           </Tooltip>
-          <IconButton
-            onClick={onClose}
-            sx={{
-              color: COLORS.TEXT_SECONDARY,
-              "&:hover": {
-                backgroundColor: COLORS.SURFACE_ALT,
-              },
-            }}
-          >
+          <IconButton onClick={onClose} size="small" sx={{ color: COLORS.CHARTBOOK.INK }}>
             <Close />
           </IconButton>
         </Box>
@@ -191,9 +186,9 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
               sx={{
                 p: 2,
                 mb: 3,
-                border: `1px solid ${COLORS.BORDER}`,
+                border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
                 borderRadius: 2,
-                backgroundColor: COLORS.SURFACE_ALT,
+                backgroundColor: COLORS.CHARTBOOK.GROUND,
               }}
             >
               <Typography variant="h6" fontWeight="bold" mb={2}>
@@ -209,9 +204,9 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                       margin: "0 16px 0 0",
                     },
                     "& .MuiRadio-root": {
-                      color: COLORS.PRIMARY,
+                      color: COLORS.CHARTBOOK.GRID,
                       "&.Mui-checked": {
-                        color: COLORS.PRIMARY,
+                        color: COLORS.CHARTBOOK.INK,
                       },
                     },
                   }}
@@ -235,9 +230,9 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
               sx={{
                 p: 2,
                 mb: 3,
-                border: `1px solid ${COLORS.BORDER}`,
+                border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
                 borderRadius: 2,
-                backgroundColor: COLORS.SURFACE_ALT,
+                backgroundColor: COLORS.CHARTBOOK.GROUND,
               }}
             >
               <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
@@ -249,9 +244,9 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                     size="small"
                     onClick={handleReset}
                     sx={{
-                      color: COLORS.PRIMARY,
+                      color: COLORS.CHARTBOOK.INK,
                       "&:hover": {
-                        backgroundColor: alpha(COLORS.PRIMARY, 0.1),
+                        backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.06),
                       },
                     }}
                   >
@@ -275,12 +270,13 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                     inputProps={{ step: getKRXTickSize(tradingForm.entryPoint) }}
                     sx={{
                       "& .MuiOutlinedInput-root": {
+                        borderRadius: "2px",
                         "&.Mui-focused fieldset": {
-                          borderColor: COLORS.PRIMARY,
+                          borderColor: COLORS.CHARTBOOK.INK,
                         },
                       },
                       "& .MuiInputLabel-root.Mui-focused": {
-                        color: COLORS.PRIMARY,
+                        color: COLORS.CHARTBOOK.INK,
                       },
                     }}
                   />
@@ -295,12 +291,13 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                     onChange={(e) => tradingForm.setMaxLoss(e.target.value)}
                     sx={{
                       "& .MuiOutlinedInput-root": {
+                        borderRadius: "2px",
                         "&.Mui-focused fieldset": {
-                          borderColor: COLORS.PRIMARY,
+                          borderColor: COLORS.CHARTBOOK.INK,
                         },
                       },
                       "& .MuiInputLabel-root.Mui-focused": {
-                        color: COLORS.PRIMARY,
+                        color: COLORS.CHARTBOOK.INK,
                       },
                     }}
                   />
@@ -315,12 +312,13 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                     onChange={(e) => tradingForm.setStopLoss(e.target.value)}
                     sx={{
                       "& .MuiOutlinedInput-root": {
+                        borderRadius: "2px",
                         "&.Mui-focused fieldset": {
-                          borderColor: COLORS.PRIMARY,
+                          borderColor: COLORS.CHARTBOOK.INK,
                         },
                       },
                       "& .MuiInputLabel-root.Mui-focused": {
-                        color: COLORS.PRIMARY,
+                        color: COLORS.CHARTBOOK.INK,
                       },
                     }}
                   />
@@ -335,12 +333,13 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                     onChange={(e) => tradingForm.setTakeProfit(e.target.value)}
                     sx={{
                       "& .MuiOutlinedInput-root": {
+                        borderRadius: "2px",
                         "&.Mui-focused fieldset": {
-                          borderColor: COLORS.PRIMARY,
+                          borderColor: COLORS.CHARTBOOK.INK,
                         },
                       },
                       "& .MuiInputLabel-root.Mui-focused": {
-                        color: COLORS.PRIMARY,
+                        color: COLORS.CHARTBOOK.INK,
                       },
                     }}
                   />
@@ -356,9 +355,9 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
               sx={{
                 p: 2,
                 mb: 3,
-                border: `1px solid ${COLORS.BORDER}`,
+                border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
                 borderRadius: 2,
-                backgroundColor: COLORS.SURFACE_ALT,
+                backgroundColor: COLORS.CHARTBOOK.GROUND,
               }}
             >
               <Typography variant="h6" fontWeight="bold" mb={2}>
@@ -378,12 +377,13 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                     inputProps={{ min: 0, max: 6 }}
                     sx={{
                       "& .MuiOutlinedInput-root": {
+                        borderRadius: "2px",
                         "&.Mui-focused fieldset": {
-                          borderColor: COLORS.PRIMARY,
+                          borderColor: COLORS.CHARTBOOK.INK,
                         },
                       },
                       "& .MuiInputLabel-root.Mui-focused": {
-                        color: COLORS.PRIMARY,
+                        color: COLORS.CHARTBOOK.INK,
                       },
                     }}
                   />
@@ -395,12 +395,13 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                     onClick={tradingForm.handleEqualDivision}
                     fullWidth
                     sx={{
-                      borderColor: COLORS.PRIMARY,
-                      color: COLORS.PRIMARY,
+                      borderColor: COLORS.CHARTBOOK.INK,
+                      color: COLORS.CHARTBOOK.INK,
                       fontSize: "0.75rem",
+                      borderRadius: "2px",
                       "&:hover": {
-                        borderColor: COLORS.PRIMARY_HOVER,
-                        backgroundColor: alpha(COLORS.PRIMARY, 0.08),
+                        borderColor: COLORS.CHARTBOOK.INK,
+                        backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.06),
                       },
                     }}
                   >
@@ -427,12 +428,13 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                       inputProps={{ step: getKRXTickSize(tradingForm.entryPoint) }}
                       sx={{
                         "& .MuiOutlinedInput-root": {
+                          borderRadius: "2px",
                           "&.Mui-focused fieldset": {
-                            borderColor: COLORS.PRIMARY,
+                            borderColor: COLORS.CHARTBOOK.INK,
                           },
                         },
                         "& .MuiInputLabel-root.Mui-focused": {
-                          color: COLORS.PRIMARY,
+                          color: COLORS.CHARTBOOK.INK,
                         },
                       }}
                     />
@@ -448,12 +450,13 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                       inputProps={{ min: 0, max: 100, step: 0.1 }}
                       sx={{
                         "& .MuiOutlinedInput-root": {
+                          borderRadius: "2px",
                           "&.Mui-focused fieldset": {
-                            borderColor: COLORS.PRIMARY,
+                            borderColor: COLORS.CHARTBOOK.INK,
                           },
                         },
                         "& .MuiInputLabel-root.Mui-focused": {
-                          color: COLORS.PRIMARY,
+                          color: COLORS.CHARTBOOK.INK,
                         },
                       }}
                     />
@@ -477,12 +480,13 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                         inputProps={{ step: 1 }}
                         sx={{
                           "& .MuiOutlinedInput-root": {
+                            borderRadius: "2px",
                             "&.Mui-focused fieldset": {
-                              borderColor: COLORS.PRIMARY,
+                              borderColor: COLORS.CHARTBOOK.INK,
                             },
                           },
                           "& .MuiInputLabel-root.Mui-focused": {
-                            color: COLORS.PRIMARY,
+                            color: COLORS.CHARTBOOK.INK,
                           },
                         }}
                       />
@@ -500,12 +504,13 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                         inputProps={{ min: 0, max: 100, step: 0.1 }}
                         sx={{
                           "& .MuiOutlinedInput-root": {
+                            borderRadius: "2px",
                             "&.Mui-focused fieldset": {
-                              borderColor: COLORS.PRIMARY,
+                              borderColor: COLORS.CHARTBOOK.INK,
                             },
                           },
                           "& .MuiInputLabel-root.Mui-focused": {
-                            color: COLORS.PRIMARY,
+                            color: COLORS.CHARTBOOK.INK,
                           },
                         }}
                       />
@@ -520,7 +525,7 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                   variant="body2"
                   sx={{
                     color:
-                      Math.abs(tradingForm.positionSum - 100) >= 0.01 ? COLORS.UP : COLORS.SUCCESS,
+                      Math.abs(tradingForm.positionSum - 100) >= 0.01 ? COLORS.UP : COLORS.DOWN,
                     fontWeight: "bold",
                   }}
                 >
@@ -538,9 +543,9 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
                 <Box
                   sx={{
                     p: 1,
-                    bgcolor: `${COLORS.TINT_WARNING}`,
-                    border: `1px solid ${COLORS.TINT_WARNING}`,
-                    borderRadius: 1,
+                    bgcolor: alpha(COLORS.WARNING, 0.1),
+                    border: `1px solid ${COLORS.WARNING}`,
+                    borderRadius: 2,
                     mt: 1,
                   }}
                 >
@@ -561,16 +566,16 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
           onClick={onClose}
           disabled={loading}
           sx={{
-            borderColor: COLORS.BORDER_STRONG,
-            color: COLORS.TEXT_SECONDARY,
+            borderColor: COLORS.CHARTBOOK.GRID,
+            color: COLORS.CHARTBOOK.INK,
             px: 3,
             py: 1,
             borderRadius: 2,
             textTransform: "none",
             fontSize: "0.9rem",
             "&:hover": {
-              borderColor: "#999",
-              backgroundColor: COLORS.SURFACE_ALT,
+              borderColor: COLORS.CHARTBOOK.INK,
+              backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.06),
             },
           }}
         >
@@ -581,8 +586,8 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
           onClick={handleSave}
           disabled={!tradingForm.isFormValid() || loading}
           sx={{
-            background: tradingForm.isFormValid() ? GRADIENT_COLORS.PRIMARY : COLORS.BORDER_STRONG,
-            color: COLORS.ON_ACCENT,
+            backgroundColor: tradingForm.isFormValid() ? COLORS.CHARTBOOK.INK : COLORS.CHARTBOOK.GRID,
+            color: COLORS.CHARTBOOK.GROUND,
             px: 3,
             py: 1,
             borderRadius: 2,
@@ -590,24 +595,17 @@ const TradingConfigModal = ({ open, onClose, config, onSave, loading = false }) 
             fontSize: "0.9rem",
             fontWeight: 500,
             "&:hover": {
-              background: tradingForm.isFormValid()
-                ? `linear-gradient(135deg, ${COLORS.PRIMARY_HOVER} 0%, #6a4190 100%)`
-                : COLORS.BORDER_STRONG,
-              transform: tradingForm.isFormValid() ? "translateY(-1px)" : "none",
-              boxShadow: tradingForm.isFormValid()
-                ? `0 6px 20px ${alpha(COLORS.PRIMARY, 0.3)}`
-                : "none",
+              backgroundColor: tradingForm.isFormValid() ? COLORS.CHARTBOOK.INK : COLORS.CHARTBOOK.GRID,
             },
             "&:disabled": {
-              background: `${COLORS.BORDER_STRONG} !important`,
-              color: "white !important",
+              backgroundColor: `${COLORS.CHARTBOOK.GRID} !important`,
+              color: `${COLORS.CHARTBOOK.GROUND} !important`,
             },
-            transition: "all 0.3s ease",
           }}
         >
           {loading ? (
             <>
-              <CircularProgress size={16} sx={{ mr: 1, color: COLORS.ON_ACCENT }} />
+              <CircularProgress size={16} sx={{ mr: 1, color: COLORS.CHARTBOOK.GROUND }} />
               저장 중...
             </>
           ) : (

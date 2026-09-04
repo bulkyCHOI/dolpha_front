@@ -201,9 +201,29 @@ export const COLORS = {
     LOW: cssVar("rank-low"),
     DEFAULT: cssVar("rank-default"),
   },
+
+  // Chartbook 월드 색상
+  CHARTBOOK: {
+    GROUND: cssVar("chartbook-ground"),
+    INK: cssVar("chartbook-ink"),
+    GRID: cssVar("chartbook-grid"),
+    RS_RED: cssVar("chartbook-rs-red"),
+    PANEL_BLUE: cssVar("chartbook-panel-blue"),
+    SECONDARY: cssVar("chartbook-secondary"),
+    SELECTED_BG: cssVar("chartbook-selected-bg"),
+    SELECTED_INK: cssVar("chartbook-selected-ink"),
+  },
 };
 
 export const LAYOUT = {
+  /**
+   * 본문 좌우 여백 (MUI spacing 단위).
+   *
+   * FullWidthContainer 와 상단 헤더 알약이 같은 값을 써서 폭을 맞춘다.
+   * 헤더만 MUI Container 를 쓰면 테마의 전역 max-width override(1320px)에
+   * 걸려 본문보다 좁아진다.
+   */
+  PAGE_GUTTER: { xs: 2, sm: 3, md: 4 },
   NAVBAR_HEIGHT: "80px",
   CONTENT_HEIGHT: "calc(100vh - 80px)",
   BOX_SHADOW: "0 4px 6px rgba(0, 0, 0, 0.1)",
@@ -222,4 +242,23 @@ export const SCROLLBAR_STYLES = {
     borderRadius: "4px",
     hover: cssVar("text-muted"),
   },
+};
+
+/**
+ * 쌓임 순서(z-index).
+ *
+ * 상단 헤더는 "본문 위에 떠 있는 판"이라 어떤 본문 요소보다도 위여야 한다.
+ * 값이 흩어져 있으면 페이지마다 임의로 1000 같은 수를 써서 헤더를 덮어버리므로
+ * 층을 여기 한곳에 모아둔다. MUI 기본 스케일(appBar 1100 · modal 1300 ·
+ * tooltip 1500)과 어긋나지 않게 헤더는 appBar 자리를 그대로 쓴다.
+ */
+export const Z_INDEX = {
+  /** 표·차트 내부의 sticky 헤더나 고정 열 */
+  CONTENT_STICKY: 5,
+  /** 페이지 하단에 고정되는 바 (모바일 BottomNavigation 등) */
+  PAGE_BOTTOM_BAR: 1000,
+  /** 전역 상단 네비게이션 */
+  HEADER: 1100,
+  /** 헤더에서 펼쳐지는 드롭다운 — 헤더 위, MUI Modal(1300) 아래 */
+  HEADER_MENU: 1200,
 };

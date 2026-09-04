@@ -33,9 +33,22 @@ import ChartContainer from "components/ChartContainer/ChartContainer";
 import StockInfoHeader from "components/StockInfoHeader/StockInfoHeader";
 import StockList from "components/StockList/StockList";
 import FinancialFilter from "components/FinancialFilter/FinancialFilter";
+import ChartbookHeader from "components/ChartbookHeader/ChartbookHeader";
 import useFinancialFilter from "hooks/useFinancialFilter";
-import { COLORS, GRADIENT_COLORS, alpha, onColor } from "constants/styles";
+import { COLORS, GRADIENT_COLORS, Z_INDEX, alpha, onColor } from "constants/styles";
 import { formatNumber } from "utils/formatters";
+
+// Chartbook: 수치·티커·기계 출력 폰트
+const MONO_STACK = "'Fragment Mono', 'Monaco', monospace";
+
+// RS 순위 강도색 (배지는 이 색을 채움이 아니라 테두리·글자로만 쓴다)
+const rsBandColor = (rank) => {
+  if (rank >= 90) return COLORS.UP;
+  if (rank >= 70) return COLORS.WARNING;
+  if (rank >= 60) return COLORS.SUCCESS;
+  if (rank >= 50) return COLORS.DOWN;
+  return COLORS.TEXT_MUTED;
+};
 
 const PERIODS = [
   { value: "daily", label: "일간" },
@@ -216,7 +229,7 @@ function TopRising() {
         px={{ xs: 2, lg: 0 }}
         mx={-2}
         sx={{
-          background: GRADIENT_COLORS.DARK_GRADIENT,
+          background: COLORS.CHARTBOOK.GROUND,
           minHeight: "100vh",
           display: "flex",
           alignItems: "center",
@@ -224,7 +237,7 @@ function TopRising() {
         }}
       >
         <CircularProgress color="inherit" />
-        <Typography color="white.main" sx={{ ml: 2 }}>
+        <Typography color="text.primary" sx={{ ml: 2 }}>
           상승률 TOP 50 데이터를 불러오는 중...
         </Typography>
       </Box>
@@ -240,14 +253,14 @@ function TopRising() {
         px={{ xs: 2, lg: 0 }}
         mx={-2}
         sx={{
-          background: GRADIENT_COLORS.DARK_GRADIENT,
+          background: COLORS.CHARTBOOK.GROUND,
           minHeight: "100vh",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
         }}
       >
-        <Typography color="white.main">오류: {error}</Typography>
+        <Typography color="text.primary">오류: {error}</Typography>
       </Box>
     );
   }
@@ -277,9 +290,9 @@ function TopRising() {
       >
         <Box
           sx={{
-            backgroundColor: COLORS.SURFACE,
+            backgroundColor: COLORS.CHARTBOOK.GROUND,
             borderRadius: 2,
-            boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+            border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
             height: "100%",
             display: "flex",
             flexDirection: "column",
@@ -326,14 +339,14 @@ function TopRising() {
                     width: 64,
                     height: 64,
                     borderRadius: "50%",
-                    background: GRADIENT_COLORS.PRIMARY,
+                    backgroundColor: COLORS.CHARTBOOK.INK,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     mb: 2,
                   }}
                 >
-                  <Typography variant="h4" color="white.main">
+                  <Typography variant="h4" color={COLORS.CHARTBOOK.GROUND}>
                     📈
                   </Typography>
                 </Box>
@@ -397,9 +410,9 @@ function TopRising() {
       >
         <Box
           sx={{
-            backgroundColor: COLORS.SURFACE,
+            backgroundColor: COLORS.CHARTBOOK.GROUND,
             borderRadius: 2,
-            boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+            border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
             height: "100%",
             display: "flex",
             flexDirection: "column",
@@ -417,7 +430,7 @@ function TopRising() {
           />
 
           {/* 탭 헤더 */}
-          <Box sx={{ flexShrink: 0, borderBottom: `1px solid ${COLORS.BORDER}` }}>
+          <Box sx={{ flexShrink: 0, borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}` }}>
             <Tabs
               value={activeTab}
               onChange={handleTabChange}
@@ -425,8 +438,8 @@ function TopRising() {
               sx={{
                 minHeight: { xs: "44px", md: "48px" },
                 "& .MuiTabs-indicator": {
-                  backgroundColor: COLORS.PRIMARY,
-                  height: "3px",
+                  backgroundColor: COLORS.CHARTBOOK.INK,
+                  height: "2px",
                 },
                 "& .MuiTab-root": {
                   fontWeight: "bold",
@@ -434,9 +447,7 @@ function TopRising() {
                   color: COLORS.TEXT_SECONDARY,
                   minWidth: "auto",
                   padding: { xs: "8px 12px", md: "12px 16px" },
-                  "&.Mui-selected": {
-                    color: COLORS.PRIMARY,
-                  },
+                  "&.Mui-selected": { color: COLORS.CHARTBOOK.INK },
                 },
               }}
             >
@@ -447,7 +458,7 @@ function TopRising() {
 
           {/* 기간 선택 탭 - 로딩 중에도 항상 표시 */}
           {activeTab === 0 && stockData.length > 0 && (
-            <Box sx={{ flexShrink: 0, borderBottom: `1px solid ${COLORS.BORDER}`, px: 0.5 }}>
+            <Box sx={{ flexShrink: 0, borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}`, px: 0.5 }}>
               <Tabs
                 value={period}
                 onChange={(_, v) => setPeriod(v)}
@@ -455,7 +466,7 @@ function TopRising() {
                 scrollButtons="auto"
                 sx={{
                   minHeight: "36px",
-                  "& .MuiTabs-indicator": { backgroundColor: COLORS.PRIMARY, height: "2px" },
+                  "& .MuiTabs-indicator": { backgroundColor: COLORS.CHARTBOOK.INK, height: "2px" },
                   "& .MuiTab-root": {
                     minHeight: "36px",
                     fontSize: "0.75rem",
@@ -463,7 +474,7 @@ function TopRising() {
                     color: COLORS.TEXT_MUTED,
                     padding: "6px 12px",
                     minWidth: "auto",
-                    "&.Mui-selected": { color: COLORS.PRIMARY },
+                    "&.Mui-selected": { color: COLORS.CHARTBOOK.INK },
                   },
                 }}
               >
@@ -510,11 +521,11 @@ function TopRising() {
                   {/* 테이블 헤더 */}
                   <Box
                     sx={{
-                      background: GRADIENT_COLORS.PRIMARY,
+                      backgroundColor: COLORS.CHARTBOOK.GROUND,
+                      borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}`,
                       p: 1,
                       display: "flex",
                       alignItems: "center",
-                      boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
                       flexShrink: 0,
                     }}
                   >
@@ -522,7 +533,7 @@ function TopRising() {
                       <Grid item xs={3} sm={2.5}>
                         <Typography
                           variant="subtitle2"
-                          color="white.main"
+                          color="text.primary"
                           fontWeight="bold"
                           sx={{ fontSize: { xs: "0.65rem", md: "0.8rem" } }}
                         >
@@ -532,7 +543,7 @@ function TopRising() {
                       <Grid item xs={2} sm={2}>
                         <Typography
                           variant="subtitle2"
-                          color="white.main"
+                          color="text.primary"
                           fontWeight="bold"
                           textAlign="center"
                           sx={{ fontSize: { xs: "0.65rem", md: "0.8rem" } }}
@@ -543,7 +554,7 @@ function TopRising() {
                       <Grid item xs={1.5} sm={1.5}>
                         <Typography
                           variant="subtitle2"
-                          color="white.main"
+                          color="text.primary"
                           fontWeight="bold"
                           textAlign="center"
                           sx={{ fontSize: { xs: "0.65rem", md: "0.8rem" } }}
@@ -554,7 +565,7 @@ function TopRising() {
                       <Grid item xs={2.75} sm={3}>
                         <Typography
                           variant="subtitle2"
-                          color="white.main"
+                          color="text.primary"
                           fontWeight="bold"
                           textAlign="center"
                           sx={{ fontSize: { xs: "0.65rem", md: "0.8rem" } }}
@@ -565,7 +576,7 @@ function TopRising() {
                       <Grid item xs={2.75} sm={3}>
                         <Typography
                           variant="subtitle2"
-                          color="white.main"
+                          color="text.primary"
                           fontWeight="bold"
                           textAlign="center"
                           sx={{ fontSize: { xs: "0.65rem", md: "0.8rem" } }}
@@ -581,7 +592,7 @@ function TopRising() {
                     sx={{
                       flex: 1,
                       overflow: "auto",
-                      backgroundColor: COLORS.SURFACE,
+                      backgroundColor: COLORS.CHARTBOOK.GROUND,
                       "&::-webkit-scrollbar": {
                         width: "8px",
                       },
@@ -607,28 +618,20 @@ function TopRising() {
                           borderBottom:
                             rowIndex === filteredStocks.length - 1
                               ? "none"
-                              : `1px solid ${COLORS.DIVIDER}`,
+                              : `1px solid ${COLORS.CHARTBOOK.GRID}`,
                           cursor: "pointer",
                           transition: "all 0.2s ease",
                           backgroundColor:
                             selectedStock?.code === row.code
-                              ? `linear-gradient(135deg, ${alpha(COLORS.PRIMARY, 0.1)} 0%, ${alpha(
-                                  COLORS.PRIMARY_DARK,
-                                  0.1
-                                )} 100%)`
-                              : rowIndex % 2 === 0
-                              ? COLORS.SURFACE_ALT
-                              : COLORS.ON_ACCENT,
+                              ? COLORS.CHARTBOOK.SELECTED_BG
+                              : COLORS.CHARTBOOK.GROUND,
+                          color:
+                            selectedStock?.code === row.code
+                              ? COLORS.CHARTBOOK.SELECTED_INK
+                              : "inherit",
                           "&:hover": {
-                            backgroundColor: alpha(COLORS.PRIMARY, 0.08),
-                            transform: "translateX(4px)",
-                            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                            borderLeft: `3px solid ${COLORS.PRIMARY}`,
+                            backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.06),
                           },
-                          ...(selectedStock?.code === row.code && {
-                            borderLeft: `3px solid ${COLORS.PRIMARY}`,
-                            boxShadow: `0 2px 12px ${alpha(COLORS.PRIMARY, 0.2)}`,
-                          }),
                         }}
                       >
                         <Grid container spacing={0} alignItems="center">
@@ -637,7 +640,7 @@ function TopRising() {
                               <Typography
                                 variant="body2"
                                 fontWeight={selectedStock?.code === row.code ? "bold" : "medium"}
-                                color={selectedStock?.code === row.code ? "info" : "text"}
+                                color={selectedStock?.code === row.code ? undefined : "text"}
                                 sx={{
                                   fontSize: { xs: "0.65rem", md: "0.75rem" },
                                   lineHeight: 1.1,
@@ -666,7 +669,8 @@ function TopRising() {
                                 label={`+${((row.change || 0) * 100).toFixed(1)}%`}
                                 size="small"
                                 sx={{
-                                  backgroundColor:
+                                  backgroundColor: "transparent",
+                                  color:
                                     (row.change || 0) * 100 >= 25
                                       ? COLORS.UP
                                       : (row.change || 0) * 100 >= 20
@@ -678,7 +682,7 @@ function TopRising() {
                                       : (row.change || 0) * 100 >= 5
                                       ? COLORS.DOWN
                                       : COLORS.TEXT_MUTED,
-                                  color: onColor(
+                                  border: `1px solid ${
                                     (row.change || 0) * 100 >= 25
                                       ? COLORS.UP
                                       : (row.change || 0) * 100 >= 20
@@ -690,15 +694,13 @@ function TopRising() {
                                       : (row.change || 0) * 100 >= 5
                                       ? COLORS.DOWN
                                       : COLORS.TEXT_MUTED
-                                  ),
-                                  fontWeight: "bold",
+                                  }`,
+                                  borderRadius: "2px",
+                                  fontFamily: MONO_STACK,
+                                  fontWeight: 500,
                                   fontSize: { xs: "0.55rem", md: "0.65rem" },
                                   minWidth: { xs: "45px", md: "40px" },
                                   height: { xs: "26px", md: "18px" },
-                                  cursor: "pointer",
-                                  "&:hover": {
-                                    opacity: 0.8,
-                                  },
                                 }}
                               />
                             </Box>
@@ -709,39 +711,15 @@ function TopRising() {
                                 label={Math.floor(row.rsRank) || "-"}
                                 size="small"
                                 sx={{
-                                  backgroundColor:
-                                    row.rsRank >= 90
-                                      ? COLORS.UP
-                                      : row.rsRank >= 80
-                                      ? COLORS.WARNING
-                                      : row.rsRank >= 70
-                                      ? COLORS.WARNING
-                                      : row.rsRank >= 60
-                                      ? COLORS.SUCCESS
-                                      : row.rsRank >= 50
-                                      ? COLORS.DOWN
-                                      : COLORS.TEXT_MUTED,
-                                  color: onColor(
-                                    row.rsRank >= 90
-                                      ? COLORS.UP
-                                      : row.rsRank >= 80
-                                      ? COLORS.WARNING
-                                      : row.rsRank >= 70
-                                      ? COLORS.WARNING
-                                      : row.rsRank >= 60
-                                      ? COLORS.SUCCESS
-                                      : row.rsRank >= 50
-                                      ? COLORS.DOWN
-                                      : COLORS.TEXT_MUTED
-                                  ),
-                                  fontWeight: "bold",
+                                  backgroundColor: "transparent",
+                                  color: rsBandColor(row.rsRank),
+                                  border: `1px solid ${rsBandColor(row.rsRank)}`,
+                                  borderRadius: "2px",
+                                  fontFamily: MONO_STACK,
+                                  fontWeight: 500,
                                   fontSize: { xs: "0.55rem", md: "0.65rem" },
                                   minWidth: { xs: "35px", md: "30px" },
                                   height: { xs: "26px", md: "18px" },
-                                  cursor: "pointer",
-                                  "&:hover": {
-                                    opacity: 0.8,
-                                  },
                                 }}
                               />
                             </Box>
@@ -829,15 +807,6 @@ function TopRising() {
                         variant="contained"
                         color="primary"
                         onClick={() => navigate("/pages/authentication/sign-in")}
-                        sx={{
-                          background: GRADIENT_COLORS.PRIMARY,
-                          color: onColor(GRADIENT_COLORS.PRIMARY),
-                          px: 4,
-                          py: 1.5,
-                          "&:hover": {
-                            background: GRADIENT_COLORS.PRIMARY_HOVER,
-                          },
-                        }}
                       >
                         로그인 하러 가기
                       </Button>
@@ -890,16 +859,16 @@ function TopRising() {
     <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
       <Box
         sx={{
-          backgroundColor: COLORS.SURFACE,
+          backgroundColor: COLORS.CHARTBOOK.GROUND,
           borderRadius: 2,
-          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+          border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
           height: "100%",
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
         }}
       >
-        <Box sx={{ px: 2, py: 1, borderBottom: `1px solid ${COLORS.BORDER}`, flexShrink: 0 }}>
+        <Box sx={{ px: 2, py: 1, borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}`, flexShrink: 0 }}>
           <Typography variant="h6" fontWeight="bold" sx={{ mb: 0.5 }}>
             상승률 TOP 50
           </Typography>
@@ -910,7 +879,7 @@ function TopRising() {
             scrollButtons="auto"
             sx={{
               minHeight: "32px",
-              "& .MuiTabs-indicator": { backgroundColor: COLORS.PRIMARY, height: "2px" },
+              "& .MuiTabs-indicator": { backgroundColor: COLORS.CHARTBOOK.INK, height: "2px" },
               "& .MuiTab-root": {
                 minHeight: "32px",
                 fontSize: "0.7rem",
@@ -918,7 +887,7 @@ function TopRising() {
                 color: COLORS.TEXT_MUTED,
                 padding: "4px 10px",
                 minWidth: "auto",
-                "&.Mui-selected": { color: COLORS.PRIMARY },
+                "&.Mui-selected": { color: COLORS.CHARTBOOK.INK },
               },
             }}
           >
@@ -963,9 +932,9 @@ function TopRising() {
     <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
       <Box
         sx={{
-          backgroundColor: COLORS.SURFACE,
+          backgroundColor: COLORS.CHARTBOOK.GROUND,
           borderRadius: 2,
-          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+          border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
           height: "100%",
           display: "flex",
           flexDirection: "column",
@@ -1007,14 +976,14 @@ function TopRising() {
                   width: 64,
                   height: 64,
                   borderRadius: "50%",
-                  background: GRADIENT_COLORS.PRIMARY,
+                  backgroundColor: COLORS.CHARTBOOK.INK,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   mb: 2,
                 }}
               >
-                <Typography variant="h4" color="white.main">
+                <Typography variant="h4" color={COLORS.CHARTBOOK.GROUND}>
                   📈
                 </Typography>
               </Box>
@@ -1069,16 +1038,16 @@ function TopRising() {
     <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
       <Box
         sx={{
-          backgroundColor: COLORS.SURFACE,
+          backgroundColor: COLORS.CHARTBOOK.GROUND,
           borderRadius: 2,
-          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+          border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
           height: "100%",
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
         }}
       >
-        <Box sx={{ px: 2, py: 1.5, borderBottom: `1px solid ${COLORS.BORDER}` }}>
+        <Box sx={{ px: 2, py: 1.5, borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}` }}>
           <Typography variant="h6" fontWeight="bold">
             자동매매 설정
           </Typography>
@@ -1131,6 +1100,16 @@ function TopRising() {
   return (
     <>
       <AppHeader routes={routes} sticky />
+      <Box sx={{ height: "80px", flexShrink: 0, backgroundColor: COLORS.CHARTBOOK.GROUND }} />
+      <ChartbookHeader
+        strategyName="상승률 TOP 50"
+        date={new Date().toLocaleDateString("ko-KR", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        })}
+        candidateCount={filteredStocks.length}
+      />
 
       {/* 모바일 레이아웃 */}
       {isMobile ? (
@@ -1138,7 +1117,7 @@ function TopRising() {
           sx={{
             height: "100vh",
             width: "100%",
-            backgroundColor: COLORS.SURFACE_ALT,
+            backgroundColor: COLORS.CHARTBOOK.GROUND,
             display: "flex",
             flexDirection: "column",
             overflow: "hidden",
@@ -1156,7 +1135,13 @@ function TopRising() {
 
           {/* 하단 네비게이션 */}
           <Paper
-            sx={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 1000 }}
+            sx={{
+              position: "fixed",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              zIndex: Z_INDEX.PAGE_BOTTOM_BAR,
+            }}
             elevation={3}
           >
             <BottomNavigation
@@ -1219,7 +1204,7 @@ function TopRising() {
           sx={{
             height: "100vh",
             width: "100%",
-            backgroundColor: COLORS.SURFACE_ALT,
+            backgroundColor: COLORS.CHARTBOOK.GROUND,
             display: "flex",
             flexDirection: "column",
             overflow: "hidden",

@@ -9,12 +9,14 @@
 
 import Box from "@mui/material/Box";
 import EnhancedDataTable from "components/EnhancedDataTable";
-import { COLORS } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 
 const ROW_MIN_HEIGHT = "40px";
 const SCROLL_HEIGHT = "380px";
 
 export default function FlowTable({ columns, data, minWidth }) {
+  const hoverBg = alpha(COLORS.CHARTBOOK.INK, 0.06);
+
   return (
     <Box sx={{ overflowX: "auto", mt: 1 }}>
       <EnhancedDataTable
@@ -31,9 +33,9 @@ export default function FlowTable({ columns, data, minWidth }) {
           },
           headRow: {
             style: {
-              backgroundColor: COLORS.SURFACE_ALT,
-              borderBottomWidth: "2px",
-              borderBottomColor: COLORS.BORDER,
+              backgroundColor: COLORS.CHARTBOOK.GROUND,
+              borderBottomWidth: "1px",
+              borderBottomColor: COLORS.CHARTBOOK.GRID,
               fontSize: "13px",
               fontWeight: "bold",
               minHeight: ROW_MIN_HEIGHT,
@@ -46,9 +48,8 @@ export default function FlowTable({ columns, data, minWidth }) {
             style: {
               minHeight: ROW_MIN_HEIGHT,
               fontSize: "13px",
-              "&:nth-of-type(odd)": { backgroundColor: COLORS.SURFACE_ALT },
-              // hover 는 시세 의미색이 아니라 전용 토큰을 쓴다.
-              "&:hover": { backgroundColor: `${COLORS.HOVER_BG} !important` },
+              "&:nth-of-type(odd)": { backgroundColor: COLORS.CHARTBOOK.GROUND },
+              "&:hover": { backgroundColor: `${hoverBg} !important` },
             },
           },
           cells: {

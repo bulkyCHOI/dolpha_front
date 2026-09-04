@@ -41,8 +41,8 @@ function FinancialFilter({
         flexShrink: 0,
         px: 1,
         py: 0.75,
-        borderBottom: `1px solid ${COLORS.BORDER}`,
-        backgroundColor: COLORS.SURFACE_ALT,
+        borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+        backgroundColor: COLORS.CHARTBOOK.GROUND,
       }}
     >
       <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
@@ -59,8 +59,22 @@ function FinancialFilter({
                 flex: 1,
                 minWidth: 0,
                 "& .MuiOutlinedInput-root": {
-                  backgroundColor: COLORS.SURFACE,
+                  backgroundColor: COLORS.CHARTBOOK.GROUND,
+                  borderRadius: 0,
                   fontSize: "0.75rem",
+                  color: COLORS.CHARTBOOK.INK,
+                  border: "none",
+                  borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+                  "&:hover": {
+                    borderBottomColor: COLORS.CHARTBOOK.GRID,
+                  },
+                  "&.Mui-focused": {
+                    borderBottomColor: COLORS.CHARTBOOK.INK,
+                  },
+                },
+                "& .MuiOutlinedInput-input::placeholder": {
+                  color: COLORS.TEXT_SECONDARY,
+                  opacity: 1,
                 },
               }}
             />
@@ -68,7 +82,17 @@ function FinancialFilter({
         ))}
         <Tooltip title="필터 초기화(전체 보기)" arrow>
           <span>
-            <IconButton size="small" onClick={onReset} disabled={!isActive}>
+            <IconButton
+              size="small"
+              onClick={onReset}
+              disabled={!isActive}
+              sx={{
+                color: COLORS.CHARTBOOK.INK,
+                "&:disabled": {
+                  color: COLORS.TEXT_MUTED,
+                },
+              }}
+            >
               <RestartAltIcon fontSize="small" />
             </IconButton>
           </span>
@@ -83,7 +107,7 @@ function FinancialFilter({
           mt: 0.25,
         }}
       >
-        <Typography variant="caption" sx={{ color: COLORS.TEXT_SECONDARY }}>
+        <Typography variant="caption" sx={{ color: COLORS.TEXT_SECONDARY, fontSize: "0.75rem" }}>
           {statusText}
         </Typography>
         {isAuthenticated && (
@@ -92,7 +116,16 @@ function FinancialFilter({
             to="/pages/my-page"
             state={{ activeTab: MY_PAGE_SCREENER_TAB }}
             variant="caption"
-            sx={{ flexShrink: 0, color: COLORS.PRIMARY, whiteSpace: "nowrap" }}
+            sx={{
+              flexShrink: 0,
+              color: COLORS.CHARTBOOK.INK,
+              whiteSpace: "nowrap",
+              fontSize: "0.75rem",
+              textDecoration: "none",
+              "&:hover": {
+                textDecoration: "underline",
+              },
+            }}
           >
             기본값 설정
           </Link>
