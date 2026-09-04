@@ -63,14 +63,15 @@ export default {
   },
 
   info: {
-    // 흰 글자 대비 4.5 확보. 원래 #3b82f6 은 3.68.
-    main: "#3472d8",
+    // chartbook 크림 지면 위 글자 AA. 원래 #3b82f6 → #3472d8 → #2f68c4.
+    main: "#2f68c4",
     focus: "#2563eb",
   },
 
   // 흰 배경에서 글자로도 쓰이므로 대비 3:1 을 넘기는 깊이로 잡는다
   success: {
-    main: "#15803d",
+    // chartbook 크림 지면 위 글자 AA. 원래 #10b981 → #15803d → #136235.
+    main: "#136235",
     focus: "#166534",
   },
 
@@ -80,8 +81,8 @@ export default {
   },
 
   error: {
-    // 흰 글자 대비 4.5 확보. 원래 #ef4444 는 3.76.
-    main: "#d23c3c",
+    // chartbook 크림 지면 위 글자 AA. 원래 #ef4444 → #d23c3c → #c33531.
+    main: "#c33531",
     focus: "#dc2626",
   },
 
