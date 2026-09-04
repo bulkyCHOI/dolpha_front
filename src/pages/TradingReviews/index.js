@@ -127,9 +127,9 @@ const getFinalStatusColor = (status) => {
 // Chartbook: 헤어라인 칩 스타일 (채워진 알약 금지)
 const MONO_STACK = "'Fragment Mono', 'Monaco', monospace";
 const STATUS_TOKEN = {
-  success: COLORS.SUCCESS,
+  success: COLORS.CHARTBOOK.BAND_WEAK,
   info: COLORS.CHARTBOOK.PANEL_BLUE,
-  warning: COLORS.WARNING,
+  warning: COLORS.CHARTBOOK.BAND_MID,
   default: COLORS.CHARTBOOK.SECONDARY,
 };
 const hairlineChipSx = (c) => ({
@@ -282,8 +282,7 @@ export default function TradingReviews() {
       cell: (row) => (
         <Typography
           variant="body2"
-          color="info.main"
-          sx={{ fontSize: "0.8rem", fontWeight: "bold" }}
+          sx={{ fontSize: "0.8rem", fontWeight: "bold", color: COLORS.UP }}
         >
           {formatCurrency(row.total_buy_amount)}원
         </Typography>
@@ -297,8 +296,7 @@ export default function TradingReviews() {
       cell: (row) => (
         <Typography
           variant="body2"
-          color="warning.main"
-          sx={{ fontSize: "0.8rem", fontWeight: "bold" }}
+          sx={{ fontSize: "0.8rem", fontWeight: "bold", color: COLORS.DOWN }}
         >
           {formatCurrency(row.total_sell_amount)}원
         </Typography>
@@ -314,14 +312,13 @@ export default function TradingReviews() {
         return (
           <Box display="flex" alignItems="center" gap={0.5}>
             {isProfit ? (
-              <TrendingUpIcon sx={{ fontSize: "16px", color: "success.main" }} />
+              <TrendingUpIcon sx={{ fontSize: "16px", color: COLORS.UP }} />
             ) : (
-              <TrendingDownIcon sx={{ fontSize: "16px", color: "error.main" }} />
+              <TrendingDownIcon sx={{ fontSize: "16px", color: COLORS.DOWN }} />
             )}
             <Typography
               variant="body2"
-              color={isProfit ? "success" : "error"}
-              sx={{ fontSize: "0.8rem", fontWeight: "bold" }}
+              sx={{ fontSize: "0.8rem", fontWeight: "bold", color: isProfit ? COLORS.UP : COLORS.DOWN }}
             >
               {isProfit ? "+" : ""}
               {formatCurrency(row.total_profit_loss)}원
@@ -390,7 +387,7 @@ export default function TradingReviews() {
             <span style={{ color: COLORS.DOWN, fontWeight: "bold" }}>진입 {row.entry_count}회</span>
           </Typography>
           <Typography variant="caption" sx={{ fontSize: "0.7rem", lineHeight: 1.2 }}>
-            <span style={{ color: COLORS.WARNING, fontWeight: "bold" }}>
+            <span style={{ color: COLORS.CHARTBOOK.BAND_MID, fontWeight: "bold" }}>
               청산 {row.exit_count}회
             </span>
           </Typography>
@@ -925,7 +922,7 @@ export default function TradingReviews() {
                           <Typography
                             variant="caption"
                             fontWeight="bold"
-                            sx={{ color: COLORS.WARNING }}
+                            sx={{ color: COLORS.CHARTBOOK.BAND_MID }}
                           >
                             {formatCurrency(pos.trailing_stop_price)}원
                           </Typography>
@@ -955,7 +952,7 @@ export default function TradingReviews() {
                                   variant="caption"
                                   fontWeight={slot.is_done ? "bold" : "regular"}
                                   sx={{
-                                    color: slot.is_done ? "success.main" : "text.secondary",
+                                    color: slot.is_done ? COLORS.CHARTBOOK.BAND_WEAK : "text.secondary",
                                     textDecoration: slot.is_done ? "line-through" : "none",
                                   }}
                                 >
@@ -987,7 +984,7 @@ export default function TradingReviews() {
                                 variant="caption"
                                 fontWeight={stage.is_done ? "bold" : "regular"}
                                 sx={{
-                                  color: stage.is_done ? "text.secondary" : "warning.main",
+                                  color: stage.is_done ? "text.secondary" : COLORS.CHARTBOOK.BAND_MID,
                                   textDecoration: stage.is_done ? "line-through" : "none",
                                 }}
                               >
@@ -1089,7 +1086,7 @@ export default function TradingReviews() {
                       <Typography
                         variant="h6"
                         fontWeight="bold"
-                        color={COLORS.SUCCESS}
+                        color={COLORS.CHARTBOOK.BAND_WEAK}
                         sx={{ mt: 0.5 }}
                       >
                         {stats.closed_count}건
@@ -1128,7 +1125,7 @@ export default function TradingReviews() {
                         fontWeight="bold"
                         sx={{
                           mt: 0.5,
-                          color: stats.total_profit_loss >= 0 ? COLORS.SUCCESS : COLORS.UP,
+                          color: stats.total_profit_loss >= 0 ? COLORS.UP : COLORS.DOWN,
                         }}
                       >
                         {stats.total_profit_loss >= 0 ? "+" : ""}
@@ -1338,7 +1335,7 @@ export default function TradingReviews() {
                           fontWeight="bold"
                           sx={{
                             color:
-                              selectedReview.total_profit_loss >= 0 ? "success.main" : "error.main",
+                              selectedReview.total_profit_loss >= 0 ? COLORS.UP : COLORS.DOWN,
                           }}
                         >
                           {selectedReview.total_profit_loss >= 0 ? "+" : ""}
@@ -1357,8 +1354,8 @@ export default function TradingReviews() {
                           sx={{
                             color:
                               selectedReview.profit_loss_percent >= 0
-                                ? "success.main"
-                                : "error.main",
+                                ? COLORS.UP
+                                : COLORS.DOWN,
                           }}
                         >
                           {selectedReview.profit_loss_percent >= 0 ? "+" : ""}
@@ -1498,7 +1495,7 @@ export default function TradingReviews() {
                                 width: 40,
                                 height: 40,
                                 borderRadius: "50%",
-                                bgcolor: isBuy ? "success.main" : "error.main",
+                                bgcolor: isBuy ? COLORS.UP : COLORS.DOWN,
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
@@ -1533,7 +1530,7 @@ export default function TradingReviews() {
                                     <Typography
                                       variant="body2"
                                       fontWeight="bold"
-                                      sx={{ color: isBuy ? "success.main" : "error.main" }}
+                                      sx={{ color: isBuy ? COLORS.UP : COLORS.DOWN }}
                                     >
                                       {isBuy ? "매수" : "매도"}
                                     </Typography>
@@ -1600,8 +1597,8 @@ export default function TradingReviews() {
                                           sx={{
                                             color:
                                               entry.profit_loss >= 0
-                                                ? "success.main"
-                                                : "error.main",
+                                                ? COLORS.UP
+                                                : COLORS.DOWN,
                                           }}
                                         >
                                           {entry.profit_loss >= 0 ? "+" : ""}
@@ -1675,7 +1672,7 @@ export default function TradingReviews() {
                                             title="저장"
                                           >
                                             <CheckIcon
-                                              sx={{ fontSize: 14, color: "success.main" }}
+                                              sx={{ fontSize: 14, color: COLORS.CHARTBOOK.BAND_WEAK }}
                                             />
                                           </IconButton>
                                         )}
