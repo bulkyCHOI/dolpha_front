@@ -121,9 +121,9 @@ const getStrategyTypeColor = (strategyType) => {
   // 붉은색 계열로 전략 종류별 구분 - 차이를 극대화
   const colors = {
     mtt: COLORS.UP, // 진한 다크 레드 - 주력 전략 (Minervini)
-    weekly_high: COLORS.WARNING, // 딥 오렌지 - 장기 전략 (52주 신고가)
-    fifty_day_high: COLORS.WARNING, // 밝은 오렌지 - 중기 전략 (50일 신고가)
-    daily_top50: COLORS.WARNING, // 엠버(황금색) - 단기 전략 (일일 Top50)
+    weekly_high: COLORS.CHARTBOOK.BAND_MID, // 딥 오렌지 - 장기 전략 (52주 신고가)
+    fifty_day_high: COLORS.CHARTBOOK.BAND_MID, // 밝은 오렌지 - 중기 전략 (50일 신고가)
+    daily_top50: COLORS.CHARTBOOK.BAND_MID, // 엠버(황금색) - 단기 전략 (일일 Top50)
     theme_surge: COLORS.STRATEGY_THEME_SURGE, // 급등테마주 전략
   };
   return colors[strategyType] || COLORS.TEXT_MUTED;
@@ -396,11 +396,11 @@ export default function TradingConfigs() {
             height: "24px",
             fontFamily: MONO_STACK,
             backgroundColor: "transparent",
-            border: `1px solid ${row.is_active ? COLORS.SUCCESS : COLORS.CHARTBOOK.SECONDARY}`,
+            border: `1px solid ${row.is_active ? COLORS.CHARTBOOK.BAND_WEAK : COLORS.CHARTBOOK.SECONDARY}`,
             borderRadius: "2px",
             "& .MuiChip-label": {
               padding: "0 8px",
-              color: `${row.is_active ? COLORS.SUCCESS : COLORS.CHARTBOOK.SECONDARY} !important`,
+              color: `${row.is_active ? COLORS.CHARTBOOK.BAND_WEAK : COLORS.CHARTBOOK.SECONDARY} !important`,
             },
           }}
         />
@@ -416,7 +416,7 @@ export default function TradingConfigs() {
           sx={{
             fontSize: "0.85rem",
             fontWeight: row.stop_loss ? "bold" : "regular",
-            color: row.stop_loss ? "info.main" : "text.secondary",
+            color: row.stop_loss ? COLORS.CHARTBOOK.INK : "text.secondary",
           }}
         >
           {formatTradingValue(row.stop_loss, row.trading_mode, "stop_loss")}
@@ -433,7 +433,7 @@ export default function TradingConfigs() {
           sx={{
             fontSize: "0.85rem",
             fontWeight: row.take_profit ? "bold" : "regular",
-            color: row.take_profit ? "error.main" : "text.secondary",
+            color: row.take_profit ? COLORS.CHARTBOOK.INK : "text.secondary",
           }}
         >
           {formatTradingValue(row.take_profit, row.trading_mode, "take_profit")}
@@ -463,7 +463,7 @@ export default function TradingConfigs() {
         let chipColor = COLORS.CHARTBOOK.SECONDARY;
         if (actualEntries > 0) {
           if (positionSum >= 80) chipColor = COLORS.UP;
-          else if (positionSum >= 50) chipColor = COLORS.WARNING;
+          else if (positionSum >= 50) chipColor = COLORS.CHARTBOOK.BAND_MID;
           else if (positionSum >= 25) chipColor = COLORS.CHARTBOOK.PANEL_BLUE;
         }
 
@@ -525,7 +525,7 @@ export default function TradingConfigs() {
               fontWeight="bold"
               sx={{
                 fontSize: "0.8rem",
-                color: "success.main",
+                color: COLORS.CHARTBOOK.INK,
                 lineHeight: 1.2,
               }}
             >
@@ -576,7 +576,7 @@ export default function TradingConfigs() {
                 sx={{
                   fontSize: "0.8rem",
                   fontWeight: "bold",
-                  color: isUp ? "error.main" : isDown ? "info.main" : "text.primary",
+                  color: isUp ? COLORS.UP : isDown ? COLORS.DOWN : "text.primary",
                   lineHeight: 1.3,
                 }}
               >
@@ -591,7 +591,7 @@ export default function TradingConfigs() {
                   variant="caption"
                   sx={{
                     fontSize: "0.68rem",
-                    color: isUp ? "error.main" : "info.main",
+                    color: isUp ? COLORS.UP : COLORS.DOWN,
                     lineHeight: 1.2,
                   }}
                 >
@@ -640,7 +640,7 @@ export default function TradingConfigs() {
                 variant="caption"
                 sx={{
                   fontSize: "0.68rem",
-                  color: dropPct < 0 ? "info.main" : "error.main",
+                  color: dropPct < 0 ? COLORS.DOWN : COLORS.UP,
                   lineHeight: 1.2,
                 }}
               >
@@ -653,7 +653,7 @@ export default function TradingConfigs() {
                 variant="caption"
                 sx={{
                   fontSize: "0.65rem",
-                  color: dropAtr < 0 ? "info.main" : "error.main",
+                  color: dropAtr < 0 ? COLORS.DOWN : COLORS.UP,
                   lineHeight: 1.2,
                   display: "block",
                 }}
@@ -706,7 +706,7 @@ export default function TradingConfigs() {
               fontWeight="bold"
               sx={{
                 fontSize: "0.8rem",
-                color: isProfit ? "error.main" : "info.main",
+                color: isProfit ? COLORS.UP : COLORS.DOWN,
                 lineHeight: 1.2,
               }}
             >
@@ -719,7 +719,7 @@ export default function TradingConfigs() {
               variant="caption"
               sx={{
                 fontSize: "0.7rem",
-                color: isProfit ? "error.main" : "info.main",
+                color: isProfit ? COLORS.UP : COLORS.DOWN,
                 fontWeight: "bold",
                 lineHeight: 1.2,
               }}
@@ -1749,7 +1749,7 @@ export default function TradingConfigs() {
                           <Typography
                             variant="body2"
                             fontWeight="bold"
-                            color={isProfit ? "error.main" : "info.main"}
+                            sx={{ color: isProfit ? COLORS.UP : COLORS.DOWN }}
                           >
                             {isProfit ? "+" : ""}
                             {formatCurrency(Math.round(profitLoss))}원 ({isProfit ? "+" : ""}

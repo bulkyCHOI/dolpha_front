@@ -105,7 +105,7 @@ function Profile() {
                   <Typography variant="h3" mb={1} fontWeight="bold">
                     {userInfo.name}
                   </Typography>
-                  <Typography variant="h6" color="text.secondary" mb={1} opacity={0.8}>
+                  <Typography variant="h6" mb={1} sx={{ color: COLORS.TEXT_SECONDARY }}>
                     {userInfo.email}
                   </Typography>
                   <Box
@@ -114,7 +114,7 @@ function Profile() {
                     justifyContent={{ xs: "center", sm: "flex-start" }}
                     gap={1}
                   >
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" sx={{ color: COLORS.TEXT_SECONDARY }}>
                       가입일: {userInfo.joinDate}
                     </Typography>
                   </Box>
@@ -131,7 +131,7 @@ function Profile() {
               <Typography variant="h5" mb={1} fontWeight="bold">
                 기본 정보
               </Typography>
-              <Typography variant="body2" color="text.secondary" opacity={0.7}>
+              <Typography variant="body2" sx={{ color: COLORS.TEXT_SECONDARY }}>
                 Google 계정 정보는 Google에서 관리됩니다
               </Typography>
             </Box>
