@@ -87,10 +87,10 @@ export const PRICE_LINE_COLORS = [
  * 캔버스에 들어가므로 접근 시점에 실제 값으로 해석한다.
  */
 export const CHART_SURFACE = canvasColors({
-  background: COLORS.SURFACE,
-  textColor: COLORS.TEXT_SECONDARY,
-  gridColor: COLORS.DIVIDER,
-  borderColor: COLORS.BORDER,
+  background: COLORS.CHARTBOOK.GROUND,
+  textColor: COLORS.CHARTBOOK.INK,
+  gridColor: COLORS.CHARTBOOK.GRID,
+  borderColor: COLORS.CHARTBOOK.GRID,
 });
 
 /**

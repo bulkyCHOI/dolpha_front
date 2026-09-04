@@ -12,7 +12,7 @@ import Typography from "@mui/material/Typography";
 
 import { useState, useEffect } from "react";
 import { useAuth } from "contexts/AuthContext";
-import { COLORS, GRADIENT_COLORS, alpha, onColor } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 
 function Profile() {
   const [userInfo, setUserInfo] = useState({
@@ -79,15 +79,12 @@ function Profile() {
       <Grid container spacing={3}>
         {/* 프로필 헤더 카드 */}
         <Grid item xs={12}>
-          <Card
+          <Box
             sx={{
               p: { xs: 2, md: 3 },
-              background: `linear-gradient(135deg, ${alpha(COLORS.PRIMARY, 0.08)} 0%, ${alpha(
-                COLORS.PRIMARY_DARK,
-                0.08
-              )} 100%)`,
-              border: `1px solid ${alpha(COLORS.PRIMARY, 0.1)}`,
-              borderRadius: 3,
+              backgroundColor: COLORS.CHARTBOOK.GROUND,
+              border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+              borderRadius: "2px",
             }}
           >
             <Grid container spacing={3} alignItems="center">
@@ -97,8 +94,7 @@ function Profile() {
                   sx={{
                     width: { xs: 100, md: 120 },
                     height: { xs: 100, md: 120 },
-                    border: `4px solid ${alpha(COLORS.PRIMARY, 0.2)}`,
-                    boxShadow: `0 8px 32px ${alpha(COLORS.PRIMARY, 0.2)}`,
+                    border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
                   }}
                 >
                   {userInfo.name ? userInfo.name[0] : "U"}
@@ -125,12 +121,12 @@ function Profile() {
                 </Box>
               </Grid>
             </Grid>
-          </Card>
+          </Box>
         </Grid>
 
         {/* 정보 편집 카드 */}
         <Grid item xs={12}>
-          <Card sx={{ p: { xs: 2, md: 3 }, borderRadius: 3 }}>
+          <Box sx={{ p: { xs: 2, md: 3 }, backgroundColor: COLORS.CHARTBOOK.GROUND, border: `1px solid ${COLORS.CHARTBOOK.GRID}`, borderRadius: "2px" }}>
             <Box mb={3}>
               <Typography variant="h5" mb={1} fontWeight="bold">
                 기본 정보
@@ -150,13 +146,13 @@ function Profile() {
                   variant="outlined"
                   sx={{
                     "& .MuiOutlinedInput-root": {
-                      borderRadius: 2,
+                      borderRadius: "2px",
                       "&.Mui-focused fieldset": {
-                        borderColor: COLORS.PRIMARY,
+                        borderColor: COLORS.CHARTBOOK.INK,
                       },
                     },
                     "& .MuiInputLabel-root.Mui-focused": {
-                      color: COLORS.PRIMARY,
+                      color: COLORS.CHARTBOOK.INK,
                     },
                   }}
                 />
@@ -171,7 +167,7 @@ function Profile() {
                   disabled
                   sx={{
                     "& .MuiOutlinedInput-root": {
-                      borderRadius: 2,
+                      borderRadius: "2px",
                     },
                   }}
                 />
@@ -183,26 +179,25 @@ function Profile() {
                 variant="contained"
                 onClick={handleSave}
                 sx={{
-                  background: GRADIENT_COLORS.PRIMARY,
-                  color: onColor(GRADIENT_COLORS.PRIMARY),
+                  backgroundColor: COLORS.CHARTBOOK.INK,
+                  color: COLORS.CHARTBOOK.GROUND,
                   px: 4,
                   py: 1.5,
-                  borderRadius: 2,
+                  borderRadius: "2px",
                   textTransform: "none",
                   fontSize: "1rem",
                   fontWeight: 500,
                   "&:hover": {
-                    background: `linear-gradient(135deg, ${COLORS.PRIMARY_HOVER} 0%, #6a4190 100%)`,
-                    transform: "translateY(-1px)",
-                    boxShadow: `0 6px 20px ${alpha(COLORS.PRIMARY, 0.3)}`,
+                    backgroundColor: COLORS.CHARTBOOK.INK,
+                    opacity: 0.8,
                   },
-                  transition: "all 0.3s ease",
+                  transition: "all 0.2s ease",
                 }}
               >
                 저장하기
               </Button>
             </Box>
-          </Card>
+          </Box>
         </Grid>
       </Grid>
     </Box>

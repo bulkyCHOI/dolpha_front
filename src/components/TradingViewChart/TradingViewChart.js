@@ -112,7 +112,7 @@ function TradingViewChart({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            background: alpha(COLORS.SURFACE, 0.6),
+            background: alpha(COLORS.CHARTBOOK.GROUND, 0.6),
             color: COLORS.TEXT_SECONDARY,
             fontSize: "14px",
           }}

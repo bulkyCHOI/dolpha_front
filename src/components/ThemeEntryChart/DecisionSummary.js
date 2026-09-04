@@ -15,7 +15,9 @@ import {
   ratio,
   won,
 } from "./constants";
-import { COLORS } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
+
+const MONO_STACK = "'Fragment Mono', 'Monaco', monospace";
 
 const OK_ICON = "✓";
 const NG_ICON = "✕";
@@ -26,11 +28,11 @@ function ConditionCard({ label, ok, color, metrics }) {
     <Box
       sx={{
         p: 1.25,
-        borderRadius: 1.5,
+        borderRadius: 0,
         height: "100%",
         border: "1px solid",
-        borderColor: ok ? `${color}55` : COLORS.BORDER,
-        bgcolor: ok ? `${color}0f` : COLORS.SURFACE_ALT,
+        borderColor: ok ? color : COLORS.CHARTBOOK.GRID,
+        bgcolor: COLORS.CHARTBOOK.GROUND,
       }}
     >
       <Box sx={{ display: "flex", alignItems: "center", gap: 0.6, mb: 0.75 }}>
@@ -43,31 +45,31 @@ function ConditionCard({ label, ok, color, metrics }) {
             placeItems: "center",
             fontSize: 10,
             fontWeight: 700,
-            color: COLORS.SURFACE,
-            bgcolor: ok ? color : COLORS.BORDER_STRONG,
+            color: "#ffffff",
+            bgcolor: ok ? color : COLORS.CHARTBOOK.GRID,
           }}
         >
           {ok ? OK_ICON : NG_ICON}
         </Box>
         <Typography
           variant="button"
-          sx={{ fontSize: 12.5, fontWeight: 700, color: ok ? color : CHART_COLORS.MUTED }}
+          sx={{ fontSize: 12.5, fontWeight: 700, color: ok ? color : COLORS.CHARTBOOK.INK, fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}
         >
           {label}
         </Typography>
       </Box>
       {metrics.map(({ name, value, criterion }) => (
         <Box key={name} sx={{ display: "flex", justifyContent: "space-between", gap: 1, mb: 0.25 }}>
-          <Typography variant="caption" sx={{ fontSize: 11, color: CHART_COLORS.MUTED }}>
+          <Typography variant="caption" sx={{ fontSize: 11, color: COLORS.CHARTBOOK.INK, fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}>
             {name}
           </Typography>
           <Typography
             variant="caption"
-            sx={{ fontSize: 11, fontWeight: 600, fontVariantNumeric: "tabular-nums" }}
+            sx={{ fontSize: 11, fontWeight: 600, fontVariantNumeric: "tabular-nums", fontFamily: MONO_STACK }}
           >
             {value}
             {criterion && (
-              <Box component="span" sx={{ color: COLORS.TEXT_MUTED, fontWeight: 400, ml: 0.5 }}>
+              <Box component="span" sx={{ color: COLORS.CHARTBOOK.INK, fontWeight: 400, ml: 0.5 }}>
                 / {criterion}
               </Box>
             )}
@@ -110,7 +112,7 @@ export function ChartLegend() {
       {LEGEND_ITEMS.map(({ label, color, kind }) => (
         <Box key={label} sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
           <Box sx={swatch(kind, color)} />
-          <Typography variant="caption" sx={{ fontSize: 10.5, color: CHART_COLORS.MUTED }}>
+          <Typography variant="caption" sx={{ fontSize: 10.5, color: COLORS.CHARTBOOK.INK, fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}>
             {label}
           </Typography>
         </Box>
@@ -157,11 +159,14 @@ export function ExitSummary({ exit }) {
             height: 19,
             fontSize: 11,
             fontWeight: 700,
-            bgcolor: status.bg,
+            backgroundColor: status.bg,
             color: status.color,
+            border: status.border,
+            borderRadius: "2px",
+            fontFamily: MONO_STACK,
           }}
         />
-        <Typography variant="caption" sx={{ fontSize: 11.5, color: CHART_COLORS.MUTED }}>
+        <Typography variant="caption" sx={{ fontSize: 11.5, color: COLORS.CHARTBOOK.INK, fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}>
           {exit.reason}
         </Typography>
       </Box>
@@ -173,22 +178,22 @@ export function ExitSummary({ exit }) {
           gap: 2,
           flexWrap: "wrap",
           p: 1.25,
-          borderRadius: 1.5,
-          border: `1px solid ${COLORS.BORDER}`,
-          bgcolor: COLORS.SURFACE_ALT,
+          borderRadius: 0,
+          border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+          bgcolor: COLORS.CHARTBOOK.GROUND,
         }}
       >
-        <Typography variant="h5" fontWeight="bold" sx={{ color: rateColor, lineHeight: 1.1 }}>
+        <Typography variant="h5" fontWeight="bold" sx={{ color: rateColor, lineHeight: 1.1, fontFamily: MONO_STACK, fontVariantNumeric: "tabular-nums" }}>
           {rate == null ? "—" : `${rate >= 0 ? "+" : ""}${rate.toFixed(2)}%`}
         </Typography>
         {metrics.map(({ name, value }) => (
           <Box key={name} sx={{ display: "flex", alignItems: "baseline", gap: 0.6 }}>
-            <Typography variant="caption" sx={{ fontSize: 11, color: CHART_COLORS.MUTED }}>
+            <Typography variant="caption" sx={{ fontSize: 11, color: COLORS.CHARTBOOK.INK, fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}>
               {name}
             </Typography>
             <Typography
               variant="button"
-              sx={{ fontSize: 12.5, fontWeight: 700, fontVariantNumeric: "tabular-nums" }}
+              sx={{ fontSize: 12.5, fontWeight: 700, fontVariantNumeric: "tabular-nums", fontFamily: MONO_STACK }}
             >
               {value}
             </Typography>
@@ -266,8 +271,11 @@ function DecisionSummary({ decision, params }) {
             height: 19,
             fontSize: 11,
             fontWeight: 700,
-            bgcolor: status.bg,
+            backgroundColor: status.bg,
             color: status.color,
+            border: status.border,
+            borderRadius: "2px",
+            fontFamily: MONO_STACK,
           }}
         />
         {geometry && !geometry.verified && (
@@ -278,8 +286,11 @@ function DecisionSummary({ decision, params }) {
               sx={{
                 height: 19,
                 fontSize: 10.5,
-                bgcolor: COLORS.TINT_WARNING,
+                backgroundColor: "transparent",
+                border: `1px solid ${COLORS.WARNING}`,
                 color: COLORS.WARNING,
+                borderRadius: "2px",
+                fontFamily: MONO_STACK,
               }}
             />
           </Tooltip>
@@ -291,12 +302,15 @@ function DecisionSummary({ decision, params }) {
             sx={{
               height: 19,
               fontSize: 10.5,
-              bgcolor: COLORS.SURFACE_ALT,
-              color: CHART_COLORS.MUTED,
+              backgroundColor: "transparent",
+              border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+              color: COLORS.CHARTBOOK.INK,
+              borderRadius: "2px",
+              fontFamily: MONO_STACK,
             }}
           />
         )}
-        <Typography variant="caption" sx={{ fontSize: 11.5, color: CHART_COLORS.MUTED }}>
+        <Typography variant="caption" sx={{ fontSize: 11.5, color: COLORS.CHARTBOOK.INK, fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}>
           {decision.reason}
         </Typography>
       </Box>

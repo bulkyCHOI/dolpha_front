@@ -40,3 +40,7 @@ frontend.log
 # before/after 비교용 스크린샷 (용량이 크고 시세에 따라 매번 바뀐다)
 tests/visual/__archive__/
 tests/visual/.auth/
+
+# impeccable 훅 캐시 (세션마다 바뀜)
+.impeccable/hook.cache.json
+src/.impeccable/hook.cache.json

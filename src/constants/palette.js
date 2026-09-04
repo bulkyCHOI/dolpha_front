@@ -118,6 +118,23 @@ export const LIGHT_PALETTE = {
   "rank-medium": warning.main,
   "rank-low": error.main,
   "rank-default": flat.main,
+
+  // Chartbook 월드 (기술 chartbook 미학)
+  "chartbook-ground": "#f4f1ea",
+  "chartbook-ink": "#141414",
+  "chartbook-grid": "#d8d3c6",
+  "chartbook-rs-red": "#8a1c1c",
+  "chartbook-panel-blue": "#1f4e79",
+  "chartbook-secondary": "#9aa39a",
+  "chartbook-selected-bg": "#141414",
+  "chartbook-selected-ink": "#f4f1ea",
+  /**
+   * 강도 밴드 색 글자(RS·상승률 칩, 상태 라벨) — 크림 지면 위 AA(4.5) 확보.
+   * 시세 의미색(up/down)과 달리 "글자로 읽히는" 용도라 채도를 낮추고 어둡게 잡는다.
+   */
+  "chartbook-band-strong": "#a52722",
+  "chartbook-band-mid": "#6b5410",
+  "chartbook-band-weak": "#1a5c32",
 };
 
 /**
@@ -128,9 +145,9 @@ export const LIGHT_PALETTE = {
  * 시세 색(up/down)은 어두운 배경에서 대비가 떨어지므로 한 단계 밝게 잡는다.
  */
 export const DARK_PALETTE = {
-  primary: "#818cf8",
-  "primary-hover": "#a5b4fc",
-  "primary-dark": "#6366f1",
+  primary: "#6b97e4",
+  "primary-hover": "#8fb3ec",
+  "primary-dark": "#4d7cc4",
   // 다크에서는 한 단계 깊게 — 흰 글자 대비를 확보하고 눈부심을 줄인다
   "banner-from": "#3730a3",
   "banner-to": "#4c1d95",
@@ -206,6 +223,20 @@ export const DARK_PALETTE = {
   "rank-medium": "#fbbf24",
   "rank-low": "#f87171",
   "rank-default": "#64748b",
+
+  // Chartbook 월드 (기술 chartbook 미학) — 다크 모드
+  "chartbook-ground": "#2a2520",
+  "chartbook-ink": "#f5f1ec",
+  "chartbook-grid": "#4c4438",
+  "chartbook-rs-red": "#e07070",
+  "chartbook-panel-blue": "#8fb3ec",
+  "chartbook-secondary": "#b8bfb8",
+  "chartbook-selected-bg": "#3d3630",
+  "chartbook-selected-ink": "#f5f1ec",
+  // 강도 밴드 색 글자 — 워치 차콜 위 AA 확보 (라이트와 방향 반대: 밝게)
+  "chartbook-band-strong": "#e8908c",
+  "chartbook-band-mid": "#d9a441",
+  "chartbook-band-weak": "#6cc48a",
 };
 
 // 키가 어긋나면 다크에서 해당 색만 조용히 라이트로 남는다. 개발 중에 잡는다.

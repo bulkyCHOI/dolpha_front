@@ -105,7 +105,7 @@ class ZoneRenderer {
     const width = ctx.measureText(text).width;
     const boxLeft = align === "center" ? x - width / 2 - LABEL_PADDING : x - LABEL_PADDING;
 
-    ctx.fillStyle = alpha(COLORS.SURFACE, 0.82);
+    ctx.fillStyle = alpha(COLORS.CHARTBOOK.GROUND, 0.82);
     ctx.fillRect(boxLeft, y - 2, width + LABEL_PADDING * 2, 15);
 
     ctx.fillStyle = color;

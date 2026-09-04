@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import { COLORS } from "constants/styles";
 
 /**
  * 전역 하단 저작권 표기.
@@ -9,8 +10,17 @@ import Typography from "@mui/material/Typography";
  */
 function AppFooter() {
   return (
-    <Box component="footer" py={3} textAlign="center">
-      <Typography variant="caption" color="text.secondary">
+    <Box
+      component="footer"
+      py={3}
+      textAlign="center"
+      sx={{
+        backgroundColor: COLORS.CHARTBOOK.GROUND,
+        borderTop: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+        color: COLORS.TEXT_SECONDARY,
+      }}
+    >
+      <Typography variant="caption" sx={{ color: COLORS.TEXT_SECONDARY }}>
         Copyright © {new Date().getFullYear()} Dolpha. All rights reserved.
       </Typography>
     </Box>

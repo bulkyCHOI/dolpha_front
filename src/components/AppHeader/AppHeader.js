@@ -15,7 +15,6 @@ import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 
 // @mui material components
-import Container from "@mui/material/Container";
 import Icon from "@mui/material/Icon";
 import Popper from "@mui/material/Popper";
 import Grow from "@mui/material/Grow";
@@ -31,9 +30,10 @@ import Tooltip from "@mui/material/Tooltip";
 import AppHeaderDropdown from "components/AppHeader/AppHeaderDropdown";
 import { useThemeMode } from "contexts/ThemeModeContext";
 import AppHeaderMobile from "components/AppHeader/AppHeaderMobile";
+import useHeaderBand from "components/AppHeader/useHeaderBand";
 
 import breakpoints from "assets/theme/base/breakpoints";
-import { COLORS, alpha } from "constants/styles";
+import { COLORS, LAYOUT, alpha, Z_INDEX } from "constants/styles";
 
 function AppHeader({ brand, routes, sticky }) {
   const { mode, toggleMode } = useThemeMode();
@@ -46,6 +46,7 @@ function AppHeader({ brand, routes, sticky }) {
   const [arrowRef, setArrowRef] = useState(null);
   const [mobileNavbar, setMobileNavbar] = useState(false);
   const [mobileView, setMobileView] = useState(false);
+  const { navRef, barRef, bandHeight, isScrolled } = useHeaderBand(sticky);
 
   const openMobileNavbar = () => setMobileNavbar(!mobileNavbar);
 
@@ -281,7 +282,7 @@ function AppHeader({ brand, routes, sticky }) {
       open={Boolean(dropdown)}
       placement="top-start"
       transition
-      style={{ zIndex: 10 }}
+      style={{ zIndex: Z_INDEX.HEADER_MENU }}
       modifiers={[
         {
           name: "arrow",
@@ -305,11 +306,11 @@ function AppHeader({ brand, routes, sticky }) {
           sx={{
             transformOrigin: "left top",
             // 드롭다운 패널. 본문 표면과 같은 색이면 다크에서 메뉴 경계가 사라진다.
-            background: COLORS.SURFACE_OVERLAY,
+            background: COLORS.CHARTBOOK.GROUND,
           }}
         >
           <Box>
-            <Typography variant="h1" sx={{ color: COLORS.SURFACE_OVERLAY }}>
+            <Typography variant="h1" sx={{ color: COLORS.CHARTBOOK.GROUND }}>
               <Icon ref={setArrowRef} sx={{ mt: -3 }}>
                 arrow_drop_up
               </Icon>
@@ -317,11 +318,11 @@ function AppHeader({ brand, routes, sticky }) {
             <Box
               p={2}
               mt={2}
-              sx={({ borders, boxShadows }) => ({
-                borderRadius: borders.borderRadius.lg,
-                boxShadow: boxShadows.lg,
-                border: `1px solid ${COLORS.OVERLAY_BORDER}`,
-              })}
+              sx={{
+                borderRadius: "2px",
+                boxShadow: "none",
+                border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+              }}
             >
               {renderRoutes}
             </Box>
@@ -424,7 +425,7 @@ function AppHeader({ brand, routes, sticky }) {
       open={Boolean(nestedDropdown)}
       placement="right-start"
       transition
-      style={{ zIndex: 10 }}
+      style={{ zIndex: Z_INDEX.HEADER_MENU }}
       onMouseEnter={() => {
         setNestedDropdown(nestedDropdownEl);
       }}
@@ -440,7 +441,7 @@ function AppHeader({ brand, routes, sticky }) {
           sx={{
             transformOrigin: "left top",
             // 드롭다운 패널. 본문 표면과 같은 색이면 다크에서 메뉴 경계가 사라진다.
-            background: COLORS.SURFACE_OVERLAY,
+            background: COLORS.CHARTBOOK.GROUND,
           }}
         >
           <Box ml={2.5} mt={-2.5}>
@@ -448,11 +449,11 @@ function AppHeader({ brand, routes, sticky }) {
               py={1.5}
               px={1}
               mt={2}
-              sx={({ borders, boxShadows }) => ({
-                borderRadius: borders.borderRadius.lg,
-                boxShadow: boxShadows.lg,
-                border: `1px solid ${COLORS.OVERLAY_BORDER}`,
-              })}
+              sx={{
+                borderRadius: "2px",
+                boxShadow: "none",
+                border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+              }}
             >
               {renderNestedRoutes}
             </Box>
@@ -463,34 +464,59 @@ function AppHeader({ brand, routes, sticky }) {
   );
 
   return (
-    <Container
-      maxWidth={false}
+    <Box
       sx={{
-        ...(sticky ? { position: "sticky", top: 0, zIndex: 10 } : null),
-        px: 1,
+        // 알약의 위치 기준. MUI Container 는 테마 전역 override 로 폭이
+        // 1320px 로 묶여 본문보다 좁아지므로 쓰지 않는다.
+        position: sticky ? "sticky" : "relative",
+        ...(sticky ? { top: 0, zIndex: Z_INDEX.HEADER } : null),
       }}
     >
+      {/*
+        알약형 헤더는 absolute 라 위·좌우로 여백이 뚫려 있고, 그 틈으로 본문이
+        그대로 지나가 "본문이 헤더 앞에 있다"처럼 보인다. 스크롤이 시작되면
+        띠 전체를 화면 폭만큼 덮어 앞뒤 관계를 분명히 한다. 최상단에서는
+        투명하게 둬서 히어로 배경 위에 떠 있는 원래 모습을 유지한다.
+      */}
+      {sticky && (
+        <Box
+          aria-hidden
+          sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            height: bandHeight,
+            zIndex: -1,
+            pointerEvents: "none",
+            backgroundColor: isScrolled ? COLORS.CHARTBOOK.GROUND : "transparent",
+            borderBottom: `1px solid ${isScrolled ? COLORS.CHARTBOOK.GRID : "transparent"}`,
+            transition: "background-color 200ms linear, border-color 200ms linear",
+          }}
+        />
+      )}
       <Box
+        ref={navRef}
         component="nav"
         role="navigation"
         aria-label="Main navigation"
         py={{ xs: 0.5, md: 1 }}
         px={{ xs: 2, sm: 3, lg: 2 }}
         my={{ xs: 1, md: 2 }}
-        mx={{ xs: 1, md: 3 }}
-        width={{ xs: "calc(100% - 16px)", md: "calc(100% - 48px)" }}
+        mx={LAYOUT.PAGE_GUTTER}
         position="absolute"
         left={0}
+        right={0}
         zIndex={3}
-        sx={({ palette, borders, boxShadows }) => ({
-          color: palette.white.main,
+        sx={({ palette, borders }) => ({
+          color: COLORS.CHARTBOOK.INK,
           borderRadius: borders.borderRadius.xl,
-          boxShadow: boxShadows.md,
-          backgroundImage: `linear-gradient(310deg, var(--dolpha-banner-from), var(--dolpha-banner-to))`,
-          backdropFilter: "saturate(200%) blur(30px)",
+          backgroundColor: COLORS.CHARTBOOK.GROUND,
+          border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+          boxShadow: "none",
         })}
       >
-        <Box display="flex" justifyContent="space-between" alignItems="center">
+        <Box ref={barRef} display="flex" justifyContent="space-between" alignItems="center">
           <Box
             component={Link}
             to="/"
@@ -501,8 +527,11 @@ function AppHeader({ brand, routes, sticky }) {
             <Typography
               variant="button"
               fontWeight="bold"
-              color="white.main"
-              sx={{ fontSize: { xs: "1rem", md: "1.25rem" } }}
+              sx={{
+                fontSize: { xs: "1rem", md: "1.25rem" },
+                color: COLORS.CHARTBOOK.INK,
+                fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif",
+              }}
             >
               {brand}
             </Typography>
@@ -516,7 +545,6 @@ function AppHeader({ brand, routes, sticky }) {
               aria-label={mode === "dark" ? "라이트 모드로 전환" : "다크 모드로 전환"}
               onClick={toggleMode}
               lineHeight={0}
-              color="white.main"
               sx={{
                 cursor: "pointer",
                 display: "flex",
@@ -528,8 +556,12 @@ function AppHeader({ brand, routes, sticky }) {
                 border: "none",
                 borderRadius: 1,
                 background: "transparent",
-                "&:hover": { backgroundColor: alpha(COLORS.SURFACE, 0.12) },
-                "&:focus": { outline: "2px solid #fff", outlineOffset: "2px" },
+                color: COLORS.CHARTBOOK.INK,
+                "&:hover": { backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.08) },
+                "&:focus": {
+                  outline: `2px solid ${COLORS.CHARTBOOK.INK}`,
+                  outlineOffset: "2px",
+                },
               }}
             >
               <Icon sx={{ fontSize: "1.25rem" }}>
@@ -544,7 +576,6 @@ function AppHeader({ brand, routes, sticky }) {
             lineHeight={0}
             py={{ xs: 1, md: 1.5 }}
             pl={{ xs: 1, md: 1.5 }}
-            color="white.main"
             sx={{
               cursor: "pointer",
               minWidth: { xs: "44px", md: "48px" },
@@ -555,11 +586,12 @@ function AppHeader({ brand, routes, sticky }) {
               borderRadius: 1,
               border: "none",
               background: "transparent",
+              color: COLORS.CHARTBOOK.INK,
               "&:hover": {
-                backgroundColor: alpha(COLORS.SURFACE, 0.1),
+                backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.08),
               },
               "&:focus": {
-                outline: `2px solid ${COLORS.SURFACE}`,
+                outline: `2px solid ${COLORS.CHARTBOOK.INK}`,
                 outlineOffset: "2px",
               },
             }}
@@ -576,7 +608,7 @@ function AppHeader({ brand, routes, sticky }) {
       </Box>
       {dropdownMenu}
       {nestedDropdownMenu}
-    </Container>
+    </Box>
   );
 }
 

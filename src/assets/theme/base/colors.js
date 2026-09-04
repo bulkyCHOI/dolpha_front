@@ -28,10 +28,10 @@ export default {
     strong: "#0f172a",
     // 보조 설명. 더 밝으면 흰 배경에서 작은 글자가 읽히지 않는다
     // 흰 배경 위 대비 4.5 확보(3.65 → 4.55). 원래 #7a8799.
-    muted: "#6b7787",
+    muted: "#565e6b",
 
     primary: "#1e293b",
-    secondary: "#64748b",
+    secondary: "#5b6472",
     disabled: "#94a3b8",
   },
 
@@ -52,9 +52,9 @@ export default {
 
   // 프로젝트 전반에서 이미 사실상의 브랜드 컬러로 쓰이던 인디고
   primary: {
-    // 흰 글자 대비 4.5 (WCAG AA) 를 넘기기 위해 12% 어둡게. 원래 #667eea 는 3.66.
-    main: "#5a6fce",
-    focus: "#5a6fd8",
+    // chartbook: 인디고 폐기, 패널 블루로. 크림 지면 위 색 글자 AA 확보.
+    main: "#1f4e79",
+    focus: "#2a5f8f",
   },
 
   secondary: {
@@ -100,15 +100,15 @@ export default {
    * 차트 색상(components/TradingViewChart/chartTheme.js)과 같은 값을 쓴다.
    */
   bullish: {
-    // 흰 글자 대비 4.5 확보(3.76 → 4.72). 원래 #ef4444.
-    main: "#d23c3c",
+    // chartbook 크림 지면 위 색 글자 AA(4.5) 확보. 원래 #ef4444 → #d23c3c → #c33531.
+    main: "#c33531",
     focus: "#dc2626",
     faded: "rgba(239, 68, 68, 0.12)",
   },
 
   bearish: {
-    // 흰 글자 대비 4.5 확보(3.68 → 4.62). 원래 #3b82f6.
-    main: "#3472d8",
+    // chartbook 크림 지면 위 색 글자 AA(4.5) 확보. 원래 #3b82f6 → #3472d8 → #2f68c4.
+    main: "#2f68c4",
     focus: "#2563eb",
     faded: "rgba(59, 130, 246, 0.12)",
   },

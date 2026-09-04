@@ -28,9 +28,9 @@ import {
   FINANCIAL_FILTER_FIELDS,
   hasAnyFilterValue,
 } from "constants/screenerFilters";
-import { COLORS } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 
-const ACCENT = COLORS.PRIMARY;
+const ACCENT = COLORS.CHARTBOOK.INK;
 const MUTED = COLORS.TEXT_SECONDARY;
 
 const FIELD_HELP = {
@@ -75,8 +75,8 @@ function ScreenerFilterSettings() {
   };
 
   return (
-    <Card sx={{ borderRadius: 2, backgroundColor: COLORS.SURFACE }}>
-      <Box p={{ xs: 2, md: 3 }}>
+    <Box sx={{ borderRadius: "2px", backgroundColor: COLORS.CHARTBOOK.GROUND, border: `1px solid ${COLORS.CHARTBOOK.GRID}`, p: { xs: 2, md: 3 } }}>
+      <Box>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
           <Box
             sx={{
@@ -174,8 +174,8 @@ function ScreenerFilterSettings() {
                 sx={{
                   color: ACCENT,
                   borderColor: ACCENT,
-                  "&:hover": { borderColor: ACCENT, backgroundColor: COLORS.TINT_PRIMARY },
-                  "&.Mui-disabled": { color: MUTED, borderColor: COLORS.BORDER },
+                  "&:hover": { borderColor: ACCENT, backgroundColor: alpha(ACCENT, 0.06) },
+                  "&.Mui-disabled": { color: MUTED, borderColor: COLORS.CHARTBOOK.GRID },
                 }}
               >
                 모두 비우기
@@ -186,9 +186,9 @@ function ScreenerFilterSettings() {
                 disabled={saving}
                 startIcon={saving ? <CircularProgress size={16} color="inherit" /> : null}
                 sx={{
-                  color: "#fff",
                   backgroundColor: ACCENT,
-                  "&:hover": { backgroundColor: ACCENT },
+                  color: COLORS.CHARTBOOK.GROUND,
+                  "&:hover": { backgroundColor: ACCENT, opacity: 0.8 },
                 }}
               >
                 {saving ? "저장 중..." : "저장"}
@@ -203,7 +203,7 @@ function ScreenerFilterSettings() {
           </>
         )}
       </Box>
-    </Card>
+    </Box>
   );
 }
 

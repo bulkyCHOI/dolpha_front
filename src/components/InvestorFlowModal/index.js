@@ -222,7 +222,20 @@ const MEMBER_COLUMNS = [
     cell: (row) => (
       <span>
         {row.name}
-        {row.is_foreign && <Chip label="외국계" size="small" sx={{ ml: 1, fontSize: "0.65rem" }} />}
+        {row.is_foreign && (
+          <Chip
+            label="외국계"
+            size="small"
+            sx={{
+              ml: 1,
+              fontSize: "0.65rem",
+              backgroundColor: "transparent",
+              color: COLORS.CHARTBOOK.INK,
+              border: `1px solid ${COLORS.CHARTBOOK.INK}`,
+              borderRadius: "2px",
+            }}
+          />
+        )}
       </span>
     ),
   },
@@ -288,9 +301,28 @@ export default function InvestorFlowModal({ open, onClose, stockCode, stockName 
   ];
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="lg"
+      fullWidth
+      PaperProps={{
+        sx: {
+          borderRadius: 0,
+          bgcolor: COLORS.CHARTBOOK.GROUND,
+          border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+          boxShadow: "none",
+        },
+      }}
+    >
       <DialogTitle
-        sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", pb: 0 }}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          pb: 1,
+          borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+        }}
       >
         <Box>
           <Typography variant="h6" component="span" fontWeight={700}>

@@ -9,6 +9,7 @@ import Icon from "@mui/material/Icon";
 
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import { COLORS, alpha } from "constants/styles";
 
 function AppHeaderDropdown({
   name,
@@ -41,17 +42,27 @@ function AppHeaderDropdown({
         p={1}
         display="flex"
         alignItems="baseline"
-        color="white"
-        opacity={1}
-        sx={{ cursor: "pointer", userSelect: "none" }}
+        sx={{
+          cursor: "pointer",
+          userSelect: "none",
+          color: COLORS.CHARTBOOK.INK,
+          borderRadius: "4px",
+          transition: "background-color 150ms ease",
+          "&:hover": {
+            backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.08),
+          },
+        }}
         {...(route && routeComponent)}
         {...(href && linkComponent)}
       >
         <Typography
           variant="body2"
           lineHeight={1}
-          color="inherit"
-          sx={{ alignSelf: "center", "& *": { verticalAlign: "middle" } }}
+          sx={{
+            alignSelf: "center",
+            "& *": { verticalAlign: "middle" },
+            color: COLORS.CHARTBOOK.INK,
+          }}
         >
           {icon}
         </Typography>
@@ -59,12 +70,17 @@ function AppHeaderDropdown({
           variant="button"
           fontWeight="regular"
           textTransform="capitalize"
-          color="white"
-          sx={{ fontWeight: "100%", ml: 1, mr: 0.25 }}
+          sx={{
+            fontWeight: "500",
+            ml: 1,
+            mr: 0.25,
+            color: COLORS.CHARTBOOK.INK,
+            fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif",
+          }}
         >
           {name}
         </Typography>
-        <Typography variant="body2" color="white" ml="auto">
+        <Typography variant="body2" ml="auto" sx={{ color: COLORS.CHARTBOOK.INK }}>
           <Icon sx={{ fontWeight: "normal", verticalAlign: "middle" }}>
             {collapse && "keyboard_arrow_down"}
           </Icon>

@@ -27,9 +27,12 @@ export const CHART_COLORS = canvasColors({
   PASSED: COLORS.WARNING,
   EXECUTED: COLORS.SUCCESS,
   EXIT: COLORS.INFO_DARK,
-  MUTED: COLORS.TEXT_SECONDARY,
-  GRID: COLORS.DIVIDER,
-  BORDER: COLORS.BORDER,
+  STOP: COLORS.DOWN,
+  TARGET: COLORS.SUCCESS,
+  TRAILING: COLORS.WARNING,
+  MUTED: COLORS.CHARTBOOK.INK,
+  GRID: COLORS.CHARTBOOK.GRID,
+  BORDER: COLORS.CHARTBOOK.GRID,
 });
 
 /**
@@ -70,24 +73,28 @@ export const LEGEND_ITEMS = [
   { label: "직전 상승 구간", color: ZONE_STYLE.RISE.stroke, kind: "zone" },
   { label: "판정 시점", color: CHART_COLORS.DECISION, kind: "vertical" },
   { label: "청산 체결", color: CHART_COLORS.EXIT, kind: "line" },
+  { label: "손절선", color: CHART_COLORS.STOP, kind: "dashed" },
+  { label: "익절선 (차수·T배수·비율)", color: CHART_COLORS.TARGET, kind: "line" },
+  { label: "트레일링 시작", color: CHART_COLORS.TRAILING, kind: "dotted" },
 ];
 
 /** 판정 결과 → 표시 텍스트/색 */
 export const decisionStatus = (decision) => {
-  if (!decision) return { label: "—", color: CHART_COLORS.MUTED, bg: COLORS.SURFACE_ALT };
-  if (decision.executed) return { label: "진입", color: COLORS.SUCCESS, bg: COLORS.TINT_SUCCESS };
+  if (!decision) return { label: "—", color: COLORS.CHARTBOOK.INK, bg: "transparent", border: `1px solid ${COLORS.CHARTBOOK.GRID}` };
+  if (decision.executed) return { label: "진입", color: COLORS.SUCCESS, bg: "transparent", border: `1px solid ${COLORS.SUCCESS}` };
   if (decision.passed)
-    return { label: "충족", color: COLORS.WARNING, bg: `${COLORS.TINT_WARNING}` };
-  return { label: "대기", color: CHART_COLORS.MUTED, bg: COLORS.SURFACE_ALT };
+    return { label: "충족", color: COLORS.WARNING, bg: "transparent", border: `1px solid ${COLORS.WARNING}` };
+  return { label: "대기", color: COLORS.CHARTBOOK.INK, bg: "transparent", border: `1px solid ${COLORS.CHARTBOOK.GRID}` };
 };
 
 /** 청산 유형 → 표시 텍스트/색. 부분청산과 전량청산을 구분해 보여준다. */
 export const exitStatus = (exit) => {
-  if (!exit) return { label: "—", color: CHART_COLORS.MUTED, bg: COLORS.SURFACE_ALT };
+  if (!exit) return { label: "—", color: COLORS.CHARTBOOK.INK, bg: "transparent", border: `1px solid ${COLORS.CHARTBOOK.GRID}` };
   return {
     label: exit.is_partial ? "분할청산" : "청산",
     color: COLORS.INFO_DARK,
-    bg: COLORS.TINT_PRIMARY,
+    bg: "transparent",
+    border: `1px solid ${COLORS.INFO_DARK}`,
   };
 };
 

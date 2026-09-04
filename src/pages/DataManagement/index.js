@@ -36,6 +36,7 @@ import DatePicker from "components/DatePicker";
 
 import AppHeader from "components/AppHeader";
 import AppFooter from "components/AppFooter";
+import ChartbookHeader from "components/ChartbookHeader/ChartbookHeader";
 
 // Routes
 import routes from "routes";
@@ -78,7 +79,7 @@ function SummaryCard({ title, done, total, records, latestDate, extra }) {
   const color = progress >= 95 ? "success" : progress >= 70 ? "warning" : "error";
 
   return (
-    <Card elevation={2} sx={{ height: "100%" }}>
+    <Card elevation={0} sx={{ height: "100%", border: `1px solid ${COLORS.CHARTBOOK.GRID}`, backgroundColor: COLORS.CHARTBOOK.GROUND, borderRadius: "2px" }}>
       <CardContent>
         <Typography variant="h6" fontWeight="bold" mb={1}>
           {title}
@@ -119,7 +120,7 @@ function SummaryCard({ title, done, total, records, latestDate, extra }) {
 function AnalysisGapCard({ gap }) {
   if (!gap) return null;
   return (
-    <Card elevation={2}>
+    <Card elevation={0} sx={{ border: `1px solid ${COLORS.CHARTBOOK.GRID}`, backgroundColor: COLORS.CHARTBOOK.GROUND, borderRadius: "2px" }}>
       <CardContent>
         <Typography variant="h6" fontWeight="bold" mb={1}>
           분석 누락 현황
@@ -193,10 +194,9 @@ function GridCell({ dateKey, step }) {
           border: `1px solid ${border || COLORS.BORDER}`,
           borderRadius: 1,
           cursor: "default",
-          transition: "transform 0.1s, box-shadow 0.1s",
+          transition: "transform 0.1s",
           "&:hover": {
             transform: "scale(1.08)",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.18)",
             zIndex: 1,
             position: "relative",
           },
@@ -273,9 +273,9 @@ function PipelineGrid({ grid }) {
             sx={{
               display: "flex",
               alignItems: "flex-end",
-              bgcolor: COLORS.SURFACE_SUNKEN,
-              borderRadius: "8px 8px 0 0",
-              borderBottom: `2px solid ${COLORS.BORDER_STRONG}`,
+              bgcolor: COLORS.CHARTBOOK.GROUND,
+              borderRadius: 0,
+              borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}`,
               pb: 1,
               pt: 0.5,
             }}
@@ -288,7 +288,7 @@ function PipelineGrid({ grid }) {
                 maxWidth: LABEL_W,
                 flexShrink: 0,
                 px: 1.5,
-                borderRight: `2px solid ${COLORS.BORDER_STRONG}`,
+                borderRight: `1px solid ${COLORS.CHARTBOOK.GRID}`,
               }}
             >
               <Typography variant="caption" fontWeight="bold" color="text.secondary">
@@ -334,9 +334,9 @@ function PipelineGrid({ grid }) {
               sx={{
                 display: "flex",
                 alignItems: "center",
-                bgcolor: si % 2 === 0 ? COLORS.SURFACE : COLORS.SURFACE_ALT,
-                borderBottom: si < steps.length - 1 ? `1px solid ${COLORS.SURFACE_ALT}` : "none",
-                "&:last-child": { borderRadius: "0 0 8px 8px" },
+                bgcolor: COLORS.CHARTBOOK.GROUND,
+                borderBottom: si < steps.length - 1 ? `1px solid ${COLORS.CHARTBOOK.GRID}` : "none",
+                "&:last-child": { borderRadius: 0 },
                 py: 1,
               }}
             >
@@ -348,7 +348,7 @@ function PipelineGrid({ grid }) {
                   maxWidth: LABEL_W,
                   flexShrink: 0,
                   px: 1.5,
-                  borderRight: `2px solid ${COLORS.BORDER_STRONG}`,
+                  borderRight: `1px solid ${COLORS.CHARTBOOK.GRID}`,
                 }}
               >
                 <Typography variant="caption" fontWeight="bold" display="block">
@@ -579,12 +579,12 @@ function DailyPipelinePanel({ processes, onTriggerDone }) {
     <Accordion
       expanded={expanded}
       onChange={(_, v) => setExpanded(v)}
-      elevation={3}
+      elevation={0}
       sx={{
         mb: 3,
-        border: "2px solid",
-        borderColor: "primary.main",
-        borderRadius: "12px !important",
+        border: `2px solid ${COLORS.CHARTBOOK.INK}`,
+        borderRadius: "2px !important",
+        backgroundColor: COLORS.CHARTBOOK.GROUND,
         "&:before": { display: "none" },
       }}
     >
@@ -592,24 +592,24 @@ function DailyPipelinePanel({ processes, onTriggerDone }) {
       <AccordionSummary
         expandIcon={<span style={{ fontSize: 20 }}>▼</span>}
         sx={{
-          bgcolor: "primary.main",
-          borderRadius: expanded ? "10px 10px 0 0" : "10px",
+          bgcolor: COLORS.CHARTBOOK.INK,
+          borderRadius: expanded ? "0" : "2px",
           px: 3,
           py: 1,
         }}
       >
         <Box display="flex" alignItems="center" gap={2} width="100%">
-          <Typography variant="h6" fontWeight="bold" color="white.main">
+          <Typography variant="h6" fontWeight="bold" color={COLORS.CHARTBOOK.GROUND}>
             ⚡ 일간 전체 파이프라인
           </Typography>
           {isRunning && (
             <Chip
               label="실행 중"
               size="small"
-              sx={{ bgcolor: COLORS.SUCCESS, color: COLORS.ON_ACCENT }}
+              sx={{ backgroundColor: "transparent", color: COLORS.SUCCESS, border: `1px solid ${COLORS.SUCCESS}`, borderRadius: "2px" }}
             />
           )}
-          <Typography variant="body2" color="white.main" sx={{ opacity: 0.85, ml: "auto", mr: 2 }}>
+          <Typography variant="body2" color={COLORS.CHARTBOOK.GROUND} sx={{ opacity: 0.85, ml: "auto", mr: 2 }}>
             수집 → 가공 전 과정을 순서대로 한번에 실행
           </Typography>
         </Box>
@@ -629,14 +629,14 @@ function DailyPipelinePanel({ processes, onTriggerDone }) {
                       width: 24,
                       height: 24,
                       borderRadius: "50%",
-                      bgcolor: isSkipped ? COLORS.BORDER_STRONG : "primary.main",
+                      bgcolor: isSkipped ? COLORS.CHARTBOOK.GRID : COLORS.CHARTBOOK.INK,
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       flexShrink: 0,
                     }}
                   >
-                    <Typography variant="caption" color="white.main" fontWeight="bold">
+                    <Typography variant="caption" color={COLORS.CHARTBOOK.GROUND} fontWeight="bold">
                       {step.icon}
                     </Typography>
                   </Box>
@@ -932,10 +932,11 @@ function CollectionTab({ processes, onLogSourceChange }) {
       <Accordion
         expanded={individualExpanded}
         onChange={(_, v) => setIndividualExpanded(v)}
-        elevation={2}
+        elevation={0}
         sx={{
-          border: `1px solid ${COLORS.BORDER}`,
-          borderRadius: "12px !important",
+          border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+          borderRadius: "2px !important",
+          backgroundColor: COLORS.CHARTBOOK.GROUND,
           "&:before": { display: "none" },
         }}
       >
@@ -1051,7 +1052,12 @@ function DataManagement() {
   return (
     <>
       <AppHeader routes={routes} sticky />
-      <Box minHeight="100vh" pt={10} pb={4} sx={{ bgcolor: COLORS.SURFACE_SUNKEN }}>
+      <Box sx={{ height: "80px", flexShrink: 0, backgroundColor: COLORS.CHARTBOOK.GROUND }} />
+      <ChartbookHeader
+        strategyName="데이터 관리"
+        date={new Date().toLocaleDateString("ko-KR")}
+      />
+      <Box minHeight="100vh" pt={2} pb={4} sx={{ bgcolor: COLORS.CHARTBOOK.GROUND }}>
         <Container maxWidth="xl">
           <Typography variant="h4" fontWeight="bold" mb={1}>
             데이터 관리
@@ -1060,11 +1066,11 @@ function DataManagement() {
             원천데이터 수집 현황 · 빈 구간 조회 · 실시간 로그
           </Typography>
 
-          <Card elevation={1}>
+          <Card elevation={0} sx={{ border: `1px solid ${COLORS.CHARTBOOK.GRID}`, backgroundColor: COLORS.CHARTBOOK.GROUND, borderRadius: "2px" }}>
             <Tabs
               value={tab}
               onChange={(_, v) => setTab(v)}
-              sx={{ borderBottom: `1px solid ${COLORS.BORDER}`, px: 2 }}
+              sx={{ borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}`, px: 2 }}
             >
               <Tab label="데이터 현황" />
               <Tab label="날짜별 빈 구간" />
@@ -1125,7 +1131,7 @@ function DataManagement() {
                         <AnalysisGapCard gap={analysisGap} />
                       </Grid>
                       <Grid item xs={12} md={8}>
-                        <Card elevation={2}>
+                        <Card elevation={0} sx={{ border: `1px solid ${COLORS.CHARTBOOK.GRID}`, backgroundColor: COLORS.CHARTBOOK.GROUND, borderRadius: "2px" }}>
                           <CardContent>
                             <Typography variant="h6" fontWeight="bold" mb={1}>
                               전체 현황 요약

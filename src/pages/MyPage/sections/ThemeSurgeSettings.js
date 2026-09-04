@@ -22,8 +22,9 @@ import WhatshotIcon from "@mui/icons-material/Whatshot";
 import { Link as RouterLink } from "react-router-dom";
 
 import Typography from "@mui/material/Typography";
+import ThemeSurgeEntryStages from "./ThemeSurgeEntryStages";
 import ThemeSurgeExitSettings from "./ThemeSurgeExitSettings";
-import { COLORS } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 
 const ACCENT = COLORS.WARNING;
 const MUTED = COLORS.TEXT_SECONDARY;
@@ -54,7 +55,7 @@ function ThemeSurgeSettings({ defaults, onChange }) {
   const enabled = Boolean(defaults.theme_surge_enabled);
 
   return (
-    <Card sx={{ borderRadius: 2, border: enabled ? `1px solid ${ACCENT}55` : "none" }}>
+    <Box sx={{ borderRadius: "2px", backgroundColor: COLORS.CHARTBOOK.GROUND, border: enabled ? `1px solid ${ACCENT}` : `1px solid ${COLORS.CHARTBOOK.GRID}` }}>
       <Box p={2}>
         <Box
           sx={{
@@ -214,18 +215,19 @@ function ThemeSurgeSettings({ defaults, onChange }) {
               <Box
                 component={RouterLink}
                 to="/theme-surge"
-                sx={{ color: COLORS.PRIMARY, fontWeight: 600, textDecoration: "none" }}
+                sx={{ color: COLORS.CHARTBOOK.INK, fontWeight: 600, textDecoration: "none" }}
               >
                 급등테마주 페이지
               </Box>
               에서 확인할 수 있습니다.
             </Typography>
 
+            <ThemeSurgeEntryStages defaults={defaults} onChange={onChange} />
             <ThemeSurgeExitSettings defaults={defaults} onChange={onChange} />
           </Box>
         </Collapse>
       </Box>
-    </Card>
+    </Box>
   );
 }
 

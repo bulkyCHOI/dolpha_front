@@ -4,7 +4,10 @@ import Chip from "@mui/material/Chip";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { formatNumber } from "utils/formatters";
-import { COLORS, GRADIENT_COLORS, alpha, onColor } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
+
+const MONO_STACK = "'Fragment Mono', 'Monaco', monospace";
+const ARCHIVO_STACK = "'Archivo', 'Helvetica', 'Arial', sans-serif";
 
 function HTFStockList({
   stocks,
@@ -92,11 +95,11 @@ function HTFStockList({
       {/* 테이블 헤더 */}
       <Box
         sx={{
-          background: GRADIENT_COLORS.PRIMARY,
+          backgroundColor: COLORS.CHARTBOOK.GROUND,
           p: 1,
           display: "flex",
           alignItems: "center",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+          borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}`,
           flexShrink: 0,
         }}
       >
@@ -104,9 +107,13 @@ function HTFStockList({
           <Grid item xs={3}>
             <Typography
               variant="subtitle2"
-              color="white.main"
-              fontWeight="bold"
-              sx={{ fontSize: { xs: "0.7rem", md: "0.875rem" } }}
+              color={COLORS.CHARTBOOK.INK}
+              fontWeight={700}
+              sx={{
+                fontSize: "0.75rem",
+                letterSpacing: "0.02em",
+                fontFamily: ARCHIVO_STACK,
+              }}
             >
               종목명
             </Typography>
@@ -114,10 +121,14 @@ function HTFStockList({
           <Grid item xs={2.5}>
             <Typography
               variant="subtitle2"
-              color="white.main"
-              fontWeight="bold"
+              color={COLORS.CHARTBOOK.INK}
+              fontWeight={700}
               textAlign="center"
-              sx={{ fontSize: { xs: "0.7rem", md: "0.875rem" } }}
+              sx={{
+                fontSize: "0.75rem",
+                letterSpacing: "0.02em",
+                fontFamily: ARCHIVO_STACK,
+              }}
             >
               상승률
             </Typography>
@@ -125,10 +136,14 @@ function HTFStockList({
           <Grid item xs={2.5}>
             <Typography
               variant="subtitle2"
-              color="white.main"
-              fontWeight="bold"
+              color={COLORS.CHARTBOOK.INK}
+              fontWeight={700}
               textAlign="center"
-              sx={{ fontSize: { xs: "0.7rem", md: "0.875rem" } }}
+              sx={{
+                fontSize: "0.75rem",
+                letterSpacing: "0.02em",
+                fontFamily: ARCHIVO_STACK,
+              }}
             >
               조정폭
             </Typography>
@@ -136,10 +151,14 @@ function HTFStockList({
           <Grid item xs={2}>
             <Typography
               variant="subtitle2"
-              color="white.main"
-              fontWeight="bold"
+              color={COLORS.CHARTBOOK.INK}
+              fontWeight={700}
               textAlign="center"
-              sx={{ fontSize: { xs: "0.65rem", md: "0.8rem" } }}
+              sx={{
+                fontSize: "0.75rem",
+                letterSpacing: "0.02em",
+                fontFamily: ARCHIVO_STACK,
+              }}
             >
               시작일
             </Typography>
@@ -147,10 +166,14 @@ function HTFStockList({
           <Grid item xs={2}>
             <Typography
               variant="subtitle2"
-              color="white.main"
-              fontWeight="bold"
+              color={COLORS.CHARTBOOK.INK}
+              fontWeight={700}
               textAlign="center"
-              sx={{ fontSize: { xs: "0.7rem", md: "0.875rem" } }}
+              sx={{
+                fontSize: "0.75rem",
+                letterSpacing: "0.02em",
+                fontFamily: ARCHIVO_STACK,
+              }}
             >
               상태
             </Typography>
@@ -163,7 +186,7 @@ function HTFStockList({
         sx={{
           flex: 1,
           overflow: "auto",
-          backgroundColor: COLORS.SURFACE,
+          backgroundColor: COLORS.CHARTBOOK.GROUND,
           "&::-webkit-scrollbar": {
             width: "8px",
           },
@@ -190,28 +213,20 @@ function HTFStockList({
               sx={{
                 p: 0.5,
                 borderBottom:
-                  rowIndex === stocks.length - 1 ? "none" : `1px solid ${COLORS.DIVIDER}`,
+                  rowIndex === stocks.length - 1 ? "none" : `1px solid ${COLORS.CHARTBOOK.GRID}`,
                 cursor: "pointer",
-                transition: "all 0.2s ease",
+                transition: "background-color 0.12s ease",
+                color: selectedStock?.code === stock.code ? COLORS.CHARTBOOK.SELECTED_INK : "inherit",
                 backgroundColor:
                   selectedStock?.code === stock.code
-                    ? `linear-gradient(135deg, ${alpha(COLORS.PRIMARY, 0.1)} 0%, ${alpha(
-                        COLORS.PRIMARY_DARK,
-                        0.1
-                      )} 100%)`
-                    : rowIndex % 2 === 0
-                    ? COLORS.SURFACE_ALT
-                    : COLORS.SURFACE,
+                    ? COLORS.CHARTBOOK.SELECTED_BG
+                    : COLORS.CHARTBOOK.GROUND,
                 "&:hover": {
-                  backgroundColor: alpha(COLORS.PRIMARY, 0.08),
-                  transform: "translateX(4px)",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                  borderLeft: `3px solid ${COLORS.PRIMARY}`,
+                  backgroundColor:
+                    selectedStock?.code === stock.code
+                      ? COLORS.CHARTBOOK.SELECTED_BG
+                      : alpha(COLORS.CHARTBOOK.INK, 0.06),
                 },
-                ...(selectedStock?.code === stock.code && {
-                  borderLeft: `3px solid ${COLORS.PRIMARY}`,
-                  boxShadow: `0 2px 12px ${alpha(COLORS.PRIMARY, 0.2)}`,
-                }),
               }}
             >
               <Grid container spacing={0} alignItems="center">
@@ -221,9 +236,12 @@ function HTFStockList({
                     <Typography
                       variant="body2"
                       fontWeight={selectedStock?.code === stock.code ? "bold" : "medium"}
-                      color={selectedStock?.code === stock.code ? "info" : "text"}
                       sx={{
-                        fontSize: { xs: "0.7rem", md: "0.8rem" },
+                        color:
+                          selectedStock?.code === stock.code
+                            ? COLORS.CHARTBOOK.SELECTED_INK
+                            : COLORS.CHARTBOOK.INK,
+                        fontSize: "0.8rem",
                         lineHeight: 1.1,
                         overflow: "hidden",
                         textOverflow: "ellipsis",
@@ -234,10 +252,14 @@ function HTFStockList({
                     </Typography>
                     <Typography
                       variant="caption"
-                      color="text.secondary"
                       sx={{
-                        fontSize: { xs: "0.6rem", md: "0.7rem" },
-                        display: { xs: "none", sm: "block" },
+                        fontSize: "0.7rem",
+                        fontFamily: MONO_STACK,
+                        color:
+                          selectedStock?.code === stock.code
+                            ? COLORS.CHARTBOOK.SELECTED_INK
+                            : COLORS.TEXT_SECONDARY,
+                        opacity: selectedStock?.code === stock.code ? 0.8 : 1,
                       }}
                     >
                       {stock.code || ""}
@@ -252,16 +274,22 @@ function HTFStockList({
                       label={`${Math.round(stock.htf_8week_gain || 0)}%`}
                       size="small"
                       sx={{
-                        backgroundColor: getGainColor(stock.htf_8week_gain || 0),
-                        color: onColor(getGainColor(stock.htf_8week_gain || 0)),
-                        fontWeight: "bold",
-                        fontSize: { xs: "0.6rem", md: "0.7rem" },
-                        minWidth: { xs: "35px", md: "40px" },
-                        height: { xs: "28px", md: "20px" },
-                        cursor: "pointer",
-                        "&:hover": {
-                          opacity: 0.8,
-                        },
+                        backgroundColor: "transparent",
+                        color:
+                          selectedStock?.code === stock.code
+                            ? COLORS.CHARTBOOK.SELECTED_INK
+                            : getGainColor(stock.htf_8week_gain || 0),
+                        border: `1px solid ${
+                          selectedStock?.code === stock.code
+                            ? COLORS.CHARTBOOK.SELECTED_INK
+                            : getGainColor(stock.htf_8week_gain || 0)
+                        }`,
+                        borderRadius: "2px",
+                        fontFamily: MONO_STACK,
+                        fontWeight: 500,
+                        fontSize: "0.7rem",
+                        minWidth: "40px",
+                        height: "20px",
                       }}
                     />
                   </Box>
@@ -274,12 +302,22 @@ function HTFStockList({
                       label={`${Math.round(stock.htf_max_pullback || 0)}%`}
                       size="small"
                       sx={{
-                        backgroundColor: getPullbackColor(stock.htf_max_pullback || 0),
-                        color: onColor(getPullbackColor(stock.htf_max_pullback || 0)),
-                        fontWeight: "bold",
-                        fontSize: { xs: "0.6rem", md: "0.7rem" },
-                        minWidth: { xs: "35px", md: "40px" },
-                        height: { xs: "28px", md: "20px" },
+                        backgroundColor: "transparent",
+                        color:
+                          selectedStock?.code === stock.code
+                            ? COLORS.CHARTBOOK.SELECTED_INK
+                            : getPullbackColor(stock.htf_max_pullback || 0),
+                        border: `1px solid ${
+                          selectedStock?.code === stock.code
+                            ? COLORS.CHARTBOOK.SELECTED_INK
+                            : getPullbackColor(stock.htf_max_pullback || 0)
+                        }`,
+                        borderRadius: "2px",
+                        fontFamily: MONO_STACK,
+                        fontWeight: 500,
+                        fontSize: "0.7rem",
+                        minWidth: "40px",
+                        height: "20px",
                       }}
                     />
                   </Box>
@@ -292,8 +330,13 @@ function HTFStockList({
                       variant="body2"
                       textAlign="center"
                       sx={{
-                        fontSize: { xs: "0.65rem", md: "0.75rem" },
-                        fontWeight: "medium",
+                        fontSize: "0.75rem",
+                        fontFamily: MONO_STACK,
+                        fontWeight: 500,
+                        color:
+                          selectedStock?.code === stock.code
+                            ? COLORS.CHARTBOOK.SELECTED_INK
+                            : COLORS.CHARTBOOK.INK,
                       }}
                     >
                       {stock.htf_pattern_start_date
@@ -313,12 +356,22 @@ function HTFStockList({
                       label={statusChip.text}
                       size="small"
                       sx={{
-                        backgroundColor: statusChip.color,
-                        color: onColor(statusChip.color),
-                        fontWeight: "bold",
-                        fontSize: { xs: "0.6rem", md: "0.7rem" },
-                        minWidth: { xs: "30px", md: "35px" },
-                        height: { xs: "28px", md: "20px" },
+                        backgroundColor: "transparent",
+                        color:
+                          selectedStock?.code === stock.code
+                            ? COLORS.CHARTBOOK.SELECTED_INK
+                            : statusChip.color,
+                        border: `1px solid ${
+                          selectedStock?.code === stock.code
+                            ? COLORS.CHARTBOOK.SELECTED_INK
+                            : statusChip.color
+                        }`,
+                        borderRadius: "2px",
+                        fontFamily: MONO_STACK,
+                        fontWeight: 500,
+                        fontSize: "0.7rem",
+                        minWidth: "40px",
+                        height: "20px",
                       }}
                     />
                   </Box>

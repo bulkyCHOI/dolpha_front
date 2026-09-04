@@ -4,6 +4,7 @@ import { CircularProgress, Alert } from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { useAuth } from "contexts/AuthContext";
+import { COLORS, alpha } from "constants/styles";
 
 function AuthCallback() {
   const [status, setStatus] = useState("processing"); // processing, success, error
@@ -103,15 +104,16 @@ function AuthCallback() {
         justifyContent: "center",
         minHeight: "100vh",
         padding: 3,
+        backgroundColor: COLORS.CHARTBOOK.GROUND,
       }}
     >
       {status === "processing" && (
         <>
-          <CircularProgress size={60} sx={{ mb: 3 }} />
-          <Typography variant="h5" sx={{ mb: 2 }}>
+          <CircularProgress size={60} sx={{ mb: 3, color: COLORS.CHARTBOOK.INK }} />
+          <Typography variant="h5" sx={{ mb: 2, color: COLORS.CHARTBOOK.INK }}>
             로그인 처리 중...
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color={COLORS.TEXT_SECONDARY}>
             잠시만 기다려주세요.
           </Typography>
         </>
@@ -130,7 +132,7 @@ function AuthCallback() {
           <Alert severity="error" sx={{ mb: 3, width: "100%", maxWidth: 400 }}>
             {message}
           </Alert>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color={COLORS.TEXT_SECONDARY}>
             3초 후 로그인 페이지로 이동합니다...
           </Typography>
         </>

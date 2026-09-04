@@ -15,8 +15,9 @@ import EntryDecisionChart from "./EntryDecisionChart";
 import DecisionList from "./DecisionList";
 import DecisionSummary, { ChartLegend, ExitSummary } from "./DecisionSummary";
 import { CHART_COLORS, decisionStatus } from "./constants";
-import { COLORS } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 
+const MONO_STACK = "'Fragment Mono', 'Monaco', monospace";
 const CHART_HEIGHT = 400;
 
 /** 판정 이력을 종목별로 묶어 탭 목록을 만든다. */
@@ -76,17 +77,17 @@ function StockTabLabel({ stock }) {
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, textTransform: "none" }}>
       <Box sx={{ textAlign: "left" }}>
-        <Typography variant="button" sx={{ fontSize: 13, fontWeight: 700, display: "block" }}>
+        <Typography variant="button" sx={{ fontSize: 13, fontWeight: 700, display: "block", fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}>
           {stock.stock_name}
         </Typography>
-        <Typography variant="caption" sx={{ fontSize: 10, color: CHART_COLORS.MUTED }}>
+        <Typography variant="caption" sx={{ fontSize: 10, color: COLORS.CHARTBOOK.INK, fontFamily: MONO_STACK }}>
           {stock.theme_name || stock.stock_code} · {stock.total}회
         </Typography>
       </Box>
       <Chip
         size="small"
         label={badge.label}
-        sx={{ height: 18, fontSize: 10, fontWeight: 700, bgcolor: badge.bg, color: badge.color }}
+        sx={{ height: 18, fontSize: 10, fontWeight: 700, backgroundColor: badge.bg, color: badge.color, border: badge.border, borderRadius: "2px", fontFamily: MONO_STACK }}
       />
     </Box>
   );
@@ -163,14 +164,14 @@ function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
 
   if (!isAuthenticated) {
     return (
-      <Alert severity="info">로그인하면 내 종목의 진입 판정이 1분봉 차트 위에 표시됩니다.</Alert>
+      <Alert severity="info" sx={{ backgroundColor: COLORS.CHARTBOOK.GROUND, border: `1px solid ${COLORS.CHARTBOOK.GRID}` }}>로그인하면 내 종목의 진입 판정이 1분봉 차트 위에 표시됩니다.</Alert>
     );
   }
 
   if (stocks.length === 0) {
     return (
       <Box sx={{ py: 4, textAlign: "center" }}>
-        <Typography variant="body2" sx={{ color: CHART_COLORS.MUTED, fontSize: 13 }}>
+        <Typography variant="body2" sx={{ color: COLORS.CHARTBOOK.INK, fontSize: 13 }}>
           판정 이력이 없습니다.
         </Typography>
       </Box>
@@ -186,9 +187,9 @@ function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
         scrollButtons="auto"
         sx={{
           minHeight: 46,
-          borderBottom: `1px solid ${COLORS.SURFACE_ALT}`,
+          borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}`,
           mb: 1.5,
-          "& .MuiTabs-indicator": { height: 2, bgcolor: COLORS.PRIMARY_DARK },
+          "& .MuiTabs-indicator": { height: 2, bgcolor: COLORS.CHARTBOOK.PANEL_BLUE },
           "& .MuiTab-root": { minHeight: 46, py: 0.5, px: 1.5 },
           "& .MuiTabs-flexContainer": { gap: 0.5 },
         }}
@@ -203,19 +204,19 @@ function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
       </Tabs>
 
       {error && (
-        <Alert severity="error" sx={{ mb: 1.5 }}>
+        <Alert severity="error" sx={{ mb: 1.5, backgroundColor: COLORS.CHARTBOOK.GROUND, border: `1px solid ${COLORS.CHARTBOOK.GRID}` }}>
           {error}
         </Alert>
       )}
 
       {loading ? (
-        <Skeleton variant="rounded" height={CHART_HEIGHT} />
+        <Skeleton variant="rounded" height={CHART_HEIGHT} sx={{ backgroundColor: COLORS.CHARTBOOK.GRID }} />
       ) : chart.bars.length === 0 ? (
         <Box sx={{ py: 5, textAlign: "center" }}>
-          <Typography variant="body2" sx={{ color: CHART_COLORS.MUTED, fontSize: 13 }}>
+          <Typography variant="body2" sx={{ color: COLORS.CHARTBOOK.INK, fontSize: 13 }}>
             {chart.stock_name || selectedCode}의 1분봉이 저장되어 있지 않아 차트를 그릴 수 없습니다.
           </Typography>
-          <Typography variant="caption" sx={{ color: COLORS.TEXT_MUTED }}>
+          <Typography variant="caption" sx={{ color: COLORS.CHARTBOOK.INK, fontSize: 12 }}>
             분봉은 자동매매 사이클이 돌 때 수집됩니다.
           </Typography>
         </Box>
@@ -225,12 +226,13 @@ function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
             <Grid item xs={12} lg={9}>
               <Box
                 sx={{
-                  border: `1px solid ${COLORS.SURFACE_ALT}`,
-                  borderRadius: 1.5,
+                  border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+                  borderRadius: 0,
                   overflow: "hidden",
                 }}
               >
                 <EntryDecisionChart
+                  date={date || chart.date}
                   bars={chart.bars}
                   decision={selectedDecision}
                   exits={exits}
@@ -267,7 +269,8 @@ function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
                       height: 20,
                       fontSize: 10.5,
                       fontWeight: 600,
-                      bgcolor: onlyMeaningful ? COLORS.TINT_PRIMARY : COLORS.SURFACE_ALT,
+                      bgcolor: onlyMeaningful ? alpha(COLORS.CHARTBOOK.PANEL_BLUE, 0.1) : COLORS.CHARTBOOK.GROUND,
+                      border: `1px solid ${onlyMeaningful ? COLORS.CHARTBOOK.PANEL_BLUE : COLORS.CHARTBOOK.GRID}`,
                       color: onlyMeaningful ? COLORS.PRIMARY_DARK : CHART_COLORS.MUTED,
                     }}
                   />

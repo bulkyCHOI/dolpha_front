@@ -207,10 +207,24 @@ function StockChartModal({ open, onClose, stockCode, stockName }) {
       onClose={onClose}
       maxWidth="xl"
       fullWidth
-      PaperProps={{ sx: { height: "85vh" } }}
+      PaperProps={{
+        sx: {
+          height: "85vh",
+          borderRadius: 0,
+          bgcolor: COLORS.CHARTBOOK.GROUND,
+          border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+          boxShadow: "none",
+        },
+      }}
     >
       <DialogTitle
-        sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", py: 1.5 }}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          py: 1.5,
+          borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+        }}
       >
         <Box display="flex" alignItems="baseline" gap={2}>
           <Typography variant="h6" fontWeight={700}>
@@ -240,7 +254,7 @@ function StockChartModal({ open, onClose, stockCode, stockName }) {
               일봉 (전체 {dailyData.length}일, 최근 {DAILY_INITIAL_VISIBLE}일 표시)
             </Typography>
             <Box
-              sx={{ flex: 1, minHeight: 0, border: `1px solid ${COLORS.DIVIDER}`, borderRadius: 1 }}
+              sx={{ flex: 1, minHeight: 0, border: `1px solid ${COLORS.CHARTBOOK.GRID}`, borderRadius: 2 }}
             >
               <LightweightChart
                 data={dailyWithCurrent}
@@ -255,7 +269,7 @@ function StockChartModal({ open, onClose, stockCode, stockName }) {
               1분봉 (정규장 09:00~15:30, {Math.round(MINUTE_REFRESH_MS / 1000)}초마다 갱신)
             </Typography>
             <Box
-              sx={{ flex: 1, minHeight: 0, border: `1px solid ${COLORS.DIVIDER}`, borderRadius: 1 }}
+              sx={{ flex: 1, minHeight: 0, border: `1px solid ${COLORS.CHARTBOOK.GRID}`, borderRadius: 2 }}
             >
               <LightweightChart data={minuteData} mode="intraday" loading={minuteLoading} />
             </Box>

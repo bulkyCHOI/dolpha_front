@@ -26,7 +26,7 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 
 import Typography from "@mui/material/Typography";
-import { COLORS } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 
 const ACCENT = COLORS.WARNING;
 const MUTED = COLORS.TEXT_SECONDARY;
@@ -128,10 +128,11 @@ function ThemeSurgeExitSettings({ defaults, onChange }) {
 
       <Collapse in={useOwnExit}>
         <Box sx={{ mt: 2 }}>
-          <Alert severity="warning" sx={{ mb: 2, borderRadius: 2, fontSize: 13 }}>
+          <Alert severity="warning" sx={{ mb: 2, borderRadius: "2px", fontSize: 13 }}>
             테마는 다음 날 소멸할 수 있으므로 <strong>당일 청산</strong>을 전제로 합니다. 손절은
             진입 신호의 <strong>눌림 저점</strong>이고, 배팅 사이즈는 그 손절가에 닿았을 때 계좌에서
-            잃을 금액이 아래 비율이 되도록 자동 계산됩니다.
+            잃을 금액이 아래 비율이 되도록 자동 계산됩니다. 다만 눌림이 얕으면 매수 금액이
+            과도해지므로 <strong>1종목 최대 비중</strong>으로 한 번 더 잘라냅니다.
           </Alert>
 
           <Grid container spacing={2} sx={{ mb: 2 }}>
@@ -150,6 +151,36 @@ function ThemeSurgeExitSettings({ defaults, onChange }) {
                 }
                 inputProps={{ min: 0.1, max: 10, step: 0.1 }}
                 InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
+                sx={{
+                  "& .MuiInputBase-input": { fontFamily: "'Fragment Mono', 'Monaco', monospace", fontVariantNumeric: "tabular-nums" },
+                  "& .MuiInputBase-root": {
+                    "&:hover": { backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.04) },
+                  },
+                }}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={3}>
+              <Label
+                text="1종목 최대 비중"
+                help="한 종목에 넣을 수 있는 매수 금액의 상한(계좌 대비)입니다. 눌림이 얕아 손절폭이 작으면 위 공식이 계좌의 절반 이상을 한 종목에 배정하므로, 갭·거래정지로 손절이 밀리는 경우에 대비해 비중 자체를 제한합니다. 예: 계좌 1억, 상한 20% → 최대 2,000만원."
+              />
+              <TextField
+                fullWidth
+                size="small"
+                type="number"
+                value={defaults.theme_surge_max_position_pct ?? 20.0}
+                onChange={(e) =>
+                  onChange("theme_surge_max_position_pct", parseFloat(e.target.value) || 1.0)
+                }
+                inputProps={{ min: 1, max: 100, step: 1 }}
+                InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
+                sx={{
+                  "& .MuiInputBase-input": { fontFamily: "'Fragment Mono', 'Monaco', monospace", fontVariantNumeric: "tabular-nums" },
+                  "& .MuiInputBase-root": {
+                    "&:hover": { backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.04) },
+                  },
+                }}
               />
             </Grid>
 
@@ -203,7 +234,7 @@ function ThemeSurgeExitSettings({ defaults, onChange }) {
             >
               <HelpOutlineIcon sx={{ fontSize: 14, color: COLORS.TEXT_MUTED, cursor: "help" }} />
             </Tooltip>
-            <Typography variant="caption" sx={{ color: MUTED, ml: "auto" }}>
+            <Typography variant="caption" sx={{ color: MUTED, ml: "auto", fontFamily: "'Fragment Mono', 'Monaco', monospace", fontVariantNumeric: "tabular-nums" }}>
               누적 {totalSellPct.toFixed(0)}% · 트레일링 몫 {remainPct.toFixed(0)}%
             </Typography>
           </Box>
@@ -212,7 +243,7 @@ function ThemeSurgeExitSettings({ defaults, onChange }) {
             // eslint-disable-next-line react/no-array-index-key
             <Grid container spacing={1} alignItems="center" key={index} sx={{ mb: 1 }}>
               <Grid item xs={2} sm={1}>
-                <Typography variant="caption" fontWeight="bold" sx={{ color: ACCENT }}>
+                <Typography variant="caption" fontWeight="bold" sx={{ color: COLORS.STRATEGY_THEME_SURGE }}>
                   {index + 1}차
                 </Typography>
               </Grid>
@@ -225,6 +256,12 @@ function ThemeSurgeExitSettings({ defaults, onChange }) {
                   onChange={(e) => updateStage(index, "t", parseFloat(e.target.value) || 0)}
                   inputProps={{ min: 0.1, max: 50, step: 0.5 }}
                   InputProps={{ endAdornment: <InputAdornment position="end">T</InputAdornment> }}
+                  sx={{
+                    "& .MuiInputBase-input": { fontFamily: "'Fragment Mono', 'Monaco', monospace", fontVariantNumeric: "tabular-nums" },
+                    "& .MuiInputBase-root": {
+                      "&:hover": { backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.04) },
+                    },
+                  }}
                 />
               </Grid>
               <Grid item xs={4} sm={3}>
@@ -237,6 +274,12 @@ function ThemeSurgeExitSettings({ defaults, onChange }) {
                   inputProps={{ min: 1, max: 100, step: 5 }}
                   InputProps={{
                     endAdornment: <InputAdornment position="end">% 청산</InputAdornment>,
+                  }}
+                  sx={{
+                    "& .MuiInputBase-input": { fontFamily: "'Fragment Mono', 'Monaco', monospace", fontVariantNumeric: "tabular-nums" },
+                    "& .MuiInputBase-root": {
+                      "&:hover": { backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.04) },
+                    },
                   }}
                 />
               </Grid>
@@ -257,7 +300,7 @@ function ThemeSurgeExitSettings({ defaults, onChange }) {
               size="small"
               onClick={addStage}
               disabled={stages.length >= MAX_STAGES || remainPct <= 0}
-              sx={{ color: ACCENT }}
+              sx={{ color: COLORS.STRATEGY_THEME_SURGE }}
             >
               <AddIcon fontSize="small" />
             </IconButton>
@@ -267,7 +310,7 @@ function ThemeSurgeExitSettings({ defaults, onChange }) {
           </Box>
 
           {totalSellPct > 100 && (
-            <Alert severity="error" sx={{ mb: 2, borderRadius: 2, fontSize: 13 }}>
+            <Alert severity="error" sx={{ mb: 2, borderRadius: "2px", fontSize: 13 }}>
               누적 청산 비율이 100%를 넘습니다. 초과하는 차수는 저장 시 버려집니다.
             </Alert>
           )}
@@ -319,6 +362,12 @@ function ThemeSurgeExitSettings({ defaults, onChange }) {
                   InputProps={{
                     endAdornment: <InputAdornment position="end">T 초과</InputAdornment>,
                   }}
+                  sx={{
+                    "& .MuiInputBase-input": { fontFamily: "'Fragment Mono', 'Monaco', monospace", fontVariantNumeric: "tabular-nums" },
+                    "& .MuiInputBase-root": {
+                      "&:hover": { backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.04) },
+                    },
+                  }}
                 />
               </Grid>
 
@@ -357,6 +406,12 @@ function ThemeSurgeExitSettings({ defaults, onChange }) {
                   }
                   inputProps={{ min: 1, max: 60, step: 1 }}
                   InputProps={{ endAdornment: <InputAdornment position="end">봉</InputAdornment> }}
+                  sx={{
+                    "& .MuiInputBase-input": { fontFamily: "'Fragment Mono', 'Monaco', monospace", fontVariantNumeric: "tabular-nums" },
+                    "& .MuiInputBase-root": {
+                      "&:hover": { backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.04) },
+                    },
+                  }}
                 />
               </Grid>
             </Grid>
@@ -368,7 +423,7 @@ function ThemeSurgeExitSettings({ defaults, onChange }) {
           >
             · 청산 우선순위: <strong>강제청산 → 손절 → 트레일링 → 분할익절</strong> 순으로
             판정합니다.
-            <br />· 전용 청산을 끄면 위 Manual 설정(손절 · 익절 · 트레일링 · 분할익절)을 그대로
+            <br />· 전용 청산을 끄면 위 Manual 설정(손절·익절·트레일링·분할익절)을 그대로
             따릅니다. Manual 기본값은 주 단위 스윙에 맞춰져 있으므로 당일 매매에는 권장하지
             않습니다.
           </Typography>

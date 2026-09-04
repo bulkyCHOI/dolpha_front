@@ -23,9 +23,10 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 import Typography from "@mui/material/Typography";
 import AppHeader from "components/AppHeader";
+import ChartbookHeader from "components/ChartbookHeader/ChartbookHeader";
 import routes from "routes";
 import { fetchMarketIndices } from "utils/twelveDataApi";
-import { COLORS } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 
 function IssueInfo() {
   const theme = useTheme();
@@ -59,10 +60,9 @@ function IssueInfo() {
       <Box
         sx={{
           p: 1.5,
-          border: `1px solid ${COLORS.BORDER}`,
+          border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
           borderRadius: 2,
-          backgroundColor: COLORS.SURFACE_ALT,
-          boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+          backgroundColor: COLORS.CHARTBOOK.GROUND,
         }}
       >
         <svg width={width} height={height}>
@@ -245,17 +245,18 @@ function IssueInfo() {
   };
 
   const getChartColor = (change) => {
-    if (change >= 0) return theme.palette.error.main; // 빨간색 (상승)
-    return theme.palette.info.main; // 파란색 (하락)
+    if (change > 0) return COLORS.UP;
+    if (change < 0) return COLORS.DOWN;
+    return COLORS.TEXT_MUTED;
   };
 
   const getChangeIcon = (change) => {
     const iconColor =
       change > 0
-        ? theme.palette.error.main
+        ? COLORS.UP
         : change < 0
-        ? theme.palette.info.main
-        : theme.palette.text.primary;
+        ? COLORS.DOWN
+        : COLORS.CHARTBOOK.INK;
 
     if (change > 0) return <TrendingUpIcon fontSize="small" sx={{ color: iconColor }} />;
     if (change < 0) return <TrendingDownIcon fontSize="small" sx={{ color: iconColor }} />;
@@ -313,7 +314,7 @@ function IssueInfo() {
           minHeight="100vh"
           width="100%"
           sx={{
-            backgroundColor: COLORS.SURFACE,
+            backgroundColor: COLORS.CHARTBOOK.GROUND,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -328,12 +329,22 @@ function IssueInfo() {
   return (
     <>
       <AppHeader routes={routes} sticky />
+      <Box sx={{ height: "80px", flexShrink: 0, backgroundColor: COLORS.CHARTBOOK.GROUND }} />
+      <ChartbookHeader
+        strategyName="이슈 정보"
+        date={new Date().toLocaleDateString("ko-KR")}
+        candidateCount={
+          issueData.marketIndices.length +
+          issueData.economicNews.length +
+          issueData.corporateEvents.length
+        }
+      />
       <Box
         minHeight="100vh"
         width="100%"
         sx={{
-          backgroundColor: COLORS.SURFACE,
-          pt: 12,
+          backgroundColor: COLORS.CHARTBOOK.GROUND,
+          pt: 4,
           pb: 4,
         }}
       >
@@ -352,10 +363,10 @@ function IssueInfo() {
               <IconButton
                 onClick={handleRefresh}
                 sx={{
-                  color: "primary.main",
-                  backgroundColor: "rgba(25, 118, 210, 0.04)",
+                  color: COLORS.CHARTBOOK.INK,
+                  backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.06),
                   "&:hover": {
-                    backgroundColor: "rgba(25, 118, 210, 0.08)",
+                    backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.12),
                   },
                 }}
               >
@@ -375,8 +386,8 @@ function IssueInfo() {
             <Card
               sx={{
                 mb: 3,
-                boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
-                border: `1px solid ${COLORS.BORDER}`,
+                border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+                backgroundColor: COLORS.CHARTBOOK.GROUND,
               }}
             >
               <CardContent sx={{ p: 3 }}>
@@ -394,12 +405,11 @@ function IssueInfo() {
                         variant="outlined"
                         sx={{
                           height: "100%",
-                          border: `1px solid ${COLORS.BORDER}`,
-                          boxShadow: "0 1px 6px rgba(0,0,0,0.04)",
+                          border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+                          backgroundColor: COLORS.CHARTBOOK.GROUND,
                           "&:hover": {
-                            boxShadow: "0 4px 12px rgba(0,0,0,0.12)",
-                            transform: "translateY(-2px)",
-                            transition: "all 0.2s ease-in-out",
+                            backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.06),
+                            transition: "background-color 0.12s ease",
                           },
                         }}
                       >
@@ -436,10 +446,10 @@ function IssueInfo() {
                                     fontWeight: "medium",
                                     color:
                                       index.change > 0
-                                        ? theme.palette.error.main
+                                        ? COLORS.UP
                                         : index.change < 0
-                                        ? theme.palette.info.main
-                                        : theme.palette.text.primary,
+                                        ? COLORS.DOWN
+                                        : COLORS.CHARTBOOK.INK,
                                   }}
                                 >
                                   {formatChange(index.change)} (
@@ -517,8 +527,8 @@ function IssueInfo() {
             <Card
               sx={{
                 height: "100%",
-                boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
-                border: `1px solid ${COLORS.BORDER}`,
+                border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+                backgroundColor: COLORS.CHARTBOOK.GROUND,
               }}
             >
               <CardContent sx={{ p: 3 }}>
@@ -568,8 +578,10 @@ function IssueInfo() {
                         size="small"
                         variant="outlined"
                         sx={{
-                          borderColor: COLORS.BORDER,
-                          color: "text.secondary",
+                          borderColor: COLORS.CHARTBOOK.GRID,
+                          color: COLORS.CHARTBOOK.INK,
+                          backgroundColor: "transparent",
+                          borderRadius: "2px",
                         }}
                       />
                       <Typography variant="caption" color="text.secondary" sx={{ opacity: 0.7 }}>
@@ -591,8 +603,8 @@ function IssueInfo() {
             <Card
               sx={{
                 height: "100%",
-                boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
-                border: `1px solid ${COLORS.BORDER}`,
+                border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+                backgroundColor: COLORS.CHARTBOOK.GROUND,
               }}
             >
               <CardContent sx={{ p: 3 }}>
@@ -641,8 +653,10 @@ function IssueInfo() {
                         size="small"
                         variant="outlined"
                         sx={{
-                          borderColor: COLORS.BORDER,
-                          color: "text.secondary",
+                          borderColor: COLORS.CHARTBOOK.GRID,
+                          color: COLORS.CHARTBOOK.INK,
+                          backgroundColor: "transparent",
+                          borderRadius: "2px",
                         }}
                       />
                       <Typography variant="caption" color="text.secondary" sx={{ opacity: 0.7 }}>
@@ -665,11 +679,11 @@ function IssueInfo() {
               severity="info"
               sx={{
                 mt: 2,
-                backgroundColor: "rgba(2, 136, 209, 0.04)",
-                border: "1px solid rgba(2, 136, 209, 0.12)",
+                backgroundColor: COLORS.CHARTBOOK.GROUND,
+                border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
                 borderRadius: 2,
                 "& .MuiAlert-icon": {
-                  color: "info.main",
+                  color: COLORS.CHARTBOOK.INK,
                 },
               }}
             >

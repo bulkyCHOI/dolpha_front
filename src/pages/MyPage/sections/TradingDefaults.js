@@ -31,7 +31,7 @@ import { useState, useEffect } from "react";
 import ThemeSurgeSettings from "./ThemeSurgeSettings";
 import AccountSettings from "./AccountSettings";
 import { useAuth } from "contexts/AuthContext";
-import { COLORS, GRADIENT_COLORS, alpha, onColor } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 
 function TradingDefaults() {
   const [defaults, setDefaults] = useState({
@@ -93,6 +93,8 @@ function TradingDefaults() {
     // 급등테마주 청산 설정 (데이 트레이딩 전용)
     theme_surge_use_own_exit: true,
     theme_surge_max_loss: 1.0,
+    theme_surge_max_position_pct: 20.0,
+    theme_surge_entry_stages: [{ t: 0, weight_pct: 100 }],
     theme_surge_exit_stages: [{ t: 2.0, sell_pct: 50.0 }],
     theme_surge_use_trailing: true,
     theme_surge_trailing_start_t: 2.0,
@@ -312,14 +314,12 @@ function TradingDefaults() {
   };
 
   const renderCompactSection = (title, children) => (
-    <Card sx={{ mb: 2, borderRadius: 2 }}>
-      <Box p={2}>
-        <Typography variant="h6" fontWeight="bold" mb={2}>
-          {title}
-        </Typography>
-        {children}
-      </Box>
-    </Card>
+    <Box sx={{ mb: 2, borderRadius: "2px", backgroundColor: COLORS.CHARTBOOK.GROUND, border: `1px solid ${COLORS.CHARTBOOK.GRID}`, p: 2 }}>
+      <Typography variant="h6" fontWeight="bold" mb={2}>
+        {title}
+      </Typography>
+      {children}
+    </Box>
   );
 
   if (loading) {
@@ -349,20 +349,17 @@ function TradingDefaults() {
 
           {/* ── Row 1: 계좌 설정 (사용자 KIS 계좌 등록 + 전략별 계좌 지정) ── */}
           <Grid item xs={12}>
-            <Card sx={{ borderRadius: 2 }}>
-              <Box p={2}>
-                <AccountSettings />
-              </Box>
-            </Card>
+            <Box sx={{ borderRadius: "2px", backgroundColor: COLORS.CHARTBOOK.GROUND, border: `1px solid ${COLORS.CHARTBOOK.GRID}`, p: 2 }}>
+              <AccountSettings />
+            </Box>
           </Grid>
 
           {/* ── Row 1-b: 매매모드 ── */}
           <Grid item xs={12}>
-            <Card sx={{ borderRadius: 2 }}>
-              <Box p={2}>
-                <Typography variant="h6" fontWeight="bold" mb={1.5}>
-                  매매모드
-                </Typography>
+            <Box sx={{ borderRadius: "2px", backgroundColor: COLORS.CHARTBOOK.GROUND, border: `1px solid ${COLORS.CHARTBOOK.GRID}`, p: 2 }}>
+              <Typography variant="h6" fontWeight="bold" mb={1.5}>
+                매매모드
+              </Typography>
                 <FormControl component="fieldset">
                   <RadioGroup
                     row
@@ -381,16 +378,14 @@ function TradingDefaults() {
                     />
                   </RadioGroup>
                 </FormControl>
-              </Box>
-            </Card>
+            </Box>
           </Grid>
 
           {/* ── Row 2: 3-column 설정 카드 ── */}
 
           {/* 리스크 관리 */}
           <Grid item xs={12} md={4}>
-            <Card sx={{ height: "100%", borderRadius: 2 }}>
-              <Box p={2}>
+            <Box sx={{ height: "100%", borderRadius: "2px", backgroundColor: COLORS.CHARTBOOK.GROUND, border: `1px solid ${COLORS.CHARTBOOK.GRID}`, p: 2 }}>
                 <Typography variant="h6" fontWeight="bold" mb={2}>
                   리스크 관리
                 </Typography>
@@ -486,14 +481,12 @@ function TradingDefaults() {
                     />
                   </Grid>
                 </Grid>
-              </Box>
-            </Card>
+            </Box>
           </Grid>
 
           {/* 포지션 분할 */}
           <Grid item xs={12} md={4}>
-            <Card sx={{ height: "100%", borderRadius: 2 }}>
-              <Box p={2}>
+            <Box sx={{ height: "100%", borderRadius: "2px", backgroundColor: COLORS.CHARTBOOK.GROUND, border: `1px solid ${COLORS.CHARTBOOK.GRID}`, p: 2 }}>
                 <Typography variant="h6" fontWeight="bold" mb={2}>
                   포지션 분할
                 </Typography>
@@ -538,12 +531,12 @@ function TradingDefaults() {
                       onClick={handleEqualDivision}
                       fullWidth
                       sx={{
-                        borderColor: COLORS.PRIMARY,
-                        color: COLORS.PRIMARY,
+                        borderColor: COLORS.CHARTBOOK.INK,
+                        color: COLORS.CHARTBOOK.INK,
                         fontSize: "0.75rem",
                         "&:hover": {
-                          borderColor: COLORS.PRIMARY_HOVER,
-                          backgroundColor: alpha(COLORS.PRIMARY, 0.08),
+                          borderColor: COLORS.CHARTBOOK.INK,
+                          backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.06),
                         },
                       }}
                     >
@@ -622,14 +615,12 @@ function TradingDefaults() {
                     </Typography>
                   )}
                 </Box>
-              </Box>
-            </Card>
+            </Box>
           </Grid>
 
           {/* 분할 익절 */}
           <Grid item xs={12} md={4}>
-            <Card sx={{ height: "100%", borderRadius: 2 }}>
-              <Box p={2}>
+            <Box sx={{ height: "100%", borderRadius: "2px", backgroundColor: COLORS.CHARTBOOK.GROUND, border: `1px solid ${COLORS.CHARTBOOK.GRID}`, p: 2 }}>
                 <Typography variant="h6" fontWeight="bold" mb={2}>
                   분할 익절
                 </Typography>
@@ -819,9 +810,9 @@ function TradingDefaults() {
                                 mb: 1,
                                 px: 0.5,
                                 py: 0.5,
-                                bgcolor: alpha(COLORS.PRIMARY, 0.04),
-                                border: `1px solid ${alpha(COLORS.PRIMARY, 0.15)}`,
-                                borderRadius: 1.5,
+                                bgcolor: alpha(COLORS.CHARTBOOK.INK, 0.03),
+                                border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+                                borderRadius: "2px",
                               }}
                             >
                               <Grid container spacing={1} alignItems="center">
@@ -957,8 +948,7 @@ function TradingDefaults() {
                       </>
                     );
                   })()}
-              </Box>
-            </Card>
+            </Box>
           </Grid>
 
           {/* ── 급등테마주 자동매매 ── */}
@@ -971,7 +961,7 @@ function TradingDefaults() {
             {message && (
               <Alert
                 severity={message.type}
-                sx={{ mb: 1.5, borderRadius: 2, whiteSpace: "pre-line" }}
+                sx={{ mb: 1.5, borderRadius: "2px", whiteSpace: "pre-line" }}
               >
                 {message.text}
               </Alert>
@@ -983,23 +973,24 @@ function TradingDefaults() {
                 disabled={saveLoading}
                 size="medium"
                 sx={{
-                  background: GRADIENT_COLORS.PRIMARY,
-                  color: onColor(GRADIENT_COLORS.PRIMARY),
+                  backgroundColor: COLORS.CHARTBOOK.INK,
+                  color: COLORS.CHARTBOOK.GROUND,
                   px: 3,
                   py: 1,
-                  borderRadius: 2,
+                  borderRadius: "2px",
                   textTransform: "none",
                   fontSize: "0.9rem",
                   fontWeight: 500,
                   "&:hover": {
-                    background: `linear-gradient(135deg, ${COLORS.PRIMARY_HOVER} 0%, #6a4190 100%)`,
+                    backgroundColor: COLORS.CHARTBOOK.INK,
+                    opacity: 0.8,
                   },
                   "&:disabled": { opacity: 0.6 },
                 }}
               >
                 {saveLoading ? (
                   <>
-                    <CircularProgress size={16} sx={{ mr: 1, color: COLORS.ON_ACCENT }} />
+                    <CircularProgress size={16} sx={{ mr: 1, color: COLORS.CHARTBOOK.GROUND }} />
                     저장 중...
                   </>
                 ) : (

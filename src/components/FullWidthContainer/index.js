@@ -5,6 +5,8 @@
 import { Box } from "@mui/material";
 import { forwardRef } from "react";
 
+import { LAYOUT, COLORS } from "constants/styles";
+
 const FullWidthContainer = forwardRef(
   ({ children, sx = {}, disableGutters = false, ...props }, ref) => {
     return (
@@ -14,7 +16,8 @@ const FullWidthContainer = forwardRef(
           width: "100%",
           maxWidth: "none", // Material-UI Container 제한 제거
           mx: "auto",
-          px: disableGutters ? 0 : { xs: 2, sm: 3, md: 4 },
+          px: disableGutters ? 0 : LAYOUT.PAGE_GUTTER,
+          backgroundColor: COLORS.CHARTBOOK.GROUND,
           ...sx,
         }}
         {...props}

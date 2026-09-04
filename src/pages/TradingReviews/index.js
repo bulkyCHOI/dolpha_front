@@ -52,6 +52,7 @@ import Button from "@mui/material/Button";
 
 import AppHeader from "components/AppHeader";
 import AppFooter from "components/AppFooter";
+import ChartbookHeader from "components/ChartbookHeader/ChartbookHeader";
 
 // Routes
 import routes from "routes";
@@ -123,11 +124,21 @@ const getFinalStatusColor = (status) => {
   return colors[status] || "default";
 };
 
-// 배경색에 따른 텍스트 색상 결정 함수
-const getTextColor = (backgroundColor) => {
-  const darkColors = [COLORS.DOWN];
-  return darkColors.includes(backgroundColor) ? COLORS.ON_ACCENT : COLORS.ON_ACCENT_LIGHT;
+// Chartbook: 헤어라인 칩 스타일 (채워진 알약 금지)
+const MONO_STACK = "'Fragment Mono', 'Monaco', monospace";
+const STATUS_TOKEN = {
+  success: COLORS.SUCCESS,
+  info: COLORS.CHARTBOOK.PANEL_BLUE,
+  warning: COLORS.WARNING,
+  default: COLORS.CHARTBOOK.SECONDARY,
 };
+const hairlineChipSx = (c) => ({
+  backgroundColor: "transparent",
+  border: `1px solid ${c}`,
+  borderRadius: "2px",
+  fontFamily: MONO_STACK,
+  "& .MuiChip-label": { color: `${c} !important` },
+});
 
 export default function TradingReviews() {
   const { showSnackbar, NotificationComponent } = useNotification();
@@ -200,17 +211,13 @@ export default function TradingReviews() {
         return (
           <Chip
             label={getTradingModeLabel(row.trading_mode)}
-            variant="filled"
+            variant="outlined"
             size="small"
             sx={{
               fontSize: "0.7rem",
               height: "24px",
-              fontWeight: "bold",
-              backgroundColor: bgColor,
-              "& .MuiChip-label": {
-                padding: "0 8px",
-                color: `${getTextColor(bgColor)} !important`,
-              },
+              fontWeight: 500,
+              ...hairlineChipSx(bgColor),
             }}
           />
         );
@@ -224,12 +231,12 @@ export default function TradingReviews() {
       cell: (row) => (
         <Chip
           label={getFinalStatusLabel(row.final_status)}
-          color={getFinalStatusColor(row.final_status)}
+          variant="outlined"
           size="small"
           sx={{
             fontSize: "0.7rem",
             height: "24px",
-            "& .MuiChip-label": { padding: "0 8px" },
+            ...hairlineChipSx(STATUS_TOKEN[getFinalStatusColor(row.final_status)] || STATUS_TOKEN.default),
           }}
         />
       ),
@@ -775,8 +782,8 @@ export default function TradingReviews() {
               <Chip
                 label={`${codes.length}종목`}
                 size="small"
-                color="info"
-                sx={{ height: 20, fontSize: "0.65rem" }}
+                variant="outlined"
+                sx={{ height: 20, fontSize: "0.65rem", ...hairlineChipSx(STATUS_TOKEN.info) }}
               />
             )}
           </Box>
@@ -805,9 +812,9 @@ export default function TradingReviews() {
                     sx={{
                       minWidth: 220,
                       flex: "0 1 240px",
-                      borderLeft: "3px solid",
-                      borderLeftColor:
-                        isProfit == null ? "grey.400" : isProfit ? "error.main" : "info.main",
+                      borderRadius: "2px",
+                      border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+                      boxShadow: "none",
                     }}
                   >
                     <CardContent sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}>
@@ -1004,8 +1011,14 @@ export default function TradingReviews() {
   return (
     <>
       <AppHeader routes={routes} sticky />
+      <Box sx={{ height: "80px", flexShrink: 0, backgroundColor: COLORS.CHARTBOOK.GROUND }} />
+      <ChartbookHeader
+        strategyName="매매 복기"
+        date={new Date().toLocaleDateString("ko-KR")}
+        candidateCount={tradingReviews.length}
+      />
 
-      <Box component="section" sx={{ minHeight: "80vh", pt: 12, pb: 4 }}>
+      <Box component="section" sx={{ minHeight: "80vh", pt: 2, pb: 4, backgroundColor: COLORS.CHARTBOOK.GROUND }}>
         <FullWidthContainer>
           {/* 계좌 요약 */}
           {renderAccountSummary()}
@@ -1043,7 +1056,7 @@ export default function TradingReviews() {
               <Box sx={{ flex: 1 }}>
                 <Box display="flex" flexDirection="row" gap={1.5} flexWrap="wrap">
                   {/* 전체 거래 */}
-                  <Card sx={{ flex: 1, minWidth: "120px", minHeight: "80px" }}>
+                  <Card sx={{ flex: 1, minWidth: "120px", minHeight: "80px", elevation: 0, border: `1px solid ${COLORS.CHARTBOOK.GRID}`, backgroundColor: COLORS.CHARTBOOK.GROUND, borderRadius: "2px" }}>
                     <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
                       <Typography
                         variant="caption"
@@ -1055,7 +1068,7 @@ export default function TradingReviews() {
                       <Typography
                         variant="h6"
                         fontWeight="bold"
-                        color="primary.main"
+                        color={COLORS.CHARTBOOK.INK}
                         sx={{ mt: 0.5 }}
                       >
                         {stats.total_count}건
@@ -1064,7 +1077,7 @@ export default function TradingReviews() {
                   </Card>
 
                   {/* 청산완료 */}
-                  <Card sx={{ flex: 1, minWidth: "120px", minHeight: "80px" }}>
+                  <Card sx={{ flex: 1, minWidth: "120px", minHeight: "80px", elevation: 0, border: `1px solid ${COLORS.CHARTBOOK.GRID}`, backgroundColor: COLORS.CHARTBOOK.GROUND, borderRadius: "2px" }}>
                     <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
                       <Typography
                         variant="caption"
@@ -1076,7 +1089,7 @@ export default function TradingReviews() {
                       <Typography
                         variant="h6"
                         fontWeight="bold"
-                        color="success.main"
+                        color={COLORS.SUCCESS}
                         sx={{ mt: 0.5 }}
                       >
                         {stats.closed_count}건
@@ -1085,7 +1098,7 @@ export default function TradingReviews() {
                   </Card>
 
                   {/* 보유중 */}
-                  <Card sx={{ flex: 1, minWidth: "120px", minHeight: "80px" }}>
+                  <Card sx={{ flex: 1, minWidth: "120px", minHeight: "80px", elevation: 0, border: `1px solid ${COLORS.CHARTBOOK.GRID}`, backgroundColor: COLORS.CHARTBOOK.GROUND, borderRadius: "2px" }}>
                     <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
                       <Typography
                         variant="caption"
@@ -1094,14 +1107,14 @@ export default function TradingReviews() {
                       >
                         보유중
                       </Typography>
-                      <Typography variant="h6" fontWeight="bold" color="info.main" sx={{ mt: 0.5 }}>
+                      <Typography variant="h6" fontWeight="bold" color={COLORS.CHARTBOOK.PANEL_BLUE} sx={{ mt: 0.5 }}>
                         {stats.holding_count}건
                       </Typography>
                     </CardContent>
                   </Card>
 
                   {/* 총 손익 */}
-                  <Card sx={{ flex: 1, minWidth: "150px", minHeight: "80px" }}>
+                  <Card sx={{ flex: 1, minWidth: "150px", minHeight: "80px", elevation: 0, border: `1px solid ${COLORS.CHARTBOOK.GRID}`, backgroundColor: COLORS.CHARTBOOK.GROUND, borderRadius: "2px" }}>
                     <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
                       <Typography
                         variant="caption"
@@ -1115,7 +1128,7 @@ export default function TradingReviews() {
                         fontWeight="bold"
                         sx={{
                           mt: 0.5,
-                          color: stats.total_profit_loss >= 0 ? "success.main" : "error.main",
+                          color: stats.total_profit_loss >= 0 ? COLORS.SUCCESS : COLORS.UP,
                         }}
                       >
                         {stats.total_profit_loss >= 0 ? "+" : ""}
@@ -1208,9 +1221,17 @@ export default function TradingReviews() {
                     ·{" "}
                     <Chip
                       label={getFinalStatusLabel(selectedReview.final_status)}
-                      color={getFinalStatusColor(selectedReview.final_status)}
+                      variant="outlined"
                       size="small"
-                      sx={{ fontSize: "0.65rem", height: "20px", ml: 0.5 }}
+                      sx={{
+                        fontSize: "0.65rem",
+                        height: "20px",
+                        ml: 0.5,
+                        ...hairlineChipSx(
+                          STATUS_TOKEN[getFinalStatusColor(selectedReview.final_status)] ||
+                            STATUS_TOKEN.default
+                        ),
+                      }}
                     />
                   </Typography>
                 </Box>
@@ -1403,10 +1424,9 @@ export default function TradingReviews() {
                       <Box
                         sx={{
                           p: 2,
-                          bgcolor: COLORS.SURFACE_ALT,
-                          borderRadius: 1.5,
-                          border: "1px solid",
-                          borderColor: "grey.200",
+                          bgcolor: COLORS.CHARTBOOK.GROUND,
+                          borderRadius: "2px",
+                          border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
                         }}
                       >
                         <Typography variant="body2" color="text.secondary">
@@ -1483,13 +1503,12 @@ export default function TradingReviews() {
                                 alignItems: "center",
                                 justifyContent: "center",
                                 flexShrink: 0,
-                                boxShadow: 1,
                               }}
                             >
                               {isBuy ? (
-                                <ArrowUpwardIcon sx={{ color: COLORS.ON_ACCENT, fontSize: 18 }} />
+                                <ArrowUpwardIcon sx={{ color: COLORS.UP, fontSize: 18 }} />
                               ) : (
-                                <ArrowDownwardIcon sx={{ color: COLORS.ON_ACCENT, fontSize: 18 }} />
+                                <ArrowDownwardIcon sx={{ color: COLORS.DOWN, fontSize: 18 }} />
                               )}
                             </Box>
 
@@ -1527,8 +1546,8 @@ export default function TradingReviews() {
                                     <Chip
                                       label={statusLabels[entry.status] || entry.status}
                                       size="small"
-                                      color={entry.status === "FILLED" ? "success" : "default"}
-                                      sx={{ fontSize: "0.65rem", height: "18px" }}
+                                      variant="outlined"
+                                      sx={{ fontSize: "0.65rem", height: "18px", ...hairlineChipSx(entry.status === "FILLED" ? STATUS_TOKEN.success : STATUS_TOKEN.default) }}
                                     />
                                   </Box>
                                   <Typography variant="caption" color="text.secondary">

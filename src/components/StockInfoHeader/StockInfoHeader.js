@@ -6,7 +6,7 @@ import ArrowDownward from "@mui/icons-material/ArrowDownward";
 import Assessment from "@mui/icons-material/Assessment";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { COLORS, GRADIENT_COLORS, alpha } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 
 function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinancialModal }) {
   const getChangeRate = () => {
@@ -32,9 +32,9 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
   return (
     <Box
       sx={{
-        background: GRADIENT_COLORS.PRIMARY,
-        borderRadius: { xs: 2, md: 1 },
-        boxShadow: `0 2px 8px ${alpha(COLORS.PRIMARY, 0.1)}`,
+        backgroundColor: COLORS.CHARTBOOK.GROUND,
+        border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+        borderRadius: "2px",
         position: "relative",
         p: { xs: 1.5, md: 1.5 },
         mb: 2,
@@ -44,20 +44,20 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
       <Box sx={{ display: { xs: "block", md: "none" } }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
           <Box>
-            <Typography variant="h6" color="white.main" fontWeight="bold">
+            <Typography variant="h6" color={COLORS.CHARTBOOK.INK} fontWeight="bold">
               {selectedStock.name || "-"}
             </Typography>
-            <Typography variant="caption" color="white.main" sx={{ opacity: 0.9 }}>
+            <Typography variant="caption" color={COLORS.CHARTBOOK.INK} sx={{ opacity: 0.7 }}>
               {selectedStock.code || "-"} • KOSPI
             </Typography>
           </Box>
           <IconButton
             onClick={() => onOpenFinancialModal(selectedStock)}
             sx={{
-              color: COLORS.ON_ACCENT,
+              color: COLORS.CHARTBOOK.INK,
               padding: "8px",
               "&:hover": {
-                backgroundColor: alpha(COLORS.SURFACE, 0.1),
+                backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.06),
               },
             }}
             title="재무제표 보기"
@@ -68,12 +68,17 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
 
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <Box>
-            <Typography variant="h5" color="white.main" fontWeight="bold">
+            <Typography
+              variant="h5"
+              color={COLORS.CHARTBOOK.INK}
+              fontWeight="bold"
+              sx={{ fontFamily: "'Fragment Mono', 'Monaco', monospace", fontVariantNumeric: "tabular-nums" }}
+            >
               {ohlcvData && ohlcvData.length > 0
                 ? new Intl.NumberFormat("ko-KR").format(ohlcvData[ohlcvData.length - 1]?.close)
                 : "-"}
             </Typography>
-            <Typography variant="caption" color="white.main" sx={{ opacity: 0.9 }}>
+            <Typography variant="caption" color={COLORS.CHARTBOOK.INK} sx={{ opacity: 0.7 }}>
               종가
             </Typography>
           </Box>
@@ -84,17 +89,22 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
             >
               {changeRate !== null &&
                 (changeRate >= 0 ? (
-                  <ArrowUpward sx={{ fontSize: "16px", color: COLORS.ON_ACCENT }} />
+                  <ArrowUpward sx={{ fontSize: "16px", color: COLORS.UP }} />
                 ) : (
-                  <ArrowDownward sx={{ fontSize: "16px", color: COLORS.ON_ACCENT }} />
+                  <ArrowDownward sx={{ fontSize: "16px", color: COLORS.DOWN }} />
                 ))}
-              <Typography variant="body1" color="white.main" fontWeight="bold">
+              <Typography
+                variant="body1"
+                color={changeRate !== null && changeRate >= 0 ? COLORS.UP : COLORS.DOWN}
+                fontWeight="bold"
+                sx={{ fontFamily: "'Fragment Mono', 'Monaco', monospace", fontVariantNumeric: "tabular-nums" }}
+              >
                 {changeRate !== null
                   ? `${changeRate >= 0 ? "+" : ""}${changeRate.toFixed(2)}%`
                   : "-"}
               </Typography>
             </Box>
-            <Typography variant="caption" color="white.main" sx={{ opacity: 0.9 }}>
+            <Typography variant="caption" color={COLORS.CHARTBOOK.INK} sx={{ opacity: 0.7 }}>
               ATR:{" "}
               {analysisData &&
               analysisData.length > 0 &&
@@ -121,19 +131,19 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
           {/* 종목명 & 코드 */}
           <Grid item xs={12} sm={1.6}>
             <Box>
-              <Typography variant="caption" color="white.main" sx={{ fontSize: "0.7rem" }}>
+              <Typography variant="caption" color={COLORS.CHARTBOOK.INK} sx={{ fontSize: "0.7rem", opacity: 0.7 }}>
                 종목명
               </Typography>
               <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                 <Typography
                   variant="body2"
                   fontWeight="bold"
-                  color="white.main"
+                  color={COLORS.CHARTBOOK.INK}
                   sx={{ fontSize: "0.85rem", lineHeight: 1.2 }}
                 >
                   {selectedStock.name || "-"}
                 </Typography>
-                <Typography variant="caption" color="white.main" sx={{ fontSize: "0.65rem" }}>
+                <Typography variant="caption" color={COLORS.CHARTBOOK.INK} sx={{ fontSize: "0.65rem", opacity: 0.7 }}>
                   ({selectedStock.code || "-"})
                 </Typography>
               </Box>
@@ -143,13 +153,13 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
           {/* 마켓 정보 */}
           <Grid item xs={12} sm={1.6}>
             <Box>
-              <Typography variant="caption" color="white.main" sx={{ fontSize: "0.7rem" }}>
+              <Typography variant="caption" color={COLORS.CHARTBOOK.INK} sx={{ fontSize: "0.7rem", opacity: 0.7 }}>
                 마켓
               </Typography>
               <Typography
                 variant="body2"
                 fontWeight="bold"
-                color="white.main"
+                color={COLORS.CHARTBOOK.INK}
                 sx={{ fontSize: "0.85rem" }}
               >
                 KOSPI
@@ -160,14 +170,14 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
           {/* 종가 */}
           <Grid item xs={12} sm={1.6}>
             <Box>
-              <Typography variant="caption" color="white.main" sx={{ fontSize: "0.7rem" }}>
+              <Typography variant="caption" color={COLORS.CHARTBOOK.INK} sx={{ fontSize: "0.7rem", opacity: 0.7 }}>
                 종가
               </Typography>
               <Typography
                 variant="body2"
                 fontWeight="bold"
-                color="white.main"
-                sx={{ fontSize: "0.85rem" }}
+                color={COLORS.CHARTBOOK.INK}
+                sx={{ fontSize: "0.85rem", fontFamily: "'Fragment Mono', 'Monaco', monospace", fontVariantNumeric: "tabular-nums" }}
               >
                 {ohlcvData && ohlcvData.length > 0
                   ? new Intl.NumberFormat("ko-KR").format(ohlcvData[ohlcvData.length - 1]?.close)
@@ -179,21 +189,21 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
           {/* 등락율 */}
           <Grid item xs={12} sm={1.6}>
             <Box>
-              <Typography variant="caption" color="white.main" sx={{ fontSize: "0.7rem" }}>
+              <Typography variant="caption" color={COLORS.CHARTBOOK.INK} sx={{ fontSize: "0.7rem", opacity: 0.7 }}>
                 등락율
               </Typography>
               <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                 {changeRate !== null &&
                   (changeRate >= 0 ? (
-                    <ArrowUpward sx={{ fontSize: "14px", color: COLORS.ON_ACCENT }} />
+                    <ArrowUpward sx={{ fontSize: "14px", color: COLORS.UP }} />
                   ) : (
-                    <ArrowDownward sx={{ fontSize: "14px", color: COLORS.ON_ACCENT }} />
+                    <ArrowDownward sx={{ fontSize: "14px", color: COLORS.DOWN }} />
                   ))}
                 <Typography
                   variant="body2"
                   fontWeight="bold"
-                  color="white.main"
-                  sx={{ fontSize: "0.85rem" }}
+                  color={changeRate !== null && changeRate >= 0 ? COLORS.UP : COLORS.DOWN}
+                  sx={{ fontSize: "0.85rem", fontFamily: "'Fragment Mono', 'Monaco', monospace", fontVariantNumeric: "tabular-nums" }}
                 >
                   {changeRate !== null
                     ? `${changeRate >= 0 ? "+" : ""}${changeRate.toFixed(2)}%`
@@ -206,14 +216,14 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
           {/* ATR */}
           <Grid item xs={12} sm={1.6}>
             <Box>
-              <Typography variant="caption" color="white.main" sx={{ fontSize: "0.7rem" }}>
+              <Typography variant="caption" color={COLORS.CHARTBOOK.INK} sx={{ fontSize: "0.7rem", opacity: 0.7 }}>
                 ATR
               </Typography>
               <Typography
                 variant="body2"
                 fontWeight="bold"
-                color="white.main"
-                sx={{ fontSize: "0.85rem" }}
+                color={COLORS.CHARTBOOK.INK}
+                sx={{ fontSize: "0.85rem", fontFamily: "'Fragment Mono', 'Monaco', monospace", fontVariantNumeric: "tabular-nums" }}
               >
                 {analysisData &&
                 analysisData.length > 0 &&
@@ -236,14 +246,14 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
           {/* 시가총액 */}
           <Grid item xs={12} sm={1.6}>
             <Box>
-              <Typography variant="caption" color="white.main" sx={{ fontSize: "0.7rem" }}>
+              <Typography variant="caption" color={COLORS.CHARTBOOK.INK} sx={{ fontSize: "0.7rem", opacity: 0.7 }}>
                 시가총액
               </Typography>
               <Typography
                 variant="body2"
                 fontWeight="bold"
-                color="white.main"
-                sx={{ fontSize: "0.85rem" }}
+                color={COLORS.CHARTBOOK.INK}
+                sx={{ fontSize: "0.85rem", fontFamily: "'Fragment Mono', 'Monaco', monospace", fontVariantNumeric: "tabular-nums" }}
               >
                 {formatMarketCap(selectedStock.market_cap)}
               </Typography>
@@ -253,14 +263,14 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
           {/* 영업이익율 */}
           <Grid item xs={12} sm={1.6}>
             <Box>
-              <Typography variant="caption" color="white.main" sx={{ fontSize: "0.7rem" }}>
+              <Typography variant="caption" color={COLORS.CHARTBOOK.INK} sx={{ fontSize: "0.7rem", opacity: 0.7 }}>
                 영업이익율
               </Typography>
               <Typography
                 variant="body2"
                 fontWeight="bold"
-                color="white.main"
-                sx={{ fontSize: "0.85rem" }}
+                color={COLORS.CHARTBOOK.INK}
+                sx={{ fontSize: "0.85rem", fontFamily: "'Fragment Mono', 'Monaco', monospace", fontVariantNumeric: "tabular-nums" }}
               >
                 {selectedStock.영업이익율 != null && selectedStock.영업이익율 !== 0
                   ? `${selectedStock.영업이익율.toFixed(1)}%`
@@ -283,10 +293,10 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
               <IconButton
                 onClick={() => onOpenFinancialModal(selectedStock)}
                 sx={{
-                  color: COLORS.ON_ACCENT,
+                  color: COLORS.CHARTBOOK.INK,
                   padding: "2px",
                   "&:hover": {
-                    backgroundColor: alpha(COLORS.SURFACE, 0.1),
+                    backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.06),
                   },
                 }}
                 title="재무제표 보기"

@@ -8,12 +8,6 @@ import ZonePrimitive from "components/TradingViewChart/ZonePrimitive";
 import { CHART_COLORS, ZONE_STYLE, decisionStatus, timeLabel, won } from "./constants";
 import { COLORS, alpha, resolveColor } from "constants/styles";
 
-const MINUTE = 60;
-const LEAD_MINUTES = 4; // 탐색 구간 시작 앞쪽 여백
-const TRAIL_MINUTES = 12; // 판정 시점 뒤쪽 여백
-const EXIT_LEAD_MINUTES = 40; // 청산 시점 앞쪽 여백 (어떤 흐름 끝에 청산됐는지 보이게)
-const FALLBACK_BARS = 90; // 판정 좌표가 없을 때 보여줄 최근 봉 수
-
 const upVolume = () => alpha(resolveColor(COLORS.UP), 0.45);
 const downVolume = () => alpha(resolveColor(COLORS.DOWN), 0.45);
 const decisionVolume = () => "rgba(97, 97, 97, 0.75)";
@@ -180,44 +174,125 @@ function buildPriceLines(decision, selectedExit) {
     });
   }
 
+  return [...lines, ...buildExitLevelLines(decision?.exit_levels)];
+}
+
+/** 유저 청산 설정 기반 손절선·차수별 익절선(참고선). */
+function buildExitLevelLines(exitLevels) {
+  if (!exitLevels) return [];
+
+  const lines = [];
+
+  if (exitLevels.stop) {
+    lines.push({
+      price: exitLevels.stop,
+      color: CHART_COLORS.STOP,
+      lineWidth: 2,
+      lineStyle: LineStyle.Dashed,
+      title: "손절 (눌림저점)",
+    });
+  }
+
+  (exitLevels.targets ?? []).forEach((target) => {
+    const t = Number(target.t);
+    const sellPct = Number(target.sell_pct);
+    lines.push({
+      price: target.price,
+      color: CHART_COLORS.TARGET,
+      lineWidth: 1,
+      lineStyle: LineStyle.Solid,
+      title: `${target.stage}차 익절 ${Number.isFinite(t) ? `${t}T` : ""}·${
+        Number.isFinite(sellPct) ? `${sellPct}%` : ""
+      }`,
+    });
+  });
+
+  if (exitLevels.use_trailing && exitLevels.trailing_start_price) {
+    lines.push({
+      price: exitLevels.trailing_start_price,
+      color: CHART_COLORS.TRAILING,
+      lineWidth: 1,
+      lineStyle: LineStyle.Dotted,
+      title: `트레일링 시작 ${exitLevels.trailing_start_t}T`,
+    });
+  }
+
   return lines;
 }
 
-/** 선택된 시점이 한눈에 들어오도록 보이는 시간 범위를 정한다. */
-function focusRange(bars, decision, selectedExit) {
-  if (bars.length === 0) return null;
-  const last = bars[bars.length - 1].time;
+/**
+ * 정규장 전체 기간(09:00 ~ 현재시간 또는 15:30)의 시간 범위를 계산한다.
+ *
+ * - 당일 장중(09:00~15:30): 09:00 ~ 현재 시각
+ * - 당일 장마감(15:30 이후) 또는 과거 날짜: 09:00 ~ 15:30
+ * - 당일 개장 전(09:00 이전): 09:00 ~ 15:30
+ */
+function computeFullDayRange(dateStr, bars) {
+  let year;
+  let month;
+  let day;
 
-  // 청산을 골랐으면 체결 시점 앞뒤를 균형 있게 — 청산은 시작 구간이 따로 없다
-  if (selectedExit?.chart_time != null) {
-    return {
-      from: selectedExit.chart_time - EXIT_LEAD_MINUTES * MINUTE,
-      to: selectedExit.chart_time + TRAIL_MINUTES * MINUTE,
-    };
+  if (dateStr) {
+    const parts = dateStr.split("-").map(Number);
+    if (parts.length === 3 && !parts.some(isNaN)) {
+      [year, month, day] = parts;
+    }
   }
 
-  const geometry = decision?.geometry;
-  if (!geometry) {
-    const head = bars[Math.max(0, bars.length - FALLBACK_BARS)].time;
-    return { from: head, to: last + TRAIL_MINUTES * MINUTE };
+  if (!year && bars && bars.length > 0 && typeof bars[0].time === "number") {
+    const d = new Date(bars[0].time * 1000);
+    year = d.getUTCFullYear();
+    month = d.getUTCMonth() + 1;
+    day = d.getUTCDate();
   }
 
-  return {
-    from: geometry.window_from - LEAD_MINUTES * MINUTE,
-    to: (geometry.decision_bar ?? last) + TRAIL_MINUTES * MINUTE,
-  };
+  if (!year) return null;
+
+  const from = Math.floor(Date.UTC(year, month - 1, day, 9, 0, 0) / 1000);
+
+  // KST 기준 현재 날짜 및 시각 계산
+  const now = new Date();
+  const kstNow = new Date(now.getTime() + (now.getTimezoneOffset() + 540) * 60000);
+  const todayKstStr = `${kstNow.getFullYear()}-${String(kstNow.getMonth() + 1).padStart(
+    2,
+    "0"
+  )}-${String(kstNow.getDate()).padStart(2, "0")}`;
+
+  const isToday = dateStr === todayKstStr;
+  let toHour = 15;
+  let toMinute = 30;
+
+  if (isToday) {
+    const currentH = kstNow.getHours();
+    const currentM = kstNow.getMinutes();
+    const currentTotalMin = currentH * 60 + currentM;
+
+    if (currentTotalMin >= 9 * 60 && currentTotalMin <= 15 * 60 + 30) {
+      toHour = currentH;
+      toMinute = currentM;
+    } else {
+      toHour = 15;
+      toMinute = 30;
+    }
+  }
+
+  const to = Math.floor(Date.UTC(year, month - 1, day, toHour, toMinute, 0) / 1000);
+
+  return { from, to: Math.max(to, from + 60) };
 }
 
 /**
  * 진입 판정 1분봉 차트.
  * 전고점·눌림 구간·돌파 기준선을 선택된 판정 기준으로 그린다.
  */
-function EntryDecisionChart({ bars, decision, exits, selectedExit, height }) {
+function EntryDecisionChart({ date, bars, decision, exits, selectedExit, height }) {
   // primitive는 차트 수명 동안 같은 인스턴스를 유지해야 한다.
   const zonesRef = useRef(null);
   if (!zonesRef.current) zonesRef.current = new ZonePrimitive();
 
   const [hoverBar, setHoverBar] = useState(null);
+
+  const initialVisibleRange = useMemo(() => computeFullDayRange(date, bars), [date, bars]);
 
   const series = useMemo(() => {
     const decisionBar = decision?.geometry?.decision_bar;
@@ -306,7 +381,7 @@ function EntryDecisionChart({ bars, decision, exits, selectedExit, height }) {
         left: 8,
         zIndex: 2,
         fontSize: 11.5,
-        background: alpha(COLORS.SURFACE, 0.88),
+        background: alpha(COLORS.CHARTBOOK.GROUND, 0.88),
         color: COLORS.TEXT,
         padding: "2px 6px",
         borderRadius: 4,
@@ -333,11 +408,9 @@ function EntryDecisionChart({ bars, decision, exits, selectedExit, height }) {
       panes={[{ stretch: 1 }]}
       height={height}
       intraday
-      // 선택이 바뀔 때마다 해당 구간으로 화면을 다시 맞춘다
-      fitContentKey={`${selectedExit ? `exit-${selectedExit.id}` : decision?.time ?? "none"}-${
-        bars.length
-      }`}
-      initialVisibleRange={focusRange(bars, decision, selectedExit)}
+      // 종목이나 날짜가 바뀔 때 화면을 09:00~현재/15:30으로 맞춘다
+      fitContentKey={`${date}-${bars[0]?.time ?? "empty"}-${bars.length}`}
+      initialVisibleRange={initialVisibleRange}
       onCrosshairMove={handleCrosshairMove}
       overlay={readoutOverlay}
       chartOptions={{
@@ -358,6 +431,7 @@ function EntryDecisionChart({ bars, decision, exits, selectedExit, height }) {
 }
 
 EntryDecisionChart.propTypes = {
+  date: PropTypes.string,
   bars: PropTypes.array,
   decision: PropTypes.object,
   exits: PropTypes.array,
@@ -366,6 +440,7 @@ EntryDecisionChart.propTypes = {
 };
 
 EntryDecisionChart.defaultProps = {
+  date: "",
   bars: [],
   decision: null,
   exits: [],

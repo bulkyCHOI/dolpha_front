@@ -17,6 +17,11 @@ import Tooltip from "@mui/material/Tooltip";
 import Box from "@mui/material/Box";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import Divider from "@mui/material/Divider";
 
 // @mui icons
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -29,6 +34,7 @@ import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
+import FlashOnIcon from "@mui/icons-material/FlashOn";
 
 // Enhanced components
 import FullWidthContainer from "components/FullWidthContainer";
@@ -40,6 +46,7 @@ import Button from "@mui/material/Button";
 
 import AppHeader from "components/AppHeader";
 import AppFooter from "components/AppFooter";
+import ChartbookHeader from "components/ChartbookHeader/ChartbookHeader";
 
 // Routes and context
 import routes from "routes";
@@ -141,12 +148,8 @@ const getTradingModeColor = (tradingMode) => {
   return colors[tradingMode] || COLORS.TEXT_MUTED;
 };
 
-// 배경색에 따른 텍스트 색상 결정 함수
-const getTextColor = (backgroundColor) => {
-  // MTT(다크레드)와 Turtle(네이비)만 흰색, 나머지는 검은색
-  const darkColors = [COLORS.UP, COLORS.DOWN, COLORS.STRATEGY_THEME_SURGE]; // MTT, Turtle/ATR, 급등테마주
-  return darkColors.includes(backgroundColor) ? COLORS.ON_ACCENT : COLORS.ON_ACCENT_LIGHT;
-};
+// Chartbook: 숫자·티커·칩 라벨용 모노 스택
+const MONO_STACK = "'Fragment Mono', 'Monaco', monospace";
 
 // 수익률 계산 함수
 const calculateProfitRate = (entryPrice, currentPrice) => {
@@ -184,6 +187,11 @@ export default function TradingConfigs() {
   // 매매동향 모달 state
   const [flowModalOpen, setFlowModalOpen] = useState(false);
   const [flowModalStock, setFlowModalStock] = useState(null);
+
+  // 강제청산 모달 state
+  const [forceExitModalOpen, setForceExitModalOpen] = useState(false);
+  const [selectedRowForForceExit, setSelectedRowForForceExit] = useState(null);
+  const [forceExitLoading, setForceExitLoading] = useState(false);
 
   // 거래 상태 정보 로드 함수
   const loadTradingStatus = async () => {
@@ -327,16 +335,19 @@ export default function TradingConfigs() {
         return (
           <Chip
             label={getStrategyTypeLabel(row.strategy_type)}
-            variant="filled"
+            variant="outlined"
             size="small"
             sx={{
               fontSize: "0.7rem",
               height: "24px",
-              fontWeight: "bold",
-              backgroundColor: bgColor,
+              fontWeight: 500,
+              fontFamily: MONO_STACK,
+              backgroundColor: "transparent",
+              border: `1px solid ${bgColor}`,
+              borderRadius: "2px",
               "& .MuiChip-label": {
                 padding: "0 8px",
-                color: `${getTextColor(bgColor)} !important`,
+                color: `${bgColor} !important`,
               },
             }}
           />
@@ -352,16 +363,19 @@ export default function TradingConfigs() {
         return (
           <Chip
             label={getTradingModeLabel(row.trading_mode)}
-            variant="filled"
+            variant="outlined"
             size="small"
             sx={{
               fontSize: "0.7rem",
               height: "24px",
-              fontWeight: "bold",
-              backgroundColor: bgColor,
+              fontWeight: 500,
+              fontFamily: MONO_STACK,
+              backgroundColor: "transparent",
+              border: `1px solid ${bgColor}`,
+              borderRadius: "2px",
               "& .MuiChip-label": {
                 padding: "0 8px",
-                color: `${getTextColor(bgColor)} !important`,
+                color: `${bgColor} !important`,
               },
             }}
           />
@@ -375,12 +389,19 @@ export default function TradingConfigs() {
       cell: (row) => (
         <Chip
           label={row.is_active ? "활성" : "비활성"}
-          color={row.is_active ? "info" : "default"}
+          variant="outlined"
           size="small"
           sx={{
             fontSize: "0.7rem",
             height: "24px",
-            "& .MuiChip-label": { padding: "0 8px" },
+            fontFamily: MONO_STACK,
+            backgroundColor: "transparent",
+            border: `1px solid ${row.is_active ? COLORS.SUCCESS : COLORS.CHARTBOOK.SECONDARY}`,
+            borderRadius: "2px",
+            "& .MuiChip-label": {
+              padding: "0 8px",
+              color: `${row.is_active ? COLORS.SUCCESS : COLORS.CHARTBOOK.SECONDARY} !important`,
+            },
           }}
         />
       ),
@@ -439,11 +460,11 @@ export default function TradingConfigs() {
         const actualEntries = status?.actual_entries || 0;
         const positionSum = status?.position_sum || 0;
 
-        let chipColor = "default";
+        let chipColor = COLORS.CHARTBOOK.SECONDARY;
         if (actualEntries > 0) {
-          if (positionSum >= 80) chipColor = "error";
-          else if (positionSum >= 50) chipColor = "warning";
-          else if (positionSum >= 25) chipColor = "info";
+          if (positionSum >= 80) chipColor = COLORS.UP;
+          else if (positionSum >= 50) chipColor = COLORS.WARNING;
+          else if (positionSum >= 25) chipColor = COLORS.CHARTBOOK.PANEL_BLUE;
         }
 
         return (
@@ -458,13 +479,17 @@ export default function TradingConfigs() {
               <Chip
                 label={`${positionSum.toFixed(0)}%`}
                 size="small"
-                color={chipColor}
+                variant="outlined"
                 sx={{
                   fontSize: "0.65rem",
                   height: "18px",
                   minWidth: "44px",
-                  fontWeight: "bold",
-                  "& .MuiChip-label": { padding: "0 6px" },
+                  fontWeight: 500,
+                  fontFamily: MONO_STACK,
+                  backgroundColor: "transparent",
+                  border: `1px solid ${chipColor}`,
+                  borderRadius: "2px",
+                  "& .MuiChip-label": { padding: "0 6px", color: `${chipColor} !important` },
                 }}
               />
             )}
@@ -722,7 +747,7 @@ export default function TradingConfigs() {
     },
     {
       name: "액션",
-      width: "160px",
+      width: "190px",
       cell: (row) => {
         const isFav = favoriteCodes.has(row.stock_code);
         return (
@@ -738,6 +763,19 @@ export default function TradingConfigs() {
                 ) : (
                   <StarBorderIcon sx={{ fontSize: "16px" }} />
                 )}
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="강제청산 (시장가 즉시 매도)">
+              <IconButton
+                size="small"
+                color="error"
+                sx={{
+                  padding: "4px",
+                  "&:hover": { backgroundColor: "rgba(244, 67, 54, 0.1)" },
+                }}
+                onClick={() => handleOpenForceExitModal(row)}
+              >
+                <FlashOnIcon sx={{ fontSize: "16px" }} />
               </IconButton>
             </Tooltip>
             <Tooltip title="상세 보기">
@@ -979,6 +1017,52 @@ export default function TradingConfigs() {
     }
   };
 
+  // 강제청산 모달 열기 핸들러
+  const handleOpenForceExitModal = (row) => {
+    setSelectedRowForForceExit(row);
+    setForceExitModalOpen(true);
+  };
+
+  // 강제청산 모달 닫기 핸들러
+  const handleCloseForceExitModal = () => {
+    if (forceExitLoading) return;
+    setForceExitModalOpen(false);
+    setSelectedRowForForceExit(null);
+  };
+
+  // 강제청산 실행 핸들러
+  const handleConfirmForceExit = async () => {
+    if (!selectedRowForForceExit) return;
+    setForceExitLoading(true);
+    try {
+      const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
+      const response = await authenticatedFetch(
+        `${apiBaseUrl}/api/mypage/trading-configs/force-exit`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            stock_code: selectedRowForForceExit.stock_code,
+            strategy_type: selectedRowForForceExit.strategy_type,
+          }),
+        }
+      );
+      const result = await response.json();
+      if (response.ok && (result.status === "OK" || result.success)) {
+        showSnackbar(result.message || "강제청산 주문이 완료되었습니다.", "success");
+        loadAllTradingConfigs();
+        loadTradingStatus();
+        handleCloseForceExitModal();
+      } else {
+        showSnackbar(result.message || result.error || "강제청산 처리에 실패했습니다.", "error");
+      }
+    } catch (err) {
+      showSnackbar(`강제청산 오류: ${err.message}`, "error");
+    } finally {
+      setForceExitLoading(false);
+    }
+  };
+
   // 급등테마주 후보의 등록일 목록 (과거 → 최신)
   const themeSurgeDates = [
     ...new Set(
@@ -1094,7 +1178,7 @@ export default function TradingConfigs() {
   const displayedConfigs = activeTab === 1 ? themeSurgeConfigsOfDate : generalConfigs;
 
   // 선택 탭을 채우는 강조색 (탭별 전략색)
-  const activeTabColor = activeTab === 1 ? COLORS.STRATEGY_THEME_SURGE : COLORS.PRIMARY;
+  const activeTabColor = COLORS.CHARTBOOK.SELECTED_BG;
 
   const themeDateIndex = themeSurgeDates.indexOf(selectedThemeDate);
   const hasPrevThemeDate = themeDateIndex > 0;
@@ -1108,7 +1192,14 @@ export default function TradingConfigs() {
     <>
       <AppHeader routes={routes} sticky />
 
-      <Box component="section" sx={{ minHeight: "80vh", pt: 12, pb: 4 }}>
+      <Box sx={{ height: "80px", flexShrink: 0, backgroundColor: COLORS.CHARTBOOK.GROUND }} />
+      <ChartbookHeader
+        strategyName="자동매매 설정"
+        date={new Date().toLocaleDateString("ko-KR")}
+        candidateCount={displayedConfigs.length}
+      />
+
+      <Box component="section" sx={{ minHeight: "80vh", pt: 4, pb: 4 }}>
         <FullWidthContainer>
           {/* 페이지 헤더와 투자 현황 요약을 같은 줄에 배치 */}
           {!loading && !error && displayedConfigs.length > 0 ? (
@@ -1130,7 +1221,7 @@ export default function TradingConfigs() {
               <Box sx={{ flex: 1 }}>
                 <Box display="flex" flexDirection="row" gap={1.5}>
                   {/* 투자 대상 */}
-                  <Card sx={{ flex: 1, minHeight: "80px" }}>
+                  <Card sx={{ flex: 1, minHeight: "80px", bgcolor: COLORS.CHARTBOOK.GROUND, border: `1px solid ${COLORS.CHARTBOOK.GRID}`, boxShadow: "none" }}>
                     <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
                       <Typography
                         variant="caption"
@@ -1142,7 +1233,7 @@ export default function TradingConfigs() {
                       <Typography
                         variant="h6"
                         fontWeight="bold"
-                        color="primary.main"
+                        color="text.primary"
                         sx={{ mt: 0.5 }}
                       >
                         {displayedConfigs.length}개
@@ -1151,7 +1242,7 @@ export default function TradingConfigs() {
                   </Card>
 
                   {/* 투자 종목 수 */}
-                  <Card sx={{ flex: 1, minHeight: "80px" }}>
+                  <Card sx={{ flex: 1, minHeight: "80px", bgcolor: COLORS.CHARTBOOK.GROUND, border: `1px solid ${COLORS.CHARTBOOK.GRID}`, boxShadow: "none" }}>
                     <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
                       <Typography
                         variant="caption"
@@ -1163,7 +1254,7 @@ export default function TradingConfigs() {
                       <Typography
                         variant="h6"
                         fontWeight="bold"
-                        color="primary.main"
+                        color="text.primary"
                         sx={{ mt: 0.5 }}
                       >
                         {(() => {
@@ -1180,7 +1271,7 @@ export default function TradingConfigs() {
                   </Card>
 
                   {/* 투자금 합계 */}
-                  <Card sx={{ flex: 1, minHeight: "80px" }}>
+                  <Card sx={{ flex: 1, minHeight: "80px", bgcolor: COLORS.CHARTBOOK.GROUND, border: `1px solid ${COLORS.CHARTBOOK.GRID}`, boxShadow: "none" }}>
                     <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
                       <Typography
                         variant="caption"
@@ -1192,7 +1283,7 @@ export default function TradingConfigs() {
                       <Typography
                         variant="h6"
                         fontWeight="bold"
-                        color="success.main"
+                        color="text.primary"
                         sx={{ mt: 0.5 }}
                       >
                         {(() => {
@@ -1209,7 +1300,7 @@ export default function TradingConfigs() {
                   </Card>
 
                   {/* 평가손익 합계 */}
-                  <Card sx={{ flex: 1, minHeight: "80px" }}>
+                  <Card sx={{ flex: 1, minHeight: "80px", bgcolor: COLORS.CHARTBOOK.GROUND, border: `1px solid ${COLORS.CHARTBOOK.GRID}`, boxShadow: "none" }}>
                     <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
                       <Typography
                         variant="caption"
@@ -1232,7 +1323,7 @@ export default function TradingConfigs() {
                               if (!avgPrice || !currentPrice || !quantity) return sum;
                               return sum + (currentPrice.price - avgPrice) * quantity;
                             }, 0);
-                            return totalProfitLoss >= 0 ? "error.main" : "info.main";
+                            return totalProfitLoss >= 0 ? COLORS.UP : COLORS.DOWN;
                           })(),
                         }}
                       >
@@ -1254,7 +1345,7 @@ export default function TradingConfigs() {
                   </Card>
 
                   {/* 평균 손익률 */}
-                  <Card sx={{ flex: 1, minHeight: "80px" }}>
+                  <Card sx={{ flex: 1, minHeight: "80px", bgcolor: COLORS.CHARTBOOK.GROUND, border: `1px solid ${COLORS.CHARTBOOK.GRID}`, boxShadow: "none" }}>
                     <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
                       <Typography
                         variant="caption"
@@ -1289,7 +1380,7 @@ export default function TradingConfigs() {
 
                             const avgReturn =
                               totalWeight > 0 ? totalWeightedReturn / totalWeight : 0;
-                            return avgReturn >= 0 ? "error.main" : "info.main";
+                            return avgReturn >= 0 ? COLORS.UP : COLORS.DOWN;
                           })(),
                         }}
                       >
@@ -1350,17 +1441,19 @@ export default function TradingConfigs() {
                 onChange={(event, newValue) => setActiveTab(newValue)}
                 textColor="inherit"
                 sx={{
-                  borderBottom: 1,
-                  borderColor: "divider",
-                  "& .MuiTab-root": { fontWeight: "bold", textTransform: "none" },
-                  // 시세 의미색(UP=상승 적색)을 탭 강조에 쓰면 뜻이 어긋나고,
-                  // 다크에서 밝은 적색 면 위 글자가 읽히지 않는다.
-                  // 선택 탭은 강조색 면으로 채우고, 그 위 글자색은 onColor 로 고른다.
+                  backgroundColor: COLORS.CHARTBOOK.GROUND,
+                  borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+                  "& .MuiTab-root": {
+                    fontWeight: 600,
+                    textTransform: "none",
+                    color: COLORS.TEXT_SECONDARY,
+                  },
+                  // 선택 탭은 잉크 반전 면으로 채운다 (앱 전역 선택 표시와 통일).
                   // 밑줄 인디케이터는 채운 면과 중복이라 감춘다.
                   "& .MuiTabs-indicator": { display: "none" },
                   "& .Mui-selected": {
                     backgroundColor: `${activeTabColor} !important`,
-                    color: `${onColor(activeTabColor)} !important`,
+                    color: `${COLORS.CHARTBOOK.SELECTED_INK} !important`,
                   },
                 }}
               >
@@ -1388,7 +1481,11 @@ export default function TradingConfigs() {
                   </IconButton>
 
                   <Box textAlign="center" sx={{ minWidth: 200 }}>
-                    <Typography variant="h6" fontWeight="bold" sx={{ color: COLORS.STRATEGY_THEME_SURGE }}>
+                    <Typography
+                      variant="h6"
+                      fontWeight="bold"
+                      sx={{ color: COLORS.STRATEGY_THEME_SURGE }}
+                    >
                       {formatKstDateLabel(selectedThemeDate)}
                     </Typography>
                     <Typography variant="caption" color="text.secondary" opacity={0.7}>
@@ -1430,7 +1527,7 @@ export default function TradingConfigs() {
           {!loading && !error && (
             <Box>
               {displayedConfigs.length === 0 ? (
-                <Card>
+                <Card sx={{ bgcolor: COLORS.CHARTBOOK.GROUND, border: `1px solid ${COLORS.CHARTBOOK.GRID}`, boxShadow: "none" }}>
                   <CardContent>
                     <Box textAlign="center" py={6}>
                       <SettingsIcon sx={{ fontSize: 60, color: "text.secondary", mb: 2 }} />
@@ -1444,7 +1541,7 @@ export default function TradingConfigs() {
                           ? "아직 설정된 급등테마주 전략이 없습니다."
                           : "아직 설정된 자동매매 전략이 없습니다."}
                       </Typography>
-                      <Button variant="gradient" color="info">
+                      <Button variant="outlined" color="info">
                         자동매매 설정하기
                       </Button>
                     </Box>
@@ -1524,6 +1621,174 @@ export default function TradingConfigs() {
         onSave={handleModalSave}
         loading={modalLoading}
       />
+
+      {/* 강제청산 확인 모달 */}
+      <Dialog
+        open={forceExitModalOpen}
+        onClose={handleCloseForceExitModal}
+        maxWidth="xs"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 0,
+            bgcolor: COLORS.CHARTBOOK.GROUND,
+            border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+            boxShadow: "none",
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            p: 2.5,
+            pb: 1.5,
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+            fontWeight: "bold",
+          }}
+        >
+          <FlashOnIcon color="error" />
+          <Typography variant="h5" fontWeight="bold" color="text.primary">
+            자동매매 강제청산
+          </Typography>
+        </DialogTitle>
+        <DialogContent sx={{ p: 2.5, pt: 1 }}>
+          {selectedRowForForceExit &&
+            (() => {
+              const row = selectedRowForForceExit;
+              const status = tradingStatus[row.stock_code];
+              const currentPriceObj = currentPrices[row.stock_code];
+              const avgPrice = status?.avg_price || 0;
+              const quantity = status?.total_quantity || 0;
+              const currentPrice = currentPriceObj?.price || 0;
+              const profitLoss =
+                avgPrice > 0 && currentPrice > 0 && quantity > 0
+                  ? (currentPrice - avgPrice) * quantity
+                  : null;
+              const profitRate =
+                avgPrice > 0 && currentPrice > 0
+                  ? ((currentPrice - avgPrice) / avgPrice) * 100
+                  : null;
+              const isProfit = profitLoss !== null && profitLoss >= 0;
+
+              return (
+                <Box display="flex" flexDirection="column" gap={2}>
+                  <Alert severity={quantity > 0 ? "warning" : "info"} sx={{ fontSize: "0.85rem" }}>
+                    {quantity > 0
+                      ? "확인을 누르면 한국투자증권 계좌에 즉시 전량 시장가 매도 주문이 접수되며, 해당 종목의 자동매매 설정이 비활성화됩니다."
+                      : "현재 보유 수량이 없습니다. 확인을 누르면 해당 종목의 자동매매 설정이 비활성화됩니다."}
+                  </Alert>
+
+                  <Box
+                    sx={{
+                      p: 2,
+                      borderRadius: 2,
+                      backgroundColor: "action.hover",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 1.5,
+                    }}
+                  >
+                    <Box display="flex" justifyContent="space-between" alignItems="center">
+                      <Box display="flex" alignItems="center" gap={1}>
+                        <Typography variant="h6" fontWeight="bold" color="text.primary">
+                          {row.stock_name}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          ({row.stock_code})
+                        </Typography>
+                      </Box>
+                      <Chip
+                        label={getStrategyTypeLabel(row.strategy_type)}
+                        variant="outlined"
+                        size="small"
+                        sx={{
+                          fontSize: "0.75rem",
+                          fontWeight: 500,
+                          fontFamily: MONO_STACK,
+                          backgroundColor: "transparent",
+                          border: `1px solid ${getStrategyTypeColor(row.strategy_type)}`,
+                          borderRadius: "2px",
+                          color: `${getStrategyTypeColor(row.strategy_type)} !important`,
+                        }}
+                      />
+                    </Box>
+
+                    <Divider />
+
+                    <Box display="grid" gridTemplateColumns="1fr 1fr" gap={1.5}>
+                      <Box>
+                        <Typography variant="caption" color="text.secondary">
+                          보유 수량
+                        </Typography>
+                        <Typography variant="body2" fontWeight="bold" color="text.primary">
+                          {quantity > 0 ? `${formatCurrency(quantity)}주` : "0주 (보유 없음)"}
+                        </Typography>
+                      </Box>
+                      <Box>
+                        <Typography variant="caption" color="text.secondary">
+                          평균단가
+                        </Typography>
+                        <Typography variant="body2" fontWeight="bold" color="text.primary">
+                          {avgPrice > 0 ? `${formatCurrency(Math.round(avgPrice))}원` : "-"}
+                        </Typography>
+                      </Box>
+                      <Box>
+                        <Typography variant="caption" color="text.secondary">
+                          현재가
+                        </Typography>
+                        <Typography variant="body2" fontWeight="bold" color="text.primary">
+                          {currentPrice > 0 ? `${formatCurrency(currentPrice)}원` : "-"}
+                        </Typography>
+                      </Box>
+                      <Box>
+                        <Typography variant="caption" color="text.secondary">
+                          평가손익
+                        </Typography>
+                        {profitLoss !== null ? (
+                          <Typography
+                            variant="body2"
+                            fontWeight="bold"
+                            color={isProfit ? "error.main" : "info.main"}
+                          >
+                            {isProfit ? "+" : ""}
+                            {formatCurrency(Math.round(profitLoss))}원 ({isProfit ? "+" : ""}
+                            {profitRate.toFixed(2)}%)
+                          </Typography>
+                        ) : (
+                          <Typography variant="body2" color="text.secondary">
+                            -
+                          </Typography>
+                        )}
+                      </Box>
+                    </Box>
+                  </Box>
+                </Box>
+              );
+            })()}
+        </DialogContent>
+        <DialogActions sx={{ p: 2.5, pt: 1, gap: 1 }}>
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={handleCloseForceExitModal}
+            disabled={forceExitLoading}
+          >
+            취소
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleConfirmForceExit}
+            disabled={forceExitLoading}
+            startIcon={
+              forceExitLoading ? <CircularProgress size={16} color="inherit" /> : <FlashOnIcon />
+            }
+          >
+            {forceExitLoading ? "청산 중..." : "즉시 강제청산"}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

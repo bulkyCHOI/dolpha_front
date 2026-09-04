@@ -33,9 +33,22 @@ import ChartContainer from "components/ChartContainer/ChartContainer";
 import StockInfoHeader from "components/StockInfoHeader/StockInfoHeader";
 import StockList from "components/StockList/StockList";
 import FinancialFilter from "components/FinancialFilter/FinancialFilter";
+import ChartbookHeader from "components/ChartbookHeader/ChartbookHeader";
 import useFinancialFilter from "hooks/useFinancialFilter";
-import { COLORS, GRADIENT_COLORS, LAYOUT, alpha, onColor } from "constants/styles";
+import { COLORS, alpha, onColor } from "constants/styles";
 import { formatNumber } from "utils/formatters";
+
+// Chartbook: 수치·티커·기계 출력 폰트
+const MONO_STACK = "'Fragment Mono', 'Monaco', monospace";
+
+// RS 순위 강도색 (배지는 이 색을 채움이 아니라 테두리·글자로만 쓴다)
+const rsBandColor = (rank) => {
+  if (rank >= 90) return COLORS.CHARTBOOK.BAND_STRONG;
+  if (rank >= 70) return COLORS.CHARTBOOK.BAND_MID;
+  if (rank >= 60) return COLORS.CHARTBOOK.BAND_WEAK;
+  if (rank >= 50) return COLORS.CHARTBOOK.PANEL_BLUE;
+  return COLORS.TEXT_MUTED;
+};
 
 function MTT() {
   const [activeTab, setActiveTab] = useState(0);
@@ -197,9 +210,8 @@ function MTT() {
     <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
       <Box
         sx={{
-          backgroundColor: COLORS.SURFACE,
+          backgroundColor: COLORS.CHARTBOOK.GROUND,
           borderRadius: 2,
-          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
           height: "100%",
           display: "flex",
           flexDirection: "column",
@@ -233,9 +245,8 @@ function MTT() {
     <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
       <Box
         sx={{
-          backgroundColor: COLORS.SURFACE,
+          backgroundColor: COLORS.CHARTBOOK.GROUND,
           borderRadius: 2,
-          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
           height: "100%",
           display: "flex",
           flexDirection: "column",
@@ -277,14 +288,14 @@ function MTT() {
                   width: 64,
                   height: 64,
                   borderRadius: "50%",
-                  background: GRADIENT_COLORS.PRIMARY,
+                  backgroundColor: COLORS.CHARTBOOK.INK,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   mb: 2,
                 }}
               >
-                <Typography variant="h4" color="white.main">
+                <Typography variant="h4" color={COLORS.CHARTBOOK.GROUND}>
                   📈
                 </Typography>
               </Box>
@@ -339,9 +350,8 @@ function MTT() {
     <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
       <Box
         sx={{
-          backgroundColor: COLORS.SURFACE,
+          backgroundColor: COLORS.CHARTBOOK.GROUND,
           borderRadius: 2,
-          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
           height: "100%",
           display: "flex",
           flexDirection: "column",
@@ -401,6 +411,16 @@ function MTT() {
   return (
     <>
       <AppHeader routes={routes} sticky />
+      <Box sx={{ height: "80px", flexShrink: 0, backgroundColor: COLORS.CHARTBOOK.GROUND }} />
+      <ChartbookHeader
+        strategyName="MTT"
+        date={new Date().toLocaleDateString("ko-KR", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        })}
+        candidateCount={filteredStocks.length}
+      />
 
       {/* 모바일 레이아웃 */}
       {isMobile ? (
@@ -408,15 +428,12 @@ function MTT() {
           sx={{
             height: "100vh",
             width: "100%",
-            backgroundColor: COLORS.SURFACE_ALT,
+            backgroundColor: COLORS.CHARTBOOK.GROUND,
             display: "flex",
             flexDirection: "column",
             overflow: "hidden",
           }}
         >
-          {/* 네비게이션 바 높이만큼 패딩 추가 */}
-          <Box sx={{ height: "80px", flexShrink: 0 }} />
-
           {/* 메인 콘텐츠 */}
           <Box sx={{ flex: 1, p: 1 }}>
             {mobileTab === 0 && renderMobileStockTab()}
@@ -489,15 +506,12 @@ function MTT() {
           sx={{
             height: "100vh",
             width: "100%",
-            backgroundColor: COLORS.SURFACE_ALT,
+            backgroundColor: COLORS.CHARTBOOK.GROUND,
             display: "flex",
             flexDirection: "column",
             overflow: "hidden",
           }}
         >
-          {/* 네비게이션 바 높이만큼 패딩 추가 */}
-          <Box sx={{ height: "80px", flexShrink: 0 }} />
-
           <Grid
             container
             spacing={0.5}
@@ -522,9 +536,8 @@ function MTT() {
             >
               <Box
                 sx={{
-                  backgroundColor: COLORS.SURFACE,
+                  backgroundColor: COLORS.CHARTBOOK.GROUND,
                   borderRadius: 2,
-                  boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
                   height: "100%",
                   display: "flex",
                   flexDirection: "column",
@@ -571,14 +584,14 @@ function MTT() {
                           width: 64,
                           height: 64,
                           borderRadius: "50%",
-                          background: GRADIENT_COLORS.PRIMARY,
+                          backgroundColor: COLORS.CHARTBOOK.INK,
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
                           mb: 2,
                         }}
                       >
-                        <Typography variant="h4" color="white.main">
+                        <Typography variant="h4" color={COLORS.CHARTBOOK.GROUND}>
                           📈
                         </Typography>
                       </Box>
@@ -642,9 +655,8 @@ function MTT() {
             >
               <Box
                 sx={{
-                  backgroundColor: COLORS.SURFACE,
+                  backgroundColor: COLORS.CHARTBOOK.GROUND,
                   borderRadius: 2,
-                  boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
                   height: "100%",
                   display: "flex",
                   flexDirection: "column",
@@ -671,8 +683,8 @@ function MTT() {
                     sx={{
                       minHeight: { xs: "44px", md: "48px" },
                       "& .MuiTabs-indicator": {
-                        backgroundColor: COLORS.PRIMARY,
-                        height: "3px",
+                        backgroundColor: COLORS.CHARTBOOK.INK,
+                        height: "2px",
                       },
                       "& .MuiTab-root": {
                         fontWeight: "bold",
@@ -681,7 +693,7 @@ function MTT() {
                         minWidth: "auto",
                         padding: { xs: "8px 12px", md: "12px 16px" },
                         "&.Mui-selected": {
-                          color: COLORS.PRIMARY,
+                          color: COLORS.CHARTBOOK.INK,
                         },
                       },
                     }}
@@ -727,11 +739,11 @@ function MTT() {
                         {/* 테이블 헤더 */}
                         <Box
                           sx={{
-                            background: GRADIENT_COLORS.PRIMARY,
+                            backgroundColor: COLORS.CHARTBOOK.GROUND,
+                            border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
                             p: 1,
                             display: "flex",
                             alignItems: "center",
-                            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
                             flexShrink: 0,
                           }}
                         >
@@ -739,7 +751,7 @@ function MTT() {
                             <Grid item xs={3.5} sm={3}>
                               <Typography
                                 variant="subtitle2"
-                                color="white.main"
+                                color={COLORS.CHARTBOOK.INK}
                                 fontWeight="bold"
                                 sx={{ fontSize: { xs: "0.7rem", md: "0.875rem" } }}
                               >
@@ -749,7 +761,7 @@ function MTT() {
                             <Grid item xs={1.5} sm={2}>
                               <Typography
                                 variant="subtitle2"
-                                color="white.main"
+                                color={COLORS.CHARTBOOK.INK}
                                 fontWeight="bold"
                                 textAlign="center"
                                 sx={{ fontSize: { xs: "0.7rem", md: "0.875rem" } }}
@@ -760,7 +772,7 @@ function MTT() {
                             <Grid item xs={2} sm={2}>
                               <Typography
                                 variant="subtitle2"
-                                color="white.main"
+                                color={COLORS.CHARTBOOK.INK}
                                 fontWeight="bold"
                                 textAlign="center"
                                 sx={{ fontSize: { xs: "0.65rem", md: "0.8rem" } }}
@@ -771,7 +783,7 @@ function MTT() {
                             <Grid item xs={2.5} sm={2.5}>
                               <Typography
                                 variant="subtitle2"
-                                color="white.main"
+                                color={COLORS.CHARTBOOK.INK}
                                 fontWeight="bold"
                                 textAlign="center"
                                 sx={{ fontSize: { xs: "0.7rem", md: "0.875rem" } }}
@@ -782,7 +794,7 @@ function MTT() {
                             <Grid item xs={2.5} sm={2.5}>
                               <Typography
                                 variant="subtitle2"
-                                color="white.main"
+                                color={COLORS.CHARTBOOK.INK}
                                 fontWeight="bold"
                                 textAlign="center"
                                 sx={{ fontSize: { xs: "0.7rem", md: "0.875rem" } }}
@@ -798,7 +810,7 @@ function MTT() {
                           sx={{
                             flex: 1,
                             overflow: "auto",
-                            backgroundColor: COLORS.SURFACE,
+                            backgroundColor: COLORS.CHARTBOOK.GROUND,
                             "&::-webkit-scrollbar": {
                               width: "8px",
                             },
@@ -824,28 +836,23 @@ function MTT() {
                                 borderBottom:
                                   rowIndex === filteredStocks.length - 1
                                     ? "none"
-                                    : `1px solid ${COLORS.DIVIDER}`,
+                                    : `1px solid ${COLORS.CHARTBOOK.GRID}`,
                                 cursor: "pointer",
-                                transition: "all 0.2s ease",
+                                transition: "background-color 0.12s ease",
+                                color:
+                                  selectedStock?.code === row.code
+                                    ? COLORS.CHARTBOOK.SELECTED_INK
+                                    : "inherit",
                                 backgroundColor:
                                   selectedStock?.code === row.code
-                                    ? `linear-gradient(135deg, ${alpha(
-                                        COLORS.PRIMARY,
-                                        0.1
-                                      )} 0%, ${alpha(COLORS.PRIMARY_DARK, 0.1)} 100%)`
-                                    : rowIndex % 2 === 0
-                                    ? COLORS.SURFACE_ALT
-                                    : COLORS.ON_ACCENT,
+                                    ? COLORS.CHARTBOOK.SELECTED_BG
+                                    : COLORS.CHARTBOOK.GROUND,
                                 "&:hover": {
-                                  backgroundColor: alpha(COLORS.PRIMARY, 0.08),
-                                  transform: "translateX(4px)",
-                                  boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                                  borderLeft: `3px solid ${COLORS.PRIMARY}`,
+                                  backgroundColor:
+                                    selectedStock?.code === row.code
+                                      ? COLORS.CHARTBOOK.SELECTED_BG
+                                      : alpha(COLORS.CHARTBOOK.INK, 0.06),
                                 },
-                                ...(selectedStock?.code === row.code && {
-                                  borderLeft: `3px solid ${COLORS.PRIMARY}`,
-                                  boxShadow: `0 2px 12px ${alpha(COLORS.PRIMARY, 0.2)}`,
-                                }),
                               }}
                             >
                               <Grid container spacing={0} alignItems="center">
@@ -856,23 +863,30 @@ function MTT() {
                                       fontWeight={
                                         selectedStock?.code === row.code ? "bold" : "medium"
                                       }
-                                      color={selectedStock?.code === row.code ? "info" : "text"}
                                       sx={{
                                         fontSize: { xs: "0.7rem", md: "0.8rem" },
                                         lineHeight: 1.1,
                                         overflow: "hidden",
                                         textOverflow: "ellipsis",
                                         whiteSpace: "nowrap",
+                                        color:
+                                          selectedStock?.code === row.code
+                                            ? COLORS.CHARTBOOK.SELECTED_INK
+                                            : COLORS.CHARTBOOK.INK,
                                       }}
                                     >
                                       {row.name || "-"}
                                     </Typography>
                                     <Typography
                                       variant="caption"
-                                      color="text.secondary"
                                       sx={{
                                         fontSize: { xs: "0.6rem", md: "0.7rem" },
                                         display: { xs: "none", sm: "block" },
+                                        fontFamily: MONO_STACK,
+                                        color:
+                                          selectedStock?.code === row.code
+                                            ? COLORS.CHARTBOOK.SELECTED_INK
+                                            : COLORS.TEXT_SECONDARY,
                                       }}
                                     >
                                       {row.code || ""}
@@ -885,39 +899,23 @@ function MTT() {
                                       label={Math.floor(row.rsRank) || "-"}
                                       size="small"
                                       sx={{
-                                        backgroundColor:
-                                          row.rsRank >= 90
-                                            ? COLORS.UP
-                                            : row.rsRank >= 80
-                                            ? COLORS.WARNING
-                                            : row.rsRank >= 70
-                                            ? COLORS.WARNING
-                                            : row.rsRank >= 60
-                                            ? COLORS.SUCCESS
-                                            : row.rsRank >= 50
-                                            ? COLORS.DOWN
-                                            : COLORS.TEXT_MUTED,
-                                        color: onColor(
-                                          row.rsRank >= 90
-                                            ? COLORS.UP
-                                            : row.rsRank >= 80
-                                            ? COLORS.WARNING
-                                            : row.rsRank >= 70
-                                            ? COLORS.WARNING
-                                            : row.rsRank >= 60
-                                            ? COLORS.SUCCESS
-                                            : row.rsRank >= 50
-                                            ? COLORS.DOWN
-                                            : COLORS.TEXT_MUTED
-                                        ),
-                                        fontWeight: "bold",
+                                        backgroundColor: "transparent",
+                                        color:
+                                          selectedStock?.code === row.code
+                                            ? COLORS.CHARTBOOK.SELECTED_INK
+                                            : rsBandColor(row.rsRank),
+                                        border: `1px solid ${
+                                          selectedStock?.code === row.code
+                                            ? COLORS.CHARTBOOK.SELECTED_INK
+                                            : rsBandColor(row.rsRank)
+                                        }`,
+                                        borderRadius: "2px",
+                                        fontFamily: MONO_STACK,
+                                        fontWeight: 500,
                                         fontSize: { xs: "0.6rem", md: "0.7rem" },
                                         minWidth: { xs: "30px", md: "35px" },
                                         height: { xs: "28px", md: "20px" },
                                         cursor: "pointer",
-                                        "&:hover": {
-                                          opacity: 0.8,
-                                        },
                                       }}
                                     />
                                   </Box>
@@ -928,24 +926,19 @@ function MTT() {
                                       label={`${row.mtt_duration_days || 0}일`}
                                       size="small"
                                       sx={{
-                                        backgroundColor:
-                                          row.mtt_duration_days >= 30
-                                            ? COLORS.SUCCESS
-                                            : row.mtt_duration_days >= 14
-                                            ? COLORS.WARNING
-                                            : row.mtt_duration_days >= 7
-                                            ? COLORS.DOWN
-                                            : COLORS.TEXT_MUTED,
-                                        color: onColor(
-                                          row.mtt_duration_days >= 30
-                                            ? COLORS.SUCCESS
-                                            : row.mtt_duration_days >= 14
-                                            ? COLORS.WARNING
-                                            : row.mtt_duration_days >= 7
-                                            ? COLORS.DOWN
-                                            : COLORS.TEXT_MUTED
-                                        ),
-                                        fontWeight: "bold",
+                                        backgroundColor: "transparent",
+                                        color:
+                                          selectedStock?.code === row.code
+                                            ? COLORS.CHARTBOOK.SELECTED_INK
+                                            : COLORS.CHARTBOOK.INK,
+                                        border: `1px solid ${
+                                          selectedStock?.code === row.code
+                                            ? COLORS.CHARTBOOK.SELECTED_INK
+                                            : COLORS.CHARTBOOK.GRID
+                                        }`,
+                                        borderRadius: "2px",
+                                        fontFamily: MONO_STACK,
+                                        fontWeight: 500,
                                         fontSize: { xs: "0.6rem", md: "0.7rem" },
                                         minWidth: { xs: "35px", md: "40px" },
                                         height: { xs: "28px", md: "20px" },
@@ -1039,12 +1032,13 @@ function MTT() {
                               color="primary"
                               onClick={() => navigate("/pages/authentication/sign-in")}
                               sx={{
-                                background: GRADIENT_COLORS.PRIMARY,
-                                color: onColor(GRADIENT_COLORS.PRIMARY),
+                                backgroundColor: COLORS.CHARTBOOK.INK,
+                                color: COLORS.CHARTBOOK.GROUND,
                                 px: 4,
                                 py: 1.5,
                                 "&:hover": {
-                                  background: GRADIENT_COLORS.PRIMARY_HOVER,
+                                  backgroundColor: COLORS.CHARTBOOK.INK,
+                                  opacity: 0.8,
                                 },
                               }}
                             >

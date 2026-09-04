@@ -31,10 +31,18 @@ import { cssVar } from "constants/palette";
  * 본문용은 Pretendard(한글) → Roboto(라틴/숫자) 순으로 폴백한다.
  * 크기는 11 / 12 / 13 / 14 / 16 / 18 / 20 / 24 / 30 단일 스케일만 쓴다.
  * 컴포넌트에서 fontSize를 px로 직접 박지 말 것.
+ *
+ * Chartbook 전용:
+ * - fontFamilyArchivo: 구조화/라벨/네비게이션/제목용 (라틴만)
+ * - fontFamilyMonoFragment: 수치/티커/기계 출력용 (라틴만)
  */
 const baseProperties = {
   fontFamily: '"Pretendard Variable", Pretendard, "Roboto", "Helvetica", "Arial", sans-serif',
   fontFamily2: '"Pretendard Variable", Pretendard, "Roboto Slab", serif',
+  // 계산책 스타일: 구조/라벨 (라틴, 한글은 Pretendard)
+  fontFamilyArchivo: '"Archivo", "Helvetica", "Arial", sans-serif',
+  // 계산책 스타일: 수치/티커/기계 산출 (라틴만)
+  fontFamilyMonoFragment: '"Fragment Mono", "Monaco", "Courier New", monospace',
   // 숫자 표(시세·수익률)에서 자릿수가 흔들리지 않게 쓰는 폰트 설정
   fontVariantNumeric: "tabular-nums",
   fontWeightLighter: 300,

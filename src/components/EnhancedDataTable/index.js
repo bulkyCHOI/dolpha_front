@@ -4,39 +4,44 @@
 
 import DataTable from "react-data-table-component";
 import styled from "styled-components";
-import { COLORS } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
+
+const MONO_STACK = "'Fragment Mono', 'Monaco', monospace";
+const HEADER_STACK = "'Archivo', 'Helvetica', 'Arial', sans-serif";
 
 const StyledEnhancedDataTable = styled(DataTable)`
   /*
+   * Chartbook 세계: 평면 지면, 헤어라인 구분선, 모노 숫자.
    * react-data-table-component 는 표·헤더·셀에 흰 배경과 rgba(0, 0, 0, 0.87)
    * 글자를 기본값으로 깐다. 배경만 덮으면 다크에서 표 바깥 테두리가 흰 판으로
    * 남고 글자는 검은색 그대로다. 배경과 글자를 함께 지정해야 한다.
    */
   .rdt_Table {
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     width: 100%;
-    background-color: ${COLORS.SURFACE};
-    color: ${COLORS.TEXT};
+    background-color: ${COLORS.CHARTBOOK.GROUND};
+    color: ${COLORS.CHARTBOOK.INK};
+    border-radius: 0;
+    box-shadow: none;
   }
 
   .rdt_TableHeadRow {
-    background-color: ${COLORS.SURFACE_ALT};
-    color: ${COLORS.TEXT};
-    border-bottom: 2px solid ${COLORS.BORDER};
+    background-color: ${COLORS.CHARTBOOK.GROUND};
+    color: ${COLORS.CHARTBOOK.INK};
+    border-bottom: 1px solid ${COLORS.CHARTBOOK.GRID};
     font-weight: bold;
+    font-family: ${HEADER_STACK};
   }
 
   .rdt_TableRow {
     transition: background-color 0.2s ease;
-    background-color: ${COLORS.SURFACE};
-    color: ${COLORS.TEXT};
+    background-color: ${COLORS.CHARTBOOK.GROUND};
+    color: ${COLORS.CHARTBOOK.INK};
+    border-bottom: 1px solid ${COLORS.CHARTBOOK.GRID};
     &:nth-of-type(odd) {
-      background-color: ${COLORS.SURFACE_ALT};
+      background-color: ${COLORS.CHARTBOOK.GROUND};
     }
     &:hover {
-      background-color: ${COLORS.ROW_HOVER} !important;
+      background-color: ${alpha(COLORS.CHARTBOOK.INK, 0.06)} !important;
     }
   }
 
@@ -45,12 +50,15 @@ const StyledEnhancedDataTable = styled(DataTable)`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    font-family: ${MONO_STACK};
+    font-variant-numeric: tabular-nums;
   }
 
   .rdt_TableCol {
     padding: 16px 8px;
-    color: ${COLORS.TEXT};
+    color: ${COLORS.CHARTBOOK.INK};
     font-weight: bold;
+    font-family: ${HEADER_STACK};
     white-space: normal !important;
     overflow: visible !important;
     text-overflow: unset !important;
@@ -63,22 +71,27 @@ const StyledEnhancedDataTable = styled(DataTable)`
     word-break: keep-all;
   }
 
+  .rdt_TableCol_Sortable::after {
+    fill: ${COLORS.CHARTBOOK.INK};
+  }
+
   .rdt_Pagination {
-    background-color: ${COLORS.SURFACE_ALT};
-    color: ${COLORS.TEXT};
-    border-top: 1px solid ${COLORS.BORDER};
+    background-color: ${COLORS.CHARTBOOK.GROUND};
+    color: ${COLORS.CHARTBOOK.INK};
+    border-top: 1px solid ${COLORS.CHARTBOOK.GRID};
 
     button {
-      fill: ${COLORS.TEXT};
-      color: ${COLORS.TEXT};
+      fill: ${COLORS.CHARTBOOK.INK};
+      color: ${COLORS.CHARTBOOK.INK};
     }
     button:disabled {
       fill: ${COLORS.TEXT_MUTED};
       color: ${COLORS.TEXT_MUTED};
     }
     select {
-      background-color: ${COLORS.SURFACE};
-      color: ${COLORS.TEXT};
+      background-color: ${COLORS.CHARTBOOK.GROUND};
+      color: ${COLORS.CHARTBOOK.INK};
+      border: 1px solid ${COLORS.CHARTBOOK.GRID};
     }
   }
 `;
@@ -179,14 +192,13 @@ const EnhancedDataTable = ({
           },
           headRow: {
             style: {
-              backgroundColor: COLORS.SURFACE_ALT,
-              // 색을 지정하지 않으면 react-data-table-component 기본값
-              // rgba(0, 0, 0, 0.87) 이 남아 다크에서 헤더가 배경에 묻힌다.
-              color: COLORS.TEXT,
-              borderBottomWidth: "2px",
-              borderBottomColor: COLORS.BORDER,
+              backgroundColor: COLORS.CHARTBOOK.GROUND,
+              color: COLORS.CHARTBOOK.INK,
+              borderBottomWidth: "1px",
+              borderBottomColor: COLORS.CHARTBOOK.GRID,
               fontSize: "14px",
               fontWeight: "bold",
+              fontFamily: HEADER_STACK,
             },
           },
           headCells: {
@@ -200,17 +212,14 @@ const EnhancedDataTable = ({
           rows: {
             style: {
               minHeight: "65px",
-              // 기본 테마는 흰 배경 · 검은 글자다. 지정하지 않으면 다크에서
-              // 짝수 행만 흰 판으로 남는다.
-              backgroundColor: COLORS.SURFACE,
-              color: COLORS.TEXT,
+              backgroundColor: COLORS.CHARTBOOK.GROUND,
+              color: COLORS.CHARTBOOK.INK,
+              borderBottomColor: COLORS.CHARTBOOK.GRID,
               "&:nth-of-type(odd)": {
-                backgroundColor: COLORS.SURFACE_ALT,
+                backgroundColor: COLORS.CHARTBOOK.GROUND,
               },
-              // hover 는 전용 토큰을 쓴다. 시세 의미색(TINT_DOWN)을 끌어다 쓰면
-              // 뜻이 어긋나고, 다크에서 파란 면이 그대로 도드라진다.
               "&:hover": {
-                backgroundColor: `${COLORS.ROW_HOVER} !important`,
+                backgroundColor: `${alpha(COLORS.CHARTBOOK.INK, 0.06)} !important`,
               },
             },
             /**
@@ -219,32 +228,33 @@ const EnhancedDataTable = ({
              * 여기서 덮지 않으면 다크에서 행 하나가 흰 판으로 뜬다.
              */
             highlightOnHoverStyle: {
-              backgroundColor: COLORS.ROW_HOVER,
-              color: COLORS.TEXT,
-              borderBottomColor: COLORS.BORDER,
-              outlineColor: COLORS.SURFACE,
+              backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.06),
+              color: COLORS.CHARTBOOK.INK,
+              borderBottomColor: COLORS.CHARTBOOK.GRID,
+              outlineColor: COLORS.CHARTBOOK.GROUND,
             },
             stripedStyle: {
-              backgroundColor: COLORS.SURFACE_ALT,
-              color: COLORS.TEXT,
+              backgroundColor: COLORS.CHARTBOOK.GROUND,
+              color: COLORS.CHARTBOOK.INK,
             },
           },
           cells: {
             style: {
               padding: "12px 8px",
+              fontFamily: MONO_STACK,
+              fontVariantNumeric: "tabular-nums",
             },
           },
           pagination: {
             style: {
-              backgroundColor: COLORS.SURFACE_ALT,
-              // "페이지당 행 수:" 등은 기본값 rgba(0, 0, 0, 0.54) 라 다크에서 읽히지 않는다.
-              color: COLORS.TEXT,
-              borderTop: `1px solid ${COLORS.BORDER}`,
+              backgroundColor: COLORS.CHARTBOOK.GROUND,
+              color: COLORS.CHARTBOOK.INK,
+              borderTop: `1px solid ${COLORS.CHARTBOOK.GRID}`,
               fontSize: "14px",
             },
             pageButtonsStyle: {
-              color: COLORS.TEXT,
-              fill: COLORS.TEXT,
+              color: COLORS.CHARTBOOK.INK,
+              fill: COLORS.CHARTBOOK.INK,
               "&:disabled": {
                 color: COLORS.TEXT_MUTED,
                 fill: COLORS.TEXT_MUTED,

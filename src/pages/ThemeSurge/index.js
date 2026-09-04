@@ -31,20 +31,24 @@ import ThemeEntryChart from "components/ThemeEntryChart";
 import ThemeRateLineChart from "components/ThemeRateLineChart";
 import { useThemeSurgeData, todayKST } from "hooks/useThemeSurgeData";
 import { useThemeSurgePositions } from "hooks/useThemeSurgePositions";
-import { COLORS, alpha, GRADIENT_COLORS } from "constants/styles";
+import ChartbookHeader from "components/ChartbookHeader/ChartbookHeader";
+import { COLORS, alpha } from "constants/styles";
 import { formatNumber } from "utils/formatters";
 
 const AUTO_REFRESH_MS = 60000;
 const LIVE_THEME_LIMIT = 10;
 
+const MONO_STACK = "'Fragment Mono', 'Monaco', monospace";
 const RISE = COLORS.UP;
 const FALL = COLORS.DOWN;
-const MUTED = COLORS.TEXT_SECONDARY;
+const MUTED = COLORS.CHARTBOOK.INK;
 
 const cardSx = {
   p: 2.5,
-  borderRadius: 2,
-  boxShadow: "0 1px 3px rgba(16,24,40,0.06), 0 1px 2px rgba(16,24,40,0.04)",
+  borderRadius: 0,
+  backgroundColor: COLORS.CHARTBOOK.GROUND,
+  border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+  boxShadow: "none",
 };
 
 const rateColor = (rate) => (rate >= 0 ? RISE : FALL);
@@ -57,25 +61,26 @@ function StatCard({ icon: Icon, label, value, unit, accent }) {
         sx={{
           width: 40,
           height: 40,
-          borderRadius: 1.5,
+          borderRadius: 0,
           display: "grid",
           placeItems: "center",
           bgcolor: alpha(accent, 0.12),
           color: accent,
           flexShrink: 0,
+          border: `1px solid ${accent}66`,
         }}
       >
         <Icon fontSize="small" />
       </Box>
       <Box sx={{ minWidth: 0 }}>
-        <Typography variant="caption" sx={{ color: MUTED, display: "block", lineHeight: 1.2 }}>
+        <Typography variant="caption" sx={{ color: COLORS.CHARTBOOK.INK, display: "block", lineHeight: 1.2 }}>
           {label}
         </Typography>
         <Box sx={{ display: "flex", alignItems: "baseline", gap: 0.5 }}>
-          <Typography variant="h5" fontWeight="bold" sx={{ lineHeight: 1.2 }}>
+          <Typography variant="h5" fontWeight="bold" sx={{ lineHeight: 1.2, fontFamily: MONO_STACK, fontVariantNumeric: "tabular-nums" }}>
             {value}
           </Typography>
-          <Typography variant="caption" sx={{ color: MUTED }}>
+          <Typography variant="caption" sx={{ color: COLORS.CHARTBOOK.INK, fontFamily: MONO_STACK }}>
             {unit}
           </Typography>
         </Box>
@@ -106,11 +111,11 @@ function SectionCard({ title, subtitle, action, children, sx }) {
         }}
       >
         <Box>
-          <Typography variant="h6" fontWeight="bold" sx={{ fontSize: 15 }}>
+          <Typography variant="h6" fontWeight="bold" sx={{ fontSize: 15, fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}>
             {title}
           </Typography>
           {subtitle && (
-            <Typography variant="caption" sx={{ color: MUTED, display: "block", mt: 0.25 }}>
+            <Typography variant="caption" sx={{ color: COLORS.CHARTBOOK.INK, display: "block", mt: 0.25, fontSize: 12 }}>
               {subtitle}
             </Typography>
           )}
@@ -146,7 +151,7 @@ function StockCell({ name, code }) {
       {code && (
         <Typography
           variant="caption"
-          sx={{ color: COLORS.TEXT_MUTED, lineHeight: 1, fontSize: 11 }}
+          sx={{ color: COLORS.CHARTBOOK.INK, lineHeight: 1, fontSize: 11, fontFamily: MONO_STACK, fontWeight: 500 }}
         >
           {code}
         </Typography>
@@ -176,10 +181,11 @@ function ThemeInlineCell({ name, leader }) {
           sx={{
             fontSize: 10.5,
             lineHeight: 1.05,
-            color: COLORS.TEXT_MUTED,
+            color: COLORS.CHARTBOOK.INK,
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
+            fontFamily: MONO_STACK,
           }}
         >
           {leader}
@@ -194,7 +200,7 @@ ThemeInlineCell.defaultProps = { leader: "" };
 
 function RateCell({ value }) {
   return (
-    <Typography variant="button" sx={{ fontSize: 13, fontWeight: 700, color: rateColor(value) }}>
+    <Typography variant="button" sx={{ fontSize: 13, fontWeight: 700, color: rateColor(value), fontFamily: MONO_STACK, fontVariantNumeric: "tabular-nums" }}>
       {signed(value)}
     </Typography>
   );
@@ -210,12 +216,13 @@ function ConditionMark({ ok }) {
         display: "inline-block",
         width: 18,
         height: 18,
-        borderRadius: "50%",
-        bgcolor: ok ? COLORS.TINT_SUCCESS : COLORS.SURFACE_ALT,
-        color: ok ? COLORS.SUCCESS : COLORS.BORDER_STRONG,
+        borderRadius: 0,
+        bgcolor: "transparent",
+        color: ok ? COLORS.CHARTBOOK.BAND_WEAK : COLORS.CHARTBOOK.INK,
+        border: `1px solid ${ok ? COLORS.CHARTBOOK.BAND_WEAK : COLORS.CHARTBOOK.GRID}`,
         fontSize: 11,
         fontWeight: 700,
-        lineHeight: "18px",
+        lineHeight: "16px",
         textAlign: "center",
       }}
     >
@@ -236,17 +243,18 @@ ConditionMark.defaultProps = { ok: false };
  */
 const tableStyles = (minWidth, compact = false) => ({
   table: {
-    style: { width: "100%", tableLayout: "auto", minWidth, backgroundColor: COLORS.SURFACE },
+    style: { width: "100%", tableLayout: "auto", minWidth, backgroundColor: COLORS.CHARTBOOK.GROUND },
   },
   headRow: {
     style: {
-      backgroundColor: COLORS.SURFACE_ALT,
+      backgroundColor: COLORS.CHARTBOOK.GROUND,
       borderBottomWidth: "1px",
-      borderBottomColor: COLORS.BORDER,
+      borderBottomColor: COLORS.CHARTBOOK.GRID,
       fontSize: "12px",
       fontWeight: 700,
-      color: MUTED,
+      color: COLORS.CHARTBOOK.INK,
       minHeight: compact ? "24px" : "40px",
+      fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif",
     },
   },
   headCells: {
@@ -256,32 +264,34 @@ const tableStyles = (minWidth, compact = false) => ({
       textOverflow: "unset",
       padding: compact ? "0px 6px" : "8px",
       minHeight: compact ? "24px" : "40px",
+      borderRight: `1px solid ${COLORS.CHARTBOOK.GRID}`,
     },
   },
   rows: {
     style: {
-      backgroundColor: COLORS.SURFACE,
-      color: COLORS.TEXT,
+      backgroundColor: COLORS.CHARTBOOK.GROUND,
+      color: COLORS.CHARTBOOK.INK,
       minHeight: compact ? "0px" : "48px",
       lineHeight: compact ? 1.1 : "inherit",
       fontSize: "13px",
-      "&:not(:last-of-type)": { borderBottomColor: COLORS.SURFACE_ALT },
-      "&:hover": { backgroundColor: `${COLORS.ROW_HOVER} !important` },
+      "&:not(:last-of-type)": { borderBottomColor: COLORS.CHARTBOOK.GRID },
+      "&:hover": { backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.06) },
     },
   },
-  cells: { style: { color: COLORS.TEXT, padding: compact ? "0px 6px" : "8px" } },
+  cells: { style: { color: COLORS.CHARTBOOK.INK, padding: compact ? "0px 6px" : "8px", borderRight: `1px solid ${COLORS.CHARTBOOK.GRID}` } },
   pagination: {
     style: {
-      backgroundColor: COLORS.SURFACE,
-      borderTop: `1px solid ${COLORS.SURFACE_ALT}`,
+      backgroundColor: COLORS.CHARTBOOK.GROUND,
+      borderTop: `1px solid ${COLORS.CHARTBOOK.GRID}`,
       fontSize: "12px",
+      color: COLORS.CHARTBOOK.INK,
     },
   },
 });
 
 const NO_DATA = (message) => (
   <Box sx={{ py: 5, textAlign: "center", width: "100%" }}>
-    <Typography variant="body2" sx={{ color: MUTED, fontSize: 13 }}>
+    <Typography variant="body2" sx={{ color: COLORS.CHARTBOOK.INK, fontSize: 13 }}>
       {message}
     </Typography>
   </Box>
@@ -417,23 +427,25 @@ function ThemeSurge() {
       selector: (r) => r.executed,
       center: true,
       width: "80px",
-      cell: (r) => (
-        <Chip
-          size="small"
-          label={r.executed ? "진입" : r.passed ? "충족" : "대기"}
-          sx={{
-            height: 20,
-            fontSize: 11,
-            fontWeight: 600,
-            bgcolor: r.executed
-              ? COLORS.TINT_SUCCESS
-              : r.passed
-              ? `${COLORS.TINT_WARNING}`
-              : COLORS.SURFACE_ALT,
-            color: r.executed ? COLORS.SUCCESS : r.passed ? COLORS.WARNING : MUTED,
-          }}
-        />
-      ),
+      cell: (r) => {
+        const chipColor = r.executed ? COLORS.CHARTBOOK.BAND_STRONG : r.passed ? COLORS.CHARTBOOK.BAND_MID : COLORS.CHARTBOOK.INK;
+        return (
+          <Chip
+            size="small"
+            label={r.executed ? "진입" : r.passed ? "충족" : "대기"}
+            sx={{
+              height: 20,
+              fontSize: 11,
+              fontWeight: 600,
+              backgroundColor: "transparent",
+              border: `1px solid ${chipColor}`,
+              color: chipColor,
+              borderRadius: "2px",
+              fontFamily: MONO_STACK,
+            }}
+          />
+        );
+      },
     },
     {
       name: "사유",
@@ -441,7 +453,7 @@ function ThemeSurge() {
       grow: 2,
       wrap: true,
       cell: (r) => (
-        <Typography variant="caption" sx={{ color: MUTED, fontSize: 11.5, lineHeight: 1.5 }}>
+        <Typography variant="caption" sx={{ color: COLORS.CHARTBOOK.INK, fontSize: 11.5, lineHeight: 1.5 }}>
           {r.reason}
         </Typography>
       ),
@@ -451,7 +463,13 @@ function ThemeSurge() {
   return (
     <>
       <AppHeader routes={routes} sticky />
-      <Box minHeight="100vh" pt={10} pb={5} sx={{ bgcolor: COLORS.SURFACE_SUNKEN }}>
+      <Box sx={{ height: "80px", flexShrink: 0, backgroundColor: COLORS.CHARTBOOK.GROUND }} />
+      <ChartbookHeader
+        strategyName="급등테마주"
+        date={new Date(date).toLocaleDateString("ko-KR")}
+        candidateCount={summary?.surge_theme_count || 0}
+      />
+      <Box minHeight="100vh" pb={5} sx={{ bgcolor: COLORS.CHARTBOOK.GROUND }}>
         <FullWidthContainer>
           {/* ── 헤더 ───────────────────────────────── */}
           <Box
@@ -465,10 +483,10 @@ function ThemeSurge() {
             }}
           >
             <Box sx={{ maxWidth: 640 }}>
-              <Typography variant="h4" fontWeight="bold" sx={{ lineHeight: 1.3 }}>
+              <Typography variant="h4" fontWeight="bold" sx={{ lineHeight: 1.3, fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}>
                 급등테마주 자동매매
               </Typography>
-              <Typography variant="body2" sx={{ color: MUTED, mt: 0.5, fontSize: 13.5 }}>
+              <Typography variant="body2" sx={{ color: COLORS.CHARTBOOK.INK, mt: 0.5, fontSize: 13.5 }}>
                 개장일 09:00~15:30 동안 토스증권 &apos;지금 뜨는 산업&apos;을 5분마다 수집해 급등
                 테마의 주도주를 고르고, 1분봉에서{" "}
                 <strong>눌림목 → 전고점 돌파 → 외국인 매수세</strong>가 갖춰지면 매수합니다.
@@ -484,13 +502,17 @@ function ThemeSurge() {
                     sx={{
                       height: 20,
                       fontSize: 11,
-                      bgcolor: COLORS.TINT_PRIMARY,
-                      color: COLORS.PRIMARY_DARK,
+                      backgroundColor: "transparent",
+                      border: `1px solid ${COLORS.CHARTBOOK.PANEL_BLUE}`,
+                      color: COLORS.CHARTBOOK.INK,
+                      borderRadius: "2px",
+                      fontFamily: MONO_STACK,
+                      fontVariantNumeric: "tabular-nums",
                     }}
                   />
                 )}
                 {lastUpdated && (
-                  <Typography variant="caption" sx={{ color: COLORS.TEXT_MUTED }}>
+                  <Typography variant="caption" sx={{ color: COLORS.CHARTBOOK.INK, fontSize: 12, fontFamily: MONO_STACK, fontVariantNumeric: "tabular-nums" }}>
                     최종 갱신 {lastUpdated.toLocaleTimeString("ko-KR")} · 1분마다 자동 갱신
                   </Typography>
                 )}
@@ -504,12 +526,13 @@ function ThemeSurge() {
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 sx={{
-                  bgcolor: COLORS.SURFACE,
+                  bgcolor: COLORS.CHARTBOOK.GROUND,
+                  border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
                   width: { xs: "100%", sm: 160 },
-                  "& .MuiInputBase-input": { fontSize: 13 },
+                  "& .MuiInputBase-input": { fontSize: 13, color: COLORS.CHARTBOOK.INK },
+                  "& fieldset": { borderColor: COLORS.CHARTBOOK.GRID },
                 }}
               />
-              {/* MK 테마의 outlined 기본 색이 거의 흰색이라 명시적으로 지정한다 */}
               <Button
                 variant="outlined"
                 size="medium"
@@ -517,17 +540,18 @@ function ThemeSurge() {
                 onClick={handleRefresh}
                 disabled={loading}
                 sx={{
-                  bgcolor: COLORS.SURFACE,
+                  bgcolor: COLORS.CHARTBOOK.GROUND,
                   whiteSpace: "nowrap",
-                  color: `${COLORS.PRIMARY_BLUE} !important`,
-                  borderColor: `${COLORS.PRIMARY_BLUE}66 !important`,
+                  color: `${COLORS.CHARTBOOK.PANEL_BLUE} !important`,
+                  borderColor: `${COLORS.CHARTBOOK.GRID} !important`,
+                  border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
                   "&:hover": {
-                    bgcolor: COLORS.HOVER_BG,
-                    borderColor: `${COLORS.PRIMARY_BLUE} !important`,
+                    bgcolor: alpha(COLORS.CHARTBOOK.INK, 0.06),
+                    borderColor: `${COLORS.CHARTBOOK.PANEL_BLUE} !important`,
                   },
                   "&.Mui-disabled": {
-                    color: `${COLORS.TEXT_MUTED} !important`,
-                    borderColor: "#dfe3e8 !important",
+                    color: `${COLORS.CHARTBOOK.INK} !important`,
+                    borderColor: `${COLORS.CHARTBOOK.GRID} !important`,
                   },
                 }}
               >
@@ -540,14 +564,14 @@ function ThemeSurge() {
                 onClick={handleScan}
                 disabled={scanning || !isAuthenticated}
                 sx={{
-                  background: GRADIENT_COLORS.PRIMARY,
-                  color: `${COLORS.SURFACE} !important`,
+                  background: COLORS.CHARTBOOK.PANEL_BLUE,
+                  color: "#ffffff !important",
                   whiteSpace: "nowrap",
                   boxShadow: "none",
-                  "&:hover": { background: GRADIENT_COLORS.PRIMARY_HOVER, boxShadow: "none" },
+                  "&:hover": { background: alpha(COLORS.CHARTBOOK.PANEL_BLUE, 0.85), boxShadow: "none" },
                   "&.Mui-disabled": {
-                    background: COLORS.SURFACE_ALT,
-                    color: `${COLORS.TEXT_MUTED} !important`,
+                    background: COLORS.CHARTBOOK.GRID,
+                    color: `${COLORS.CHARTBOOK.INK} !important`,
                   },
                 }}
               >
@@ -557,7 +581,7 @@ function ThemeSurge() {
           </Box>
 
           {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
+            <Alert severity="error" sx={{ mb: 2, backgroundColor: COLORS.CHARTBOOK.GROUND, border: `1px solid ${COLORS.CHARTBOOK.GRID}` }}>
               {error}
             </Alert>
           )}
@@ -647,8 +671,11 @@ function ThemeSurge() {
                     sx={{
                       height: 20,
                       fontSize: 11,
-                      bgcolor: COLORS.TINT_SUCCESS,
-                      color: COLORS.SUCCESS,
+                      backgroundColor: "transparent",
+                      border: `1px solid ${COLORS.CHARTBOOK.BAND_WEAK}`,
+                      color: COLORS.CHARTBOOK.BAND_WEAK,
+                      borderRadius: "2px",
+                      fontFamily: MONO_STACK,
                     }}
                   />
                 }
@@ -702,7 +729,7 @@ function ThemeSurge() {
                     startIcon={<TableRowsIcon />}
                     onClick={() => setShowSignalTable((shown) => !shown)}
                     sx={{
-                      color: `${COLORS.PRIMARY_BLUE} !important`,
+                      color: `${COLORS.CHARTBOOK.PANEL_BLUE} !important`,
                       fontSize: 12,
                       whiteSpace: "nowrap",
                     }}
@@ -720,7 +747,7 @@ function ThemeSurge() {
               />
 
               <Collapse in={showSignalTable} unmountOnExit>
-                <Divider sx={{ my: 2 }} />
+                <Divider sx={{ my: 2, borderColor: COLORS.CHARTBOOK.GRID }} />
                 <Box sx={{ overflowX: "auto" }}>
                   <EnhancedDataTable
                     columns={signalColumns}
@@ -738,8 +765,8 @@ function ThemeSurge() {
             </SectionCard>
           </Box>
 
-          <Divider sx={{ my: 3 }} />
-          <Typography variant="caption" sx={{ color: COLORS.TEXT_MUTED }}>
+          <Divider sx={{ my: 3, borderColor: COLORS.CHARTBOOK.GRID }} />
+          <Typography variant="caption" sx={{ color: COLORS.CHARTBOOK.INK, fontSize: 12, fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}>
             데이터 출처: 토스증권 산업분류(TICS) 랭킹 · 수급 데이터: 한국투자증권 API. 수집은 개장일
             09:00~15:30에만 이루어집니다. 표시된 정보는 투자 판단의 참고용이며 투자 권유가 아닙니다.
           </Typography>
