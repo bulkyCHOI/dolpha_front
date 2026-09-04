@@ -14,29 +14,29 @@ Coded by www.creative-tim.com
 */
 
 // Material Kit 2 React base styles
-import boxShadows from "assets/theme/base/boxShadows";
 import typography from "assets/theme/base/typography";
 import colors from "assets/theme/base/colors";
 import borders from "assets/theme/base/borders";
 
 // Material Kit 2 React helper functions
 import pxToRem from "assets/theme/functions/pxToRem";
+import { cssVar } from "constants/palette";
 
-const { lg } = boxShadows;
 const { size } = typography;
-const { text, white, transparent, light, dark, gradients } = colors;
+const { text, transparent, light, dark, gradients } = colors;
 const { borderRadius } = borders;
 
 export default {
   styleOverrides: {
     popper: {
-      boxShadow: lg,
+      boxShadow: "none",
+      border: `1px solid ${cssVar("chartbook-grid")}`,
       padding: pxToRem(8),
       fontSize: size.sm,
       color: text.main,
       textAlign: "left",
-      backgroundColor: `${white.main} !important`,
-      borderRadius: borderRadius.md,
+      backgroundColor: `${cssVar("chartbook-ground")} !important`,
+      borderRadius: borderRadius.sm,
     },
 
     paper: {
@@ -46,7 +46,7 @@ export default {
 
     option: {
       padding: `${pxToRem(4.8)} ${pxToRem(16)}`,
-      borderRadius: borderRadius.md,
+      borderRadius: borderRadius.sm,
       fontSize: size.sm,
       color: text.main,
       transition: "background-color 300ms ease, color 300ms ease",
@@ -58,7 +58,7 @@ export default {
 
       '&[aria-selected="true"]': {
         backgroundColor: `${light.main} !important`,
-        color: `${dark.main} !important`,
+        color: `${cssVar("chartbook-ink")} !important`,
       },
     },
 
@@ -82,7 +82,7 @@ export default {
       height: "auto",
       padding: pxToRem(4),
       backgroundColor: gradients.dark.state,
-      color: white.main,
+      color: cssVar("chartbook-ink"),
 
       "& .MuiChip-label": {
         lineHeight: 1.2,
@@ -90,7 +90,7 @@ export default {
       },
 
       "& .MuiSvgIcon-root, & .MuiSvgIcon-root:hover, & .MuiSvgIcon-root:focus": {
-        color: white.main,
+        color: cssVar("chartbook-ink"),
         marginRight: 0,
       },
     },

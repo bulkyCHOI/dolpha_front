@@ -158,7 +158,7 @@ export const calculateColumnWidths = (columns, data, containerWidth) => {
 export const getCustomTableStyles = (theme) => ({
   table: {
     style: {
-      backgroundColor: COLORS.SURFACE,
+      backgroundColor: COLORS.CHARTBOOK.GROUND,
       width: "100%",
       tableLayout: "auto",
       borderCollapse: "separate",
@@ -167,9 +167,9 @@ export const getCustomTableStyles = (theme) => ({
   },
   headRow: {
     style: {
-      backgroundColor: COLORS.SURFACE_ALT,
-      borderBottomWidth: "2px",
-      borderBottomColor: COLORS.BORDER,
+      backgroundColor: COLORS.CHARTBOOK.GROUND,
+      borderBottomWidth: "1px",
+      borderBottomColor: COLORS.CHARTBOOK.GRID,
       fontSize: "14px",
       fontWeight: "bold",
       minHeight: "52px",
@@ -182,7 +182,7 @@ export const getCustomTableStyles = (theme) => ({
   },
   headCells: {
     style: {
-      backgroundColor: COLORS.SURFACE_ALT,
+      backgroundColor: COLORS.CHARTBOOK.GROUND,
       color: COLORS.TEXT,
       paddingLeft: "12px",
       paddingRight: "12px",
@@ -205,12 +205,12 @@ export const getCustomTableStyles = (theme) => ({
   rows: {
     style: {
       minHeight: "65px",
-      backgroundColor: COLORS.SURFACE,
+      backgroundColor: COLORS.CHARTBOOK.GROUND,
       color: COLORS.TEXT,
       borderBottomWidth: "1px",
-      borderBottomColor: COLORS.BORDER,
+      borderBottomColor: COLORS.CHARTBOOK.GRID,
       "&:nth-of-type(odd)": {
-        backgroundColor: COLORS.SURFACE_ALT,
+        backgroundColor: COLORS.CHARTBOOK.GROUND,
       },
       "&:hover": {
         backgroundColor: `${COLORS.ROW_HOVER} !important`,
@@ -228,11 +228,11 @@ export const getCustomTableStyles = (theme) => ({
     highlightOnHoverStyle: {
       backgroundColor: COLORS.ROW_HOVER,
       color: COLORS.TEXT,
-      borderBottomColor: COLORS.BORDER,
-      outlineColor: COLORS.SURFACE,
+      borderBottomColor: COLORS.CHARTBOOK.GRID,
+      outlineColor: COLORS.CHARTBOOK.GROUND,
     },
     stripedStyle: {
-      backgroundColor: COLORS.SURFACE_ALT,
+      backgroundColor: COLORS.CHARTBOOK.GROUND,
       color: COLORS.TEXT,
     },
   },
@@ -264,8 +264,8 @@ export const getCustomTableStyles = (theme) => ({
   },
   pagination: {
     style: {
-      backgroundColor: COLORS.SURFACE_ALT,
-      borderTop: `1px solid ${COLORS.BORDER}`,
+      backgroundColor: COLORS.CHARTBOOK.GROUND,
+      borderTop: `1px solid ${COLORS.CHARTBOOK.GRID}`,
       fontSize: "14px",
       padding: "12px",
 

@@ -16,22 +16,20 @@ Coded by www.creative-tim.com
 // Material Kit 2 React base styles
 import colors from "assets/theme/base/colors";
 import borders from "assets/theme/base/borders";
-import boxShadows from "assets/theme/base/boxShadows";
 
 // Material Kit 2 React helper functions
 import pxToRem from "assets/theme/functions/pxToRem";
 import { cssVar } from "constants/palette";
 
-const { grey, white } = colors;
+const { grey } = colors;
 const { borderRadius } = borders;
-const { tabsBoxShadow } = boxShadows;
 
 export default {
   styleOverrides: {
     root: {
       position: "relative",
-      backgroundColor: cssVar("surface-alt"),
-      borderRadius: borderRadius.xl,
+      backgroundColor: cssVar("chartbook-ground"),
+      borderRadius: borderRadius.sm,
       minHeight: "unset",
       padding: pxToRem(4),
     },
@@ -55,9 +53,9 @@ export default {
 
     indicator: {
       height: "100%",
-      borderRadius: borderRadius.lg,
-      backgroundColor: cssVar("surface"),
-      boxShadow: tabsBoxShadow.indicator,
+      borderRadius: borderRadius.sm,
+      backgroundColor: cssVar("chartbook-ground"),
+      boxShadow: "none",
       transition: "all 500ms ease",
     },
   },
