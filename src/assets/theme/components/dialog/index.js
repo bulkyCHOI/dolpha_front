@@ -15,16 +15,16 @@ Coded by www.creative-tim.com
 
 // Material Kit 2 React base styles
 import borders from "assets/theme/base/borders";
-import boxShadows from "assets/theme/base/boxShadows";
+import { cssVar } from "constants/palette";
 
 const { borderRadius } = borders;
-const { xxl } = boxShadows;
 
 export default {
   styleOverrides: {
     paper: {
-      borderRadius: borderRadius.lg,
-      boxShadow: xxl,
+      borderRadius: borderRadius.sm,
+      boxShadow: "none",
+      border: `1px solid ${cssVar("chartbook-grid")}`,
     },
 
     paperFullScreen: {

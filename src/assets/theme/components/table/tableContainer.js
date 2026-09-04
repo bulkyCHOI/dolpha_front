@@ -14,21 +14,18 @@ Coded by www.creative-tim.com
 */
 
 // Material Kit 2 React base styles
-import colors from "assets/theme/base/colors";
-import boxShadows from "assets/theme/base/boxShadows";
 import borders from "assets/theme/base/borders";
 import { cssVar } from "constants/palette";
 
-const { white } = colors;
-const { md } = boxShadows;
 const { borderRadius } = borders;
 
 export default {
   styleOverrides: {
     root: {
-      backgroundColor: cssVar("surface"),
-      boxShadow: md,
-      borderRadius: borderRadius.xl,
+      backgroundColor: cssVar("chartbook-ground"),
+      boxShadow: "none",
+      border: `1px solid ${cssVar("chartbook-grid")}`,
+      borderRadius: borderRadius.sm,
     },
   },
 };

@@ -16,15 +16,13 @@ Coded by www.creative-tim.com
 // Material Kit 2 React Base Styles
 import colors from "assets/theme/base/colors";
 import borders from "assets/theme/base/borders";
-import boxShadows from "assets/theme/base/boxShadows";
 
 // Material Kit 2 React Helper Function
 import rgba from "assets/theme/functions/rgba";
 import { cssVar } from "constants/palette";
 
-const { black, white } = colors;
+const { black } = colors;
 const { borderWidth, borderRadius } = borders;
-const { md } = boxShadows;
 
 export default {
   styleOverrides: {
@@ -34,11 +32,11 @@ export default {
       position: "relative",
       minWidth: 0,
       wordWrap: "break-word",
-      backgroundColor: cssVar("surface"),
+      backgroundColor: cssVar("chartbook-ground"),
       backgroundClip: "border-box",
-      border: `${borderWidth[0]} solid ${rgba(black.main, 0.125)}`,
-      borderRadius: borderRadius.xl,
-      boxShadow: md,
+      border: `1px solid ${cssVar("chartbook-grid")}`,
+      borderRadius: borderRadius.sm,
+      boxShadow: "none",
       overflow: "visible",
     },
   },

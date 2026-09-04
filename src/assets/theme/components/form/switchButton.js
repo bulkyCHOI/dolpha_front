@@ -16,7 +16,6 @@ Coded by www.creative-tim.com
 // Material Kit 2 React base styles
 import colors from "assets/theme/base/colors";
 import borders from "assets/theme/base/borders";
-import boxShadows from "assets/theme/base/boxShadows";
 
 // Material Kit 2 React helper functions
 // import rgba from "assets/theme/functions/rgba";
@@ -24,9 +23,8 @@ import pxToRem from "assets/theme/functions/pxToRem";
 import linearGradient from "assets/theme/functions/linearGradient";
 import { cssVar } from "constants/palette";
 
-const { white, gradients, grey, transparent } = colors;
+const { gradients, grey, transparent } = colors;
 const { borderWidth } = borders;
-const { md } = boxShadows;
 
 export default {
   defaultProps: {
@@ -69,9 +67,9 @@ export default {
     },
 
     thumb: {
-      backgroundColor: cssVar("surface"),
-      boxShadow: md,
-      border: `${borderWidth[1]} solid ${grey[400]}`,
+      backgroundColor: cssVar("chartbook-ground"),
+      boxShadow: "none",
+      border: `${borderWidth[1]} solid ${cssVar("chartbook-grid")}`,
     },
 
     track: {
