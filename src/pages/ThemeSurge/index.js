@@ -218,8 +218,8 @@ function ConditionMark({ ok }) {
         height: 18,
         borderRadius: 0,
         bgcolor: "transparent",
-        color: ok ? COLORS.SUCCESS : COLORS.CHARTBOOK.INK,
-        border: `1px solid ${ok ? COLORS.SUCCESS : COLORS.CHARTBOOK.GRID}`,
+        color: ok ? COLORS.CHARTBOOK.BAND_WEAK : COLORS.CHARTBOOK.INK,
+        border: `1px solid ${ok ? COLORS.CHARTBOOK.BAND_WEAK : COLORS.CHARTBOOK.GRID}`,
         fontSize: 11,
         fontWeight: 700,
         lineHeight: "16px",
@@ -428,7 +428,7 @@ function ThemeSurge() {
       center: true,
       width: "80px",
       cell: (r) => {
-        const chipColor = r.executed ? COLORS.SUCCESS : r.passed ? COLORS.WARNING : COLORS.CHARTBOOK.INK;
+        const chipColor = r.executed ? COLORS.CHARTBOOK.BAND_STRONG : r.passed ? COLORS.CHARTBOOK.BAND_MID : COLORS.CHARTBOOK.INK;
         return (
           <Chip
             size="small"
@@ -504,7 +504,7 @@ function ThemeSurge() {
                       fontSize: 11,
                       backgroundColor: "transparent",
                       border: `1px solid ${COLORS.CHARTBOOK.PANEL_BLUE}`,
-                      color: COLORS.CHARTBOOK.PANEL_BLUE,
+                      color: COLORS.CHARTBOOK.INK,
                       borderRadius: "2px",
                       fontFamily: MONO_STACK,
                       fontVariantNumeric: "tabular-nums",
@@ -672,8 +672,8 @@ function ThemeSurge() {
                       height: 20,
                       fontSize: 11,
                       backgroundColor: "transparent",
-                      border: `1px solid ${COLORS.SUCCESS}`,
-                      color: COLORS.SUCCESS,
+                      border: `1px solid ${COLORS.CHARTBOOK.BAND_WEAK}`,
+                      color: COLORS.CHARTBOOK.BAND_WEAK,
                       borderRadius: "2px",
                       fontFamily: MONO_STACK,
                     }}

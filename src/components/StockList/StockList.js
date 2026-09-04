@@ -12,11 +12,11 @@ import { COLORS, alpha } from "constants/styles";
  */
 const bandColor = (value, thresholds) => {
   const [high, upper, mid, low, base] = thresholds;
-  if (value >= high) return COLORS.UP;
-  if (value >= upper) return COLORS.WARNING;
-  if (value >= mid) return COLORS.WARNING;
-  if (value >= low) return COLORS.SUCCESS;
-  if (value >= base) return COLORS.DOWN;
+  if (value >= high) return COLORS.CHARTBOOK.BAND_STRONG;
+  if (value >= upper) return COLORS.CHARTBOOK.BAND_MID;
+  if (value >= mid) return COLORS.CHARTBOOK.BAND_MID;
+  if (value >= low) return COLORS.CHARTBOOK.BAND_WEAK;
+  if (value >= base) return COLORS.CHARTBOOK.PANEL_BLUE;
   return COLORS.TEXT_MUTED;
 };
 

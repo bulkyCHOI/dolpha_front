@@ -100,11 +100,11 @@ function DailyNewsClipping() {
   const getImpactColor = (impact) => {
     switch (impact) {
       case "positive":
-        return "success";
+        return COLORS.CHARTBOOK.BAND_WEAK;
       case "negative":
-        return "error";
+        return COLORS.CHARTBOOK.BAND_STRONG;
       default:
-        return "default";
+        return COLORS.CHARTBOOK.INK;
     }
   };
 
@@ -176,8 +176,13 @@ function DailyNewsClipping() {
                     <Chip
                       label={issue.category}
                       size="large"
-                      color={getImpactColor(issue.impact)}
                       variant="outlined"
+                      sx={{
+                        backgroundColor: "transparent",
+                        borderRadius: "2px",
+                        color: getImpactColor(issue.impact),
+                        borderColor: getImpactColor(issue.impact),
+                      }}
                     />
                   </Box>
                   <Typography
@@ -200,14 +205,15 @@ function DailyNewsClipping() {
           size="large"
           variant="outlined"
           sx={{
-            borderColor: cardColor,
-            color: cardColor,
+            borderColor: COLORS.CHARTBOOK.GRID,
+            color: COLORS.CHARTBOOK.INK,
+            borderRadius: "2px",
             px: 6,
             py: 2,
             fontSize: "1.1rem",
             "&:hover": {
-              backgroundColor: cardColor,
-              color: onColor(cardColor),
+              backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.06),
+              borderColor: COLORS.CHARTBOOK.INK,
             },
           }}
         >

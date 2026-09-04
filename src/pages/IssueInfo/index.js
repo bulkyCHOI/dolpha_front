@@ -245,17 +245,18 @@ function IssueInfo() {
   };
 
   const getChartColor = (change) => {
-    if (change >= 0) return theme.palette.error.main; // 빨간색 (상승)
-    return theme.palette.info.main; // 파란색 (하락)
+    if (change > 0) return COLORS.UP;
+    if (change < 0) return COLORS.DOWN;
+    return COLORS.TEXT_MUTED;
   };
 
   const getChangeIcon = (change) => {
     const iconColor =
       change > 0
-        ? theme.palette.error.main
+        ? COLORS.UP
         : change < 0
-        ? theme.palette.info.main
-        : theme.palette.text.primary;
+        ? COLORS.DOWN
+        : COLORS.CHARTBOOK.INK;
 
     if (change > 0) return <TrendingUpIcon fontSize="small" sx={{ color: iconColor }} />;
     if (change < 0) return <TrendingDownIcon fontSize="small" sx={{ color: iconColor }} />;
@@ -445,10 +446,10 @@ function IssueInfo() {
                                     fontWeight: "medium",
                                     color:
                                       index.change > 0
-                                        ? theme.palette.error.main
+                                        ? COLORS.UP
                                         : index.change < 0
-                                        ? theme.palette.info.main
-                                        : theme.palette.text.primary,
+                                        ? COLORS.DOWN
+                                        : COLORS.CHARTBOOK.INK,
                                   }}
                                 >
                                   {formatChange(index.change)} (

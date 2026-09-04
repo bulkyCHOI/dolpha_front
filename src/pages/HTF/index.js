@@ -41,10 +41,10 @@ const MONO_STACK = "'Fragment Mono', 'Monaco', monospace";
 
 // RS 순위 강도색 (배지는 이 색을 채움이 아니라 테두리·글자로만 쓴다)
 const rsBandColor = (rank) => {
-  if (rank >= 90) return COLORS.UP;
-  if (rank >= 70) return COLORS.WARNING;
-  if (rank >= 60) return COLORS.SUCCESS;
-  if (rank >= 50) return COLORS.DOWN;
+  if (rank >= 90) return COLORS.CHARTBOOK.BAND_STRONG;
+  if (rank >= 70) return COLORS.CHARTBOOK.BAND_MID;
+  if (rank >= 60) return COLORS.CHARTBOOK.BAND_WEAK;
+  if (rank >= 50) return COLORS.CHARTBOOK.PANEL_BLUE;
   return COLORS.TEXT_MUTED;
 };
 
@@ -184,33 +184,33 @@ function HTF() {
 
   // HTF 상승률에 따른 색상 결정
   const getGainColor = (gain) => {
-    if (gain >= 300) return COLORS.UP; // 300% 이상: 진한 빨강
-    if (gain >= 200) return COLORS.UP; // 200% 이상: 빨강
-    if (gain >= 150) return COLORS.WARNING; // 150% 이상: 주황
-    if (gain >= 100) return COLORS.DOWN; // 100% 이상: 파랑
+    if (gain >= 300) return COLORS.CHARTBOOK.BAND_STRONG; // 300% 이상: 강함
+    if (gain >= 200) return COLORS.CHARTBOOK.BAND_STRONG; // 200% 이상: 강함
+    if (gain >= 150) return COLORS.CHARTBOOK.BAND_MID; // 150% 이상: 중간
+    if (gain >= 100) return COLORS.CHARTBOOK.BAND_WEAK; // 100% 이상: 약함
     return COLORS.TEXT_MUTED; // 미만: 회색
   };
 
   // HTF 조정폭에 따른 색상 결정
   const getPullbackColor = (pullback) => {
-    if (pullback <= 10) return COLORS.SUCCESS; // 10% 이하: 초록
-    if (pullback <= 15) return "#8bc34a"; // 15% 이하: 연초록
-    if (pullback <= 20) return COLORS.WARNING; // 20% 이하: 노랑
-    if (pullback <= 25) return COLORS.WARNING; // 25% 이하: 주황
-    return COLORS.UP; // 초과: 빨강
+    if (pullback <= 10) return COLORS.CHARTBOOK.BAND_WEAK; // 10% 이하: 약한 조정
+    if (pullback <= 15) return COLORS.CHARTBOOK.BAND_WEAK; // 15% 이하: 약한 조정
+    if (pullback <= 20) return COLORS.CHARTBOOK.BAND_MID; // 20% 이하: 중간 조정
+    if (pullback <= 25) return COLORS.CHARTBOOK.BAND_MID; // 25% 이하: 중간 조정
+    return COLORS.CHARTBOOK.BAND_STRONG; // 초과: 강한 조정
   };
 
   // HTF 상태에 따른 색상과 텍스트 결정
   const getStatusChip = (status) => {
     const statusConfig = {
-      rising: { color: COLORS.SUCCESS, text: "상승중" },
-      pullback: { color: COLORS.WARNING, text: "조정중" },
-      breakout: { color: COLORS.DOWN, text: "돌파" },
+      rising: { color: COLORS.CHARTBOOK.BAND_WEAK, text: "상승중" },
+      pullback: { color: COLORS.CHARTBOOK.BAND_MID, text: "조정중" },
+      breakout: { color: COLORS.CHARTBOOK.BAND_STRONG, text: "돌파" },
       none: { color: COLORS.TEXT_MUTED, text: "해당없음" },
       // 한국어 상태도 지원 (호환성)
-      상승중: { color: COLORS.SUCCESS, text: "상승중" },
-      조정중: { color: COLORS.WARNING, text: "조정중" },
-      돌파: { color: COLORS.DOWN, text: "돌파" },
+      상승중: { color: COLORS.CHARTBOOK.BAND_WEAK, text: "상승중" },
+      조정중: { color: COLORS.CHARTBOOK.BAND_MID, text: "조정중" },
+      돌파: { color: COLORS.CHARTBOOK.BAND_STRONG, text: "돌파" },
       해당없음: { color: COLORS.TEXT_MUTED, text: "해당없음" },
     };
 

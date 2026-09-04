@@ -275,8 +275,15 @@ function HTFStockList({
                       size="small"
                       sx={{
                         backgroundColor: "transparent",
-                        color: getGainColor(stock.htf_8week_gain || 0),
-                        border: `1px solid ${getGainColor(stock.htf_8week_gain || 0)}`,
+                        color:
+                          selectedStock?.code === stock.code
+                            ? COLORS.CHARTBOOK.SELECTED_INK
+                            : getGainColor(stock.htf_8week_gain || 0),
+                        border: `1px solid ${
+                          selectedStock?.code === stock.code
+                            ? COLORS.CHARTBOOK.SELECTED_INK
+                            : getGainColor(stock.htf_8week_gain || 0)
+                        }`,
                         borderRadius: "2px",
                         fontFamily: MONO_STACK,
                         fontWeight: 500,
@@ -296,8 +303,15 @@ function HTFStockList({
                       size="small"
                       sx={{
                         backgroundColor: "transparent",
-                        color: getPullbackColor(stock.htf_max_pullback || 0),
-                        border: `1px solid ${getPullbackColor(stock.htf_max_pullback || 0)}`,
+                        color:
+                          selectedStock?.code === stock.code
+                            ? COLORS.CHARTBOOK.SELECTED_INK
+                            : getPullbackColor(stock.htf_max_pullback || 0),
+                        border: `1px solid ${
+                          selectedStock?.code === stock.code
+                            ? COLORS.CHARTBOOK.SELECTED_INK
+                            : getPullbackColor(stock.htf_max_pullback || 0)
+                        }`,
                         borderRadius: "2px",
                         fontFamily: MONO_STACK,
                         fontWeight: 500,
@@ -319,7 +333,10 @@ function HTFStockList({
                         fontSize: "0.75rem",
                         fontFamily: MONO_STACK,
                         fontWeight: 500,
-                        color: COLORS.CHARTBOOK.INK,
+                        color:
+                          selectedStock?.code === stock.code
+                            ? COLORS.CHARTBOOK.SELECTED_INK
+                            : COLORS.CHARTBOOK.INK,
                       }}
                     >
                       {stock.htf_pattern_start_date
@@ -340,8 +357,15 @@ function HTFStockList({
                       size="small"
                       sx={{
                         backgroundColor: "transparent",
-                        color: statusChip.color,
-                        border: `1px solid ${statusChip.color}`,
+                        color:
+                          selectedStock?.code === stock.code
+                            ? COLORS.CHARTBOOK.SELECTED_INK
+                            : statusChip.color,
+                        border: `1px solid ${
+                          selectedStock?.code === stock.code
+                            ? COLORS.CHARTBOOK.SELECTED_INK
+                            : statusChip.color
+                        }`,
                         borderRadius: "2px",
                         fontFamily: MONO_STACK,
                         fontWeight: 500,

@@ -212,6 +212,9 @@ export const COLORS = {
     SECONDARY: cssVar("chartbook-secondary"),
     SELECTED_BG: cssVar("chartbook-selected-bg"),
     SELECTED_INK: cssVar("chartbook-selected-ink"),
+    BAND_STRONG: cssVar("chartbook-band-strong"),
+    BAND_MID: cssVar("chartbook-band-mid"),
+    BAND_WEAK: cssVar("chartbook-band-weak"),
   },
 };
 

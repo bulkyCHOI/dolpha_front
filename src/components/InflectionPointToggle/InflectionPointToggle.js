@@ -20,7 +20,7 @@ const InflectionPointToggle = ({
         color="primary"
         sx={{
           border: `1px solid ${showInflectionPoints ? COLORS.CHARTBOOK.INK : COLORS.CHARTBOOK.GRID}`,
-          color: showInflectionPoints ? COLORS.CHARTBOOK.INK : COLORS.CHARTBOOK.GRID,
+          color: showInflectionPoints ? COLORS.CHARTBOOK.INK : COLORS.CHARTBOOK.INK,
           backgroundColor: "transparent",
           "&:hover": {
             backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.06),

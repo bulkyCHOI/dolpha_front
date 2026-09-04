@@ -128,6 +128,13 @@ export const LIGHT_PALETTE = {
   "chartbook-secondary": "#9aa39a",
   "chartbook-selected-bg": "#141414",
   "chartbook-selected-ink": "#f4f1ea",
+  /**
+   * 강도 밴드 색 글자(RS·상승률 칩, 상태 라벨) — 크림 지면 위 AA(4.5) 확보.
+   * 시세 의미색(up/down)과 달리 "글자로 읽히는" 용도라 채도를 낮추고 어둡게 잡는다.
+   */
+  "chartbook-band-strong": "#a52722",
+  "chartbook-band-mid": "#6b5410",
+  "chartbook-band-weak": "#1a5c32",
 };
 
 /**
@@ -222,10 +229,14 @@ export const DARK_PALETTE = {
   "chartbook-ink": "#f5f1ec",
   "chartbook-grid": "#4c4438",
   "chartbook-rs-red": "#e07070",
-  "chartbook-panel-blue": "#6b97e4",
+  "chartbook-panel-blue": "#8fb3ec",
   "chartbook-secondary": "#b8bfb8",
   "chartbook-selected-bg": "#3d3630",
   "chartbook-selected-ink": "#f5f1ec",
+  // 강도 밴드 색 글자 — 워치 차콜 위 AA 확보 (라이트와 방향 반대: 밝게)
+  "chartbook-band-strong": "#e8908c",
+  "chartbook-band-mid": "#d9a441",
+  "chartbook-band-weak": "#6cc48a",
 };
 
 // 키가 어긋나면 다크에서 해당 색만 조용히 라이트로 남는다. 개발 중에 잡는다.

@@ -49,10 +49,10 @@ const MONO_STACK = "'Fragment Mono', 'Monaco', monospace";
 
 // RS 순위 강도색 (배지는 이 색을 채움이 아니라 테두리·글자로만 쓴다)
 const rsBandColor = (rank) => {
-  if (rank >= 90) return COLORS.UP;
-  if (rank >= 70) return COLORS.WARNING;
-  if (rank >= 60) return COLORS.SUCCESS;
-  if (rank >= 50) return COLORS.DOWN;
+  if (rank >= 90) return COLORS.CHARTBOOK.BAND_STRONG;
+  if (rank >= 70) return COLORS.CHARTBOOK.BAND_MID;
+  if (rank >= 60) return COLORS.CHARTBOOK.BAND_WEAK;
+  if (rank >= 50) return COLORS.CHARTBOOK.PANEL_BLUE;
   return COLORS.TEXT_MUTED;
 };
 

@@ -241,7 +241,7 @@ function ThemeRow({ theme, slots, baseMinute, signalIndex, nowMinute }) {
             {theme.peak_rate}%
           </Box>
           {theme.surge_slots.length > 0 && (
-            <Box component="span" sx={{ color: COLORS.WARNING, fontWeight: 600 }}>
+            <Box component="span" sx={{ color: COLORS.CHARTBOOK.BAND_MID, fontWeight: 600 }}>
               {` · 급등 ${theme.surge_slots.length}회`}
             </Box>
           )}

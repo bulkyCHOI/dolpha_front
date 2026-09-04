@@ -43,10 +43,18 @@ const MONO_STACK = "'Fragment Mono', 'Monaco', monospace";
 
 // RS 순위 강도색 (배지는 이 색을 채움이 아니라 테두리·글자로만 쓴다)
 const rsBandColor = (rank) => {
-  if (rank >= 90) return COLORS.UP;
-  if (rank >= 70) return COLORS.WARNING;
-  if (rank >= 60) return COLORS.SUCCESS;
-  if (rank >= 50) return COLORS.DOWN;
+  if (rank >= 90) return COLORS.CHARTBOOK.BAND_STRONG;
+  if (rank >= 70) return COLORS.CHARTBOOK.BAND_MID;
+  if (rank >= 60) return COLORS.CHARTBOOK.BAND_WEAK;
+  if (rank >= 50) return COLORS.CHARTBOOK.PANEL_BLUE;
+  return COLORS.TEXT_MUTED;
+};
+
+const gainBandColor = (pct) => {
+  if (pct >= 25) return COLORS.CHARTBOOK.BAND_STRONG;
+  if (pct >= 15) return COLORS.CHARTBOOK.BAND_MID;
+  if (pct >= 5) return COLORS.CHARTBOOK.BAND_WEAK;
+  if (pct > 0) return COLORS.CHARTBOOK.PANEL_BLUE;
   return COLORS.TEXT_MUTED;
 };
 
@@ -653,10 +661,14 @@ function TopRising() {
                               </Typography>
                               <Typography
                                 variant="caption"
-                                color="text.secondary"
                                 sx={{
                                   fontSize: { xs: "0.55rem", md: "0.65rem" },
                                   display: { xs: "none", sm: "block" },
+                                  fontFamily: MONO_STACK,
+                                  color:
+                                    selectedStock?.code === row.code
+                                      ? COLORS.CHARTBOOK.SELECTED_INK
+                                      : COLORS.TEXT_SECONDARY,
                                 }}
                               >
                                 {row.code || ""}
@@ -671,29 +683,13 @@ function TopRising() {
                                 sx={{
                                   backgroundColor: "transparent",
                                   color:
-                                    (row.change || 0) * 100 >= 25
-                                      ? COLORS.UP
-                                      : (row.change || 0) * 100 >= 20
-                                      ? COLORS.WARNING
-                                      : (row.change || 0) * 100 >= 15
-                                      ? COLORS.WARNING
-                                      : (row.change || 0) * 100 >= 10
-                                      ? COLORS.SUCCESS
-                                      : (row.change || 0) * 100 >= 5
-                                      ? COLORS.DOWN
-                                      : COLORS.TEXT_MUTED,
+                                    selectedStock?.code === row.code
+                                      ? COLORS.CHARTBOOK.SELECTED_INK
+                                      : gainBandColor((row.change || 0) * 100),
                                   border: `1px solid ${
-                                    (row.change || 0) * 100 >= 25
-                                      ? COLORS.UP
-                                      : (row.change || 0) * 100 >= 20
-                                      ? COLORS.WARNING
-                                      : (row.change || 0) * 100 >= 15
-                                      ? COLORS.WARNING
-                                      : (row.change || 0) * 100 >= 10
-                                      ? COLORS.SUCCESS
-                                      : (row.change || 0) * 100 >= 5
-                                      ? COLORS.DOWN
-                                      : COLORS.TEXT_MUTED
+                                    selectedStock?.code === row.code
+                                      ? COLORS.CHARTBOOK.SELECTED_INK
+                                      : gainBandColor((row.change || 0) * 100)
                                   }`,
                                   borderRadius: "2px",
                                   fontFamily: MONO_STACK,
@@ -712,8 +708,8 @@ function TopRising() {
                                 size="small"
                                 sx={{
                                   backgroundColor: "transparent",
-                                  color: rsBandColor(row.rsRank),
-                                  border: `1px solid ${rsBandColor(row.rsRank)}`,
+                                  color: selectedStock?.code === row.code ? COLORS.CHARTBOOK.SELECTED_INK : rsBandColor(row.rsRank),
+                                  border: `1px solid ${selectedStock?.code === row.code ? COLORS.CHARTBOOK.SELECTED_INK : rsBandColor(row.rsRank)}`,
                                   borderRadius: "2px",
                                   fontFamily: MONO_STACK,
                                   fontWeight: 500,
@@ -733,7 +729,12 @@ function TopRising() {
                                 fontWeight={row["당기매출"] < 0 ? "bold" : "bold"}
                                 sx={{
                                   fontSize: { xs: "0.65rem", md: "0.75rem" },
-                                  color: row["당기매출"] < 0 ? COLORS.DOWN : "inherit",
+                                  color:
+                                    selectedStock?.code === row.code
+                                      ? COLORS.CHARTBOOK.SELECTED_INK
+                                      : row["당기매출"] < 0
+                                      ? COLORS.DOWN
+                                      : COLORS.CHARTBOOK.INK,
                                 }}
                               >
                                 {formatNumber(row["당기매출"]) || "0"}
@@ -749,7 +750,12 @@ function TopRising() {
                                 fontWeight={row["당기영업이익"] < 0 ? "bold" : "bold"}
                                 sx={{
                                   fontSize: { xs: "0.65rem", md: "0.75rem" },
-                                  color: row["당기영업이익"] < 0 ? COLORS.DOWN : "inherit",
+                                  color:
+                                    selectedStock?.code === row.code
+                                      ? COLORS.CHARTBOOK.SELECTED_INK
+                                      : row["당기영업이익"] < 0
+                                      ? COLORS.DOWN
+                                      : COLORS.CHARTBOOK.INK,
                                 }}
                               >
                                 {formatNumber(row["당기영업이익"]) || "0"}

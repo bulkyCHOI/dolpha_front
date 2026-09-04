@@ -43,10 +43,18 @@ const MONO_STACK = "'Fragment Mono', 'Monaco', monospace";
 
 // RS 순위 강도색 (배지는 이 색을 채움이 아니라 테두리·글자로만 쓴다)
 const rsBandColor = (rank) => {
-  if (rank >= 90) return COLORS.UP;
-  if (rank >= 70) return COLORS.WARNING;
-  if (rank >= 60) return COLORS.SUCCESS;
-  if (rank >= 50) return COLORS.DOWN;
+  if (rank >= 90) return COLORS.CHARTBOOK.BAND_STRONG;
+  if (rank >= 70) return COLORS.CHARTBOOK.BAND_MID;
+  if (rank >= 60) return COLORS.CHARTBOOK.BAND_WEAK;
+  if (rank >= 50) return COLORS.CHARTBOOK.PANEL_BLUE;
+  return COLORS.TEXT_MUTED;
+};
+
+const gainBandColor = (pct) => {
+  if (pct >= 60) return COLORS.CHARTBOOK.BAND_STRONG;
+  if (pct >= 40) return COLORS.CHARTBOOK.BAND_MID;
+  if (pct >= 20) return COLORS.CHARTBOOK.BAND_WEAK;
+  if (pct > 0) return COLORS.CHARTBOOK.PANEL_BLUE;
   return COLORS.TEXT_MUTED;
 };
 
@@ -644,13 +652,14 @@ function FiftyDayHigh() {
                               </Typography>
                               <Typography
                                 variant="caption"
-                                color="text.secondary"
                                 sx={{
                                   fontSize: { xs: "0.6rem", md: "0.7rem" },
                                   display: { xs: "none", sm: "block" },
+                                  fontFamily: MONO_STACK,
+                                  color: selectedStock?.code === row.code ? COLORS.CHARTBOOK.SELECTED_INK : COLORS.TEXT_SECONDARY,
                                 }}
                               >
-                                {row.code || ""}
+
                               </Typography>
                             </Box>
                           </Grid>
@@ -662,29 +671,9 @@ function FiftyDayHigh() {
                                 sx={{
                                   backgroundColor: "transparent",
                                   color:
-                                    row.min_50d_gain_percent >= 60
-                                      ? COLORS.UP
-                                      : row.min_50d_gain_percent >= 40
-                                      ? COLORS.WARNING
-                                      : row.min_50d_gain_percent >= 20
-                                      ? "#ffeb3b"
-                                      : row.min_50d_gain_percent >= 15
-                                      ? COLORS.SUCCESS
-                                      : row.min_50d_gain_percent >= 10
-                                      ? COLORS.DOWN
-                                      : COLORS.TEXT_MUTED,
+                                    selectedStock?.code === row.code ? COLORS.CHARTBOOK.SELECTED_INK : gainBandColor(row.min_50d_gain_percent),
                                   border: `1px solid ${
-                                    row.min_50d_gain_percent >= 60
-                                      ? COLORS.UP
-                                      : row.min_50d_gain_percent >= 40
-                                      ? COLORS.WARNING
-                                      : row.min_50d_gain_percent >= 20
-                                      ? "#ffeb3b"
-                                      : row.min_50d_gain_percent >= 15
-                                      ? COLORS.SUCCESS
-                                      : row.min_50d_gain_percent >= 10
-                                      ? COLORS.DOWN
-                                      : COLORS.TEXT_MUTED
+                                    selectedStock?.code === row.code ? COLORS.CHARTBOOK.SELECTED_INK : gainBandColor(row.min_50d_gain_percent)
                                   }`,
                                   borderRadius: "2px",
                                   fontFamily: MONO_STACK,
@@ -703,8 +692,8 @@ function FiftyDayHigh() {
                                 size="small"
                                 sx={{
                                   backgroundColor: "transparent",
-                                  color: rsBandColor(row.rsRank),
-                                  border: `1px solid ${rsBandColor(row.rsRank)}`,
+                                  color: selectedStock?.code === row.code ? COLORS.CHARTBOOK.SELECTED_INK : rsBandColor(row.rsRank),
+                                  border: `1px solid ${selectedStock?.code === row.code ? COLORS.CHARTBOOK.SELECTED_INK : rsBandColor(row.rsRank)}`,
                                   borderRadius: "2px",
                                   fontFamily: MONO_STACK,
                                   fontWeight: 500,
