@@ -95,6 +95,11 @@ function Profile() {
                     width: { xs: 100, md: 120 },
                     height: { xs: 100, md: 120 },
                     border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+                    // chartbook: 사진 없을 때 대체 글자 — MUI 기본값(grey/background.default)은
+                    // 크림/차콜 어느 한쪽에서 AA 미달. INK 는 테마에 따라 반전(다크에서 밝아짐)돼
+                    // 다크 화면에 밝은 원이 튀므로, 테마 불변의 SELECTED_BG/INK 잉크 반전 쌍을 쓴다.
+                    bgcolor: COLORS.CHARTBOOK.SELECTED_BG,
+                    color: COLORS.CHARTBOOK.SELECTED_INK,
                   }}
                 >
                   {userInfo.name ? userInfo.name[0] : "U"}
@@ -179,8 +184,10 @@ function Profile() {
                 variant="contained"
                 onClick={handleSave}
                 sx={{
-                  backgroundColor: COLORS.CHARTBOOK.INK,
-                  color: COLORS.CHARTBOOK.GROUND,
+                  // chartbook: INK 는 테마에 따라 반전(다크에서 밝아짐)돼 버튼 채움에 쓰면
+                  // 다크 화면에 밝은 사각형이 튄다. 테마 불변의 잉크 반전 쌍을 쓴다.
+                  backgroundColor: COLORS.CHARTBOOK.SELECTED_BG,
+                  color: COLORS.CHARTBOOK.SELECTED_INK,
                   px: 4,
                   py: 1.5,
                   borderRadius: "2px",
@@ -188,7 +195,7 @@ function Profile() {
                   fontSize: "1rem",
                   fontWeight: 500,
                   "&:hover": {
-                    backgroundColor: COLORS.CHARTBOOK.INK,
+                    backgroundColor: COLORS.CHARTBOOK.SELECTED_BG,
                     opacity: 0.8,
                   },
                   transition: "all 0.2s ease",

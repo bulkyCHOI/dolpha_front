@@ -15,19 +15,21 @@ Coded by www.creative-tim.com
 
 // Material Kit 2 React Base Styles
 import colors from "assets/theme/base/colors";
+import { cssVar } from "constants/palette";
 import typography from "assets/theme/base/typography";
 
 // Material Kit 2 React Helper Functions
 import pxToRem from "assets/theme/functions/pxToRem";
 
-const { transparent, light, info, secondary } = colors;
+const { transparent, info, secondary } = colors;
 const { size } = typography;
 
 export default {
   base: {
     minHeight: pxToRem(40),
-    color: light.main,
-    borderColor: light.main,
+    // chartbook: MK2 기본값 light.main(거의 흰색)은 크림 지면에서 안 읽힌다.
+    color: cssVar("chartbook-ink"),
+    borderColor: cssVar("chartbook-grid"),
     padding: `${pxToRem(10)} ${pxToRem(24)}`,
 
     "&:hover": {
