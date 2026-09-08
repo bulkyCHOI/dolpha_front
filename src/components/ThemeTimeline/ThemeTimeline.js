@@ -5,7 +5,7 @@ import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { formatNumber } from "utils/formatters";
 import { todayKST } from "hooks/useThemeSurgeData";
-import { COLORS, alpha, resolveColor } from "constants/styles";
+import { COLORS, alpha } from "constants/styles";
 
 const MONO_STACK = "'Fragment Mono', 'Monaco', monospace";
 
@@ -38,33 +38,103 @@ const heatColor = (rate) => {
 
 const LEGEND_STOPS = [-3, -1, 0, 1, 2.5, 4, 6, 8];
 
+/** 강제청산 시각 판정 → 라벨·색 (마커/툴팁 공용). */
+const EXIT_META = {
+  overnight: { label: "익일 이월", color: COLORS.WARNING },
+  force_exit: { label: "당일 강제청산", color: COLORS.DOWN },
+  max_days: { label: "보유기간 만료 청산", color: COLORS.DOWN },
+  stop_loss: { label: "손절 청산", color: COLORS.CHARTBOOK.INK },
+  trailing: { label: "트레일링 청산", color: COLORS.CHARTBOOK.INK },
+  staged: { label: "분할 익절", color: COLORS.SUCCESS },
+  hold: { label: "유예/보류", color: COLORS.CHARTBOOK.BAND_MID },
+};
+const exitMeta = (decision) => EXIT_META[decision] || EXIT_META.hold;
+
+const CONDITION_LABELS = {
+  foreign: "외국인",
+  institution: "기관",
+  program: "프로그램",
+  shinhan_top5: "신한 상위5",
+};
+
 const minuteOf = (slot) => Number(slot.slice(0, 2)) * 60 + Number(slot.slice(3));
 
 /** 09:00 기준 경과 분이 interval 배수인 슬롯만 true */
 const isEvery = (slot, interval, baseMinute) => (minuteOf(slot) - baseMinute) % interval === 0;
 
-function CellTooltip({ themeName, slot, cell, signals }) {
+/** 강제청산 시각 판정 상세 (툴팁 안 블록). */
+function ExitDetail({ exit }) {
+  const meta = exitMeta(exit.decision);
+  const conditions = Array.isArray(exit.overnight_conditions) ? exit.overnight_conditions : [];
+  const met = exit.overnight_met || {};
+  return (
+    <Box sx={{ mt: 0.25 }}>
+      <Box sx={{ fontWeight: 700, color: meta.color }}>
+        장 마감 · {meta.label} · {exit.days_held}일차
+      </Box>
+      <Box sx={{ opacity: 0.75, fontFamily: MONO_STACK }}>판정 시각 {exit.force_exit_time}</Box>
+      {exit.reason && <Box sx={{ opacity: 0.85 }}>{exit.reason}</Box>}
+      {exit.overnight_evaluated && (
+        <Box sx={{ mt: 0.25 }}>
+          <Box>
+            수급 {exit.overnight_met_count}/{exit.overnight_required} 충족
+            {!exit.overnight_available && " (일부 조회 실패)"}
+          </Box>
+          {conditions.map((key) => (
+            <Box key={key} sx={{ fontFamily: MONO_STACK }}>
+              {met[key] ? "✓" : "✗"} {CONDITION_LABELS[key] || key}
+            </Box>
+          ))}
+        </Box>
+      )}
+    </Box>
+  );
+}
+
+ExitDetail.propTypes = { exit: PropTypes.object.isRequired };
+
+function CellTooltip({ themeName, slot, cell, signals, exits }) {
   return (
     <Box sx={{ py: 0.5 }}>
-      <Box sx={{ fontWeight: 700, mb: 0.5, fontFamily: MONO_STACK, fontVariantNumeric: "tabular-nums" }}>
+      <Box
+        sx={{
+          fontWeight: 700,
+          mb: 0.5,
+          fontFamily: MONO_STACK,
+          fontVariantNumeric: "tabular-nums",
+        }}
+      >
         {themeName} · {slot}
       </Box>
       <Box sx={{ fontFamily: MONO_STACK, fontVariantNumeric: "tabular-nums" }}>
         등락률 {cell.rate >= 0 ? "+" : ""}
         {cell.rate}% · {cell.rank}위
       </Box>
-      <Box sx={{ fontFamily: MONO_STACK, fontVariantNumeric: "tabular-nums" }}>거래대금 {formatNumber(cell.trading_value)}</Box>
+      <Box sx={{ fontFamily: MONO_STACK, fontVariantNumeric: "tabular-nums" }}>
+        거래대금 {formatNumber(cell.trading_value)}
+      </Box>
       <Box sx={{ fontFamily: MONO_STACK, fontVariantNumeric: "tabular-nums" }}>
         모멘텀 {cell.momentum >= 0 ? "+" : ""}
         {Number(cell.momentum).toFixed(2)}%p
       </Box>
       <Box sx={{ mt: 0.5, opacity: 0.85 }}>{cell.reason}</Box>
       {signals.length > 0 && (
-        <Box sx={{ mt: 0.75, pt: 0.75, borderTop: `1px solid ${alpha(COLORS.CHARTBOOK.INK, 0.25)}` }}>
+        <Box
+          sx={{ mt: 0.75, pt: 0.75, borderTop: `1px solid ${alpha(COLORS.CHARTBOOK.INK, 0.25)}` }}
+        >
           {signals.map((s, i) => (
             <Box key={i}>
               [{s.executed ? "진입" : s.passed ? "조건충족" : "판정"}] {s.stock_name} — {s.reason}
             </Box>
+          ))}
+        </Box>
+      )}
+      {exits.length > 0 && (
+        <Box
+          sx={{ mt: 0.75, pt: 0.75, borderTop: `1px solid ${alpha(COLORS.CHARTBOOK.INK, 0.25)}` }}
+        >
+          {exits.map((e, i) => (
+            <ExitDetail key={i} exit={e} />
           ))}
         </Box>
       )}
@@ -77,6 +147,7 @@ CellTooltip.propTypes = {
   slot: PropTypes.string.isRequired,
   cell: PropTypes.object.isRequired,
   signals: PropTypes.array.isRequired,
+  exits: PropTypes.array.isRequired,
 };
 
 /** 세로 그리드 라인 + 시각 눈금 (셀 열과 정확히 정렬) */
@@ -198,7 +269,7 @@ NowMarker.propTypes = {
 };
 NowMarker.defaultProps = { nowMinute: null };
 
-function ThemeRow({ theme, slots, baseMinute, signalIndex, nowMinute }) {
+function ThemeRow({ theme, slots, baseMinute, signalIndex, exitIndex, nowMinute }) {
   const leaderCode = theme.leader?.stock_code;
   const surgeSegments = useMemo(() => mergeSurgeSegments(theme.cells), [theme.cells]);
 
@@ -219,7 +290,12 @@ function ThemeRow({ theme, slots, baseMinute, signalIndex, nowMinute }) {
         <Typography
           variant="button"
           fontWeight="bold"
-          sx={{ fontSize: 13, lineHeight: 1.3, display: "block", fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}
+          sx={{
+            fontSize: 13,
+            lineHeight: 1.3,
+            display: "block",
+            fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif",
+          }}
         >
           {theme.theme_name}
         </Typography>
@@ -258,6 +334,7 @@ function ThemeRow({ theme, slots, baseMinute, signalIndex, nowMinute }) {
           {slots.map((slot, idx) => {
             const cell = theme.cells[idx];
             const signals = leaderCode ? signalIndex[`${leaderCode}|${slot}`] || [] : [];
+            const exits = leaderCode ? exitIndex[`${leaderCode}|${slot}`] || [] : [];
             const body = (
               <Box
                 sx={{
@@ -265,7 +342,7 @@ function ThemeRow({ theme, slots, baseMinute, signalIndex, nowMinute }) {
                   bgcolor: heatColor(cell ? cell.rate : null),
                   position: "relative",
                   zIndex: 2,
-                  cursor: cell ? "pointer" : "default",
+                  cursor: cell || exits.length ? "pointer" : "default",
                   transition: "filter .12s",
                   "&:hover": cell ? { filter: "brightness(1.18)" } : {},
                 }}
@@ -280,7 +357,23 @@ function ThemeRow({ theme, slots, baseMinute, signalIndex, nowMinute }) {
                       width: 7,
                       height: 7,
                       borderRadius: "50%",
-                      bgcolor: signals.some((s) => s.executed) ? COLORS.SUCCESS : COLORS.CHARTBOOK.INK,
+                      bgcolor: signals.some((s) => s.executed)
+                        ? COLORS.SUCCESS
+                        : COLORS.CHARTBOOK.INK,
+                      border: `1px solid ${COLORS.CHARTBOOK.GROUND}`,
+                    }}
+                  />
+                )}
+                {exits.length > 0 && (
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%,-50%) rotate(45deg)",
+                      width: 8,
+                      height: 8,
+                      bgcolor: exitMeta(exits[0].decision).color,
                       border: `1px solid ${COLORS.CHARTBOOK.GROUND}`,
                     }}
                   />
@@ -288,7 +381,8 @@ function ThemeRow({ theme, slots, baseMinute, signalIndex, nowMinute }) {
               </Box>
             );
 
-            if (!cell) return <React.Fragment key={slot}>{body}</React.Fragment>;
+            if (!cell && exits.length === 0)
+              return <React.Fragment key={slot}>{body}</React.Fragment>;
 
             return (
               <Tooltip
@@ -299,8 +393,9 @@ function ThemeRow({ theme, slots, baseMinute, signalIndex, nowMinute }) {
                   <CellTooltip
                     themeName={theme.theme_name}
                     slot={slot}
-                    cell={cell}
+                    cell={cell || { rate: 0, rank: "-", trading_value: 0, momentum: 0, reason: "" }}
                     signals={signals}
+                    exits={exits}
                   />
                 }
               >
@@ -338,6 +433,7 @@ ThemeRow.propTypes = {
   slots: PropTypes.array.isRequired,
   baseMinute: PropTypes.number.isRequired,
   signalIndex: PropTypes.object.isRequired,
+  exitIndex: PropTypes.object.isRequired,
   nowMinute: PropTypes.number,
 };
 
@@ -347,7 +443,14 @@ export function TimelineLegend() {
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: 2, flexWrap: "wrap" }}>
       <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
-        <Typography variant="caption" sx={{ fontSize: 11, color: COLORS.CHARTBOOK.INK, fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}>
+        <Typography
+          variant="caption"
+          sx={{
+            fontSize: 11,
+            color: COLORS.CHARTBOOK.INK,
+            fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif",
+          }}
+        >
           등락률
         </Typography>
         <Box sx={{ display: "flex", borderRadius: "0", overflow: "hidden" }}>
@@ -358,23 +461,77 @@ export function TimelineLegend() {
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
         <Box sx={{ width: 18, height: 5, bgcolor: COLORS.WARNING, borderRadius: "0" }} />
-        <Typography variant="caption" sx={{ fontSize: 11, color: COLORS.CHARTBOOK.INK, fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}>
+        <Typography
+          variant="caption"
+          sx={{
+            fontSize: 11,
+            color: COLORS.CHARTBOOK.INK,
+            fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif",
+          }}
+        >
           급등 판정
         </Typography>
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
         <Box sx={{ width: 7, height: 7, borderRadius: "50%", bgcolor: COLORS.CHARTBOOK.INK }} />
-        <Typography variant="caption" sx={{ fontSize: 11, color: COLORS.CHARTBOOK.INK, fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}>
+        <Typography
+          variant="caption"
+          sx={{
+            fontSize: 11,
+            color: COLORS.CHARTBOOK.INK,
+            fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif",
+          }}
+        >
           진입 판정
         </Typography>
         <Box sx={{ width: 7, height: 7, borderRadius: "50%", bgcolor: COLORS.SUCCESS, ml: 0.5 }} />
-        <Typography variant="caption" sx={{ fontSize: 11, color: COLORS.CHARTBOOK.INK, fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}>
+        <Typography
+          variant="caption"
+          sx={{
+            fontSize: 11,
+            color: COLORS.CHARTBOOK.INK,
+            fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif",
+          }}
+        >
           실제 진입
         </Typography>
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
+        <Box sx={{ width: 8, height: 8, transform: "rotate(45deg)", bgcolor: COLORS.WARNING }} />
+        <Typography
+          variant="caption"
+          sx={{
+            fontSize: 11,
+            color: COLORS.CHARTBOOK.INK,
+            fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif",
+          }}
+        >
+          익일 이월
+        </Typography>
+        <Box
+          sx={{ width: 8, height: 8, transform: "rotate(45deg)", bgcolor: COLORS.DOWN, ml: 0.5 }}
+        />
+        <Typography
+          variant="caption"
+          sx={{
+            fontSize: 11,
+            color: COLORS.CHARTBOOK.INK,
+            fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif",
+          }}
+        >
+          강제청산
+        </Typography>
+      </Box>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
         <Box sx={{ width: 2, height: 12, bgcolor: COLORS.CHARTBOOK.PANEL_BLUE, opacity: 0.6 }} />
-        <Typography variant="caption" sx={{ fontSize: 11, color: COLORS.CHARTBOOK.INK, fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}>
+        <Typography
+          variant="caption"
+          sx={{
+            fontSize: 11,
+            color: COLORS.CHARTBOOK.INK,
+            fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif",
+          }}
+        >
           현재 시각
         </Typography>
       </Box>
@@ -390,7 +547,7 @@ export function TimelineLegend() {
  * 셀 폭은 컨테이너를 균등 분할해 하루치가 가로 스크롤 없이 한눈에 들어오며,
  * 좁은 화면에서만 최소 폭을 유지한 채 스크롤된다.
  */
-function ThemeTimeline({ slots, themes, signals, date }) {
+function ThemeTimeline({ slots, themes, signals, exits, date }) {
   const signalIndex = useMemo(() => {
     const index = {};
     signals.forEach((signal) => {
@@ -400,6 +557,16 @@ function ThemeTimeline({ slots, themes, signals, date }) {
     });
     return index;
   }, [signals]);
+
+  const exitIndex = useMemo(() => {
+    const index = {};
+    exits.forEach((exit) => {
+      const key = `${exit.stock_code}|${exit.slot}`;
+      if (!index[key]) index[key] = [];
+      index[key].push(exit);
+    });
+    return index;
+  }, [exits]);
 
   const baseMinute = useMemo(() => (slots.length ? minuteOf(slots[0]) : 540), [slots]);
 
@@ -441,6 +608,7 @@ function ThemeTimeline({ slots, themes, signals, date }) {
             slots={slots}
             baseMinute={baseMinute}
             signalIndex={signalIndex}
+            exitIndex={exitIndex}
             nowMinute={nowMinute}
           />
         ))}
@@ -453,11 +621,13 @@ ThemeTimeline.propTypes = {
   slots: PropTypes.arrayOf(PropTypes.string).isRequired,
   themes: PropTypes.arrayOf(PropTypes.object).isRequired,
   signals: PropTypes.arrayOf(PropTypes.object),
+  exits: PropTypes.arrayOf(PropTypes.object),
   date: PropTypes.string,
 };
 
 ThemeTimeline.defaultProps = {
   signals: [],
+  exits: [],
   date: "",
 };
 
