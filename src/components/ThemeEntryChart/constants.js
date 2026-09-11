@@ -27,6 +27,7 @@ export const CHART_COLORS = canvasColors({
   PASSED: COLORS.WARNING,
   EXECUTED: COLORS.SUCCESS,
   EXIT: COLORS.INFO_DARK,
+  OVERNIGHT: COLORS.WARNING,
   STOP: COLORS.DOWN,
   TARGET: COLORS.SUCCESS,
   TRAILING: COLORS.WARNING,
@@ -73,6 +74,7 @@ export const LEGEND_ITEMS = [
   { label: "직전 상승 구간", color: ZONE_STYLE.RISE.stroke, kind: "zone" },
   { label: "판정 시점", color: CHART_COLORS.DECISION, kind: "vertical" },
   { label: "청산 체결", color: CHART_COLORS.EXIT, kind: "line" },
+  { label: "익일 이월", color: CHART_COLORS.OVERNIGHT, kind: "dashed" },
   { label: "손절선", color: CHART_COLORS.STOP, kind: "dashed" },
   { label: "익절선 (차수·T배수·비율)", color: CHART_COLORS.TARGET, kind: "line" },
   { label: "트레일링 시작", color: CHART_COLORS.TRAILING, kind: "dotted" },
@@ -96,6 +98,25 @@ export const exitStatus = (exit) => {
     bg: "transparent",
     border: `1px solid ${COLORS.INFO_DARK}`,
   };
+};
+
+/** 오버나이트(익일 이월) → 표시 텍스트/색. 청산과 같은 자리에 놓이는 결말이다. */
+export const overnightStatus = (hold) => {
+  if (!hold) return { label: "—", color: COLORS.CHARTBOOK.INK, bg: "transparent", border: `1px solid ${COLORS.CHARTBOOK.GRID}` };
+  return {
+    label: "이월",
+    color: COLORS.WARNING,
+    bg: "transparent",
+    border: `1px solid ${COLORS.WARNING}`,
+  };
+};
+
+/** 오버나이트 이월 판정 수급 조건 키 → 한글 라벨 (ThemeTimeline 과 동일). */
+export const OVERNIGHT_CONDITION_LABELS = {
+  foreign: "외국인 순매수",
+  institution: "기관 순매수",
+  program: "프로그램 순매수",
+  shinhan_top5: "신한증권 매수상위5",
 };
 
 export const won = (value) =>

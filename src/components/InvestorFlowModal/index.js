@@ -4,6 +4,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Box from "@mui/material/Box";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -53,6 +55,101 @@ function useInvestorData(endpoint, stockCode) {
   }, [load]);
 
   return state;
+}
+
+async function fetchJson(path) {
+  const res = await fetch(`${API_BASE()}${path}`);
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok || !json.success) throw new Error(json.error || `조회 실패 (HTTP ${res.status})`);
+  return json.data;
+}
+
+/**
+ * 스냅샷 날짜 네비게이션 훅.
+ * - 저장된 스냅샷 날짜 목록을 불러오고, 선택된 날짜의 스냅샷을 조회한다.
+ * - date === null 이면 "실시간"(선택 안 함) 상태.
+ */
+function useSnapshotNav(stockCode) {
+  const [dates, setDates] = useState([]);
+  const [date, setDate] = useState(null);
+  const [snapshot, setSnapshot] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    let alive = true;
+    setDates([]);
+    setDate(null);
+    setSnapshot(null);
+    fetchJson(`/api/stock/${stockCode}/investor-flow-dates`)
+      .then((d) => alive && setDates(Array.isArray(d) ? d : []))
+      .catch(() => alive && setDates([]));
+    return () => {
+      alive = false;
+    };
+  }, [stockCode]);
+
+  useEffect(() => {
+    if (!date) {
+      setSnapshot(null);
+      return;
+    }
+    let alive = true;
+    setLoading(true);
+    fetchJson(`/api/stock/${stockCode}/investor-flow-snapshot?date=${date}`)
+      .then((d) => alive && setSnapshot(d))
+      .catch(() => alive && setSnapshot(null))
+      .finally(() => alive && setLoading(false));
+  }, [stockCode, date]);
+
+  const selectLatest = useCallback(() => {
+    setDate((cur) => cur ?? (dates.length > 0 ? dates[0] : null));
+  }, [dates]);
+
+  const step = useCallback(
+    (delta) => {
+      setDate((cur) => {
+        if (dates.length === 0) return cur;
+        const idx = cur ? dates.indexOf(cur) : -1;
+        // dates 는 최신순: delta<0(과거) → idx 증가, delta>0(미래) → idx 감소
+        const nextIdx = Math.min(Math.max(idx - delta, 0), dates.length - 1);
+        return dates[nextIdx];
+      });
+    },
+    [dates]
+  );
+
+  return { dates, date, setDate, snapshot, loading, selectLatest, step };
+}
+
+/** 날짜 이동 컨트롤 (◀ 2026-09-05 ▶ · 실시간). */
+function SnapshotDateNav({ nav, canLive }) {
+  const { dates, date, step, setDate } = nav;
+  if (dates.length === 0) return null;
+  const idx = date ? dates.indexOf(date) : -1;
+  const hasOlder = idx < dates.length - 1;
+  const hasNewer = idx > 0;
+
+  return (
+    <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1.5 }}>
+      <IconButton size="small" disabled={!hasOlder} onClick={() => step(-1)} aria-label="이전 날짜">
+        <ChevronLeftIcon fontSize="small" />
+      </IconButton>
+      <Typography variant="body2" sx={{ fontWeight: 700, minWidth: 92, textAlign: "center" }}>
+        {date || "실시간"}
+      </Typography>
+      <IconButton size="small" disabled={!hasNewer} onClick={() => step(1)} aria-label="다음 날짜">
+        <ChevronRightIcon fontSize="small" />
+      </IconButton>
+      {canLive && date && (
+        <Chip
+          label="실시간 보기"
+          size="small"
+          onClick={() => setDate(null)}
+          sx={{ ml: 1, cursor: "pointer" }}
+        />
+      )}
+    </Box>
+  );
 }
 
 function formatNumber(val) {
@@ -195,21 +292,33 @@ const PROGRAM_COLUMNS = [
 
 function ProgramTradeTab({ stockCode }) {
   const { data, isMarketClosed, loading, error } = useInvestorData("program-trade", stockCode);
-  const rows = data?.rows ?? [];
+  const nav = useSnapshotNav(stockCode);
+  const liveRows = data?.rows ?? [];
+
+  // 장 마감 후 + 실시간 데이터 없음 → 최신 저장 스냅샷으로 폴백
+  useEffect(() => {
+    if (!loading && isMarketClosed && liveRows.length === 0) nav.selectLatest();
+  }, [loading, isMarketClosed, liveRows.length, nav.selectLatest]);
+
+  const rows = nav.date ? nav.snapshot?.program_trade?.rows ?? [] : liveRows;
+  const showLoading = loading || nav.loading;
 
   return (
-    <DataState
-      loading={loading}
-      error={error}
-      isEmpty={rows.length === 0}
-      emptyMessage={
-        isMarketClosed
-          ? "프로그램 매매 시간대별 데이터는 장중(평일 09:00~15:30)에만 제공됩니다."
-          : "프로그램 매매 데이터가 없습니다."
-      }
-    >
-      <FlowTable columns={PROGRAM_COLUMNS} data={rows} minWidth="800px" />
-    </DataState>
+    <>
+      <SnapshotDateNav nav={nav} canLive={!isMarketClosed} />
+      <DataState
+        loading={showLoading}
+        error={error}
+        isEmpty={rows.length === 0}
+        emptyMessage={
+          isMarketClosed
+            ? "저장된 프로그램 매매 스냅샷이 없습니다. (장중에만 실시간 수집되며 자동매매 대상 종목은 매일 15:29에 저장됩니다.)"
+            : "프로그램 매매 데이터가 없습니다."
+        }
+      >
+        <FlowTable columns={PROGRAM_COLUMNS} data={rows} minWidth="800px" />
+      </DataState>
+    </>
   );
 }
 
@@ -250,37 +359,60 @@ const MEMBER_COLUMNS = [
 ];
 
 function MemberFirmTab({ stockCode }) {
-  const { data, loading, error } = useInvestorData("member-firm", stockCode);
-  const sellRows = data?.sell ?? [];
-  const buyRows = data?.buy ?? [];
-  const foreign = data?.foreign;
+  const { data, isMarketClosed, loading, error } = useInvestorData("member-firm", stockCode);
+  const nav = useSnapshotNav(stockCode);
+  const live = data ?? {};
+  const liveEmpty = (live.sell ?? []).length === 0 && (live.buy ?? []).length === 0;
+
+  useEffect(() => {
+    if (!loading && isMarketClosed && liveEmpty) nav.selectLatest();
+  }, [loading, isMarketClosed, liveEmpty, nav.selectLatest]);
+
+  const source = nav.date ? nav.snapshot?.member_firm ?? {} : live;
+  const sellRows = source.sell ?? [];
+  const buyRows = source.buy ?? [];
+  const foreign = source.foreign;
+  const showLoading = loading || nav.loading;
 
   return (
-    <DataState
-      loading={loading}
-      error={error}
-      isEmpty={sellRows.length === 0 && buyRows.length === 0}
-      emptyMessage="증권사별 매매 데이터가 없습니다."
-    >
-      <>
-        {foreign && (
-          <Alert severity="info" sx={{ mt: 2 }}>
-            외국계 합계 — 매수 {formatNumber(foreign.shnu_qty)}주 (
-            {formatPercent(foreign.shnu_ratio)}) / 매도 {formatNumber(foreign.seln_qty)}주 (
-            {formatPercent(foreign.seln_ratio)}) / 순매수{" "}
-            <strong>{formatNumber(foreign.ntby_qty)}주</strong>
-          </Alert>
-        )}
-        <Typography variant="subtitle2" sx={{ mt: 2, fontWeight: 700 }}>
-          매수 상위
-        </Typography>
-        <FlowTable columns={MEMBER_COLUMNS} data={buyRows} minWidth="520px" />
-        <Typography variant="subtitle2" sx={{ mt: 2, fontWeight: 700 }}>
-          매도 상위
-        </Typography>
-        <FlowTable columns={MEMBER_COLUMNS} data={sellRows} minWidth="520px" />
-      </>
-    </DataState>
+    <>
+      <SnapshotDateNav nav={nav} canLive={!isMarketClosed} />
+      <DataState
+        loading={showLoading}
+        error={error}
+        isEmpty={sellRows.length === 0 && buyRows.length === 0}
+        emptyMessage={
+          isMarketClosed
+            ? "저장된 증권사별 매매 스냅샷이 없습니다. (장중에만 실시간 수집되며 자동매매 대상 종목은 매일 15:29에 저장됩니다.)"
+            : "증권사별 매매 데이터가 없습니다."
+        }
+      >
+        <>
+          {foreign && (
+            <Alert severity="info" sx={{ mt: 2 }}>
+              외국계 합계 — 매수 {formatNumber(foreign.shnu_qty)}주 (
+              {formatPercent(foreign.shnu_ratio)}) / 매도 {formatNumber(foreign.seln_qty)}주 (
+              {formatPercent(foreign.seln_ratio)}) / 순매수{" "}
+              <strong>{formatNumber(foreign.ntby_qty)}주</strong>
+            </Alert>
+          )}
+          <Box sx={{ display: "flex", gap: 2, mt: 2, flexWrap: "wrap" }}>
+            <Box sx={{ flex: 1, minWidth: 320 }}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "#ff5252" }}>
+                매수 상위
+              </Typography>
+              <FlowTable columns={MEMBER_COLUMNS} data={buyRows} minWidth="320px" />
+            </Box>
+            <Box sx={{ flex: 1, minWidth: 320 }}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700, color: COLORS.DOWN }}>
+                매도 상위
+              </Typography>
+              <FlowTable columns={MEMBER_COLUMNS} data={sellRows} minWidth="320px" />
+            </Box>
+          </Box>
+        </>
+      </DataState>
+    </>
   );
 }
 

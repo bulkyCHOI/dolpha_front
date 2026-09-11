@@ -10,6 +10,7 @@ const EMPTY = {
   bars: [],
   decisions: [],
   exits: [],
+  overnight: [],
   params: {},
 };
 

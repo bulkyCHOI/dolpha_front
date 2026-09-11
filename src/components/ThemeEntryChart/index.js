@@ -13,7 +13,7 @@ import Typography from "@mui/material/Typography";
 import { useThemeEntryChart } from "hooks/useThemeEntryChart";
 import EntryDecisionChart from "./EntryDecisionChart";
 import DecisionList from "./DecisionList";
-import DecisionSummary, { ChartLegend, ExitSummary } from "./DecisionSummary";
+import DecisionSummary, { ChartLegend, ExitSummary, OvernightSummary } from "./DecisionSummary";
 import { CHART_COLORS, decisionStatus } from "./constants";
 import { COLORS, alpha } from "constants/styles";
 
@@ -121,6 +121,7 @@ function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
   const { chart, loading, error } = useThemeEntryChart(date, selectedCode, authFetch);
   const decisions = chart.decisions;
   const exits = chart.exits;
+  const overnight = chart.overnight ?? [];
 
   useEffect(() => {
     if (decisions.length === 0) {
@@ -131,11 +132,13 @@ function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
       selected &&
       (selected.kind === "exit"
         ? exits.some((exit) => exit.id === selected.id)
+        : selected.kind === "overnight"
+        ? overnight.some((hold) => hold.id === selected.id)
         : decisions.some((decision) => decision.id === selected.id));
     if (!stillThere) {
       setSelected({ kind: "decision", id: defaultDecision(decisions).id });
     }
-  }, [decisions, exits, selected]);
+  }, [decisions, exits, overnight, selected]);
 
   const selectedDecision =
     selected?.kind === "decision"
@@ -143,6 +146,10 @@ function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
       : null;
   const selectedExit =
     selected?.kind === "exit" ? exits.find((exit) => exit.id === selected.id) ?? null : null;
+  const selectedOvernight =
+    selected?.kind === "overnight"
+      ? overnight.find((hold) => hold.id === selected.id) ?? null
+      : null;
 
   // 하루 100건이 넘는 판정 중 대부분은 0/3 대기라 목록을 채우기만 한다.
   // 조건이 하나라도 걸린 판정만 추려 볼 수 있게 한다.
@@ -158,9 +165,10 @@ function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
     const merged = [
       ...shown.map((decision) => ({ ...decision, kind: "decision" })),
       ...exits.map((exit) => ({ ...exit, kind: "exit" })),
+      ...overnight.map((hold) => ({ ...hold, kind: "overnight" })),
     ];
     return merged.sort((a, b) => (a.chart_time ?? 0) - (b.chart_time ?? 0));
-  }, [onlyMeaningful, meaningful, decisions, exits]);
+  }, [onlyMeaningful, meaningful, decisions, exits, overnight]);
 
   if (!isAuthenticated) {
     return (
@@ -236,6 +244,7 @@ function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
                   bars={chart.bars}
                   decision={selectedDecision}
                   exits={exits}
+                  overnight={overnight}
                   selectedExit={selectedExit}
                   height={CHART_HEIGHT}
                 />
@@ -252,8 +261,9 @@ function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
                 }}
               >
                 <Typography variant="caption" sx={{ fontSize: 11, color: CHART_COLORS.MUTED }}>
-                  판정 {listItems.length - exits.length}건
-                  {exits.length > 0 ? ` · 청산 ${exits.length}건` : ""} · 눌러서 시점 이동
+                  판정 {listItems.length - exits.length - overnight.length}건
+                  {exits.length > 0 ? ` · 청산 ${exits.length}건` : ""}
+                  {overnight.length > 0 ? ` · 이월 ${overnight.length}건` : ""} · 눌러서 시점 이동
                 </Typography>
                 {meaningful.length > 0 && meaningful.length < decisions.length && (
                   <Chip
@@ -292,6 +302,8 @@ function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
           <Divider sx={{ my: 1.5 }} />
           {selectedExit ? (
             <ExitSummary exit={selectedExit} />
+          ) : selectedOvernight ? (
+            <OvernightSummary hold={selectedOvernight} />
           ) : (
             <DecisionSummary decision={selectedDecision} params={chart.params} />
           )}

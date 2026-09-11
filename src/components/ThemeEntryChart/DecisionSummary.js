@@ -9,8 +9,10 @@ import Typography from "@mui/material/Typography";
 import {
   CHART_COLORS,
   LEGEND_ITEMS,
+  OVERNIGHT_CONDITION_LABELS,
   decisionStatus,
   exitStatus,
+  overnightStatus,
   pct,
   ratio,
   won,
@@ -206,6 +208,116 @@ export function ExitSummary({ exit }) {
 
 ExitSummary.propTypes = { exit: PropTypes.object };
 ExitSummary.defaultProps = { exit: null };
+
+/**
+ * 선택된 오버나이트(익일 이월) 판정의 요약.
+ *
+ * 청산이 '얼마에 팔았나'를 보여준다면, 이월은 '왜 잔량을 다음 날로 넘겼나' —
+ * 강제청산 시각의 수급 조건 충족 내역을 보여준다.
+ */
+export function OvernightSummary({ hold }) {
+  if (!hold) return null;
+
+  const status = overnightStatus(hold);
+  const conditions = Array.isArray(hold.overnight_conditions) ? hold.overnight_conditions : [];
+  const met = hold.overnight_met || {};
+
+  return (
+    <Box>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap", mb: 1 }}>
+        <Typography variant="button" sx={{ fontSize: 13, fontWeight: 700 }}>
+          {hold.evaluated_at} {hold.decision_label} · {hold.days_held}일차
+        </Typography>
+        <Chip
+          size="small"
+          label={status.label}
+          sx={{
+            height: 19,
+            fontSize: 11,
+            fontWeight: 700,
+            backgroundColor: status.bg,
+            color: status.color,
+            border: status.border,
+            borderRadius: "2px",
+            fontFamily: MONO_STACK,
+          }}
+        />
+        <Typography variant="caption" sx={{ fontSize: 11.5, color: COLORS.CHARTBOOK.INK, fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}>
+          {hold.reason}
+        </Typography>
+      </Box>
+
+      <Box
+        sx={{
+          p: 1.25,
+          borderRadius: 0,
+          border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+          bgcolor: COLORS.CHARTBOOK.GROUND,
+        }}
+      >
+        {hold.overnight_evaluated ? (
+          <>
+            <Box sx={{ display: "flex", alignItems: "baseline", gap: 1, mb: 0.75 }}>
+              <Typography variant="h5" fontWeight="bold" sx={{ color: COLORS.WARNING, lineHeight: 1.1, fontFamily: MONO_STACK, fontVariantNumeric: "tabular-nums" }}>
+                {hold.overnight_met_count}/{hold.overnight_required}
+              </Typography>
+              <Typography variant="caption" sx={{ fontSize: 11, color: COLORS.CHARTBOOK.INK, fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}>
+                수급 조건 충족
+                {!hold.overnight_available && " · 일부 조회 실패"}
+              </Typography>
+            </Box>
+            <Grid container spacing={0.75}>
+              {conditions.map((key) => (
+                <Grid item xs={6} sm={3} key={key}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 0.5,
+                      p: 0.75,
+                      border: "1px solid",
+                      borderColor: met[key] ? COLORS.SUCCESS : COLORS.CHARTBOOK.GRID,
+                    }}
+                  >
+                    <Box
+                      component="span"
+                      sx={{
+                        fontSize: 11,
+                        fontWeight: 700,
+                        color: met[key] ? COLORS.SUCCESS : COLORS.DOWN,
+                        fontFamily: MONO_STACK,
+                      }}
+                    >
+                      {met[key] ? OK_ICON : NG_ICON}
+                    </Box>
+                    <Typography variant="caption" sx={{ fontSize: 10.5, color: COLORS.CHARTBOOK.INK, fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}>
+                      {OVERNIGHT_CONDITION_LABELS[key] || key}
+                    </Typography>
+                  </Box>
+                </Grid>
+              ))}
+            </Grid>
+            {hold.overnight_detail && (
+              <Typography
+                variant="caption"
+                sx={{ display: "block", mt: 0.75, fontSize: 10.5, color: COLORS.CHARTBOOK.INK, fontFamily: MONO_STACK }}
+              >
+                {hold.overnight_detail}
+              </Typography>
+            )}
+          </>
+        ) : (
+          <Typography variant="caption" sx={{ fontSize: 11.5, color: COLORS.CHARTBOOK.INK, fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}>
+            수급 조건을 평가하지 않고 이월했습니다 (보유기간·설정 기준).
+          </Typography>
+        )}
+      </Box>
+    </Box>
+  );
+}
+
+OvernightSummary.propTypes = { hold: PropTypes.object };
+OvernightSummary.defaultProps = { hold: null };
 
 /**
  * 선택된 판정의 수치 요약.

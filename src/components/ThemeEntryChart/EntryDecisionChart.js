@@ -24,7 +24,7 @@ function snapToBar(bars, time) {
 }
 
 /** 선택된 판정 + 당일 청산 체결의 마커 목록. */
-function buildMarkers(bars, decision, exits) {
+function buildMarkers(bars, decision, exits, overnight) {
   const geometry = decision?.geometry;
   const markers = [];
 
@@ -75,12 +75,23 @@ function buildMarkers(bars, decision, exits) {
     });
   });
 
+  // 익일 이월도 하루의 결말이므로 청산과 같이 항상 보여준다
+  (overnight ?? []).forEach((hold) => {
+    markers.push({
+      time: snapToBar(bars, hold.chart_time),
+      position: "aboveBar",
+      shape: "arrowDown",
+      color: CHART_COLORS.OVERNIGHT,
+      text: `${hold.evaluated_at} 이월`,
+    });
+  });
+
   // 같은 봉에 마커가 겹치면 lightweight-charts가 세로로 쌓아 준다
   return markers.filter((m) => m.time != null).sort((a, b) => a.time - b.time);
 }
 
 /** 선택된 판정의 음영 구간과 세로선 + 청산 시점 세로선. */
-function buildShapes(bars, decision, exits) {
+function buildShapes(bars, decision, exits, overnight) {
   const zones = [];
   const verticals = [];
   const geometry = decision?.geometry;
@@ -110,6 +121,16 @@ function buildShapes(bars, decision, exits) {
       time,
       color: CHART_COLORS.EXIT,
       label: `${exit.exited_at} ${exit.is_partial ? "분할청산" : "청산"}`,
+    });
+  });
+
+  (overnight ?? []).forEach((hold) => {
+    const time = snapToBar(bars, hold.chart_time);
+    if (time == null) return;
+    verticals.push({
+      time,
+      color: CHART_COLORS.OVERNIGHT,
+      label: `${hold.evaluated_at} 이월`,
     });
   });
 
@@ -285,7 +306,7 @@ function computeFullDayRange(dateStr, bars) {
  * 진입 판정 1분봉 차트.
  * 전고점·눌림 구간·돌파 기준선을 선택된 판정 기준으로 그린다.
  */
-function EntryDecisionChart({ date, bars, decision, exits, selectedExit, height }) {
+function EntryDecisionChart({ date, bars, decision, exits, overnight, selectedExit, height }) {
   // primitive는 차트 수명 동안 같은 인스턴스를 유지해야 한다.
   const zonesRef = useRef(null);
   if (!zonesRef.current) zonesRef.current = new ZonePrimitive();
@@ -297,7 +318,7 @@ function EntryDecisionChart({ date, bars, decision, exits, selectedExit, height 
   const series = useMemo(() => {
     const decisionBar = decision?.geometry?.decision_bar;
 
-    const { zones, verticals } = buildShapes(bars, decision, exits);
+    const { zones, verticals } = buildShapes(bars, decision, exits, overnight);
     zonesRef.current.setShapes(zones, verticals);
 
     return [
@@ -319,7 +340,7 @@ function EntryDecisionChart({ date, bars, decision, exits, selectedExit, height 
           priceFormat: { type: "price", precision: 0, minMove: 1 },
         },
         primitives: [zonesRef.current],
-        markers: buildMarkers(bars, decision, exits),
+        markers: buildMarkers(bars, decision, exits, overnight),
         priceLines: buildPriceLines(decision, selectedExit).map((options) => ({
           axisLabelVisible: true,
           ...options,
@@ -348,7 +369,7 @@ function EntryDecisionChart({ date, bars, decision, exits, selectedExit, height 
         priceScaleOptions: { scaleMargins: { top: 0.82, bottom: 0 } },
       },
     ];
-  }, [bars, decision, exits, selectedExit]);
+  }, [bars, decision, exits, overnight, selectedExit]);
 
   const handleCrosshairMove = (param, chart, seriesMap) => {
     const candleSeries = seriesMap?.get("candle");
@@ -435,6 +456,7 @@ EntryDecisionChart.propTypes = {
   bars: PropTypes.array,
   decision: PropTypes.object,
   exits: PropTypes.array,
+  overnight: PropTypes.array,
   selectedExit: PropTypes.object,
   height: PropTypes.number,
 };
@@ -444,6 +466,7 @@ EntryDecisionChart.defaultProps = {
   bars: [],
   decision: null,
   exits: [],
+  overnight: [],
   selectedExit: null,
   height: 380,
 };

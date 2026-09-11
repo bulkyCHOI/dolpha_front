@@ -5,7 +5,7 @@ import Chip from "@mui/material/Chip";
 import ButtonBase from "@mui/material/ButtonBase";
 
 import Typography from "@mui/material/Typography";
-import { CHART_COLORS, CONDITIONS, decisionStatus, exitStatus } from "./constants";
+import { CHART_COLORS, CONDITIONS, decisionStatus, exitStatus, overnightStatus } from "./constants";
 import { COLORS, alpha } from "constants/styles";
 
 const MONO_STACK = "'Fragment Mono', 'Monaco', monospace";
@@ -183,6 +183,60 @@ ExitRow.propTypes = {
   onSelect: PropTypes.func.isRequired,
 };
 
+/** 익일 이월(오버나이트) 1행 — 청산과 같은 자리에 놓이되 수급 충족 수를 보여준다. */
+function OvernightRow({ hold, selected, onSelect }) {
+  const status = overnightStatus(hold);
+
+  return (
+    <Row
+      selected={selected}
+      accent={CHART_COLORS.OVERNIGHT}
+      onClick={() => onSelect(hold)}
+      left={
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1, minWidth: 0 }}>
+          <Typography
+            variant="button"
+            sx={{ fontSize: 12, fontWeight: 700, fontVariantNumeric: "tabular-nums", fontFamily: MONO_STACK }}
+          >
+            {hold.evaluated_at}
+          </Typography>
+          <Typography
+            variant="caption"
+            sx={{ fontSize: 11, fontWeight: 700, color: COLORS.WARNING, whiteSpace: "nowrap", fontFamily: MONO_STACK }}
+          >
+            {hold.overnight_evaluated
+              ? `수급 ${hold.overnight_met_count}/${hold.overnight_required}`
+              : `${hold.days_held}일차`}
+          </Typography>
+        </Box>
+      }
+      right={
+        <Chip
+          size="small"
+          label={status.label}
+          sx={{
+            height: 18,
+            fontSize: 10.5,
+            fontWeight: 700,
+            backgroundColor: status.bg,
+            color: status.color,
+            border: status.border,
+            borderRadius: "2px",
+            fontFamily: MONO_STACK,
+            flexShrink: 0,
+          }}
+        />
+      }
+    />
+  );
+}
+
+OvernightRow.propTypes = {
+  hold: PropTypes.object.isRequired,
+  selected: PropTypes.bool.isRequired,
+  onSelect: PropTypes.func.isRequired,
+};
+
 /**
  * 하루치 진입 판정 + 청산 체결을 시각순으로 합친 목록.
  * 행을 누르면 그 시점 기준으로 차트가 다시 그려진다.
@@ -211,9 +265,22 @@ function DecisionList({ items, selected, onSelect, maxHeight }) {
     >
       {items.map((item) => {
         const isSelected = selected?.kind === item.kind && selected?.id === item.id;
-        return item.kind === "exit" ? (
-          <ExitRow key={`exit-${item.id}`} exit={item} selected={isSelected} onSelect={onSelect} />
-        ) : (
+        if (item.kind === "exit") {
+          return (
+            <ExitRow key={`exit-${item.id}`} exit={item} selected={isSelected} onSelect={onSelect} />
+          );
+        }
+        if (item.kind === "overnight") {
+          return (
+            <OvernightRow
+              key={`overnight-${item.id}`}
+              hold={item}
+              selected={isSelected}
+              onSelect={onSelect}
+            />
+          );
+        }
+        return (
           <DecisionRow
             key={`decision-${item.id}`}
             decision={item}
