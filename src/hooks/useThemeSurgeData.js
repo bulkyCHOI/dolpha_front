@@ -16,11 +16,14 @@ const EMPTY_TIMELINE = {
   slots: [],
   themes: [],
   signals: [],
+  exits: [],
   summary: {
     theme_count: 0,
     surge_theme_count: 0,
     signal_count: 0,
     entry_count: 0,
+    exit_count: 0,
+    overnight_count: 0,
     scanned_slots: 0,
   },
 };

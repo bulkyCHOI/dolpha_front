@@ -73,14 +73,24 @@ function StatCard({ icon: Icon, label, value, unit, accent }) {
         <Icon fontSize="small" />
       </Box>
       <Box sx={{ minWidth: 0 }}>
-        <Typography variant="caption" sx={{ color: COLORS.CHARTBOOK.INK, display: "block", lineHeight: 1.2 }}>
+        <Typography
+          variant="caption"
+          sx={{ color: COLORS.CHARTBOOK.INK, display: "block", lineHeight: 1.2 }}
+        >
           {label}
         </Typography>
         <Box sx={{ display: "flex", alignItems: "baseline", gap: 0.5 }}>
-          <Typography variant="h5" fontWeight="bold" sx={{ lineHeight: 1.2, fontFamily: MONO_STACK, fontVariantNumeric: "tabular-nums" }}>
+          <Typography
+            variant="h5"
+            fontWeight="bold"
+            sx={{ lineHeight: 1.2, fontFamily: MONO_STACK, fontVariantNumeric: "tabular-nums" }}
+          >
             {value}
           </Typography>
-          <Typography variant="caption" sx={{ color: COLORS.CHARTBOOK.INK, fontFamily: MONO_STACK }}>
+          <Typography
+            variant="caption"
+            sx={{ color: COLORS.CHARTBOOK.INK, fontFamily: MONO_STACK }}
+          >
             {unit}
           </Typography>
         </Box>
@@ -111,11 +121,18 @@ function SectionCard({ title, subtitle, action, children, sx }) {
         }}
       >
         <Box>
-          <Typography variant="h6" fontWeight="bold" sx={{ fontSize: 15, fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}>
+          <Typography
+            variant="h6"
+            fontWeight="bold"
+            sx={{ fontSize: 15, fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}
+          >
             {title}
           </Typography>
           {subtitle && (
-            <Typography variant="caption" sx={{ color: COLORS.CHARTBOOK.INK, display: "block", mt: 0.25, fontSize: 12 }}>
+            <Typography
+              variant="caption"
+              sx={{ color: COLORS.CHARTBOOK.INK, display: "block", mt: 0.25, fontSize: 12 }}
+            >
               {subtitle}
             </Typography>
           )}
@@ -151,7 +168,13 @@ function StockCell({ name, code }) {
       {code && (
         <Typography
           variant="caption"
-          sx={{ color: COLORS.CHARTBOOK.INK, lineHeight: 1, fontSize: 11, fontFamily: MONO_STACK, fontWeight: 500 }}
+          sx={{
+            color: COLORS.CHARTBOOK.INK,
+            lineHeight: 1,
+            fontSize: 11,
+            fontFamily: MONO_STACK,
+            fontWeight: 500,
+          }}
         >
           {code}
         </Typography>
@@ -200,7 +223,16 @@ ThemeInlineCell.defaultProps = { leader: "" };
 
 function RateCell({ value }) {
   return (
-    <Typography variant="button" sx={{ fontSize: 13, fontWeight: 700, color: rateColor(value), fontFamily: MONO_STACK, fontVariantNumeric: "tabular-nums" }}>
+    <Typography
+      variant="button"
+      sx={{
+        fontSize: 13,
+        fontWeight: 700,
+        color: rateColor(value),
+        fontFamily: MONO_STACK,
+        fontVariantNumeric: "tabular-nums",
+      }}
+    >
       {signed(value)}
     </Typography>
   );
@@ -243,7 +275,12 @@ ConditionMark.defaultProps = { ok: false };
  */
 const tableStyles = (minWidth, compact = false) => ({
   table: {
-    style: { width: "100%", tableLayout: "auto", minWidth, backgroundColor: COLORS.CHARTBOOK.GROUND },
+    style: {
+      width: "100%",
+      tableLayout: "auto",
+      minWidth,
+      backgroundColor: COLORS.CHARTBOOK.GROUND,
+    },
   },
   headRow: {
     style: {
@@ -278,7 +315,13 @@ const tableStyles = (minWidth, compact = false) => ({
       "&:hover": { backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.06) },
     },
   },
-  cells: { style: { color: COLORS.CHARTBOOK.INK, padding: compact ? "0px 6px" : "8px", borderRight: `1px solid ${COLORS.CHARTBOOK.GRID}` } },
+  cells: {
+    style: {
+      color: COLORS.CHARTBOOK.INK,
+      padding: compact ? "0px 6px" : "8px",
+      borderRight: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+    },
+  },
   pagination: {
     style: {
       backgroundColor: COLORS.CHARTBOOK.GROUND,
@@ -428,7 +471,11 @@ function ThemeSurge() {
       center: true,
       width: "80px",
       cell: (r) => {
-        const chipColor = r.executed ? COLORS.CHARTBOOK.BAND_STRONG : r.passed ? COLORS.CHARTBOOK.BAND_MID : COLORS.CHARTBOOK.INK;
+        const chipColor = r.executed
+          ? COLORS.CHARTBOOK.BAND_STRONG
+          : r.passed
+          ? COLORS.CHARTBOOK.BAND_MID
+          : COLORS.CHARTBOOK.INK;
         return (
           <Chip
             size="small"
@@ -453,10 +500,104 @@ function ThemeSurge() {
       grow: 2,
       wrap: true,
       cell: (r) => (
-        <Typography variant="caption" sx={{ color: COLORS.CHARTBOOK.INK, fontSize: 11.5, lineHeight: 1.5 }}>
+        <Typography
+          variant="caption"
+          sx={{ color: COLORS.CHARTBOOK.INK, fontSize: 11.5, lineHeight: 1.5 }}
+        >
           {r.reason}
         </Typography>
       ),
+    },
+  ];
+
+  const EXIT_LABELS = {
+    overnight: "익일 이월",
+    force_exit: "당일 강제청산",
+    max_days: "보유기간 만료",
+    stop_loss: "손절",
+    trailing: "트레일링",
+    staged: "분할 익절",
+    hold: "유예",
+  };
+  const OVERNIGHT_COND_LABELS = {
+    foreign: "외국인",
+    institution: "기관",
+    program: "프로그램",
+    shinhan_top5: "신한상위5",
+  };
+  const exitColumns = [
+    { name: "판정시각", selector: (r) => r.force_exit_time, width: "84px" },
+    {
+      name: "종목",
+      selector: (r) => r.stock_name,
+      sortable: true,
+      minWidth: "130px",
+      cell: (r) => <StockCell name={r.stock_name} code={r.stock_code} />,
+    },
+    {
+      name: "보유일",
+      selector: (r) => r.days_held,
+      center: true,
+      width: "72px",
+      cell: (r) => `${r.days_held}일차`,
+    },
+    {
+      name: "판정",
+      selector: (r) => r.decision,
+      center: true,
+      width: "110px",
+      cell: (r) => {
+        const isHold = r.decision === "overnight";
+        const color = isHold ? COLORS.WARNING : COLORS.CHARTBOOK.INK;
+        return (
+          <Chip
+            size="small"
+            label={EXIT_LABELS[r.decision] || r.decision}
+            sx={{
+              height: 20,
+              fontSize: 11,
+              fontWeight: 600,
+              backgroundColor: "transparent",
+              border: `1px solid ${color}`,
+              color,
+              borderRadius: "2px",
+              fontFamily: MONO_STACK,
+            }}
+          />
+        );
+      },
+    },
+    {
+      name: "수급 분석",
+      selector: (r) => r.overnight_met_count,
+      grow: 2,
+      wrap: true,
+      cell: (r) => {
+        if (!r.overnight_evaluated) {
+          return (
+            <Typography variant="caption" sx={{ color: COLORS.CHARTBOOK.INK, fontSize: 11.5 }}>
+              {r.reason || "—"}
+            </Typography>
+          );
+        }
+        const conds = Array.isArray(r.overnight_conditions) ? r.overnight_conditions : [];
+        const met = r.overnight_met || {};
+        return (
+          <Typography
+            variant="caption"
+            sx={{
+              color: COLORS.CHARTBOOK.INK,
+              fontSize: 11.5,
+              lineHeight: 1.5,
+              fontFamily: MONO_STACK,
+            }}
+          >
+            {r.overnight_met_count}/{r.overnight_required} 충족
+            {!r.overnight_available && " (조회 실패)"} ·{" "}
+            {conds.map((k) => `${met[k] ? "✓" : "✗"}${OVERNIGHT_COND_LABELS[k] || k}`).join(" ")}
+          </Typography>
+        );
+      },
     },
   ];
 
@@ -483,10 +624,17 @@ function ThemeSurge() {
             }}
           >
             <Box sx={{ maxWidth: 640 }}>
-              <Typography variant="h4" fontWeight="bold" sx={{ lineHeight: 1.3, fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}>
+              <Typography
+                variant="h4"
+                fontWeight="bold"
+                sx={{ lineHeight: 1.3, fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}
+              >
                 급등테마주 자동매매
               </Typography>
-              <Typography variant="body2" sx={{ color: COLORS.CHARTBOOK.INK, mt: 0.5, fontSize: 13.5 }}>
+              <Typography
+                variant="body2"
+                sx={{ color: COLORS.CHARTBOOK.INK, mt: 0.5, fontSize: 13.5 }}
+              >
                 개장일 09:00~15:30 동안 토스증권 &apos;지금 뜨는 산업&apos;을 5분마다 수집해 급등
                 테마의 주도주를 고르고, 1분봉에서{" "}
                 <strong>눌림목 → 전고점 돌파 → 외국인 매수세</strong>가 갖춰지면 매수합니다.
@@ -512,7 +660,15 @@ function ThemeSurge() {
                   />
                 )}
                 {lastUpdated && (
-                  <Typography variant="caption" sx={{ color: COLORS.CHARTBOOK.INK, fontSize: 12, fontFamily: MONO_STACK, fontVariantNumeric: "tabular-nums" }}>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: COLORS.CHARTBOOK.INK,
+                      fontSize: 12,
+                      fontFamily: MONO_STACK,
+                      fontVariantNumeric: "tabular-nums",
+                    }}
+                  >
                     최종 갱신 {lastUpdated.toLocaleTimeString("ko-KR")} · 1분마다 자동 갱신
                   </Typography>
                 )}
@@ -568,7 +724,10 @@ function ThemeSurge() {
                   color: "#ffffff !important",
                   whiteSpace: "nowrap",
                   boxShadow: "none",
-                  "&:hover": { background: alpha(COLORS.CHARTBOOK.PANEL_BLUE, 0.85), boxShadow: "none" },
+                  "&:hover": {
+                    background: alpha(COLORS.CHARTBOOK.PANEL_BLUE, 0.85),
+                    boxShadow: "none",
+                  },
                   "&.Mui-disabled": {
                     background: COLORS.CHARTBOOK.GRID,
                     color: `${COLORS.CHARTBOOK.INK} !important`,
@@ -581,7 +740,14 @@ function ThemeSurge() {
           </Box>
 
           {error && (
-            <Alert severity="error" sx={{ mb: 2, backgroundColor: COLORS.CHARTBOOK.GROUND, border: `1px solid ${COLORS.CHARTBOOK.GRID}` }}>
+            <Alert
+              severity="error"
+              sx={{
+                mb: 2,
+                backgroundColor: COLORS.CHARTBOOK.GROUND,
+                border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+              }}
+            >
               {error}
             </Alert>
           )}
@@ -640,7 +806,7 @@ function ThemeSurge() {
           <Box sx={{ mt: 2 }}>
             <SectionCard
               title="급등 테마 타임라인 (09:00 ~ 15:30)"
-              subtitle="가로축 = 5분 슬롯 · 색 = 테마 등락률 · 주황 밴드 = 급등 판정 구간 · 점 = 주도주 진입 판정 · 급등 구간이 길고 등락률이 높은 순으로 정렬"
+              subtitle="가로축 = 5분 슬롯 · 색 = 테마 등락률 · 주황 밴드 = 급등 판정 구간 · 점 = 주도주 진입 판정 · 마름모 = 강제청산 시각 판정(익일 이월/청산) · 급등 구간이 길고 등락률이 높은 순으로 정렬"
               action={<TimelineLegend />}
             >
               {loading ? (
@@ -652,6 +818,7 @@ function ThemeSurge() {
                   slots={timeline.slots}
                   themes={timeline.themes}
                   signals={timeline.signals}
+                  exits={timeline.exits}
                   date={date}
                 />
               )}
@@ -722,7 +889,7 @@ function ThemeSurge() {
               title="진입/청산 조건 판정"
               subtitle="종목 탭에서 판정 시점을 고르면, 그때 전고점·눌림목이 1분봉 어디로 잡혔는지 차트에 그려집니다. 3조건이 모두 ✓ 여야 매수하며, 청산은 아래 표에서 확인할 수 있습니다"
               action={
-                timeline.signals.length > 0 && (
+                (timeline.signals.length > 0 || timeline.exits.length > 0) && (
                   <Button
                     size="small"
                     variant="text"
@@ -761,12 +928,43 @@ function ThemeSurge() {
                     noDataComponent={NO_DATA("판정 이력이 없습니다.")}
                   />
                 </Box>
+
+                <Typography
+                  variant="button"
+                  sx={{
+                    display: "block",
+                    mt: 2,
+                    mb: 1,
+                    color: COLORS.CHARTBOOK.INK,
+                    fontWeight: 700,
+                  }}
+                >
+                  강제청산 시각 판정 (청산 / 익일 이월)
+                </Typography>
+                <Box sx={{ overflowX: "auto" }}>
+                  <EnhancedDataTable
+                    columns={exitColumns}
+                    data={timeline.exits}
+                    autoOptimizeColumns={false}
+                    striped={false}
+                    dense
+                    customStyles={tableStyles("720px")}
+                    noDataComponent={NO_DATA("강제청산 시각 판정 이력이 없습니다.")}
+                  />
+                </Box>
               </Collapse>
             </SectionCard>
           </Box>
 
           <Divider sx={{ my: 3, borderColor: COLORS.CHARTBOOK.GRID }} />
-          <Typography variant="caption" sx={{ color: COLORS.CHARTBOOK.INK, fontSize: 12, fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif" }}>
+          <Typography
+            variant="caption"
+            sx={{
+              color: COLORS.CHARTBOOK.INK,
+              fontSize: 12,
+              fontFamily: "'Archivo', 'Helvetica', 'Arial', sans-serif",
+            }}
+          >
             데이터 출처: 토스증권 산업분류(TICS) 랭킹 · 수급 데이터: 한국투자증권 API. 수집은 개장일
             09:00~15:30에만 이루어집니다. 표시된 정보는 투자 판단의 참고용이며 투자 권유가 아닙니다.
           </Typography>

@@ -102,6 +102,10 @@ function TradingDefaults() {
     theme_surge_trailing_bar_count: 3,
     theme_surge_force_exit_enabled: true,
     theme_surge_force_exit_time: "15:20",
+    theme_surge_overnight_enabled: false,
+    theme_surge_overnight_conditions: ["foreign", "institution", "program", "shinhan_top5"],
+    theme_surge_overnight_min_count: 2,
+    theme_surge_overnight_max_days: 3,
   });
 
   const [loading, setLoading] = useState(false);
