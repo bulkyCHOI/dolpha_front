@@ -909,6 +909,7 @@ function ThemeSurge() {
               <ThemeEntryChart
                 date={date}
                 signals={timeline.signals}
+                exitSignals={timeline.exits}
                 authFetch={authFetch}
                 isAuthenticated={isAuthenticated}
               />

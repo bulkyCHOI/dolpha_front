@@ -94,10 +94,107 @@ function ThemeBadge({ name }) {
 ThemeBadge.propTypes = { name: PropTypes.string };
 ThemeBadge.defaultProps = { name: "" };
 
+/** 수급 조건 키 → 한글 라벨 (ThemeEntryChart / ThemeTimeline 과 동일) */
+const OVERNIGHT_CONDITION_LABELS = {
+  foreign: "외국인 순매수",
+  institution: "기관 순매수",
+  program: "프로그램 순매수",
+  shinhan_top5: "신한증권 매수상위5",
+};
+
+/** 전일 이월(오버나이트) 표식 — 며칠째 들고 있는 포지션인지 한눈에 보인다 */
+function OvernightBadge({ info }) {
+  return (
+    <Chip
+      size="small"
+      label={`이월 ${info.days_held}일차`}
+      sx={{
+        height: 19,
+        fontSize: 11,
+        backgroundColor: alpha(COLORS.WARNING, 0.1),
+        border: `1px solid ${COLORS.WARNING}`,
+        color: COLORS.WARNING,
+        fontWeight: 700,
+        borderRadius: "2px",
+        fontFamily: MONO_STACK,
+      }}
+    />
+  );
+}
+
+OvernightBadge.propTypes = { info: PropTypes.object.isRequired };
+
+/** 이월 근거 — 강제청산 시각에 충족된 수급 조건 */
+function OvernightDetail({ info }) {
+  const conditions = Array.isArray(info.conditions) ? info.conditions : [];
+  const met = info.met || {};
+
+  return (
+    <Box
+      sx={{
+        mt: 1.25,
+        p: 1,
+        border: `1px solid ${alpha(COLORS.WARNING, 0.5)}`,
+        backgroundColor: alpha(COLORS.WARNING, 0.06),
+      }}
+    >
+      <Box sx={{ display: "flex", alignItems: "baseline", gap: 0.75, flexWrap: "wrap" }}>
+        <Typography variant="caption" sx={{ fontSize: 11, fontWeight: 700, color: COLORS.WARNING }}>
+          익일 이월 · {info.decided_at} 판정
+        </Typography>
+        {info.evaluated && (
+          <Typography
+            variant="caption"
+            sx={{ fontSize: 11, color: COLORS.WARNING, fontFamily: MONO_STACK }}
+          >
+            수급 {info.met_count}/{info.required}
+            {!info.available && " · 일부 조회 실패"}
+          </Typography>
+        )}
+      </Box>
+
+      {conditions.length > 0 && (
+        <Box sx={{ display: "flex", gap: 0.75, flexWrap: "wrap", mt: 0.5 }}>
+          {conditions.map((key) => (
+            <Typography
+              key={key}
+              variant="caption"
+              sx={{
+                fontSize: 11,
+                color: met[key] ? OK : MUTED,
+                fontWeight: met[key] ? 700 : 400,
+              }}
+            >
+              {met[key] ? "✓" : "✗"} {OVERNIGHT_CONDITION_LABELS[key] || key}
+            </Typography>
+          ))}
+        </Box>
+      )}
+
+      {info.reason && (
+        <Typography
+          variant="caption"
+          sx={{ display: "block", mt: 0.5, color: MUTED, fontSize: 11, lineHeight: 1.5 }}
+        >
+          {info.reason}
+        </Typography>
+      )}
+    </Box>
+  );
+}
+
+OvernightDetail.propTypes = { info: PropTypes.object.isRequired };
+
 /** 보유 포지션 카드 — 손익이 주인공 */
 function PositionCard({ position: p }) {
+  const overnight = p.is_overnight ? p.overnight : null;
+
   return (
-    <Card sx={cardSx}>
+    <Card
+      sx={
+        overnight ? { ...cardSx, borderTop: `2px solid ${COLORS.WARNING}` } : cardSx
+      }
+    >
       <Box
         sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 1 }}
       >
@@ -107,6 +204,7 @@ function PositionCard({ position: p }) {
               {p.stock_name}
             </Typography>
             <ThemeBadge name={p.theme_name} />
+            {overnight && <OvernightBadge info={overnight} />}
           </Box>
           <Typography variant="caption" sx={{ color: COLORS.CHARTBOOK.INK, fontSize: 11, fontFamily: MONO_STACK }}>
             {p.stock_code} · {p.entry_count}/{p.max_entries}차 진입
@@ -164,6 +262,8 @@ function PositionCard({ position: p }) {
           </Typography>
         </Grid>
       </Grid>
+
+      {overnight && <OvernightDetail info={overnight} />}
 
       {p.entry_reason && (
         <Typography
@@ -315,6 +415,7 @@ function ThemeSurgePositions({ positions, watching, summary, loading, error, isA
             </Typography>
             <Typography variant="caption" sx={{ color: MUTED, fontFamily: MONO_STACK }}>
               {summary.position_count}종목
+              {summary.overnight_count > 0 ? ` · 이월 ${summary.overnight_count}` : ""}
             </Typography>
             <Typography
               variant="button"
@@ -370,7 +471,13 @@ ThemeSurgePositions.propTypes = {
 ThemeSurgePositions.defaultProps = {
   positions: [],
   watching: [],
-  summary: { position_count: 0, watching_count: 0, total_profit_loss: 0, total_profit_rate: 0 },
+  summary: {
+    position_count: 0,
+    overnight_count: 0,
+    watching_count: 0,
+    total_profit_loss: 0,
+    total_profit_rate: 0,
+  },
   loading: false,
   error: null,
   isAuthenticated: false,

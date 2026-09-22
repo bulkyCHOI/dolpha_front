@@ -21,25 +21,35 @@ const MONO_STACK = "'Fragment Mono', 'Monaco', monospace";
 const CHART_HEIGHT = 400;
 
 /** 판정 이력을 종목별로 묶어 탭 목록을 만든다. */
-function groupByStock(signals) {
+function groupByStock(signals, exitSignals) {
   const grouped = new Map();
 
-  signals.forEach((signal) => {
-    const previous = grouped.get(signal.stock_code) ?? {
-      stock_code: signal.stock_code,
-      stock_name: signal.stock_name,
-      theme_name: signal.theme_name,
+  const touch = (row) => {
+    const previous = grouped.get(row.stock_code) ?? {
+      stock_code: row.stock_code,
+      stock_name: row.stock_name,
+      theme_name: row.theme_name,
       total: 0,
       passed: 0,
       executed: 0,
       best: 0,
+      overnight: false,
     };
+    grouped.set(row.stock_code, {
+      ...previous,
+      stock_name: row.stock_name || previous.stock_name,
+      theme_name: row.theme_name || previous.theme_name,
+    });
+    return grouped.get(row.stock_code);
+  };
+
+  signals.forEach((signal) => {
+    const previous = touch(signal);
     const met =
       Number(signal.has_pullback) + Number(signal.has_breakout) + Number(signal.has_foreign_buying);
 
     grouped.set(signal.stock_code, {
       ...previous,
-      theme_name: signal.theme_name || previous.theme_name,
       total: previous.total + 1,
       passed: previous.passed + Number(Boolean(signal.passed)),
       executed: previous.executed + Number(Boolean(signal.executed)),
@@ -47,9 +57,24 @@ function groupByStock(signals) {
     });
   });
 
-  // 실제 진입 → 조건 충족 → 근접한 순. 볼 이유가 큰 종목이 앞에 온다
+  // 전일 이월된 종목은 당일 진입 판정이 한 건도 없어 탭에서 통째로 빠져 있었다.
+  // 청산/이월 판정만 있는 종목도 탭으로 노출해 그 결말을 볼 수 있게 한다.
+  exitSignals.forEach((exit) => {
+    const previous = touch(exit);
+    grouped.set(exit.stock_code, {
+      ...previous,
+      overnight: previous.overnight || exit.decision === "overnight",
+    });
+  });
+
+  // 이월 > 실제 진입 → 조건 충족 → 근접한 순. 볼 이유가 큰 종목이 앞에 온다
   return [...grouped.values()].sort(
-    (a, b) => b.executed - a.executed || b.passed - a.passed || b.best - a.best || b.total - a.total
+    (a, b) =>
+      Number(b.overnight) - Number(a.overnight) ||
+      b.executed - a.executed ||
+      b.passed - a.passed ||
+      b.best - a.best ||
+      b.total - a.total
   );
 }
 
@@ -68,7 +93,14 @@ function defaultDecision(decisions) {
 }
 
 function StockTabLabel({ stock }) {
-  const badge = stock.executed
+  const badge = stock.overnight
+    ? {
+        label: "이월",
+        color: COLORS.WARNING,
+        bg: "transparent",
+        border: `1px solid ${COLORS.WARNING}`,
+      }
+    : stock.executed
     ? { label: `진입 ${stock.executed}`, ...decisionStatus({ executed: true }) }
     : stock.passed
     ? { label: `충족 ${stock.passed}`, ...decisionStatus({ passed: true }) }
@@ -81,7 +113,8 @@ function StockTabLabel({ stock }) {
           {stock.stock_name}
         </Typography>
         <Typography variant="caption" sx={{ fontSize: 10, color: COLORS.CHARTBOOK.INK, fontFamily: MONO_STACK }}>
-          {stock.theme_name || stock.stock_code} · {stock.total}회
+          {stock.theme_name || stock.stock_code} ·{" "}
+          {stock.total > 0 ? `${stock.total}회` : "판정 없음"}
         </Typography>
       </Box>
       <Chip
@@ -101,8 +134,8 @@ StockTabLabel.propTypes = { stock: PropTypes.object.isRequired };
  * 종목 탭 → 1분봉 차트 → 판정 이력 목록 순으로 좁혀 본다.
  * 판정을 고르면 그 시점에 전고점·눌림 구간이 어디로 잡혔는지 차트에 그려진다.
  */
-function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
-  const stocks = useMemo(() => groupByStock(signals), [signals]);
+function ThemeEntryChart({ date, signals, exitSignals, authFetch, isAuthenticated }) {
+  const stocks = useMemo(() => groupByStock(signals, exitSignals), [signals, exitSignals]);
   const [selectedCode, setSelectedCode] = useState("");
   // 진입 판정과 청산 체결이 한 목록에 섞이므로 종류까지 함께 들고 있어야 한다
   const [selected, setSelected] = useState(null);
@@ -123,11 +156,8 @@ function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
   const exits = chart.exits;
   const overnight = chart.overnight ?? [];
 
+  // 진입 판정이 없어도 이월/청산만으로 고를 게 남는다 (전일 이월 종목).
   useEffect(() => {
-    if (decisions.length === 0) {
-      setSelected(null);
-      return;
-    }
     const stillThere =
       selected &&
       (selected.kind === "exit"
@@ -135,8 +165,16 @@ function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
         : selected.kind === "overnight"
         ? overnight.some((hold) => hold.id === selected.id)
         : decisions.some((decision) => decision.id === selected.id));
-    if (!stillThere) {
+    if (stillThere) return;
+
+    if (decisions.length > 0) {
       setSelected({ kind: "decision", id: defaultDecision(decisions).id });
+    } else if (overnight.length > 0) {
+      setSelected({ kind: "overnight", id: overnight[0].id });
+    } else if (exits.length > 0) {
+      setSelected({ kind: "exit", id: exits[0].id });
+    } else {
+      setSelected(null);
     }
   }, [decisions, exits, overnight, selected]);
 
@@ -316,10 +354,16 @@ function ThemeEntryChart({ date, signals, authFetch, isAuthenticated }) {
 ThemeEntryChart.propTypes = {
   date: PropTypes.string.isRequired,
   signals: PropTypes.array,
+  exitSignals: PropTypes.array,
   authFetch: PropTypes.func,
   isAuthenticated: PropTypes.bool,
 };
 
-ThemeEntryChart.defaultProps = { signals: [], authFetch: null, isAuthenticated: false };
+ThemeEntryChart.defaultProps = {
+  signals: [],
+  exitSignals: [],
+  authFetch: null,
+  isAuthenticated: false,
+};
 
 export default ThemeEntryChart;
