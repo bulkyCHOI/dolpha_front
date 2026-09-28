@@ -86,6 +86,10 @@ function ThemeSurgeExitSettings({ defaults, onChange }) {
     : ALL_OVERNIGHT_KEYS;
   const overnightMinCount = Number(defaults.theme_surge_overnight_min_count) || 2;
   const overnightMaxDays = Number(defaults.theme_surge_overnight_max_days) || 3;
+  const overnightMinProfitR = Number.isFinite(Number(defaults.theme_surge_overnight_min_profit_r))
+    ? Number(defaults.theme_surge_overnight_min_profit_r)
+    : 0.5;
+  const overnightBreakevenStop = defaults.theme_surge_overnight_breakeven_stop !== false;
 
   /** 조건 체크박스 토글 — 항상 새 배열로 교체하고 필요 개수를 범위 안으로 맞춘다 */
   const toggleOvernightCondition = (key) => {
@@ -391,6 +395,56 @@ function ThemeSurgeExitSettings({ defaults, onChange }) {
                       fontVariantNumeric: "tabular-nums",
                     },
                   }}
+                />
+              </Grid>
+              <Grid item xs={6} sm={4}>
+                <Label
+                  text="최소 수익 쿠션"
+                  help="수급 조건을 충족해도 평가손익이 이 값(R 배수) 이상일 때만 이월합니다. 1R = 평단 − 진입 시 손절가. 실측상 평가손실 상태로 이월한 포지션은 평균 −1.5%, 평가수익 상태는 +2.3%였습니다. −1로 두면 사실상 조건 없음."
+                />
+                <TextField
+                  fullWidth
+                  size="small"
+                  type="number"
+                  value={overnightMinProfitR}
+                  onChange={(e) =>
+                    onChange(
+                      "theme_surge_overnight_min_profit_r",
+                      Math.min(5, Math.max(-1, parseFloat(e.target.value) || 0))
+                    )
+                  }
+                  inputProps={{ min: -1, max: 5, step: 0.1 }}
+                  InputProps={{
+                    endAdornment: <InputAdornment position="end">R 이상</InputAdornment>,
+                  }}
+                  sx={{
+                    "& .MuiInputBase-input": {
+                      fontFamily: "'Fragment Mono', 'Monaco', monospace",
+                      fontVariantNumeric: "tabular-nums",
+                    },
+                  }}
+                />
+              </Grid>
+              <Grid item xs={6} sm={4}>
+                <Label
+                  text="이월 시 본전 손절"
+                  help="이월한 포지션은 다음 날부터 손절가를 평단(본전)으로 올립니다. 익일 갭다운으로 진입 시 손절가보다 훨씬 아래에서 체결되는 손실을 막습니다."
+                />
+                <FormControlLabel
+                  control={
+                    <Switch
+                      size="small"
+                      checked={overnightBreakevenStop}
+                      onChange={(e) =>
+                        onChange("theme_surge_overnight_breakeven_stop", e.target.checked)
+                      }
+                    />
+                  }
+                  label={
+                    <Typography variant="button" sx={{ color: MUTED }}>
+                      {overnightBreakevenStop ? "사용" : "미사용"}
+                    </Typography>
+                  }
                 />
               </Grid>
             </Grid>

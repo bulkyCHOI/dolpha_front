@@ -106,6 +106,11 @@ function TradingDefaults() {
     theme_surge_overnight_conditions: ["foreign", "institution", "program", "shinhan_top5"],
     theme_surge_overnight_min_count: 2,
     theme_surge_overnight_max_days: 3,
+    theme_surge_overnight_min_profit_r: 0.5,
+    theme_surge_overnight_breakeven_stop: true,
+    theme_surge_daily_max_losses: 1,
+    theme_surge_daily_max_loss_pct: 1.5,
+    theme_surge_entry_cutoff: "14:00",
   });
 
   const [loading, setLoading] = useState(false);

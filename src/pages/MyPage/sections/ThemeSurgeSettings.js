@@ -23,6 +23,7 @@ import { Link as RouterLink } from "react-router-dom";
 
 import Typography from "@mui/material/Typography";
 import ThemeSurgeEntryStages from "./ThemeSurgeEntryStages";
+import ThemeSurgeRiskGates from "./ThemeSurgeRiskGates";
 import ThemeSurgeExitSettings from "./ThemeSurgeExitSettings";
 import { COLORS, alpha } from "constants/styles";
 
@@ -205,12 +206,15 @@ function ThemeSurgeSettings({ defaults, onChange }) {
               </Grid>
             </Grid>
 
+            <ThemeSurgeRiskGates defaults={defaults} onChange={onChange} />
+
             <Typography
               variant="caption"
               sx={{ display: "block", mt: 2, color: MUTED, lineHeight: 1.6 }}
             >
               · 후보는 <strong>14:30까지만</strong> 신규 등록되며, 장 마감 후(15:32) 끝내 진입하지
-              못한 후보는 자동으로 비활성화됩니다.
+              못한 후보는 자동으로 비활성화됩니다. 등록된 후보도 위 <strong>신규 진입 마감</strong>{" "}
+              이후에는 매수하지 않습니다.
               <br />· 발굴 현황과 진입 판정 이력은{" "}
               <Box
                 component={RouterLink}

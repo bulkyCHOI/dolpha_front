@@ -43,6 +43,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
+import CloseIcon from "@mui/icons-material/Close";
 
 // Utils
 import { formatNumber, formatPercent, formatDate } from "utils/formatters";
@@ -470,8 +471,19 @@ function TradingReviewsTable({
       </Paper>
 
       {/* 상세보기 다이얼로그 */}
-      <Dialog open={!!detailDialog} onClose={() => setDetailDialog(null)} maxWidth="md" fullWidth>
-        <DialogTitle>매매복기 상세정보</DialogTitle>
+      <Dialog open={!!detailDialog} onClose={() => setDetailDialog(null)} maxWidth="md" fullWidth fullScreen={isMobile}>
+        <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          매매복기 상세정보
+          {isMobile && (
+            <IconButton
+              onClick={() => setDetailDialog(null)}
+              aria-label="닫기"
+              sx={{ width: 44, height: 44 }}
+            >
+              <CloseIcon />
+            </IconButton>
+          )}
+        </DialogTitle>
         <DialogContent>
           {detailDialog && (
             <Stack spacing={2} sx={{ mt: 1 }}>
@@ -544,8 +556,19 @@ function TradingReviewsTable({
       </Dialog>
 
       {/* 메모 수정 다이얼로그 */}
-      <Dialog open={!!memoDialog} onClose={() => setMemoDialog(null)} maxWidth="sm" fullWidth>
-        <DialogTitle>메모 수정</DialogTitle>
+      <Dialog open={!!memoDialog} onClose={() => setMemoDialog(null)} maxWidth="sm" fullWidth fullScreen={isMobile}>
+        <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          메모 수정
+          {isMobile && (
+            <IconButton
+              onClick={() => setMemoDialog(null)}
+              aria-label="닫기"
+              sx={{ width: 44, height: 44 }}
+            >
+              <CloseIcon />
+            </IconButton>
+          )}
+        </DialogTitle>
         <DialogContent>
           <TextField
             autoFocus

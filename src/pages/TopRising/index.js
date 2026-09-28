@@ -117,6 +117,18 @@ function TopRising() {
     isActive: isFinancialFilterActive,
   } = useFinancialFilter(stockData);
 
+  // 필터 적용 후 첫 번째 종목 자동 선택 (필터 변경 및 초기 로드 대응)
+  useEffect(() => {
+    if (loading) return;
+    if (filteredStocks.length > 0) {
+      if (!selectedStock || !filteredStocks.some((s) => s.code === selectedStock.code)) {
+        setSelectedStock(filteredStocks[0]);
+      }
+    } else {
+      setSelectedStock(null);
+    }
+  }, [filteredStocks, selectedStock, loading, setSelectedStock]);
+
   const tradingForm = useTradingForm(selectedStock, authenticatedFetch, showSnackbar, "top_rising");
 
   const saveAutotradingConfig = async () => {
@@ -1216,9 +1228,6 @@ function TopRising() {
             overflow: "hidden",
           }}
         >
-          {/* 네비게이션 바 높이만큼 패딩 추가 */}
-          <Box sx={{ height: "80px", flexShrink: 0 }} />
-
           {desktopLayout}
         </Box>
       )}

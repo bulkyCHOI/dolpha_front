@@ -44,7 +44,7 @@ function AppHeaderMobile({ routes, open }) {
                       variant="button"
                       fontWeight="bold"
                       textTransform="capitalize"
-                      color="white"
+                      color={COLORS.CHARTBOOK.INK}
                       py={1}
                       px={0.5}
                     >
@@ -61,7 +61,7 @@ function AppHeaderMobile({ routes, open }) {
                         minWidth="11.25rem"
                         display="block"
                         variant="button"
-                        color="white"
+                        color={COLORS.CHARTBOOK.INK}
                         textTransform="capitalize"
                         fontWeight="regular"
                         py={0.625}
@@ -107,14 +107,14 @@ function AppHeaderMobile({ routes, open }) {
                       variant="button"
                       fontWeight="bold"
                       textTransform="capitalize"
-                      color="white"
+                      color={COLORS.CHARTBOOK.INK}
                     >
                       {item.name}
                     </Typography>
                     <Typography
                       display="block"
                       variant="button"
-                      color="white"
+                      color={COLORS.CHARTBOOK.INK}
                       fontWeight="regular"
                       sx={{ transition: "all 300ms linear" }}
                     >

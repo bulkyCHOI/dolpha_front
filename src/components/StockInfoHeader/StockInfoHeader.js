@@ -40,72 +40,149 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
         mb: 2,
       }}
     >
-      {/* 모바일: 간단한 카드 형태 */}
+      {/* 모바일: 2열 그리드 */}
       <Box sx={{ display: { xs: "block", md: "none" } }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
-          <Box>
-            <Typography variant="h6" color={COLORS.CHARTBOOK.INK} fontWeight="bold">
-              {selectedStock.name || "-"}
-            </Typography>
-            <Typography variant="caption" color={COLORS.CHARTBOOK.INK} sx={{ opacity: 0.7 }}>
-              {selectedStock.code || "-"} • KOSPI
-            </Typography>
-          </Box>
-          <IconButton
-            onClick={() => onOpenFinancialModal(selectedStock)}
+        <Grid container sx={{ borderCollapse: "collapse" }}>
+          {/* 종목명 */}
+          <Grid
+            item
+            xs={6}
             sx={{
-              color: COLORS.CHARTBOOK.INK,
-              padding: "8px",
-              "&:hover": {
-                backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.06),
-              },
+              p: 1,
+              borderRight: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+              borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}`,
             }}
-            title="재무제표 보기"
           >
-            <Assessment sx={{ fontSize: "20px" }} />
-          </IconButton>
-        </Box>
+            <Typography variant="caption" color={COLORS.CHARTBOOK.INK} sx={{ fontSize: "0.7rem", opacity: 0.7 }}>
+              종목명
+            </Typography>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mt: 0.5 }}>
+              <Typography
+                variant="body2"
+                fontWeight="bold"
+                color={COLORS.CHARTBOOK.INK}
+                sx={{ fontSize: "0.85rem", lineHeight: 1.2 }}
+              >
+                {selectedStock.name || "-"}
+              </Typography>
+              <Typography variant="caption" color={COLORS.CHARTBOOK.INK} sx={{ fontSize: "0.65rem", opacity: 0.7 }}>
+                ({selectedStock.code || "-"})
+              </Typography>
+            </Box>
+          </Grid>
 
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <Box>
+          {/* 마켓 */}
+          <Grid
+            item
+            xs={6}
+            sx={{
+              p: 1,
+              borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+            }}
+          >
+            <Typography variant="caption" color={COLORS.CHARTBOOK.INK} sx={{ fontSize: "0.7rem", opacity: 0.7 }}>
+              마켓
+            </Typography>
             <Typography
-              variant="h5"
-              color={COLORS.CHARTBOOK.INK}
+              variant="body2"
               fontWeight="bold"
-              sx={{ fontFamily: "'Fragment Mono', 'Monaco', monospace", fontVariantNumeric: "tabular-nums" }}
+              color={COLORS.CHARTBOOK.INK}
+              sx={{ fontSize: "0.85rem", mt: 0.5 }}
+            >
+              KOSPI
+            </Typography>
+          </Grid>
+
+          {/* 종가 */}
+          <Grid
+            item
+            xs={6}
+            sx={{
+              p: 1,
+              borderRight: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+              borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+            }}
+          >
+            <Typography variant="caption" color={COLORS.CHARTBOOK.INK} sx={{ fontSize: "0.7rem", opacity: 0.7 }}>
+              종가
+            </Typography>
+            <Typography
+              variant="body2"
+              fontWeight="bold"
+              color={COLORS.CHARTBOOK.INK}
+              sx={{
+                fontSize: "0.85rem",
+                fontFamily: "'Fragment Mono', 'Monaco', monospace",
+                fontVariantNumeric: "tabular-nums",
+                mt: 0.5,
+              }}
             >
               {ohlcvData && ohlcvData.length > 0
                 ? new Intl.NumberFormat("ko-KR").format(ohlcvData[ohlcvData.length - 1]?.close)
                 : "-"}
             </Typography>
-            <Typography variant="caption" color={COLORS.CHARTBOOK.INK} sx={{ opacity: 0.7 }}>
-              종가
-            </Typography>
-          </Box>
+          </Grid>
 
-          <Box sx={{ textAlign: "right" }}>
-            <Box
-              sx={{ display: "flex", alignItems: "center", gap: 0.5, justifyContent: "flex-end" }}
-            >
+          {/* 등락률 */}
+          <Grid
+            item
+            xs={6}
+            sx={{
+              p: 1,
+              borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+            }}
+          >
+            <Typography variant="caption" color={COLORS.CHARTBOOK.INK} sx={{ fontSize: "0.7rem", opacity: 0.7 }}>
+              등락율
+            </Typography>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mt: 0.5 }}>
               {changeRate !== null &&
                 (changeRate >= 0 ? (
-                  <ArrowUpward sx={{ fontSize: "16px", color: COLORS.UP }} />
+                  <ArrowUpward sx={{ fontSize: "14px", color: COLORS.UP }} />
                 ) : (
-                  <ArrowDownward sx={{ fontSize: "16px", color: COLORS.DOWN }} />
+                  <ArrowDownward sx={{ fontSize: "14px", color: COLORS.DOWN }} />
                 ))}
               <Typography
-                variant="body1"
-                color={changeRate !== null && changeRate >= 0 ? COLORS.UP : COLORS.DOWN}
+                variant="body2"
                 fontWeight="bold"
-                sx={{ fontFamily: "'Fragment Mono', 'Monaco', monospace", fontVariantNumeric: "tabular-nums" }}
+                color={changeRate !== null && changeRate >= 0 ? COLORS.UP : COLORS.DOWN}
+                sx={{
+                  fontSize: "0.85rem",
+                  fontFamily: "'Fragment Mono', 'Monaco', monospace",
+                  fontVariantNumeric: "tabular-nums",
+                }}
               >
                 {changeRate !== null
                   ? `${changeRate >= 0 ? "+" : ""}${changeRate.toFixed(2)}%`
                   : "-"}
               </Typography>
             </Box>
-            <Typography variant="caption" color={COLORS.CHARTBOOK.INK} sx={{ opacity: 0.7 }}>
-              ATR:{" "}
+          </Grid>
+
+          {/* ATR */}
+          <Grid
+            item
+            xs={6}
+            sx={{
+              p: 1,
+              borderRight: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+              borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+            }}
+          >
+            <Typography variant="caption" color={COLORS.CHARTBOOK.INK} sx={{ fontSize: "0.7rem", opacity: 0.7 }}>
+              ATR
+            </Typography>
+            <Typography
+              variant="body2"
+              fontWeight="bold"
+              color={COLORS.CHARTBOOK.INK}
+              sx={{
+                fontSize: "0.85rem",
+                fontFamily: "'Fragment Mono', 'Monaco', monospace",
+                fontVariantNumeric: "tabular-nums",
+                mt: 0.5,
+              }}
+            >
               {analysisData &&
               analysisData.length > 0 &&
               analysisData[analysisData.length - 1]?.atr &&
@@ -121,8 +198,92 @@ function StockInfoHeader({ selectedStock, ohlcvData, analysisData, onOpenFinanci
                   })()
                 : "-"}
             </Typography>
-          </Box>
-        </Box>
+          </Grid>
+
+          {/* 시가총액 */}
+          <Grid
+            item
+            xs={6}
+            sx={{
+              p: 1,
+              borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+            }}
+          >
+            <Typography variant="caption" color={COLORS.CHARTBOOK.INK} sx={{ fontSize: "0.7rem", opacity: 0.7 }}>
+              시가총액
+            </Typography>
+            <Typography
+              variant="body2"
+              fontWeight="bold"
+              color={COLORS.CHARTBOOK.INK}
+              sx={{
+                fontSize: "0.85rem",
+                fontFamily: "'Fragment Mono', 'Monaco', monospace",
+                fontVariantNumeric: "tabular-nums",
+                mt: 0.5,
+              }}
+            >
+              {formatMarketCap(selectedStock.market_cap)}
+            </Typography>
+          </Grid>
+
+          {/* 영업이익율 */}
+          <Grid
+            item
+            xs={6}
+            sx={{
+              p: 1,
+              borderRight: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+            }}
+          >
+            <Typography variant="caption" color={COLORS.CHARTBOOK.INK} sx={{ fontSize: "0.7rem", opacity: 0.7 }}>
+              영업이익율
+            </Typography>
+            <Typography
+              variant="body2"
+              fontWeight="bold"
+              color={COLORS.CHARTBOOK.INK}
+              sx={{
+                fontSize: "0.85rem",
+                fontFamily: "'Fragment Mono', 'Monaco', monospace",
+                fontVariantNumeric: "tabular-nums",
+                mt: 0.5,
+              }}
+            >
+              {selectedStock.영업이익율 != null && selectedStock.영업이익율 !== 0
+                ? `${selectedStock.영업이익율.toFixed(1)}%`
+                : "-"}
+            </Typography>
+          </Grid>
+
+          {/* 재무제표 버튼 */}
+          <Grid
+            item
+            xs={6}
+            sx={{
+              p: 1,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <IconButton
+              onClick={() => onOpenFinancialModal(selectedStock)}
+              sx={{
+                minWidth: 44,
+                minHeight: 44,
+                color: COLORS.CHARTBOOK.INK,
+                "&:hover": {
+                  backgroundColor: alpha(COLORS.CHARTBOOK.INK, 0.06),
+                },
+              }}
+              title="재무제표 보기"
+              aria-label="재무제표 보기"
+            >
+              <Assessment sx={{ fontSize: "18px" }} />
+            </IconButton>
+          </Grid>
+        </Grid>
       </Box>
 
       {/* 데스크탑: 기존 Grid 레이아웃 */}

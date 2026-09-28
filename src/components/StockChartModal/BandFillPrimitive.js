@@ -76,19 +76,22 @@ class BandFillPrimitive {
     this._upper = [];
     this._chart = null;
     this._series = null;
+    this._requestUpdate = null;
     this._renderer = new BandFillRenderer(this);
-    this._view = { renderer: () => this._renderer };
+    this._view = { renderer: () => this._renderer, zOrder: () => "bottom" };
   }
 
   /** lightweight-charts가 시리즈에 연결될 때 호출 */
-  attached({ chart, series }) {
+  attached({ chart, series, requestUpdate }) {
     this._chart = chart;
     this._series = series;
+    this._requestUpdate = requestUpdate;
   }
 
   detached() {
     this._chart = null;
     this._series = null;
+    this._requestUpdate = null;
   }
 
   updateAllViews() {}
@@ -105,6 +108,7 @@ class BandFillPrimitive {
   updateBand(lower, upper) {
     this._lower = lower;
     this._upper = upper;
+    if (this._requestUpdate) this._requestUpdate();
   }
 }
 

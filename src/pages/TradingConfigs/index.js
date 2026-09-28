@@ -63,7 +63,7 @@ import StockChartModal from "components/StockChartModal";
 
 // 매매동향 모달
 import InvestorFlowModal from "components/InvestorFlowModal";
-import { COLORS, onColor } from "constants/styles";
+import { COLORS } from "constants/styles";
 
 // Remove the old styled component - now using EnhancedDataTable
 
@@ -396,11 +396,15 @@ export default function TradingConfigs() {
             height: "24px",
             fontFamily: MONO_STACK,
             backgroundColor: "transparent",
-            border: `1px solid ${row.is_active ? COLORS.CHARTBOOK.BAND_WEAK : COLORS.CHARTBOOK.SECONDARY}`,
+            border: `1px solid ${
+              row.is_active ? COLORS.CHARTBOOK.BAND_WEAK : COLORS.CHARTBOOK.SECONDARY
+            }`,
             borderRadius: "2px",
             "& .MuiChip-label": {
               padding: "0 8px",
-              color: `${row.is_active ? COLORS.CHARTBOOK.BAND_WEAK : COLORS.CHARTBOOK.SECONDARY} !important`,
+              color: `${
+                row.is_active ? COLORS.CHARTBOOK.BAND_WEAK : COLORS.CHARTBOOK.SECONDARY
+              } !important`,
             },
           }}
         />
@@ -747,7 +751,7 @@ export default function TradingConfigs() {
     },
     {
       name: "액션",
-      width: "190px",
+      width: "220px",
       cell: (row) => {
         const isFav = favoriteCodes.has(row.stock_code);
         return (
@@ -866,45 +870,59 @@ export default function TradingConfigs() {
     }
   };
 
-  // 모든 종목의 현재가를 일괄 조회 (서버에서 순차 처리하여 KIS Rate Limit 대응)
+  // 서버가 한 번에 처리 가능한 최대 종목 수 (backend BatchPriceRequest 제한과 동일하게 유지)
+  const STOCK_PRICE_BATCH_SIZE = 50;
+
+  // 모든 종목의 현재가를 일괄 조회 (서버 제한(50개)을 넘으면 청크로 나눠 순차 조회)
   const loadCurrentPrices = async (configs) => {
     if (!configs || configs.length === 0) return;
 
     const uniqueStockCodes = [...new Set(configs.map((c) => c.stock_code))];
     const apiBaseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
+    const chunks = [];
+    for (let i = 0; i < uniqueStockCodes.length; i += STOCK_PRICE_BATCH_SIZE) {
+      chunks.push(uniqueStockCodes.slice(i, i + STOCK_PRICE_BATCH_SIZE));
+    }
+
+    const pricesMap = {};
+    let successCount = 0;
+    let errorCount = 0;
+
     try {
-      const response = await authenticatedFetch(`${apiBaseUrl}/api/stock-prices/batch`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ stock_codes: uniqueStockCodes }),
-      });
+      for (const chunk of chunks) {
+        const response = await authenticatedFetch(`${apiBaseUrl}/api/stock-prices/batch`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ stock_codes: chunk }),
+        });
 
-      if (!response.ok) {
-        showSnackbar("현재가 조회에 실패했습니다.", "error");
-        return;
-      }
-
-      const data = await response.json();
-      const pricesMap = {};
-      let successCount = 0;
-      let errorCount = 0;
-
-      Object.entries(data.prices).forEach(([stockCode, result]) => {
-        if (result.success) {
-          pricesMap[stockCode] = {
-            price: result.price,
-            change: result.change,
-            changePercent: result.changePercent,
-            source: result.source,
-            marketState: result.market_state,
-          };
-          successCount++;
-        } else {
-          pricesMap[stockCode] = null;
-          errorCount++;
+        if (!response.ok) {
+          chunk.forEach((code) => {
+            pricesMap[code] = null;
+          });
+          errorCount += chunk.length;
+          continue;
         }
-      });
+
+        const data = await response.json();
+
+        Object.entries(data.prices).forEach(([stockCode, result]) => {
+          if (result.success) {
+            pricesMap[stockCode] = {
+              price: result.price,
+              change: result.change,
+              changePercent: result.changePercent,
+              source: result.source,
+              marketState: result.market_state,
+            };
+            successCount++;
+          } else {
+            pricesMap[stockCode] = null;
+            errorCount++;
+          }
+        });
+      }
 
       setCurrentPrices(pricesMap);
 
@@ -915,6 +933,7 @@ export default function TradingConfigs() {
         showSnackbar(`${errorCount}개 종목의 현재가 조회에 실패했습니다.`, "warning");
       }
     } catch (error) {
+      setCurrentPrices(pricesMap);
       showSnackbar(`현재가 조회 오류: ${error.message}`, "error");
     }
   };
@@ -1001,16 +1020,22 @@ export default function TradingConfigs() {
         method: "DELETE",
       });
 
-      if (response.ok) {
+      const result = await response.json();
+
+      if (response.ok && result.success !== false) {
         // 로컬 상태에서 삭제
         setAllTradingConfigs((prev) =>
           prev.filter(
             (config) => !(config.stock_code === stockCode && config.strategy_type === strategyType)
           )
         );
-        showSnackbar(`${stockName}(${stockCode}) 자동매매 설정이 삭제되었습니다.`, "success");
+        showSnackbar(
+          result.message || `${stockName}(${stockCode}) 자동매매 설정이 삭제되었습니다.`,
+          "success"
+        );
+        loadTradingStatus();
       } else {
-        throw new Error("삭제 요청에 실패했습니다.");
+        throw new Error(result.error || result.message || "삭제 요청에 실패했습니다.");
       }
     } catch (error) {
       showSnackbar(`삭제 실패: ${error.message}`, "error");
@@ -1221,7 +1246,15 @@ export default function TradingConfigs() {
               <Box sx={{ flex: 1 }}>
                 <Box display="flex" flexDirection="row" gap={1.5}>
                   {/* 투자 대상 */}
-                  <Card sx={{ flex: 1, minHeight: "80px", bgcolor: COLORS.CHARTBOOK.GROUND, border: `1px solid ${COLORS.CHARTBOOK.GRID}`, boxShadow: "none" }}>
+                  <Card
+                    sx={{
+                      flex: 1,
+                      minHeight: "80px",
+                      bgcolor: COLORS.CHARTBOOK.GROUND,
+                      border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+                      boxShadow: "none",
+                    }}
+                  >
                     <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
                       <Typography
                         variant="caption"
@@ -1242,7 +1275,15 @@ export default function TradingConfigs() {
                   </Card>
 
                   {/* 투자 종목 수 */}
-                  <Card sx={{ flex: 1, minHeight: "80px", bgcolor: COLORS.CHARTBOOK.GROUND, border: `1px solid ${COLORS.CHARTBOOK.GRID}`, boxShadow: "none" }}>
+                  <Card
+                    sx={{
+                      flex: 1,
+                      minHeight: "80px",
+                      bgcolor: COLORS.CHARTBOOK.GROUND,
+                      border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+                      boxShadow: "none",
+                    }}
+                  >
                     <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
                       <Typography
                         variant="caption"
@@ -1271,7 +1312,15 @@ export default function TradingConfigs() {
                   </Card>
 
                   {/* 투자금 합계 */}
-                  <Card sx={{ flex: 1, minHeight: "80px", bgcolor: COLORS.CHARTBOOK.GROUND, border: `1px solid ${COLORS.CHARTBOOK.GRID}`, boxShadow: "none" }}>
+                  <Card
+                    sx={{
+                      flex: 1,
+                      minHeight: "80px",
+                      bgcolor: COLORS.CHARTBOOK.GROUND,
+                      border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+                      boxShadow: "none",
+                    }}
+                  >
                     <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
                       <Typography
                         variant="caption"
@@ -1300,7 +1349,15 @@ export default function TradingConfigs() {
                   </Card>
 
                   {/* 평가손익 합계 */}
-                  <Card sx={{ flex: 1, minHeight: "80px", bgcolor: COLORS.CHARTBOOK.GROUND, border: `1px solid ${COLORS.CHARTBOOK.GRID}`, boxShadow: "none" }}>
+                  <Card
+                    sx={{
+                      flex: 1,
+                      minHeight: "80px",
+                      bgcolor: COLORS.CHARTBOOK.GROUND,
+                      border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+                      boxShadow: "none",
+                    }}
+                  >
                     <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
                       <Typography
                         variant="caption"
@@ -1345,7 +1402,15 @@ export default function TradingConfigs() {
                   </Card>
 
                   {/* 평균 손익률 */}
-                  <Card sx={{ flex: 1, minHeight: "80px", bgcolor: COLORS.CHARTBOOK.GROUND, border: `1px solid ${COLORS.CHARTBOOK.GRID}`, boxShadow: "none" }}>
+                  <Card
+                    sx={{
+                      flex: 1,
+                      minHeight: "80px",
+                      bgcolor: COLORS.CHARTBOOK.GROUND,
+                      border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+                      boxShadow: "none",
+                    }}
+                  >
                     <CardContent sx={{ p: 1.5, textAlign: "center", "&:last-child": { pb: 1.5 } }}>
                       <Typography
                         variant="caption"
@@ -1527,7 +1592,13 @@ export default function TradingConfigs() {
           {!loading && !error && (
             <Box>
               {displayedConfigs.length === 0 ? (
-                <Card sx={{ bgcolor: COLORS.CHARTBOOK.GROUND, border: `1px solid ${COLORS.CHARTBOOK.GRID}`, boxShadow: "none" }}>
+                <Card
+                  sx={{
+                    bgcolor: COLORS.CHARTBOOK.GROUND,
+                    border: `1px solid ${COLORS.CHARTBOOK.GRID}`,
+                    boxShadow: "none",
+                  }}
+                >
                   <CardContent>
                     <Box textAlign="center" py={6}>
                       <SettingsIcon sx={{ fontSize: 60, color: "text.secondary", mb: 2 }} />

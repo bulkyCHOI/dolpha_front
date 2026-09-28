@@ -136,12 +136,19 @@ const EnhancedDataTable = ({
           };
         }
 
-        // 액션 컬럼 최적화
+        // 액션 컬럼 최적화 (버튼 6개 수용 가능한 최소 너비 220px 확보)
         if (column.name === "액션") {
-          optimizedColumn.width = "160px";
+          const actionWidth = width || "220px";
+          optimizedColumn.width = actionWidth;
           optimizedColumn.style = {
-            minWidth: "160px",
+            minWidth: actionWidth,
+            ...column.style,
           };
+        }
+
+        // 명시적으로 width가 지정된 경우(종목, 액션 외) 유지
+        if (width && column.name !== "액션" && column.name !== "종목") {
+          optimizedColumn.width = width;
         }
 
         // 긴 텍스트 컬럼 최적화

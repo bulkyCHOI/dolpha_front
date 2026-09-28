@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import React, { useMemo, useRef } from "react";
 import PropTypes from "prop-types";
 
 import TradingViewChart, {
@@ -9,7 +9,6 @@ import TradingViewChart, {
   fadedUpColor,
   useOhlcHover,
 } from "components/TradingViewChart";
-
 import BandFillPrimitive from "./BandFillPrimitive";
 
 const MA60_PERIOD = 60;
@@ -43,6 +42,7 @@ function computeMA60Band(data) {
 
 /**
  * 캔들 + 거래량 차트. 일봉일 때 MA60 매도추천 밴드를 함께 그린다.
+ * 공용 TradingViewChart 컴포넌트를 사용하여 렌더링을 처리한다.
  */
 function LightweightChart({ data, mode, loading, initialVisibleBars }) {
   const intraday = mode === "intraday";
@@ -52,20 +52,6 @@ function LightweightChart({ data, mode, loading, initialVisibleBars }) {
   if (!bandPrimitiveRef.current) bandPrimitiveRef.current = new BandFillPrimitive();
 
   const { bar, change, onCrosshairMove } = useOhlcHover(data);
-
-  // 분봉은 정규장(09:00~15:30) 전체 구간을 초기 화면으로 잡는다.
-  const initialVisibleRange = useMemo(() => {
-    if (!intraday) return null;
-    const firstTime = data?.[0]?.time;
-    if (typeof firstTime !== "number") return null;
-
-    const date = new Date(firstTime * 1000);
-    const [year, month, day] = [date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()];
-    return {
-      from: Math.floor(Date.UTC(year, month, day, 9, 0, 0) / 1000),
-      to: Math.floor(Date.UTC(year, month, day, 15, 30, 0) / 1000),
-    };
-  }, [data, intraday]);
 
   const series = useMemo(() => {
     const candleData = (data ?? []).map((item) => ({
@@ -116,16 +102,16 @@ function LightweightChart({ data, mode, loading, initialVisibleBars }) {
     ];
   }, [data, intraday]);
 
+  const panes = useMemo(() => [{ stretch: 4 }, { stretch: 1 }], []);
+
   return (
     <TradingViewChart
       series={series}
-      panes={[{ stretch: 4 }, { stretch: 1 }]}
+      panes={panes}
       height="100%"
       intraday={intraday}
       loading={loading}
       initialVisibleBars={initialVisibleBars}
-      initialVisibleRange={initialVisibleRange}
-      fitContentKey={mode}
       onCrosshairMove={onCrosshairMove}
       overlay={<OhlcLegend bar={bar} change={change} intraday={intraday} />}
     />

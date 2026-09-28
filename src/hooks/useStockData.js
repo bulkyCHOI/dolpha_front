@@ -144,9 +144,6 @@ export const useStockData = () => {
         const result = await response.json();
         const data = result.data || [];
         setStockData(data);
-        if (data.length > 0) {
-          setSelectedStock(data[0]);
-        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -160,7 +157,14 @@ export const useStockData = () => {
   // selectedStock.code만 의존성으로 사용해 객체 참조 변경에 의한 불필요한 재실행 방지
   const selectedStockCode = selectedStock?.code;
   useEffect(() => {
-    if (!selectedStockCode) return;
+    if (!selectedStockCode) {
+      setOhlcvData([]);
+      setIndexData([]);
+      setIndexOhlcvData([]);
+      setSelectedIndexCode("");
+      setAnalysisData([]);
+      return;
+    }
     Promise.all([
       fetchOHLCVData(selectedStockCode),
       fetchStockIndexData(selectedStockCode),

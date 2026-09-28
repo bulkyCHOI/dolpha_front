@@ -5,7 +5,7 @@
  * - 인증 불필요 (Autobot 데이터 직접 조회)
  */
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -31,9 +31,14 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import EditIcon from "@mui/icons-material/Edit";
 import CheckIcon from "@mui/icons-material/Check";
 import TextField from "@mui/material/TextField";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import TrendingFlatIcon from "@mui/icons-material/TrendingFlat";
 import AccountCharts from "./components/AccountCharts";
+import StrategyBreakdownChart from "./components/StrategyBreakdownChart";
 
 // @mui icons
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -175,6 +180,27 @@ export default function TradingReviews() {
   // 매매사유 편집 State: { [entryId]: { editing: bool, value: string, saving: bool } }
   const [noteStates, setNoteStates] = useState({});
 
+  // 전략 필터
+  const [strategyFilter, setStrategyFilter] = useState("all");
+
+  // 전략 필터 옵션 (실제 데이터에 등장하는 전략만 노출)
+  const strategyOptions = useMemo(() => {
+    const seen = new Map();
+    tradingReviews.forEach((row) => {
+      const key = row.strategy_type || "unknown";
+      if (!seen.has(key)) {
+        seen.set(key, row.strategy_label || row.strategy_type || "미분류");
+      }
+    });
+    return Array.from(seen.entries()).map(([value, label]) => ({ value, label }));
+  }, [tradingReviews]);
+
+  // 전략 필터가 적용된 목록
+  const filteredTradingReviews = useMemo(() => {
+    if (strategyFilter === "all") return tradingReviews;
+    return tradingReviews.filter((row) => (row.strategy_type || "unknown") === strategyFilter);
+  }, [tradingReviews, strategyFilter]);
+
   // API Base URL
   const API_BASE_URL = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
@@ -199,6 +225,17 @@ export default function TradingReviews() {
             {row.stock_code}
           </Typography>
         </Box>
+      ),
+    },
+    {
+      name: "전략",
+      selector: (row) => row.strategy_label || row.strategy_type,
+      sortable: true,
+      minWidth: "110px",
+      cell: (row) => (
+        <Typography variant="body2" sx={{ fontSize: "0.8rem" }}>
+          {row.strategy_label || row.strategy_type || "-"}
+        </Typography>
       ),
     },
     {
@@ -1138,6 +1175,11 @@ export default function TradingReviews() {
             </Box>
           )}
 
+          {/* 전략별 성과 비교 (승률·손익 편차 확인용) */}
+          {!loading && !error && tradingReviews.length > 0 && (
+            <StrategyBreakdownChart tradingReviews={tradingReviews} />
+          )}
+
           {/* 로딩 상태 */}
           {loading && (
             <Box display="flex" justifyContent="center" py={6}>
@@ -1155,6 +1197,25 @@ export default function TradingReviews() {
           {/* 매매복기 DataTable */}
           {!loading && !error && (
             <Box>
+              {tradingReviews.length > 0 && (
+                <Box display="flex" justifyContent="flex-end" mb={2}>
+                  <FormControl size="small" sx={{ minWidth: "160px" }}>
+                    <InputLabel>전략</InputLabel>
+                    <Select
+                      value={strategyFilter}
+                      label="전략"
+                      onChange={(e) => setStrategyFilter(e.target.value)}
+                    >
+                      <MenuItem value="all">전체</MenuItem>
+                      {strategyOptions.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Box>
+              )}
               {tradingReviews.length === 0 ? (
                 <Card>
                   <CardContent>
@@ -1173,9 +1234,9 @@ export default function TradingReviews() {
                 <ResponsiveTableWrapper>
                   <EnhancedDataTable
                     columns={columns}
-                    data={tradingReviews}
+                    data={filteredTradingReviews}
                     autoOptimizeColumns={true}
-                    defaultSortFieldId={5} // 최종청산일로 기본 정렬
+                    defaultSortFieldId={6} // 최종청산일로 기본 정렬 (전략 컬럼 추가로 인덱스 +1)
                     defaultSortAsc={false} // 최신순 정렬
                   />
                 </ResponsiveTableWrapper>

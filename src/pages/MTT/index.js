@@ -100,6 +100,18 @@ function MTT() {
     hasDefaults: hasFinancialFilterDefaults,
   } = useFinancialFilter(stockData);
 
+  // 필터 적용 후 첫 번째 종목 자동 선택 (필터 변경 및 초기 로드 대응)
+  useEffect(() => {
+    if (loading) return;
+    if (filteredStocks.length > 0) {
+      if (!selectedStock || !filteredStocks.some((s) => s.code === selectedStock.code)) {
+        setSelectedStock(filteredStocks[0]);
+      }
+    } else {
+      setSelectedStock(null);
+    }
+  }, [filteredStocks, selectedStock, loading, setSelectedStock]);
+
   const tradingForm = useTradingForm(selectedStock, authenticatedFetch, showSnackbar, "mtt");
 
   const chartInteractions = useChartInteractions(
@@ -207,7 +219,7 @@ function MTT() {
 
   // 모바일 종목 탭 렌더링
   const renderMobileStockTab = () => (
-    <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
+    <Box sx={[{ height: "calc(100vh - 160px)" }, { height: "calc(100dvh - 160px)" }, { overflow: "hidden" }]}>
       <Box
         sx={{
           backgroundColor: COLORS.CHARTBOOK.GROUND,
@@ -242,7 +254,7 @@ function MTT() {
 
   // 모바일 차트 탭 렌더링
   const renderMobileChartTab = () => (
-    <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
+    <Box sx={[{ height: "calc(100vh - 160px)" }, { height: "calc(100dvh - 160px)" }, { overflow: "hidden" }]}>
       <Box
         sx={{
           backgroundColor: COLORS.CHARTBOOK.GROUND,
@@ -347,7 +359,7 @@ function MTT() {
 
   // 모바일 자동매매 탭 렌더링
   const renderMobileAutotradingTab = () => (
-    <Box sx={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
+    <Box sx={[{ height: "calc(100vh - 160px)" }, { height: "calc(100dvh - 160px)" }, { overflow: "hidden" }]}>
       <Box
         sx={{
           backgroundColor: COLORS.CHARTBOOK.GROUND,
@@ -425,14 +437,16 @@ function MTT() {
       {/* 모바일 레이아웃 */}
       {isMobile ? (
         <Box
-          sx={{
-            height: "100vh",
-            width: "100%",
-            backgroundColor: COLORS.CHARTBOOK.GROUND,
-            display: "flex",
-            flexDirection: "column",
-            overflow: "hidden",
-          }}
+          sx={[
+            { height: "100vh", width: "100%" },
+            { height: "100dvh" },
+            {
+              backgroundColor: COLORS.CHARTBOOK.GROUND,
+              display: "flex",
+              flexDirection: "column",
+              overflow: "hidden",
+            },
+          ]}
         >
           {/* 메인 콘텐츠 */}
           <Box sx={{ flex: 1, p: 1 }}>
@@ -503,23 +517,25 @@ function MTT() {
       ) : (
         /* 데스크탑 레이아웃 */
         <Box
-          sx={{
-            height: "100vh",
-            width: "100%",
-            backgroundColor: COLORS.CHARTBOOK.GROUND,
-            display: "flex",
-            flexDirection: "column",
-            overflow: "hidden",
-          }}
+          sx={[
+            { height: "100vh", width: "100%" },
+            { height: "100dvh" },
+            {
+              backgroundColor: COLORS.CHARTBOOK.GROUND,
+              display: "flex",
+              flexDirection: "column",
+              overflow: "hidden",
+            },
+          ]}
         >
           <Grid
             container
             spacing={0.5}
-            sx={{
-              height: "calc(100vh - 80px)",
-              p: { xs: 0.5, sm: 0.5 },
-              flexDirection: { xs: "column", md: "row" },
-            }}
+            sx={[
+              { height: "calc(100vh - 80px)", p: { xs: 0.5, sm: 0.5 } },
+              { height: "calc(100dvh - 80px)" },
+              { flexDirection: { xs: "column", md: "row" } },
+            ]}
           >
             {/* 왼쪽 차트 영역 */}
             <Grid
@@ -856,7 +872,7 @@ function MTT() {
                               }}
                             >
                               <Grid container spacing={0} alignItems="center">
-                                <Grid item xs={3.5} sm={3}>
+                                <Grid item xs={5} sm={3}>
                                   <Box>
                                     <Typography
                                       variant="body2"
@@ -963,7 +979,7 @@ function MTT() {
                                     </Typography>
                                   </Box>
                                 </Grid>
-                                <Grid item xs={2.5} sm={2.5}>
+                                <Grid item xs={2.5} sm={2.5} sx={{ display: { xs: "none", sm: "block" } }}>
                                   <Box display="flex" justifyContent="center" alignItems="center">
                                     <Typography
                                       variant="body2"

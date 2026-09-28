@@ -201,6 +201,8 @@ function StockChartModal({ open, onClose, stockCode, stockName }) {
     ];
   })();
 
+  if (!open) return null;
+
   return (
     <Dialog
       open={open}

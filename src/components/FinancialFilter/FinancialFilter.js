@@ -45,7 +45,7 @@ function FinancialFilter({
         backgroundColor: COLORS.CHARTBOOK.GROUND,
       }}
     >
-      <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+      <Box sx={{ display: { xs: "grid", sm: "flex" }, gridTemplateColumns: { xs: "repeat(2, 1fr)" }, alignItems: "center", gap: 0.5, flexWrap: { sm: "wrap" } }}>
         {FINANCIAL_FILTER_FIELDS.map(({ field, label }) => (
           <Tooltip key={field} title={`${label} 입력값(%) 이상만 표시`} arrow>
             <TextField
@@ -61,7 +61,7 @@ function FinancialFilter({
                 "& .MuiOutlinedInput-root": {
                   backgroundColor: COLORS.CHARTBOOK.GROUND,
                   borderRadius: 0,
-                  fontSize: "0.75rem",
+                  fontSize: { xs: "1rem", sm: "0.75rem" },
                   color: COLORS.CHARTBOOK.INK,
                   border: "none",
                   borderBottom: `1px solid ${COLORS.CHARTBOOK.GRID}`,
@@ -87,6 +87,8 @@ function FinancialFilter({
               onClick={onReset}
               disabled={!isActive}
               sx={{
+                minWidth: 44,
+                minHeight: 44,
                 color: COLORS.CHARTBOOK.INK,
                 "&:disabled": {
                   color: COLORS.TEXT_MUTED,
