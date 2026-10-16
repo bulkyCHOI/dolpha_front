@@ -2,6 +2,7 @@
  * 전역 라우트 정의.
  *
  * 여기에 추가한 항목은 상단 네비게이션에도 자동으로 노출된다.
+ * 모든 항목은 App.js의 RequireAuth 아래에서 렌더되므로 로그인한 사용자만 볼 수 있다.
  *
  * - name: 네비게이션에 표시할 이름
  * - icon: 네비게이션 아이콘
@@ -16,7 +17,6 @@
 import Icon from "@mui/material/Icon";
 
 // Pages
-import SignIn from "pages/SignIn";
 import MyPage from "pages/MyPage";
 import Logout from "pages/Logout";
 import MTT from "pages/MTT";
@@ -32,7 +32,6 @@ import TradingReviews from "pages/TradingReviews";
 import DailyNewsClipping from "pages/DailyNewsClipping";
 import MarketInfo from "pages/MarketInfo";
 import DataManagement from "pages/DataManagement";
-import ProtectedRoute from "components/ProtectedRoute";
 
 const routes = [
   {
@@ -77,11 +76,7 @@ const routes = [
           {
             name: "즐겨찾기",
             route: "/favorites",
-            component: (
-              <ProtectedRoute>
-                <Favorites />
-              </ProtectedRoute>
-            ),
+            component: <Favorites />,
           },
         ],
       },
@@ -99,20 +94,12 @@ const routes = [
           {
             name: "설정 목록",
             route: "/trading-configs",
-            component: (
-              <ProtectedRoute>
-                <TradingConfigs />
-              </ProtectedRoute>
-            ),
+            component: <TradingConfigs />,
           },
           {
             name: "매매복기",
             route: "/trading-reviews",
-            component: (
-              <ProtectedRoute>
-                <TradingReviews />
-              </ProtectedRoute>
-            ),
+            component: <TradingReviews />,
           },
         ],
       },
@@ -168,24 +155,15 @@ const routes = [
     name: "계정",
     icon: <Icon>account_circle</Icon>,
     columns: 1,
-    rowsPerColumn: 3,
+    rowsPerColumn: 2,
     collapse: [
       {
         name: "account",
         collapse: [
           {
-            name: "로그인",
-            route: "/pages/authentication/sign-in",
-            component: <SignIn />,
-          },
-          {
             name: "마이페이지",
             route: "/pages/my-page",
-            component: (
-              <ProtectedRoute>
-                <MyPage />
-              </ProtectedRoute>
-            ),
+            component: <MyPage />,
           },
           {
             name: "로그아웃",

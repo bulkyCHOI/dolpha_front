@@ -2,12 +2,14 @@ import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { CircularProgress, Alert } from "@mui/material";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { useAuth } from "contexts/AuthContext";
+import { APPROVAL_PENDING, useAuth } from "contexts/AuthContext";
+import { consumePostLoginPath } from "utils/postLoginRedirect";
 import { COLORS, alpha } from "constants/styles";
 
 function AuthCallback() {
-  const [status, setStatus] = useState("processing"); // processing, success, error
+  const [status, setStatus] = useState("processing"); // processing, success, error, pending
   const [message, setMessage] = useState("Google 로그인을 처리하고 있습니다...");
   const navigate = useNavigate();
   const { handleGoogleCallback } = useAuth();
@@ -35,21 +37,21 @@ function AuthCallback() {
         if (state && !state.startsWith("dolpha_login_")) {
           setStatus("error");
           setMessage("잘못된 인증 요청입니다.");
-          timeoutRef.current = setTimeout(() => navigate("/pages/authentication/sign-in"), 3000);
+          timeoutRef.current = setTimeout(() => navigate("/login", { replace: true }), 3000);
           return;
         }
 
         if (error) {
           setStatus("error");
           setMessage(`Google 로그인이 취소되었습니다: ${error}`);
-          timeoutRef.current = setTimeout(() => navigate("/pages/authentication/sign-in"), 3000);
+          timeoutRef.current = setTimeout(() => navigate("/login", { replace: true }), 3000);
           return;
         }
 
         if (!code) {
           setStatus("error");
           setMessage("인증 코드를 받을 수 없습니다.");
-          timeoutRef.current = setTimeout(() => navigate("/pages/authentication/sign-in"), 3000);
+          timeoutRef.current = setTimeout(() => navigate("/login", { replace: true }), 3000);
           return;
         }
 
@@ -58,30 +60,29 @@ function AuthCallback() {
 
         if (result.success) {
           setStatus("success");
-          setMessage("로그인이 완료되었습니다. 메인 페이지로 이동합니다...");
-          timeoutRef.current = setTimeout(() => navigate("/presentation"), 2000);
-        } else {
-          setStatus("error");
-          // 사용자 친화적인 에러 메시지로 변환
-          let userFriendlyMessage = "로그인 처리 중 문제가 발생했습니다.";
-
-          if (result.error) {
-            if (result.error.includes("fetch")) {
-              userFriendlyMessage = "네트워크 연결에 문제가 있습니다. 잠시 후 다시 시도해주세요.";
-            } else if (result.error.includes("401") || result.error.includes("403")) {
-              userFriendlyMessage = "인증에 실패했습니다. 다시 로그인해주세요.";
-            } else if (result.error.includes("500")) {
-              userFriendlyMessage = "서버에 일시적인 문제가 있습니다. 잠시 후 다시 시도해주세요.";
-            }
-          }
-
-          setMessage(userFriendlyMessage);
-          timeoutRef.current = setTimeout(() => navigate("/pages/authentication/sign-in"), 3000);
+          setMessage("로그인이 완료되었습니다.");
+          navigate(consumePostLoginPath(), { replace: true });
+          return;
         }
+
+        if (result.code === APPROVAL_PENDING) {
+          // 승인 전까지는 다시 시도해도 같으므로 자동 이동하지 않는다
+          setStatus("pending");
+          setMessage(
+            `${
+              result.email || "이 계정"
+            }은(는) 관리자 승인 대기 중입니다. 승인 후 다시 로그인해주세요.`
+          );
+          return;
+        }
+
+        setStatus("error");
+        setMessage(result.error || "로그인 처리 중 문제가 발생했습니다.");
+        timeoutRef.current = setTimeout(() => navigate("/login", { replace: true }), 3000);
       } catch (error) {
         setStatus("error");
         setMessage("로그인 처리 중 예상치 못한 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
-        timeoutRef.current = setTimeout(() => navigate("/pages/authentication/sign-in"), 3000);
+        timeoutRef.current = setTimeout(() => navigate("/login", { replace: true }), 3000);
       }
     };
 
@@ -124,6 +125,17 @@ function AuthCallback() {
           <Alert severity="success" sx={{ mb: 3, width: "100%", maxWidth: 400 }}>
             {message}
           </Alert>
+        </>
+      )}
+
+      {status === "pending" && (
+        <>
+          <Alert severity="info" sx={{ mb: 3, width: "100%", maxWidth: 400 }}>
+            {message}
+          </Alert>
+          <Button variant="outlined" onClick={() => navigate("/login", { replace: true })}>
+            로그인 화면으로
+          </Button>
         </>
       )}
 

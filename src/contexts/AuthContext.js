@@ -1,6 +1,28 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+
+import {
+  AUTH_EXPIRED_EVENT,
+  clearSession,
+  getAccessToken,
+  getApiBaseUrl,
+  getRefreshToken,
+  getStoredUser,
+  refreshAccessToken,
+  saveSession,
+} from "utils/apiClient";
 
 const AuthContext = createContext();
+
+/** 백엔드가 승인 대기 계정에 돌려주는 코드 */
+export const APPROVAL_PENDING = "APPROVAL_PENDING";
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -10,50 +32,59 @@ export const useAuth = () => {
   return context;
 };
 
+const readJson = async (response) => {
+  try {
+    return await response.json();
+  } catch {
+    return {};
+  }
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  // 세션이 끊긴 사유 (expired | pending). 로그인 화면 안내에 쓴다.
+  const [sessionEndReason, setSessionEndReason] = useState(null);
   const isCallbackProcessingRef = useRef(false); // Google 콜백 처리 중복 방지
 
-  // 로컬 스토리지에서 토큰 확인
+  const isAuthenticated = Boolean(user);
+
+  const logout = useCallback(() => {
+    const refresh = getRefreshToken();
+    if (refresh) {
+      // refresh 토큰 블랙리스트 처리. 실패해도 로컬 세션은 지운다.
+      fetch(`${getApiBaseUrl()}/api/auth/logout/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refresh }),
+      }).catch(() => {});
+    }
+    clearSession();
+    setUser(null);
+  }, []);
+
+  // 저장된 토큰이 아직 유효한지 서버에 확인한다 (만료 시 apiClient가 refresh까지 시도)
   useEffect(() => {
     const checkAuthStatus = async () => {
+      if (!getAccessToken()) {
+        setLoading(false);
+        return;
+      }
+
       try {
-        const token = localStorage.getItem("access_token");
-        const userInfo = localStorage.getItem("user_info");
-
-        if (token && userInfo) {
-          try {
-            const parsedUser = JSON.parse(userInfo);
-            // 토큰 유효성 검증
-            const baseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
-
-            const testResponse = await fetch(`${baseUrl}/api/mypage/profile`, {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-            });
-
-            if (testResponse.ok) {
-              setUser(parsedUser);
-              setIsAuthenticated(true);
-            } else {
-              logout();
-            }
-          } catch (parseError) {
-            // 저장된 사용자 정보가 손상된 경우
-            logout();
-          }
+        const response = await fetch(`${getApiBaseUrl()}/api/auth/me/`);
+        if (response.ok) {
+          const data = await readJson(response);
+          saveSession({ accessToken: getAccessToken(), user: data.user });
+          setUser(data.user);
         } else {
-          setIsAuthenticated(false);
+          clearSession();
           setUser(null);
         }
       } catch (error) {
-        // 인증 상태 확인 중 오류 발생시 조용히 로그아웃
-        logout();
+        // 서버에 닿지 못한 경우: 저장된 정보로 화면은 열어 두고, 이후 API 호출에서 다시 검증된다
+        console.error("[AuthContext] 로그인 상태 확인 실패:", error);
+        setUser(getStoredUser());
       } finally {
         setLoading(false);
       }
@@ -62,192 +93,117 @@ export const AuthProvider = ({ children }) => {
     checkAuthStatus();
   }, []);
 
-  // Google OAuth 코드를 받아서 백엔드로 전송
-  const handleGoogleCallback = async (code) => {
-    // 이미 처리 중이면 중복 호출 방지
+  // 어느 API 호출에서든 토큰 갱신이 실패하면 로그아웃 상태로 전환한다
+  useEffect(() => {
+    const handleExpired = (event) => {
+      setSessionEndReason(event.detail?.reason || null);
+      setUser(null);
+    };
+    window.addEventListener(AUTH_EXPIRED_EVENT, handleExpired);
+    return () => window.removeEventListener(AUTH_EXPIRED_EVENT, handleExpired);
+  }, []);
+
+  /**
+   * Google OAuth 코드를 백엔드로 보내 JWT를 받는다.
+   * @returns {{success: true, user} | {success: false, code?: string, email?: string, error: string}}
+   */
+  const handleGoogleCallback = useCallback(async (code) => {
     if (isCallbackProcessingRef.current) {
       return { success: false, error: "이미 로그인 처리 중입니다." };
     }
+    isCallbackProcessingRef.current = true;
 
     try {
-      isCallbackProcessingRef.current = true;
-      setLoading(true);
-
-      const baseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
-
-      const response = await fetch(`${baseUrl}/api/auth/google/`, {
+      const response = await fetch(`${getApiBaseUrl()}/api/auth/google/`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          code: code,
+          code,
           redirect_uri: `${window.location.origin}/auth/callback`,
         }),
       });
+      const data = await readJson(response);
 
       if (!response.ok) {
-        let errorMessage = "서버 연결에 문제가 있습니다";
-        try {
-          const errorData = await response.json();
-          // 서버 에러 메시지를 사용자 친화적으로 변환
-          if (errorData.error) {
-            if (errorData.error.includes("code")) {
-              errorMessage = "인증 코드가 올바르지 않습니다";
-            } else if (errorData.error.includes("token")) {
-              errorMessage = "토큰 처리 중 오류가 발생했습니다";
-            } else {
-              errorMessage = "인증 처리 중 문제가 발생했습니다";
-            }
-          }
-        } catch {
-          // JSON 파싱 실패 시 네트워크 에러로 간주
-          errorMessage = "네트워크 연결을 확인해주세요";
+        if (data.code === APPROVAL_PENDING) {
+          return {
+            success: false,
+            code: APPROVAL_PENDING,
+            email: data.email,
+            error: "관리자 승인 대기 중인 계정입니다.",
+          };
         }
-        throw new Error(errorMessage);
-      }
-
-      const data = await response.json();
-
-      // 더미 토큰 감지
-      if (data.access_token && data.access_token.includes("dummy")) {
-        throw new Error(
-          "서버에서 더미 응답을 반환했습니다. 실제 Google OAuth가 구성되지 않았습니다."
-        );
+        return { success: false, error: "인증 처리 중 문제가 발생했습니다. 다시 로그인해주세요." };
       }
 
       if (!data.access_token || !data.refresh_token || !data.user) {
-        throw new Error("서버 응답에서 필수 데이터가 누락되었습니다.");
+        return { success: false, error: "서버 응답에서 필수 데이터가 누락되었습니다." };
       }
 
-      // 토큰과 사용자 정보 저장
-      localStorage.setItem("access_token", data.access_token);
-      localStorage.setItem("refresh_token", data.refresh_token);
-      localStorage.setItem("user_info", JSON.stringify(data.user));
-
+      saveSession({
+        accessToken: data.access_token,
+        refreshToken: data.refresh_token,
+        user: data.user,
+      });
+      setSessionEndReason(null);
       setUser(data.user);
-      setIsAuthenticated(true);
-
       return { success: true, user: data.user };
     } catch (error) {
-      // 에러 타입에 따라 사용자 친화적 메시지 제공
-      let userFriendlyMessage = "로그인 처리 중 문제가 발생했습니다";
-
-      if (error.name === "TypeError" && error.message.includes("fetch")) {
-        userFriendlyMessage =
-          "네트워크 연결에 문제가 있습니다. 인터넷 연결을 확인하고 다시 시도해주세요";
-      } else if (error.message.includes("Failed to fetch")) {
-        userFriendlyMessage = "서버에 연결할 수 없습니다. 잠시 후 다시 시도해주세요";
-      } else if (
-        error.message.includes("네트워크") ||
-        error.message.includes("서버") ||
-        error.message.includes("인증")
-      ) {
-        userFriendlyMessage = error.message;
-      }
-
-      return { success: false, error: userFriendlyMessage };
+      console.error("[AuthContext] Google 로그인 처리 실패:", error);
+      return {
+        success: false,
+        error: "서버에 연결할 수 없습니다. 네트워크를 확인하고 잠시 후 다시 시도해주세요.",
+      };
     } finally {
-      setLoading(false);
-      isCallbackProcessingRef.current = false; // 처리 완료 표시
+      isCallbackProcessingRef.current = false;
     }
-  };
+  }, []);
 
-  // 로그아웃
-  const logout = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-    localStorage.removeItem("user_info");
-    setUser(null);
-    setIsAuthenticated(false);
-  };
-
-  // 토큰 갱신
-  const refreshToken = async () => {
-    try {
-      const refresh = localStorage.getItem("refresh_token");
-      if (!refresh) {
-        throw new Error("리프레시 토큰이 없습니다.");
-      }
-
-      const baseUrl = window.REACT_APP_API_BASE_URL || "http://localhost:8000";
-      const response = await fetch(`${baseUrl}/api/auth/refresh/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          refresh: refresh,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("토큰 갱신 실패");
-      }
-
-      const data = await response.json();
-      localStorage.setItem("access_token", data.access_token);
-
-      return data.access_token;
-    } catch (error) {
-      // 토큰 갱신 실패시 조용히 로그아웃
-      logout();
+  const refreshToken = useCallback(async () => {
+    const token = await refreshAccessToken();
+    if (!token) {
       throw new Error("로그인이 만료되었습니다. 다시 로그인해주세요.");
     }
-  };
+    return token;
+  }, []);
 
-  // API 호출을 위한 인증된 fetch 함수
-  const authenticatedFetch = async (url, options = {}) => {
-    let token = localStorage.getItem("access_token");
-
-    if (!token) {
+  // 토큰 첨부·401 갱신은 전역 fetch 래퍼(apiClient)가 처리한다. 기존 호출부 호환용.
+  const authenticatedFetch = useCallback(async (url, options = {}) => {
+    if (!getAccessToken()) {
       throw new Error("인증 토큰이 없습니다.");
     }
-
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-      ...options.headers,
-    };
-
-    let response = await fetch(url, {
+    const response = await fetch(url, {
       ...options,
-      headers,
+      headers: { "Content-Type": "application/json", ...options.headers },
     });
-
-    // 토큰 만료 시 자동 갱신 시도
     if (response.status === 401) {
-      try {
-        token = await refreshToken();
-        headers.Authorization = `Bearer ${token}`;
-
-        response = await fetch(url, {
-          ...options,
-          headers,
-        });
-
-        if (response.status === 401) {
-          logout();
-          throw new Error("로그인이 만료되었습니다. 다시 로그인해주세요.");
-        }
-      } catch (refreshError) {
-        logout();
-        throw new Error("로그인이 만료되었습니다. 다시 로그인해주세요.");
-      }
+      throw new Error("로그인이 만료되었습니다. 다시 로그인해주세요.");
     }
-
     return response;
-  };
+  }, []);
 
-  const value = {
-    user,
-    isAuthenticated,
-    loading,
-    handleGoogleCallback,
-    logout,
-    refreshToken,
-    authenticatedFetch,
-  };
+  const value = useMemo(
+    () => ({
+      user,
+      isAuthenticated,
+      loading,
+      sessionEndReason,
+      handleGoogleCallback,
+      logout,
+      refreshToken,
+      authenticatedFetch,
+    }),
+    [
+      user,
+      isAuthenticated,
+      loading,
+      sessionEndReason,
+      handleGoogleCallback,
+      logout,
+      refreshToken,
+      authenticatedFetch,
+    ]
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

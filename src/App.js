@@ -16,6 +16,9 @@ import routes from "routes";
 import { AuthProvider } from "contexts/AuthContext";
 import { ThemeModeProvider, useThemeMode } from "contexts/ThemeModeContext";
 import AuthCallback from "pages/AuthCallback";
+import SignIn from "pages/SignIn";
+import RequireAuth from "components/RequireAuth";
+import { DEFAULT_AFTER_LOGIN } from "utils/postLoginRedirect";
 
 export default function App() {
   return (
@@ -54,9 +57,17 @@ function ThemedApp() {
       <CssBaseline />
       <AuthProvider>
         <Routes>
-          {getRoutes(routes)}
+          {/* 공개: 로그인 관련 화면만 */}
+          <Route path="/login" element={<SignIn />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
-          <Route path="*" element={<Navigate to="/mtt" />} />
+          <Route path="/pages/authentication/sign-in" element={<Navigate to="/login" replace />} />
+
+          {/* 그 외 모든 화면은 로그인 필요 */}
+          <Route element={<RequireAuth />}>
+            {getRoutes(routes)}
+            <Route path="/" element={<Navigate to={DEFAULT_AFTER_LOGIN} replace />} />
+            <Route path="*" element={<Navigate to={DEFAULT_AFTER_LOGIN} replace />} />
+          </Route>
         </Routes>
       </AuthProvider>
     </ThemeProvider>

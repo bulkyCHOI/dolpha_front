@@ -8,6 +8,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
 import LightweightChart from "./LightweightChart";
+import { withAccessTokenQuery } from "utils/apiClient";
 import { COLORS } from "constants/styles";
 
 const DAILY_LIMIT = 20000;
@@ -100,7 +101,10 @@ function StockChartModal({ open, onClose, stockCode, stockName }) {
       minuteAccumRef.current = [];
       setMinuteLoading(true);
 
-      const source = new EventSource(`${apiBase}/api/find_stock_minute_stream?code=${stockCode}`);
+      // EventSource는 헤더를 못 붙이므로 토큰을 쿼리로 전달한다
+      const source = new EventSource(
+        withAccessTokenQuery(`${apiBase}/api/find_stock_minute_stream?code=${stockCode}`)
+      );
       eventSourceRef.current = source;
 
       source.onmessage = (e) => {
